@@ -74,7 +74,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	packages, err := parsers.ParseComposerLock(pathToLockOrDirectory)
+	packages, err := parsers.TryParse(pathToLockOrDirectory)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error parsing %s: %s\n", pathToLockOrDirectory, err)
