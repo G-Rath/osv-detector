@@ -3,9 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/fatih/color"
 	"os"
 	"osv-detector/detector/database"
 	"osv-detector/detector/parsers"
+	"path"
 )
 
 func loadOSVDatabase(offline bool) database.OSVDatabase {
@@ -31,6 +33,35 @@ func printEcosystems(db database.OSVDatabase) {
 	}
 }
 
+func printVulnerabilities(
+	db database.OSVDatabase,
+	ecosystem database.Ecosystem,
+	pkg parsers.EcosystemPackage,
+) int {
+	// fmt.Printf("%s: %s@%s\n", ecosystem, pkg.Name, pkg.Version)
+	vulnerabilities := db.VulnerabilitiesAffectingPackage(ecosystem, pkg.Name, pkg.Version)
+
+	if len(vulnerabilities) == 0 {
+		return 0
+	}
+
+	fmt.Printf(
+		"%s %s\n",
+		color.YellowString("%s@%s", pkg.Name, pkg.Version),
+		color.RedString("is affected by the following vulnerabilities:"),
+	)
+
+	for _, vulnerability := range vulnerabilities {
+		fmt.Printf(
+			"  %s %s\n",
+			color.CyanString("%s:", vulnerability.ID),
+			vulnerability.Summary,
+		)
+	}
+
+	return len(vulnerabilities)
+}
+
 func main() {
 	offline := flag.Bool("offline", false, "Update the OSV database")
 	listEcosystems := flag.Bool("list-ecosystems", false, "List all the ecosystems present in the loaded OSV database")
@@ -53,5 +84,18 @@ func main() {
 		os.Exit(127)
 	}
 
-	fmt.Printf("%s", out)
+	file := path.Base(pathToLockOrDirectory)
+
+	knownVulnerabilitiesCount := 0
+	for _, pkg := range out.Packages {
+		knownVulnerabilitiesCount += printVulnerabilities(db, database.Ecosystem(out.Ecosystem), pkg)
+	}
+
+	if knownVulnerabilitiesCount == 0 {
+		fmt.Printf("%s\n", color.GreenString("%s has no known vulnerabilities!", file))
+		os.Exit(0)
+	}
+
+	// fmt.Printf("%s\n", color.GreenString("%s is affected by  no known vulnerabilities!", file))
+	// fmt.Printf("%s", out)
 }
