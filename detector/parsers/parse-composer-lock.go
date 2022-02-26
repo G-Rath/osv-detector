@@ -11,7 +11,8 @@ type ComposerPackage struct {
 }
 
 type ComposerLock struct {
-	Packages []ComposerPackage `json:"packages"`
+	Packages    []ComposerPackage `json:"packages"`
+	PackagesDev []ComposerPackage `json:"packages-dev"`
 }
 
 const ComposerEcosystem Ecosystem = "Packagist"
@@ -29,6 +30,14 @@ func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 	}
 
 	for _, composerPackage := range parsedLockfile.Packages {
+		packages = append(packages, PackageDetails{
+			Name:      composerPackage.Name,
+			Version:   composerPackage.Version,
+			Ecosystem: ComposerEcosystem,
+		})
+	}
+
+	for _, composerPackage := range parsedLockfile.PackagesDev {
 		packages = append(packages, PackageDetails{
 			Name:      composerPackage.Name,
 			Version:   composerPackage.Version,
