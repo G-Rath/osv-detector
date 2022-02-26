@@ -96,6 +96,9 @@ func main() {
 		os.Exit(0)
 	}
 
-	// fmt.Printf("%s\n", color.GreenString("%s is affected by  no known vulnerabilities!", file))
-	// fmt.Printf("%s", out)
+	fmt.Printf("\n%s\n", color.RedString(
+		"%s is affected by %d vulnerabilities!",
+		file,
+		knownVulnerabilitiesCount,
+	))
 }
