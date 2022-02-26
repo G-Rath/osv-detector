@@ -168,3 +168,35 @@ func TestNpmLock_v1_NestedDependencies(t *testing.T) {
 		Ecosystem: parsers.NpmEcosystem,
 	})
 }
+
+func TestNpmLock_v1_NestedDependenciesDup(t *testing.T) {
+	t.Parallel()
+
+	packages, err := parsers.ParseNpmLock("fixtures/npm/nested-dependencies-dup.v1.json")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	if len(packages) != 39 {
+		t.Errorf("Expected to get two packages, but got %d", len(packages))
+	}
+
+	expectPackage(t, packages, parsers.PackageDetails{
+		Name:      "supports-color",
+		Version:   "6.1.0",
+		Ecosystem: parsers.NpmEcosystem,
+	})
+
+	expectPackage(t, packages, parsers.PackageDetails{
+		Name:      "supports-color",
+		Version:   "5.5.0",
+		Ecosystem: parsers.NpmEcosystem,
+	})
+
+	expectPackage(t, packages, parsers.PackageDetails{
+		Name:      "supports-color",
+		Version:   "2.0.0",
+		Ecosystem: parsers.NpmEcosystem,
+	})
+}

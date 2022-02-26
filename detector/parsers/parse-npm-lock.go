@@ -27,19 +27,43 @@ type NpmLockfile struct {
 
 const NpmEcosystem Ecosystem = "npm"
 
-func parseNpmLockDependencies(dependencies map[string]NpmLockDependency) []PackageDetails {
+func pkgDetailsMapToSlice(m map[string]PackageDetails) []PackageDetails {
 	var details []PackageDetails
+
+	for _, detail := range m {
+		details = append(details, detail)
+	}
+
+	return details
+}
+
+func mergePkgDetailsMap(m1 map[string]PackageDetails, m2 map[string]PackageDetails) map[string]PackageDetails {
+	details := map[string]PackageDetails{}
+
+	for name, detail := range m1 {
+		details[name] = detail
+	}
+
+	for name, detail := range m2 {
+		details[name] = detail
+	}
+
+	return details
+}
+
+func parseNpmLockDependencies(dependencies map[string]NpmLockDependency) map[string]PackageDetails {
+	details := map[string]PackageDetails{}
 
 	for name, detail := range dependencies {
 		if detail.Dependencies != nil {
-			details = append(details, parseNpmLockDependencies(detail.Dependencies)...)
+			details = mergePkgDetailsMap(details, parseNpmLockDependencies(detail.Dependencies))
 		}
 
-		details = append(details, PackageDetails{
+		details[name+"@"+detail.Version] = PackageDetails{
 			Name:      name,
 			Version:   detail.Version,
 			Ecosystem: NpmEcosystem,
-		})
+		}
 	}
 
 	return details
@@ -56,25 +80,26 @@ func extractPackageName(name string) string {
 	return pkgName
 }
 
-func parseNpmLockPackages(packages map[string]NpmLockPackage) []PackageDetails {
-	var details []PackageDetails
+func parseNpmLockPackages(packages map[string]NpmLockPackage) map[string]PackageDetails {
+	details := map[string]PackageDetails{}
 
 	for namePath, detail := range packages {
 		if namePath == "" {
 			continue
 		}
+		finalName := extractPackageName(namePath)
 
-		details = append(details, PackageDetails{
-			Name:      extractPackageName(namePath),
+		details[finalName+"@"+detail.Version] = PackageDetails{
+			Name:      finalName,
 			Version:   detail.Version,
 			Ecosystem: NpmEcosystem,
-		})
+		}
 	}
 
 	return details
 }
 
-func parseNpmLock(lockfile NpmLockfile) []PackageDetails {
+func parseNpmLock(lockfile NpmLockfile) map[string]PackageDetails {
 	if lockfile.Packages != nil {
 		return parseNpmLockPackages(lockfile.Packages)
 	}
@@ -93,5 +118,5 @@ func ParseNpmLock(pathToLockfile string) ([]PackageDetails, error) {
 		}
 	}
 
-	return parseNpmLock(*parsedLockfile), nil
+	return pkgDetailsMapToSlice(parseNpmLock(*parsedLockfile)), nil
 }
