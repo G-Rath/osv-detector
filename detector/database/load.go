@@ -20,7 +20,7 @@ const GithubOSVDatabaseArchiveURL = "https://codeload.github.com/github/advisory
 // so that a new version of the archive is only downloaded if it has been
 // modified, per HTTP caching standards.
 func (db *OSVDatabase) load() error {
-	db.Vulnerabilities = []OSV{}
+	db.vulnerabilities = []OSV{}
 
 	cache, err := db.fetchCache()
 
@@ -68,7 +68,7 @@ func (db *OSVDatabase) load() error {
 			continue
 		}
 
-		db.Vulnerabilities = append(db.Vulnerabilities, pa)
+		db.vulnerabilities = append(db.vulnerabilities, pa)
 	}
 
 	return nil

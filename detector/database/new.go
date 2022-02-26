@@ -4,7 +4,7 @@ import "fmt"
 
 // OSVDatabase stores security advisories in the manner defined by the OSV spec
 type OSVDatabase struct {
-	Vulnerabilities []OSV
+	vulnerabilities []OSV
 	ArchiveURL      string
 	Offline         bool
 }

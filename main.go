@@ -16,7 +16,7 @@ func loadOSVDatabase(offline bool) database.OSVDatabase {
 		os.Exit(127)
 	}
 
-	fmt.Printf("Loaded %d vulnerabilities\n", len(db.Vulnerabilities))
+	fmt.Printf("Loaded %d vulnerabilities\n", len(db.Vulnerabilities(true)))
 
 	return *db
 }
