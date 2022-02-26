@@ -6,7 +6,7 @@ import (
 )
 
 func findParser(pathToLockfile string) PackageDetailsParser {
-	switch path.Base(pathToLockfile) {
+	switch pathToLockfile {
 	case "composer.lock":
 		return ParseComposerLock
 	case "package-lock.json":
@@ -16,8 +16,12 @@ func findParser(pathToLockfile string) PackageDetailsParser {
 	}
 }
 
-func TryParse(pathToLockfile string) ([]PackageDetails, error) {
-	parser := findParser(pathToLockfile)
+func TryParse(pathToLockfile string, parseAs string) ([]PackageDetails, error) {
+	if parseAs == "" {
+		parseAs = path.Base(pathToLockfile)
+	}
+
+	parser := findParser(parseAs)
 
 	if parser == nil {
 		return []PackageDetails{}, fmt.Errorf("cannot parse %s", path.Base(pathToLockfile))

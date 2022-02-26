@@ -61,6 +61,7 @@ func printVulnerabilities(db database.OSVDatabase, pkg detector.PackageDetails) 
 
 func main() {
 	offline := flag.Bool("offline", false, "Update the OSV database")
+	parseAs := flag.String("parse-as", "", "Name of a supported lockfile to use to determine how to parse the given file")
 	listEcosystems := flag.Bool("list-ecosystems", false, "List all the ecosystems present in the loaded OSV database")
 
 	flag.Parse()
@@ -74,7 +75,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	packages, err := parsers.TryParse(pathToLockOrDirectory)
+	packages, err := parsers.TryParse(pathToLockOrDirectory, *parseAs)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error parsing %s: %s\n", pathToLockOrDirectory, err)
