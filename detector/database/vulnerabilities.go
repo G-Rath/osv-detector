@@ -1,5 +1,9 @@
 package database
 
+import (
+	"osv-detector/detector"
+)
+
 func (db *OSVDatabase) Vulnerabilities(includeWithdrawn bool) []OSV {
 	if includeWithdrawn {
 		return db.vulnerabilities
@@ -16,11 +20,11 @@ func (db *OSVDatabase) Vulnerabilities(includeWithdrawn bool) []OSV {
 	return vulnerabilities
 }
 
-func (db *OSVDatabase) VulnerabilitiesAffectingPackage(ecosystem Ecosystem, pkg string, version string) []OSV {
+func (db *OSVDatabase) VulnerabilitiesAffectingPackage(pkg detector.PackageDetails) []OSV {
 	var vulnerabilities []OSV
 
 	for _, vulnerability := range db.Vulnerabilities(false) {
-		if vulnerability.IsAffected(ecosystem, pkg, version) {
+		if vulnerability.IsAffected(pkg) {
 			vulnerabilities = append(vulnerabilities, vulnerability)
 		}
 	}

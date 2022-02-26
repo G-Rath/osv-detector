@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"os"
+	"osv-detector/detector"
 	"strings"
 	"time"
 
@@ -33,7 +34,7 @@ const (
 	TypeGit       AffectsRangeType = "GIT"
 )
 
-type Ecosystem string
+type Ecosystem = detector.Ecosystem
 
 type Package struct {
 	Name      string    `json:"name"`
@@ -75,6 +76,8 @@ func (ar AffectsRange) containsEcosystem(v string) bool {
 
 type Affects []AffectsRange
 
+// AffectsEcosystem checks if the given version is within the range
+// specified by the events of any "Ecosystem" type ranges
 func (a Affects) AffectsEcosystem(v string) bool {
 	for _, r := range a {
 		if r.Type != TypeEcosystem {
@@ -109,7 +112,7 @@ type OSV struct {
 	Affected  []Affected `json:"affected"`
 }
 
-func (osv *OSV) AffectsEcosystem(ecosystem Ecosystem) bool {
+func (osv *OSV) AffectsEcosystem(ecosystem detector.Ecosystem) bool {
 	if osv.Affected == nil {
 		fmt.Printf("Ignoring %s as it does not have an 'affected' property\n", osv.ID)
 
@@ -125,7 +128,7 @@ func (osv *OSV) AffectsEcosystem(ecosystem Ecosystem) bool {
 	return false
 }
 
-func (osv *OSV) IsAffected(ecosystem Ecosystem, name string, version string) bool {
+func (osv *OSV) IsAffected(pkg detector.PackageDetails) bool {
 	if osv.Affected == nil {
 		fmt.Printf("Ignoring %s as it does not have an 'affected' property\n", osv.ID)
 
@@ -133,7 +136,7 @@ func (osv *OSV) IsAffected(ecosystem Ecosystem, name string, version string) boo
 	}
 
 	for _, affected := range osv.Affected {
-		if affected.Package.Ecosystem == ecosystem && affected.Package.Name == name {
+		if affected.Package.Ecosystem == pkg.Ecosystem && affected.Package.Name == pkg.Name {
 			if len(affected.Ranges) == 0 {
 				_, _ = fmt.Fprintf(
 					os.Stderr,
@@ -144,7 +147,7 @@ func (osv *OSV) IsAffected(ecosystem Ecosystem, name string, version string) boo
 				continue
 			}
 
-			if affected.Ranges.AffectsEcosystem(version) {
+			if affected.Ranges.AffectsEcosystem(pkg.Version) {
 				return true
 			}
 		}

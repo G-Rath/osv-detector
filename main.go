@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"os"
+	"osv-detector/detector"
 	"osv-detector/detector/database"
 	"osv-detector/detector/parsers"
 	"path"
@@ -33,13 +34,9 @@ func printEcosystems(db database.OSVDatabase) {
 	}
 }
 
-func printVulnerabilities(
-	db database.OSVDatabase,
-	ecosystem database.Ecosystem,
-	pkg parsers.EcosystemPackage,
-) int {
+func printVulnerabilities(db database.OSVDatabase, pkg detector.PackageDetails) int {
 	// fmt.Printf("%s: %s@%s\n", ecosystem, pkg.Name, pkg.Version)
-	vulnerabilities := db.VulnerabilitiesAffectingPackage(ecosystem, pkg.Name, pkg.Version)
+	vulnerabilities := db.VulnerabilitiesAffectingPackage(pkg)
 
 	if len(vulnerabilities) == 0 {
 		return 0
@@ -77,7 +74,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	out, err := parsers.ParseComposerLock(pathToLockOrDirectory)
+	packages, err := parsers.ParseComposerLock(pathToLockOrDirectory)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error parsing %s: %s\n", pathToLockOrDirectory, err)
@@ -87,8 +84,8 @@ func main() {
 	file := path.Base(pathToLockOrDirectory)
 
 	knownVulnerabilitiesCount := 0
-	for _, pkg := range out.Packages {
-		knownVulnerabilitiesCount += printVulnerabilities(db, database.Ecosystem(out.Ecosystem), pkg)
+	for _, pkg := range packages {
+		knownVulnerabilitiesCount += printVulnerabilities(db, pkg)
 	}
 
 	if knownVulnerabilitiesCount == 0 {

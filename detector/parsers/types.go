@@ -1,11 +1,6 @@
 package parsers
 
-type EcosystemPackage struct {
-	Name    string
-	Version string
-}
+import "osv-detector/detector"
 
-type EcosystemPackages struct {
-	Packages  []EcosystemPackage
-	Ecosystem string
-}
+type Ecosystem = detector.Ecosystem
+type PackageDetails = detector.PackageDetails

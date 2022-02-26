@@ -14,26 +14,27 @@ type ComposerLock struct {
 	Packages []ComposerPackage `json:"packages"`
 }
 
-func ParseComposerLock(pathToLockfile string) (EcosystemPackages, error) {
-	ecosystemPackages := EcosystemPackages{
-		Ecosystem: "Packagist",
-	}
+const ComposerEcosystem Ecosystem = "Packagist"
+
+func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
+	var packages []PackageDetails
 	var parsedLockfile *ComposerLock
 
 	if lockfileContents, err := ioutil.ReadFile(pathToLockfile); err == nil {
 		err := json.Unmarshal(lockfileContents, &parsedLockfile)
 
 		if err != nil {
-			return ecosystemPackages, err
+			return packages, err
 		}
 	}
 
 	for _, composerPackage := range parsedLockfile.Packages {
-		ecosystemPackages.Packages = append(ecosystemPackages.Packages, EcosystemPackage{
-			Name:    composerPackage.Name,
-			Version: composerPackage.Version,
+		packages = append(packages, PackageDetails{
+			Name:      composerPackage.Name,
+			Version:   composerPackage.Version,
+			Ecosystem: ComposerEcosystem,
 		})
 	}
 
-	return ecosystemPackages, nil
+	return packages, nil
 }
