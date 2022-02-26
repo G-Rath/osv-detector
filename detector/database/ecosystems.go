@@ -29,3 +29,21 @@ func (db *OSVDatabase) ListEcosystems() []Ecosystem {
 
 	return toSliceOfEcosystems(ecosystems)
 }
+
+func (db *OSVDatabase) ListEcosystemVulnerabilities(ecosystem Ecosystem) []OSV {
+	var vulnerabilities []OSV
+
+	for _, vulnerability := range db.Vulnerabilities(false) {
+		if vulnerability.Affected == nil {
+			fmt.Printf("Skipping %s as it does not have an 'affected' property", vulnerability.ID)
+
+			continue
+		}
+
+		if vulnerability.AffectsEcosystem(ecosystem) {
+			vulnerabilities = append(vulnerabilities, vulnerability)
+		}
+	}
+
+	return vulnerabilities
+}
