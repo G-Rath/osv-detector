@@ -11,6 +11,8 @@ func findParser(pathToLockfile string) PackageDetailsParser {
 		return ParseComposerLock
 	case "package-lock.json":
 		return ParseNpmLock
+	case "requirements.txt":
+		return ParseRequirementsTxt
 	default:
 		return nil
 	}

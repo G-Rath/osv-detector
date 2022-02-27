@@ -15,10 +15,15 @@ osv-detector path/to/my/composer.lock
 
 The detector supports parsing the following lockfiles:
 
-| Lockfile            | Ecosystem   | Tool       |
-| ------------------- | ----------- | ---------- |
-| `package-lock.json` | `npm`       | `npm`      |
-| `composer.lock`     | `Packagist` | `composer` |
+| Lockfile             | Ecosystem   | Tool       |
+| -------------------- | ----------- | ---------- |
+| `package-lock.json`  | `npm`       | `npm`      |
+| `composer.lock`      | `Packagist` | `composer` |
+| `requirements.txt`\* | `PyPI`      | `pip`      |
+
+\*: `requirements.txt` support is currently very limited - it ignores anything
+that is not a direct requirement (e.g. flags or files) & it assumes the _lowest_
+version possible for the constraint (or lack of)
 
 The detector will attempt to automatically determine the parser to use based on
 the filename - you can manually specify the parser to use with the `-parse-as`

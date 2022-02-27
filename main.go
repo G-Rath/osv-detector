@@ -82,6 +82,8 @@ func main() {
 		os.Exit(127)
 	}
 
+	fmt.Printf("%s\n", packages)
+
 	file := path.Base(pathToLockOrDirectory)
 
 	knownVulnerabilitiesCount := 0
