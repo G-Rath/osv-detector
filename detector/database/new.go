@@ -7,6 +7,7 @@ type OSVDatabase struct {
 	vulnerabilities []OSV
 	ArchiveURL      string
 	Offline         bool
+	UpdatedAt       string
 }
 
 // todo: support settings, including "way to load database"

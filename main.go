@@ -15,11 +15,15 @@ func loadOSVDatabase(offline bool) database.OSVDatabase {
 	db, err := database.NewDB(offline, database.GithubOSVDatabaseArchiveURL)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to load the OSV DB: %s\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Unable to load the OSV DB: %s\n", err)
 		os.Exit(127)
 	}
 
-	fmt.Printf("Loaded %d vulnerabilities\n", len(db.Vulnerabilities(true)))
+	fmt.Printf(
+		"Loaded %s vulnerabilities (including withdrawn, last updated %s)\n",
+		color.YellowString("%d", len(db.Vulnerabilities(true))),
+		db.UpdatedAt,
+	)
 
 	return *db
 }
@@ -35,7 +39,6 @@ func printEcosystems(db database.OSVDatabase) {
 }
 
 func printVulnerabilities(db database.OSVDatabase, pkg detector.PackageDetails) int {
-	// fmt.Printf("%s: %s@%s\n", ecosystem, pkg.Name, pkg.Version)
 	vulnerabilities := db.VulnerabilitiesAffectingPackage(pkg)
 
 	if len(vulnerabilities) == 0 {
@@ -66,7 +69,6 @@ func main() {
 
 	flag.Parse()
 	pathToLockOrDirectory := flag.Arg(0)
-	fmt.Println("Hello, world.")
 
 	db := loadOSVDatabase(*offline)
 
@@ -78,11 +80,9 @@ func main() {
 	packages, err := parsers.TryParse(pathToLockOrDirectory, *parseAs)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error parsing %s: %s\n", pathToLockOrDirectory, err)
+		_, _ = fmt.Fprintf(os.Stderr, "Error parsing %s: %s\n", pathToLockOrDirectory, err)
 		os.Exit(127)
 	}
-
-	fmt.Printf("%s\n", packages)
 
 	file := path.Base(pathToLockOrDirectory)
 

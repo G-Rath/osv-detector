@@ -28,6 +28,8 @@ func (db *OSVDatabase) load() error {
 		return err
 	}
 
+	db.UpdatedAt = cache.Date
+
 	zipReader, err := zip.NewReader(bytes.NewReader(cache.Body), int64(len(cache.Body)))
 	if err != nil {
 		return err
