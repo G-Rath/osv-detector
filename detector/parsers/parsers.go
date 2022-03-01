@@ -9,6 +9,8 @@ func findParser(pathToLockfile string) PackageDetailsParser {
 	switch pathToLockfile {
 	case "composer.lock":
 		return ParseComposerLock
+	case "Gemfile.lock":
+		return ParseGemfileLock
 	case "package-lock.json":
 		return ParseNpmLock
 	case "requirements.txt":

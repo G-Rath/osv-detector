@@ -19,6 +19,7 @@ The detector supports parsing the following lockfiles:
 | -------------------- | ----------- | ---------- |
 | `package-lock.json`  | `npm`       | `npm`      |
 | `composer.lock`      | `Packagist` | `composer` |
+| `Gemfile.lock`       | `RubyGems`  | `bundler`  |
 | `requirements.txt`\* | `PyPI`      | `pip`      |
 
 \*: `requirements.txt` support is currently very limited - it ignores anything
