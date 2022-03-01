@@ -3,6 +3,20 @@
 An auditing tool for detecting vulnerabilities using the
 [Open Source Vulnerability advisory database provided by GitHub](https://github.com/github/advisory-database)
 
+# NOTE ABOUT CURRENT STATE
+
+This tool is still in an alpha state - it should be usable and stable, but there
+are still a few things to be fixed and landed.
+
+In particular, right now the detector is using the standard `semver` package for
+comparing which is designed strictly for SemVer itself - this means that version
+comparing for ecosystems that don't follow the SemVer specification (and \_only
+that specification) won't be compared properly.
+
+A new version parser is being written which will fix this and should land within
+a few weeks; until then, some ecosystems (e.g. RubyGems) might have incorrect
+results or fail completely.
+
 ## Usage
 
 The detector accepts a path to a "lockfile" which contains information about the
