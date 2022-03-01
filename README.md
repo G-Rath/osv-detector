@@ -17,6 +17,8 @@ A new version parser is being written which will fix this and should land within
 a few weeks; until then, some ecosystems (e.g. RubyGems) might have incorrect
 results or fail completely.
 
+See [#1](https://github.com/G-Rath/osv-detector/issues/1) for updates
+
 ## Usage
 
 The detector accepts a path to a "lockfile" which contains information about the
