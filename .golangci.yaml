@@ -1,0 +1,33 @@
+output:
+  sort-results: true
+linters:
+  disable:
+    - dupl # later
+    - varnamelen       # maybe later
+    - forbidigo        # defaults to fmt.Print stuff, which we want
+    - exhaustivestruct # overkill
+    - forcetypeassert  # too hard
+    - interfacer       # deprecated
+    - golint           # deprecated
+    - scopelint        # deprecated
+    - maligned         # deprecated
+    - lll              # line length is hard
+    - godox            # to-do comments are fine
+    - godot            # comments are fine without full stops
+    - gomnd            # not every number is magic
+    - wsl              # disagree with, for now
+  presets:
+    - bugs
+    - comment
+    - error
+    - performance
+    - sql
+    - style
+    - test
+    - unused
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - goerr113
