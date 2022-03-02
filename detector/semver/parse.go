@@ -48,19 +48,36 @@ func Parse(line string) Version {
 			continue
 		}
 
+		// at this point, we:
+		//   1. might be parsing a component (as foundBuild != true)
+		//   2. we're not looking at a part of a component (as c != number)
+		//
+		// so c must be either:
+		//   1. a component terminator (.), or
+		//   2. the start of the build string
+
 		// this is a component terminator
 		if c == '.' {
-			v, _ := strconv.Atoi(current)
+			if current != "" {
+				v, _ := strconv.Atoi(current)
 
-			components = append(components, v)
-			current = ""
+				components = append(components, v)
+				current = ""
+			}
 
 			continue
 		}
 
 		// anything else is part of the build string
 		foundBuild = true
-		current += string(c)
+
+		if current != "" {
+			v, _ := strconv.Atoi(current)
+
+			components = append(components, v)
+		}
+
+		current = string(c)
 	}
 
 	// if we looped over everything without finding a build string,

@@ -109,3 +109,40 @@ func TestParse_Omitted(t *testing.T) {
 		Build:      "",
 	})
 }
+
+func TestParse_WithBuildString(t *testing.T) {
+	expectParsedAsVersion(t, "10.0.0.beta1", semver.Version{
+		Components: []int{10, 0, 0},
+		Build:      "beta1",
+	})
+
+	expectParsedAsVersion(t, "1.0.0a20", semver.Version{
+		Components: []int{1, 0, 0},
+		Build:      "a20",
+	})
+
+	expectParsedAsVersion(t, "9.0.0.pre1", semver.Version{
+		Components: []int{9, 0, 0},
+		Build:      "pre1",
+	})
+
+	expectParsedAsVersion(t, "9.4.16.v20190411", semver.Version{
+		Components: []int{9, 4, 16},
+		Build:      "v20190411",
+	})
+
+	expectParsedAsVersion(t, "0.3.0-beta.83", semver.Version{
+		Components: []int{0, 3, 0},
+		Build:      "-beta.83",
+	})
+
+	expectParsedAsVersion(t, "4.0.0-milestone3", semver.Version{
+		Components: []int{4, 0, 0},
+		Build:      "-milestone3",
+	})
+
+	expectParsedAsVersion(t, "13.6RC1", semver.Version{
+		Components: []int{13, 6},
+		Build:      "RC1",
+	})
+}
