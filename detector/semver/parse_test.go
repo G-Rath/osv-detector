@@ -201,3 +201,7 @@ func TestParse_MassParsing(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestParse_NoComponents(t *testing.T) {
+	expectParsedVersionToMatchOriginalString(t, "hello world!")
+}
