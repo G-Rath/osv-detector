@@ -5,36 +5,15 @@ import (
 	"strconv"
 )
 
-// ([\d]+)\.([\d]+)\.
-
-type char = int32
-
-func isComponentTerminator(c char) bool {
-	// regexp.MustCompile(`[.-]`).
-
-	return c == '.' || c == '-'
-}
-
-func terminatesComponent(c char) bool {
-	return isComponentTerminator(c)
-}
-
-// func (v *Version) updateComponent
-
 func Parse(line string) Version {
 	var components []int
-	// components := []int{}
-	// currentCom := 0
 
 	numberReg := regexp.MustCompile(`\d`)
 
-	// build := ""
 	current := ""
 	foundBuild := false
 
 	for _, c := range line {
-		// fmt.Printf("%s (%d)\n", string(c))
-
 		if foundBuild {
 			current += string(c)
 
