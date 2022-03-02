@@ -12,6 +12,7 @@ func Parse(line string) Version {
 
 	currentCom := ""
 	foundBuild := false
+	emptyComponent := false
 
 	for _, c := range line {
 		if foundBuild {
@@ -42,11 +43,15 @@ func Parse(line string) Version {
 
 			components = append(components, v)
 			currentCom = ""
+
+			emptyComponent = false
 		}
 
 		// a component terminator means there might be another component
 		// afterwards, so don't start parsing the build string just yet
 		if c == '.' {
+			emptyComponent = true
+
 			continue
 		}
 
@@ -57,11 +62,18 @@ func Parse(line string) Version {
 
 	// if we looped over everything without finding a build string,
 	// then what we were currently parsing is actually a component
-	if !foundBuild {
+	if !foundBuild && currentCom != "" {
 		v, _ := strconv.Atoi(currentCom)
 
 		components = append(components, v)
 		currentCom = ""
+		emptyComponent = false
+	}
+
+	// if we ended with an empty component section,
+	// prefix the build string with a '.'
+	if emptyComponent {
+		currentCom = "." + currentCom
 	}
 
 	return Version{

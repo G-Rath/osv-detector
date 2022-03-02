@@ -51,6 +51,14 @@ func expectParsedAsVersion(t *testing.T, str string, expectedVersion semver.Vers
 
 	actualVersion := semver.Parse(str)
 
+	if actualVersion.ToString() != str {
+		t.Errorf(
+			"Parsed version as a string did not equal original: %s != %s",
+			actualVersion.ToString(),
+			str,
+		)
+	}
+
 	if !versionsEqual(expectedVersion, actualVersion) {
 		t.Errorf(notExpectedMessage(str, expectedVersion, actualVersion))
 	}
@@ -108,12 +116,17 @@ func TestParse_Omitted(t *testing.T) {
 		Components: []int{1, 2, 3},
 		Build:      "",
 	})
+
+	expectParsedAsVersion(t, "1.2.3.", semver.Version{
+		Components: []int{1, 2, 3},
+		Build:      ".",
+	})
 }
 
 func TestParse_WithBuildString(t *testing.T) {
 	expectParsedAsVersion(t, "10.0.0.beta1", semver.Version{
 		Components: []int{10, 0, 0},
-		Build:      "beta1",
+		Build:      ".beta1",
 	})
 
 	expectParsedAsVersion(t, "1.0.0a20", semver.Version{
@@ -123,12 +136,12 @@ func TestParse_WithBuildString(t *testing.T) {
 
 	expectParsedAsVersion(t, "9.0.0.pre1", semver.Version{
 		Components: []int{9, 0, 0},
-		Build:      "pre1",
+		Build:      ".pre1",
 	})
 
 	expectParsedAsVersion(t, "9.4.16.v20190411", semver.Version{
 		Components: []int{9, 4, 16},
-		Build:      "v20190411",
+		Build:      ".v20190411",
 	})
 
 	expectParsedAsVersion(t, "0.3.0-beta.83", semver.Version{

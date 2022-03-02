@@ -5,25 +5,6 @@ import (
 	"strings"
 )
 
-// type Version struct {
-// 	Major int
-// 	Minor int
-// 	Patch int
-// 	Other int
-// 	Build string
-// }
-//
-// func (v Version) ToString() string {
-// 	return fmt.Sprintf(
-// 		"%d.%d.%d.%d-%s",
-// 		v.Major,
-// 		v.Minor,
-// 		v.Patch,
-// 		v.Other,
-// 		v.Build,
-// 	)
-// }
-
 type Version struct {
 	Components []int
 	Build      string
