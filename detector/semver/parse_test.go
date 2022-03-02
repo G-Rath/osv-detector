@@ -99,6 +99,8 @@ func expectParsedVersionToMatchString(
 }
 
 func TestParse_Standard(t *testing.T) {
+	t.Parallel()
+
 	expectParsedAsVersion(t, "0.0.0.0", semver.Version{
 		Components: []int{0, 0, 0, 0},
 		Build:      "",
@@ -136,6 +138,8 @@ func TestParse_Standard(t *testing.T) {
 }
 
 func TestParse_Omitted(t *testing.T) {
+	t.Parallel()
+
 	expectParsedAsVersion(t, "1", semver.Version{
 		Components: []int{1},
 		Build:      "",
@@ -158,6 +162,8 @@ func TestParse_Omitted(t *testing.T) {
 }
 
 func TestParse_WithBuildString(t *testing.T) {
+	t.Parallel()
+
 	expectParsedAsVersion(t, "10.0.0.beta1", semver.Version{
 		Components: []int{10, 0, 0},
 		Build:      ".beta1",
@@ -200,6 +206,8 @@ func TestParse_WithBuildString(t *testing.T) {
 }
 
 func TestParse_MassParsing(t *testing.T) {
+	t.Parallel()
+
 	file, err := os.Open("fixtures/all-versions.txt")
 	if err != nil {
 		t.Fatalf("Failed to read fixture file: %v", err)
@@ -226,10 +234,14 @@ func TestParse_MassParsing(t *testing.T) {
 }
 
 func TestParse_NoComponents(t *testing.T) {
+	t.Parallel()
+
 	expectParsedVersionToMatchOriginalString(t, "hello world!")
 }
 
 func TestParse_LeadingZerosAndDateLike(t *testing.T) {
+	t.Parallel()
+
 	expectParsedVersionToMatchString(t, "20.04.0", "20.4.0", semver.Version{
 		Components: []int{20, 4, 0},
 		Build:      "",
@@ -249,6 +261,8 @@ func TestParse_LeadingZerosAndDateLike(t *testing.T) {
 // todo: look into this more, and confirm if these versions are actually
 //  meant to be dates, and are expected to be compared as such
 func TestParse_DateLike(t *testing.T) {
+	t.Parallel()
+
 	expectParsedVersionToMatchString(t, "20.04.0", "20.4.0", semver.Version{
 		Components: []int{20, 4, 0},
 		Build:      "",
