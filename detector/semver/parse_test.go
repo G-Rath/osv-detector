@@ -75,6 +75,29 @@ func expectParsedAsVersion(t *testing.T, str string, expectedVersion semver.Vers
 	}
 }
 
+func expectParsedVersionToMatchString(
+	t *testing.T,
+	str string,
+	expectedString string,
+	expectedVersion semver.Version,
+) {
+	t.Helper()
+
+	actualVersion := semver.Parse(str)
+
+	if actualVersion.ToString() != expectedString {
+		t.Errorf(
+			"Parsed version as a string did not equal expected: %s != %s",
+			actualVersion.ToString(),
+			expectedString,
+		)
+	}
+
+	if !versionsEqual(expectedVersion, actualVersion) {
+		t.Errorf(notExpectedMessage(str, expectedVersion, actualVersion))
+	}
+}
+
 func TestParse_Standard(t *testing.T) {
 	expectParsedAsVersion(t, "0.0.0.0", semver.Version{
 		Components: []int{0, 0, 0, 0},
@@ -204,4 +227,55 @@ func TestParse_MassParsing(t *testing.T) {
 
 func TestParse_NoComponents(t *testing.T) {
 	expectParsedVersionToMatchOriginalString(t, "hello world!")
+}
+
+func TestParse_LeadingZerosAndDateLike(t *testing.T) {
+	expectParsedVersionToMatchString(t, "20.04.0", "20.4.0", semver.Version{
+		Components: []int{20, 4, 0},
+		Build:      "",
+	})
+
+	expectParsedVersionToMatchString(t, "4.3.04", "4.3.4", semver.Version{
+		Components: []int{4, 3, 4},
+		Build:      "",
+	})
+}
+
+// some versions look like they might be dates, which currently is not supported
+// technically because we're using ints so their leading zeros are discarded,
+// but practically we can't really know for sure if a version string should be
+// treated as a date, so for now we're just treating them as versions
+//
+// todo: look into this more, and confirm if these versions are actually
+//  meant to be dates, and are expected to be compared as such
+func TestParse_DateLike(t *testing.T) {
+	expectParsedVersionToMatchString(t, "20.04.0", "20.4.0", semver.Version{
+		Components: []int{20, 4, 0},
+		Build:      "",
+	})
+
+	expectParsedVersionToMatchString(t, "4.3.04alpha01", "4.3.4alpha01", semver.Version{
+		Components: []int{4, 3, 4},
+		Build:      "alpha01",
+	})
+
+	expectParsedVersionToMatchString(t, "2019.03.6.1", "2019.3.6.1", semver.Version{
+		Components: []int{2019, 3, 6, 1},
+		Build:      "",
+	})
+
+	expectParsedVersionToMatchString(t, "19.04.15", "19.4.15", semver.Version{
+		Components: []int{19, 4, 15},
+		Build:      "",
+	})
+
+	expectParsedVersionToMatchString(t, "20.04.13", "20.4.13", semver.Version{
+		Components: []int{20, 4, 13},
+		Build:      "",
+	})
+
+	expectParsedVersionToMatchString(t, "2019.11.09", "2019.11.9", semver.Version{
+		Components: []int{2019, 11, 9},
+		Build:      "",
+	})
 }
