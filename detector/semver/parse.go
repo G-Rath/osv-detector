@@ -10,19 +10,19 @@ func Parse(line string) Version {
 
 	numberReg := regexp.MustCompile(`\d`)
 
-	current := ""
+	currentCom := ""
 	foundBuild := false
 
 	for _, c := range line {
 		if foundBuild {
-			current += string(c)
+			currentCom += string(c)
 
 			continue
 		}
 
 		// this is part of a component version
 		if numberReg.MatchString(string(c)) {
-			current += string(c)
+			currentCom += string(c)
 
 			continue
 		}
@@ -34,42 +34,38 @@ func Parse(line string) Version {
 		// so c must be either:
 		//   1. a component terminator (.), or
 		//   2. the start of the build string
+		//
+		// either way, we will be terminating the current component being
+		// parsed (if any), so let's do that first
+		if currentCom != "" {
+			v, _ := strconv.Atoi(currentCom)
 
-		// this is a component terminator
+			components = append(components, v)
+			currentCom = ""
+		}
+
+		// a component terminator means there might be another component
+		// afterwards, so don't start parsing the build string just yet
 		if c == '.' {
-			if current != "" {
-				v, _ := strconv.Atoi(current)
-
-				components = append(components, v)
-				current = ""
-			}
-
 			continue
 		}
 
 		// anything else is part of the build string
 		foundBuild = true
-
-		if current != "" {
-			v, _ := strconv.Atoi(current)
-
-			components = append(components, v)
-		}
-
-		current = string(c)
+		currentCom = string(c)
 	}
 
 	// if we looped over everything without finding a build string,
-	// then what we were current parsing is actually a component
+	// then what we were currently parsing is actually a component
 	if !foundBuild {
-		v, _ := strconv.Atoi(current)
+		v, _ := strconv.Atoi(currentCom)
 
 		components = append(components, v)
-		current = ""
+		currentCom = ""
 	}
 
 	return Version{
 		Components: components,
-		Build:      current,
+		Build:      currentCom,
 	}
 }
