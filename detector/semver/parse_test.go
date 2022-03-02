@@ -1,8 +1,11 @@
 package semver_test
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"osv-detector/detector/semver"
+	"strings"
 	"testing"
 )
 
@@ -46,7 +49,7 @@ func notExpectedMessage(version string, expectedVersion semver.Version, actualVe
 	return str
 }
 
-func expectParsedAsVersion(t *testing.T, str string, expectedVersion semver.Version) {
+func expectParsedVersionToMatchOriginalString(t *testing.T, str string) semver.Version {
 	t.Helper()
 
 	actualVersion := semver.Parse(str)
@@ -58,6 +61,14 @@ func expectParsedAsVersion(t *testing.T, str string, expectedVersion semver.Vers
 			str,
 		)
 	}
+
+	return actualVersion
+}
+
+func expectParsedAsVersion(t *testing.T, str string, expectedVersion semver.Version) {
+	t.Helper()
+
+	actualVersion := expectParsedVersionToMatchOriginalString(t, str)
 
 	if !versionsEqual(expectedVersion, actualVersion) {
 		t.Errorf(notExpectedMessage(str, expectedVersion, actualVersion))
@@ -149,6 +160,11 @@ func TestParse_WithBuildString(t *testing.T) {
 		Build:      "-beta.83",
 	})
 
+	expectParsedAsVersion(t, "3.0.0-beta.17.5", semver.Version{
+		Components: []int{3, 0, 0},
+		Build:      "-beta.17.5",
+	})
+
 	expectParsedAsVersion(t, "4.0.0-milestone3", semver.Version{
 		Components: []int{4, 0, 0},
 		Build:      "-milestone3",
@@ -158,4 +174,30 @@ func TestParse_WithBuildString(t *testing.T) {
 		Components: []int{13, 6},
 		Build:      "RC1",
 	})
+}
+
+func TestParse_MassParsing(t *testing.T) {
+	file, err := os.Open("fixtures/all-versions.txt")
+	if err != nil {
+		t.Fatalf("Failed to read fixture file: %v", err)
+	}
+
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		// treat "#" as comments because they're not supported (yet?)
+		if strings.HasPrefix(line, "# ") {
+			continue
+		}
+
+		expectParsedVersionToMatchOriginalString(t, line)
+	}
+
+	if err := scanner.Err(); err != nil {
+		t.Fatal(err)
+	}
 }
