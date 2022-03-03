@@ -2,6 +2,7 @@ package parsers
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"regexp"
@@ -74,7 +75,7 @@ func ParseRequirementsTxt(pathToLockfile string) ([]PackageDetails, error) {
 
 	file, err := os.Open(pathToLockfile)
 	if err != nil {
-		log.Fatal(err)
+		return packages, fmt.Errorf("could not open %s: %w", pathToLockfile, err)
 	}
 	defer file.Close()
 
