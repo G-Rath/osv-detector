@@ -122,6 +122,7 @@ func (parser *gemfileLockfileParser) parse(contents string) {
 		if isSourceSection(line) {
 			parser.state = parserStateSource
 			parser.parseSource(line)
+
 			continue
 		}
 
