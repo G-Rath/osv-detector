@@ -5,9 +5,19 @@ import (
 	"strings"
 )
 
+type Components []int
+
 type Version struct {
-	Components []int
+	Components Components
 	Build      string
+}
+
+func (components *Components) Fetch(n int) int {
+	if len(*components) <= n {
+		return 0
+	}
+
+	return (*components)[n]
 }
 
 func (v Version) ToString() string {
