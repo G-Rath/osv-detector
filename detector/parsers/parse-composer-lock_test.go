@@ -11,14 +11,7 @@ func TestParseComposerLock_FileDoesNotExist(t *testing.T) {
 
 	packages, err := parsers.ParseComposerLock("fixtures/composer/does-not-exist")
 
-	if err == nil {
-		t.Errorf("Expected to get error, but did not")
-	}
-
-	if !strings.Contains(err.Error(), "could not read") {
-		t.Errorf("Expected to get \"could not read\" error, but got \"%v\"", err)
-	}
-
+	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []parsers.PackageDetails{})
 }
 
