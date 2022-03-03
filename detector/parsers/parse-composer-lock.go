@@ -22,12 +22,16 @@ func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 	var packages []PackageDetails
 	var parsedLockfile *ComposerLock
 
-	if lockfileContents, err := ioutil.ReadFile(pathToLockfile); err == nil {
-		err := json.Unmarshal(lockfileContents, &parsedLockfile)
+	lockfileContents, err := ioutil.ReadFile(pathToLockfile)
 
-		if err != nil {
-			return packages, fmt.Errorf("could not parse %s: %w", pathToLockfile, err)
-		}
+	if err != nil {
+		return packages, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
+	}
+
+	err = json.Unmarshal(lockfileContents, &parsedLockfile)
+
+	if err != nil {
+		return packages, fmt.Errorf("could not parse %s: %w", pathToLockfile, err)
 	}
 
 	for _, composerPackage := range parsedLockfile.Packages {

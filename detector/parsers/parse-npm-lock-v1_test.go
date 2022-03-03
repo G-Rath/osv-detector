@@ -2,8 +2,25 @@ package parsers_test
 
 import (
 	"osv-detector/detector/parsers"
+	"strings"
 	"testing"
 )
+
+func TestParseNpmLock_v1_FileDoesNotExist(t *testing.T) {
+	t.Parallel()
+
+	packages, err := parsers.ParseNpmLock("fixtures/npm/does-not-exist")
+
+	if err == nil {
+		t.Errorf("Expected to get error, but did not")
+	}
+
+	if !strings.Contains(err.Error(), "could not read") {
+		t.Errorf("Expected to get \"could not read\" error, but got \"%v\"", err)
+	}
+
+	expectPackages(t, packages, []parsers.PackageDetails{})
+}
 
 func TestNpmLock_v1_InvalidJson(t *testing.T) {
 	t.Parallel()
