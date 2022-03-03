@@ -32,7 +32,7 @@ func (db *OSVDatabase) load() error {
 
 	zipReader, err := zip.NewReader(bytes.NewReader(cache.Body), int64(len(cache.Body)))
 	if err != nil {
-		return err
+		return fmt.Errorf("could not read OSV database archive: %w", err)
 	}
 
 	// Read all the files from the zip archive
@@ -52,7 +52,7 @@ func (db *OSVDatabase) load() error {
 
 		file, err := zipFile.Open()
 		if err != nil {
-			return err
+			return fmt.Errorf("could not open OSV database archive: %w", err)
 		}
 		defer file.Close()
 

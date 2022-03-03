@@ -1,6 +1,7 @@
 package parsers
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"regexp"
@@ -151,7 +152,7 @@ func ParseGemfileLock(pathToLockfile string) ([]PackageDetails, error) {
 	bytes, err := ioutil.ReadFile(pathToLockfile)
 
 	if err != nil {
-		return []PackageDetails{}, err
+		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
 	}
 
 	parser.parse(string(bytes))

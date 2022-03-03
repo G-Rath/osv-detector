@@ -36,7 +36,7 @@ func (db *OSVDatabase) fetchCache() (*Cache, error) {
 		req, err := http.NewRequest("GET", db.ArchiveURL, nil)
 
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("could not retrieve OSV database archive: %w", err)
 		}
 
 		if cache != nil {
@@ -46,7 +46,7 @@ func (db *OSVDatabase) fetchCache() (*Cache, error) {
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("could not retrieve OSV database archive: %w", err)
 		}
 
 		defer resp.Body.Close()
@@ -60,7 +60,7 @@ func (db *OSVDatabase) fetchCache() (*Cache, error) {
 		body, err = ioutil.ReadAll(resp.Body)
 
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("could not read OSV database archive from response: %w", err)
 		}
 
 		etag := resp.Header.Get("ETag")
