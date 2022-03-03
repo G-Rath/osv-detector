@@ -13,7 +13,7 @@ const PipEcosystem Ecosystem = "PyPI"
 
 // todo: expand this to support more things, e.g.
 //   https://pip.pypa.io/en/stable/reference/requirements-file-format/#example
-func parseLine(line string) (PackageDetails, error) {
+func parseLine(line string) PackageDetails {
 	var constraint string
 	name := line
 
@@ -49,7 +49,7 @@ func parseLine(line string) (PackageDetails, error) {
 		Name:      name,
 		Version:   version,
 		Ecosystem: PipEcosystem,
-	}, nil
+	}
 }
 
 func removeComments(line string) string {
@@ -75,7 +75,7 @@ func ParseRequirementsTxt(pathToLockfile string) ([]PackageDetails, error) {
 
 	file, err := os.Open(pathToLockfile)
 	if err != nil {
-		log.Fatal(err)
+		return packages, fmt.Errorf("could not open %s: %w", pathToLockfile, err)
 	}
 	defer file.Close()
 
@@ -88,15 +88,7 @@ func ParseRequirementsTxt(pathToLockfile string) ([]PackageDetails, error) {
 			continue
 		}
 
-		detail, err := parseLine(line)
-
-		if err != nil {
-			fmt.Printf("Was unable to parse line '%s'", line)
-
-			continue
-		}
-
-		packages = append(packages, detail)
+		packages = append(packages, parseLine(line))
 	}
 
 	if err := scanner.Err(); err != nil {

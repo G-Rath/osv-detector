@@ -1,6 +1,7 @@
 package parsers
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"regexp"
@@ -40,7 +41,7 @@ type gemfileLockfileParser struct {
 	rubyVersion    string
 }
 
-func (parser *gemfileLockfileParser) addDependency(name string, version string, _platform string) {
+func (parser *gemfileLockfileParser) addDependency(name string, version string) {
 	parser.dependencies = append(parser.dependencies, PackageDetails{
 		Name:      name,
 		Version:   version,
@@ -59,16 +60,13 @@ func (parser *gemfileLockfileParser) parseSpec(line string) {
 	}
 
 	spaces := results[1]
-	name := results[2]
-	version := results[3]
-	platform := results[4]
 
 	if spaces == "" {
 		log.Fatal("Weird error when parsing spec in Gemfile.lock (unexpectedly had no spaces) - please report this")
 	}
 
 	if len(spaces) == 4 {
-		parser.addDependency(name, version, platform)
+		parser.addDependency(results[2], results[3])
 	}
 }
 
@@ -106,13 +104,10 @@ func (parser *gemfileLockfileParser) parseLineBasedOnState(line string) {
 		break
 	case parserStateRuby:
 		parser.rubyVersion = strings.TrimSpace(line)
-		break
 	case parserStateBundledWith:
 		parser.bundlerVersion = strings.TrimSpace(line)
-		break
 	case parserStateSource:
 		parser.parseSource(line)
-		break
 	default:
 		log.Fatalf("Unknown supported '%s'\n", parser.state)
 	}
@@ -127,22 +122,19 @@ func (parser *gemfileLockfileParser) parse(contents string) {
 		if isSourceSection(line) {
 			parser.state = parserStateSource
 			parser.parseSource(line)
+
 			continue
 		}
 
 		switch line {
 		case lockfileSectionDEPENDENCIES:
 			parser.state = parserStateDependency
-			break
 		case lockfileSectionPLATFORMS:
 			parser.state = parserStatePlatform
-			break
 		case lockfileSectionRUBY:
 			parser.state = parserStateRuby
-			break
 		case lockfileSectionBUNDLED:
 			parser.state = parserStateBundledWith
-			break
 		default:
 			if isNotIndented(line) {
 				parser.state = ""
@@ -161,7 +153,7 @@ func ParseGemfileLock(pathToLockfile string) ([]PackageDetails, error) {
 	bytes, err := ioutil.ReadFile(pathToLockfile)
 
 	if err != nil {
-		return []PackageDetails{}, err
+		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
 	}
 
 	parser.parse(string(bytes))

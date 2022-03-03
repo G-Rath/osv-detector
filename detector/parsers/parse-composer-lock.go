@@ -2,6 +2,7 @@ package parsers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 )
 
@@ -25,7 +26,7 @@ func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 		err := json.Unmarshal(lockfileContents, &parsedLockfile)
 
 		if err != nil {
-			return packages, err
+			return packages, fmt.Errorf("could not parse %s: %w", pathToLockfile, err)
 		}
 	}
 

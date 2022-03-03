@@ -2,6 +2,7 @@ package parsers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"path"
 	"strings"
@@ -114,7 +115,7 @@ func ParseNpmLock(pathToLockfile string) ([]PackageDetails, error) {
 		err := json.Unmarshal(lockfileContents, &parsedLockfile)
 
 		if err != nil {
-			return []PackageDetails{}, err
+			return []PackageDetails{}, fmt.Errorf("could not parse %s: %w", pathToLockfile, err)
 		}
 	}
 
