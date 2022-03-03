@@ -19,10 +19,7 @@ func TestNpmLock_v2_InvalidJson(t *testing.T) {
 
 	packages, err := parsers.ParseNpmLock("fixtures/npm/not-json.txt")
 
-	if err == nil {
-		t.Errorf("Expected to get error, but did not")
-	}
-
+	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []parsers.PackageDetails{})
 }
 

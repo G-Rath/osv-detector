@@ -2,7 +2,6 @@ package parsers_test
 
 import (
 	"osv-detector/detector/parsers"
-	"strings"
 	"testing"
 )
 
@@ -20,14 +19,7 @@ func TestParseComposerLock_InvalidJson(t *testing.T) {
 
 	packages, err := parsers.ParseComposerLock("fixtures/composer/not-json.txt")
 
-	if err == nil {
-		t.Errorf("Expected to get error, but did not")
-	}
-
-	if !strings.Contains(err.Error(), "could not parse") {
-		t.Errorf("Expected to get \"could not parse\" error, but got \"%v\"", err)
-	}
-
+	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []parsers.PackageDetails{})
 }
 
