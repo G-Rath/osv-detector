@@ -59,16 +59,13 @@ func (parser *gemfileLockfileParser) parseSpec(line string) {
 	}
 
 	spaces := results[1]
-	name := results[2]
-	version := results[3]
-	platform := results[4]
 
 	if spaces == "" {
 		log.Fatal("Weird error when parsing spec in Gemfile.lock (unexpectedly had no spaces) - please report this")
 	}
 
 	if len(spaces) == 4 {
-		parser.addDependency(name, version, platform)
+		parser.addDependency(results[2], results[3], results[4])
 	}
 }
 
