@@ -4,27 +4,9 @@ import (
 	"fmt"
 	"os"
 	"osv-detector/detector"
-	"strings"
+	"osv-detector/detector/semver"
 	"time"
-
-	"golang.org/x/mod/semver"
 )
-
-// addSemverPrefix adds a 'v' prefix to s if it isn't already prefixed
-// with 'v', as the semver package requires that prefix
-func addSemverPrefix(s string) string {
-	if !strings.HasPrefix(s, "v") {
-		return "v" + s
-	}
-
-	return s
-}
-
-// ensureSemverPrefix ensures that a string is compatible with the semver
-// module by making sure it starts with a 'v' prefix.
-func ensureSemverPrefix(s string) string {
-	return addSemverPrefix(strings.TrimPrefix(s, "v"))
-}
 
 type AffectsRangeType string
 
@@ -60,14 +42,14 @@ func (ar AffectsRange) containsEcosystem(v string) bool {
 		return false
 	}
 
-	v = ensureSemverPrefix(v)
+	vp := semver.Parse(v)
 
 	var affected bool
 	for _, e := range ar.Events {
 		if !affected && e.Introduced != "" {
-			affected = e.Introduced == "0" || semver.Compare(v, addSemverPrefix(e.Introduced)) >= 0
+			affected = e.Introduced == "0" || vp.CompareStr(e.Introduced) >= 0
 		} else if affected && e.Fixed != "" {
-			affected = semver.Compare(v, addSemverPrefix(e.Fixed)) < 0
+			affected = vp.CompareStr(e.Fixed) < 0
 		}
 	}
 
