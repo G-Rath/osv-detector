@@ -3,7 +3,6 @@ package parsers
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -92,7 +91,7 @@ func ParseRequirementsTxt(pathToLockfile string) ([]PackageDetails, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
+		return packages, fmt.Errorf("error while scanning %s: %w", pathToLockfile, err)
 	}
 
 	return packages, nil
