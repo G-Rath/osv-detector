@@ -41,7 +41,7 @@ type gemfileLockfileParser struct {
 	rubyVersion    string
 }
 
-func (parser *gemfileLockfileParser) addDependency(name string, version string, _platform string) {
+func (parser *gemfileLockfileParser) addDependency(name string, version string) {
 	parser.dependencies = append(parser.dependencies, PackageDetails{
 		Name:      name,
 		Version:   version,
@@ -66,7 +66,7 @@ func (parser *gemfileLockfileParser) parseSpec(line string) {
 	}
 
 	if len(spaces) == 4 {
-		parser.addDependency(results[2], results[3], results[4])
+		parser.addDependency(results[2], results[3])
 	}
 }
 
