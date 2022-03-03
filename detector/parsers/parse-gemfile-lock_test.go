@@ -5,6 +5,15 @@ import (
 	"testing"
 )
 
+func TestParseGemfileLock_FileDoesNotExist(t *testing.T) {
+	t.Parallel()
+
+	packages, err := parsers.ParseGemfileLock("fixtures/bundler/does-not-exist")
+
+	expectErrContaining(t, err, "could not read")
+	expectPackages(t, packages, []parsers.PackageDetails{})
+}
+
 func TestParseGemfileLock_InvalidJson(t *testing.T) {
 	t.Parallel()
 

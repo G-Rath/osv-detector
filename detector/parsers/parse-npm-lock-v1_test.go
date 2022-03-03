@@ -5,15 +5,21 @@ import (
 	"testing"
 )
 
+func TestParseNpmLock_v1_FileDoesNotExist(t *testing.T) {
+	t.Parallel()
+
+	packages, err := parsers.ParseNpmLock("fixtures/npm/does-not-exist")
+
+	expectErrContaining(t, err, "could not read")
+	expectPackages(t, packages, []parsers.PackageDetails{})
+}
+
 func TestNpmLock_v1_InvalidJson(t *testing.T) {
 	t.Parallel()
 
 	packages, err := parsers.ParseNpmLock("fixtures/npm/not-json.txt")
 
-	if err == nil {
-		t.Errorf("Expected to get error, but did not")
-	}
-
+	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []parsers.PackageDetails{})
 }
 

@@ -3,8 +3,21 @@ package parsers_test
 import (
 	"fmt"
 	"osv-detector/detector/parsers"
+	"strings"
 	"testing"
 )
+
+func expectErrContaining(t *testing.T, err error, str string) {
+	t.Helper()
+
+	if err == nil {
+		t.Errorf("Expected to get error, but did not")
+	}
+
+	if !strings.Contains(err.Error(), str) {
+		t.Errorf("Expected to get \"%s\" error, but got \"%v\"", str, err)
+	}
+}
 
 func packageToString(pkg parsers.PackageDetails) string {
 	return fmt.Sprintf("%s@%s (%s)", pkg.Name, pkg.Version, pkg.Ecosystem)

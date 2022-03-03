@@ -111,12 +111,16 @@ func parseNpmLock(lockfile NpmLockfile) map[string]PackageDetails {
 func ParseNpmLock(pathToLockfile string) ([]PackageDetails, error) {
 	var parsedLockfile *NpmLockfile
 
-	if lockfileContents, err := ioutil.ReadFile(pathToLockfile); err == nil {
-		err := json.Unmarshal(lockfileContents, &parsedLockfile)
+	lockfileContents, err := ioutil.ReadFile(pathToLockfile)
 
-		if err != nil {
-			return []PackageDetails{}, fmt.Errorf("could not parse %s: %w", pathToLockfile, err)
-		}
+	if err != nil {
+		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
+	}
+
+	err = json.Unmarshal(lockfileContents, &parsedLockfile)
+
+	if err != nil {
+		return []PackageDetails{}, fmt.Errorf("could not parse %s: %w", pathToLockfile, err)
 	}
 
 	return pkgDetailsMapToSlice(parseNpmLock(*parsedLockfile)), nil

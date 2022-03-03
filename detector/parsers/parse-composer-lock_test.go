@@ -5,15 +5,21 @@ import (
 	"testing"
 )
 
+func TestParseComposerLock_FileDoesNotExist(t *testing.T) {
+	t.Parallel()
+
+	packages, err := parsers.ParseComposerLock("fixtures/composer/does-not-exist")
+
+	expectErrContaining(t, err, "could not read")
+	expectPackages(t, packages, []parsers.PackageDetails{})
+}
+
 func TestParseComposerLock_InvalidJson(t *testing.T) {
 	t.Parallel()
 
 	packages, err := parsers.ParseComposerLock("fixtures/composer/not-json.txt")
 
-	if err == nil {
-		t.Errorf("Expected to get error, but did not")
-	}
-
+	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []parsers.PackageDetails{})
 }
 

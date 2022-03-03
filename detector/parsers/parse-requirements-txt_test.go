@@ -5,6 +5,15 @@ import (
 	"testing"
 )
 
+func TestParseRequirementsTxt_FileDoesNotExist(t *testing.T) {
+	t.Parallel()
+
+	packages, err := parsers.ParseRequirementsTxt("fixtures/pip/does-not-exist")
+
+	expectErrContaining(t, err, "could not open")
+	expectPackages(t, packages, []parsers.PackageDetails{})
+}
+
 func TestParseRequirementsTxt_Empty(t *testing.T) {
 	t.Parallel()
 
