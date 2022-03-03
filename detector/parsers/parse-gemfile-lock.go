@@ -106,13 +106,10 @@ func (parser *gemfileLockfileParser) parseLineBasedOnState(line string) {
 		break
 	case parserStateRuby:
 		parser.rubyVersion = strings.TrimSpace(line)
-		break
 	case parserStateBundledWith:
 		parser.bundlerVersion = strings.TrimSpace(line)
-		break
 	case parserStateSource:
 		parser.parseSource(line)
-		break
 	default:
 		log.Fatalf("Unknown supported '%s'\n", parser.state)
 	}
@@ -133,16 +130,12 @@ func (parser *gemfileLockfileParser) parse(contents string) {
 		switch line {
 		case lockfileSectionDEPENDENCIES:
 			parser.state = parserStateDependency
-			break
 		case lockfileSectionPLATFORMS:
 			parser.state = parserStatePlatform
-			break
 		case lockfileSectionRUBY:
 			parser.state = parserStateRuby
-			break
 		case lockfileSectionBUNDLED:
 			parser.state = parserStateBundledWith
-			break
 		default:
 			if isNotIndented(line) {
 				parser.state = ""
