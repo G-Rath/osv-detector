@@ -398,3 +398,25 @@ func TestVersion_Compare_UnevenWithBuildLessThan(t *testing.T) {
 		-1,
 	)
 }
+
+func TestVersion_Compare_MixedWithAndWithoutBuild(t *testing.T) {
+	t.Parallel()
+
+	expectCompareResult(t,
+		buildlessVersion("", 1),
+		buildlessVersion("alpha", 1),
+		1,
+	)
+
+	expectCompareResult(t,
+		buildlessVersion("rc.0", 2),
+		buildlessVersion("", 1),
+		1,
+	)
+
+	expectCompareResult(t,
+		buildlessVersion("beta2", 1, 0),
+		buildlessVersion("", 1),
+		-1,
+	)
+}

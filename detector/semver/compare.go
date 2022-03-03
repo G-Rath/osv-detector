@@ -54,6 +54,13 @@ func tryExtractNumber(str string) int {
 }
 
 func compareBuilds(a string, b string) int {
+	if a == "" && b != "" {
+		return +1
+	}
+	if a != "" && b == "" {
+		return -1
+	}
+
 	av := tryExtractNumber(a)
 	bv := tryExtractNumber(b)
 
