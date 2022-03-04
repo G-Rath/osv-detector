@@ -54,7 +54,7 @@ keep the codebase healthy, which can be run with:
 make lint
 ```
 
-Currently, there are _6_ unresolved linting errors which are yet to be handled -
+Currently, there are _5_ unresolved linting errors which are yet to be handled -
 because of this, we're currently not running linting as part of CI. Changes
 should not include any additional linting errors.
 
@@ -67,9 +67,6 @@ detector/database/cache.go:32:15: err113: do not define dynamic errors, use wrap
 detector/database/cache.go:36:30: should rewrite http.NewRequestWithContext or add (*Request).WithContext (noctx)
                 req, err := http.NewRequest("GET", db.ArchiveURL, nil)
                                            ^
-detector/parsers/parse-composer-lock.go:22:2: Consider preallocating `packages` (prealloc)
-        var packages []PackageDetails
-        ^
 detector/parsers/parse-npm-lock.go:32:2: Consider preallocating `details` (prealloc)
         var details []PackageDetails
         ^
