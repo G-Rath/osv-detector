@@ -17,6 +17,8 @@ type Cache struct {
 	Body []byte
 }
 
+var ErrOfflineDatabaseNotFound = errors.New("no offline version of the OSV database is available")
+
 func (db *OSVDatabase) fetchCache() (*Cache, error) {
 	var cache *Cache
 	cachePath := filepath.Join(os.TempDir(), "osv-detector-db.json")
@@ -29,7 +31,7 @@ func (db *OSVDatabase) fetchCache() (*Cache, error) {
 	}
 
 	if db.Offline && cache == nil {
-		return nil, errors.New("--offline can only be used when a local version of the OSV database is available")
+		return nil, ErrOfflineDatabaseNotFound
 	}
 
 	if !db.Offline {
