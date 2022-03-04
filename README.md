@@ -18,6 +18,7 @@ The detector supports parsing the following lockfiles:
 | Lockfile             | Ecosystem   | Tool       |
 | -------------------- | ----------- | ---------- |
 | `package-lock.json`  | `npm`       | `npm`      |
+| `yarn.lock`          | `npm`       | `yarn      |
 | `composer.lock`      | `Packagist` | `composer` |
 | `Gemfile.lock`       | `RubyGems`  | `bundler`  |
 | `requirements.txt`\* | `PyPI`      | `pip`      |
