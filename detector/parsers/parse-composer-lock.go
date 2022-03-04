@@ -33,7 +33,11 @@ func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 		return []PackageDetails{}, fmt.Errorf("could not parse %s: %w", pathToLockfile, err)
 	}
 
-	packages := make([]PackageDetails, 0, len(parsedLockfile.Packages)+len(parsedLockfile.PackagesDev))
+	packages := make(
+		[]PackageDetails,
+		0,
+		uint64(len(parsedLockfile.Packages)+len(parsedLockfile.PackagesDev)),
+	)
 
 	for _, composerPackage := range parsedLockfile.Packages {
 		packages = append(packages, PackageDetails{
