@@ -145,3 +145,41 @@ func TestYarnLock_v1_ScopedPackages(t *testing.T) {
 		},
 	})
 }
+
+func TestYarnLock_v1_VersionsWithBuildString(t *testing.T) {
+	t.Parallel()
+
+	packages, err := parsers.ParseYarnLock("fixtures/yarn/versions-with-build-strings.v1.lock")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []parsers.PackageDetails{
+		{
+			Name:      "css-tree",
+			Version:   "1.0.0-alpha.37",
+			Ecosystem: parsers.YarnEcosystem,
+		},
+		{
+			Name:      "gensync",
+			Version:   "1.0.0-beta.2",
+			Ecosystem: parsers.YarnEcosystem,
+		},
+		{
+			Name:      "node-fetch",
+			Version:   "3.0.0-beta.9",
+			Ecosystem: parsers.YarnEcosystem,
+		},
+		{
+			Name:      "resolve",
+			Version:   "1.20.0",
+			Ecosystem: parsers.YarnEcosystem,
+		},
+		{
+			Name:      "resolve",
+			Version:   "2.0.0-next.3",
+			Ecosystem: parsers.YarnEcosystem,
+		},
+	})
+}

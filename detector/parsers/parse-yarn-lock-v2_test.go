@@ -122,3 +122,31 @@ func TestYarnLock_v2_ScopedPackages(t *testing.T) {
 		},
 	})
 }
+
+func TestYarnLock_v2_VersionsWithBuildString(t *testing.T) {
+	t.Parallel()
+
+	packages, err := parsers.ParseYarnLock("fixtures/yarn/versions-with-build-strings.v2.lock")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []parsers.PackageDetails{
+		{
+			Name:      "@nicolo-ribaudo/chokidar-2",
+			Version:   "2.1.8-no-fsevents.3",
+			Ecosystem: parsers.YarnEcosystem,
+		},
+		{
+			Name:      "gensync",
+			Version:   "1.0.0-beta.2",
+			Ecosystem: parsers.YarnEcosystem,
+		},
+		{
+			Name:      "eslint-plugin-jest",
+			Version:   "0.0.0-use.local",
+			Ecosystem: parsers.YarnEcosystem,
+		},
+	})
+}

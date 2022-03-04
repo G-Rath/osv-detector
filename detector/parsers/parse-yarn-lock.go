@@ -62,7 +62,7 @@ func extractYarnPackageName(str string) string {
 }
 
 func determineYarnPackageVersion(group []string) string {
-	re := regexp.MustCompile(`^ {2}version:? "?([\d.]+)"?$`)
+	re := regexp.MustCompile(`^ {2}version:? "?([\w-.]+)"?$`)
 
 	for _, s := range group {
 		matched := re.FindStringSubmatch(s)
@@ -77,9 +77,20 @@ func determineYarnPackageVersion(group []string) string {
 }
 
 func parsePackageGroup(group []string) PackageDetails {
+	name := extractYarnPackageName(group[0])
+	version := determineYarnPackageVersion(group)
+
+	if version == "" {
+		_, _ = fmt.Fprintf(
+			os.Stderr,
+			"Failed to determine version of %s while parsing a yarn.lock - please report this!\n",
+			name,
+		)
+	}
+
 	return PackageDetails{
-		Name:      extractYarnPackageName(group[0]),
-		Version:   determineYarnPackageVersion(group),
+		Name:      name,
+		Version:   version,
 		Ecosystem: YarnEcosystem,
 	}
 }
