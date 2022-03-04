@@ -101,4 +101,6 @@ func main() {
 		file,
 		knownVulnerabilitiesCount,
 	))
+
+	os.Exit(1)
 }
