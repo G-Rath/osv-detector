@@ -1,6 +1,7 @@
 output:
   sort-results: true
 linters:
+  # prettier-ignore
   disable:
     - tagliatelle      # we're parsing data from external sources
     - varnamelen       # maybe later
