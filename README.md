@@ -47,6 +47,57 @@ osv-detector --offline
 This requires the detector to have successfully cached an offline copy of the
 OSV database at least once.
 
+### Auxiliary output commands
+
+The detector supports a few auxiliary commands that have it output information
+which can be useful for debugging issues and general exploring.
+
+#### `--list-ecosystems`
+
+Lists all the ecosystems that exist in the loaded OSV database. This can be
+useful when exploring new parsers, or building wrappers around the detector
+since a valid ecosystem is required to determine if a package has a
+vulnerability, and the ecosystem names are case-sensitive:
+
+```
+$ osv-detector --list-ecosystems
+Loaded 6532 vulnerabilities (including withdrawn, last updated Fri, 04 Mar 2022 00:11:50 GMT)
+The loaded OSV has vulnerabilities for the following ecosystems:
+  Packagist
+  Go
+  crates.io
+  RubyGems
+  npm
+  PyPI
+  Maven
+  NuGet
+```
+
+#### `--list-packages`
+
+Lists all the packages that the detector was able to parse out of the given
+lockfile. This can be useful for sense-checking parsers and can also be used for
+building other tools.
+
+Each package is outputted on its own line, in the format of
+`<ecosystem>: <name>@<version>`:
+
+```
+$ osv-detector --list-packages /path/to/my/Gemfile.lock
+Loaded 6532 vulnerabilities (including withdrawn, last updated Fri, 04 Mar 2022 00:11:50 GMT)
+The following packages were found in /path/to/my/Gemfile.lock:
+  RubyGems: ast@2.4.2
+  RubyGems: parallel@1.21.0
+  RubyGems: parser@3.1.1.0
+  RubyGems: rainbow@3.1.1
+  RubyGems: regexp_parser@2.2.1
+  RubyGems: rexml@3.2.5
+  RubyGems: rubocop@1.25.1
+  RubyGems: rubocop-ast@1.16.0
+  RubyGems: ruby-progressbar@1.11.0
+  RubyGems: unicode-display_width@2.1.0
+```
+
 ## Version parsing and comparing
 
 Versions are compared using an internal `semver` package which aims to support
