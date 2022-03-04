@@ -1,6 +1,7 @@
 package parsers
 
 import (
+	"errors"
 	"fmt"
 	"path"
 )
@@ -22,6 +23,8 @@ func findParser(pathToLockfile string) PackageDetailsParser {
 	}
 }
 
+var ErrParserNotFound = errors.New("could not determine parser")
+
 func TryParse(pathToLockfile string, parseAs string) ([]PackageDetails, error) {
 	if parseAs == "" {
 		parseAs = path.Base(pathToLockfile)
@@ -30,7 +33,7 @@ func TryParse(pathToLockfile string, parseAs string) ([]PackageDetails, error) {
 	parser := findParser(parseAs)
 
 	if parser == nil {
-		return []PackageDetails{}, fmt.Errorf("cannot parse %s", path.Base(pathToLockfile))
+		return []PackageDetails{}, fmt.Errorf("%w for %s", ErrParserNotFound, pathToLockfile)
 	}
 
 	return parser(pathToLockfile)

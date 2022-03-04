@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"github.com/fatih/color"
@@ -15,7 +16,13 @@ func loadOSVDatabase(offline bool) database.OSVDatabase {
 	db, err := database.NewDB(offline, database.GithubOSVDatabaseArchiveURL)
 
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "Unable to load the OSV DB: %s\n", err)
+		msg := fmt.Sprintf("Error loading the OSV DB: %s", err)
+
+		if errors.Is(err, database.ErrOfflineDatabaseNotFound) {
+			msg = "Error: --offline can only be used when a local version of the OSV database is available"
+		}
+
+		_, _ = fmt.Fprintf(os.Stderr, "%s\n", msg)
 		os.Exit(127)
 	}
 
@@ -89,7 +96,7 @@ func main() {
 	packages, err := parsers.TryParse(pathToLockOrDirectory, *parseAs)
 
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "Error parsing %s: %s\n", pathToLockOrDirectory, err)
+		_, _ = fmt.Fprintf(os.Stderr, "Error, %s\n", err)
 		os.Exit(127)
 	}
 

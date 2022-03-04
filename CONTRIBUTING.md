@@ -54,16 +54,13 @@ keep the codebase healthy, which can be run with:
 make lint
 ```
 
-Currently, there are _6_ unresolved linting errors which are yet to be handled -
+Currently, there are _4_ unresolved linting errors which are yet to be handled -
 because of this, we're currently not running linting as part of CI. Changes
 should not include any additional linting errors.
 
 Here are the unresolved errors:
 
 ```
-detector/database/cache.go:32:15: err113: do not define dynamic errors, use wrapped static errors instead: "errors.New(\"--offline can only be used when a local version of the OSV database is available\")" (goerr113)
-                return nil, errors.New("--offline can only be used when a local version of the OSV database is available")
-                            ^
 detector/database/cache.go:36:30: should rewrite http.NewRequestWithContext or add (*Request).WithContext (noctx)
                 req, err := http.NewRequest("GET", db.ArchiveURL, nil)
                                            ^
@@ -76,8 +73,6 @@ detector/parsers/parse-npm-lock.go:32:2: Consider preallocating `details` (preal
 detector/parsers/parse-yarn-lock.go:99:2: Consider preallocating `packages` (prealloc)
         var packages []PackageDetails
         ^
-detector/parsers/parsers.go:33:30: err113: do not define dynamic errors, use wrapped static errors instead: "fmt.Errorf(\"cannot parse %s\", path.Base(pathToLockfile))" (goerr113)
-                return []PackageDetails{}, fmt.Errorf("cannot parse %s", path.Base(pathToLockfile))
 ```
 
 Markdown documents and yaml files should ideally be formatted with
