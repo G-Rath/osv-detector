@@ -70,7 +70,7 @@ func parseNpmLockDependencies(dependencies map[string]NpmLockDependency) map[str
 	return details
 }
 
-func extractPackageName(name string) string {
+func extractNpmPackageName(name string) string {
 	maybeScope := path.Base(path.Dir(name))
 	pkgName := path.Base(name)
 
@@ -88,7 +88,7 @@ func parseNpmLockPackages(packages map[string]NpmLockPackage) map[string]Package
 		if namePath == "" {
 			continue
 		}
-		finalName := extractPackageName(namePath)
+		finalName := extractNpmPackageName(namePath)
 
 		details[finalName+"@"+detail.Version] = PackageDetails{
 			Name:      finalName,

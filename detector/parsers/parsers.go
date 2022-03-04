@@ -13,6 +13,8 @@ func findParser(pathToLockfile string) PackageDetailsParser {
 		return ParseGemfileLock
 	case "package-lock.json":
 		return ParseNpmLock
+	case "yarn.lock":
+		return ParseYarnLock
 	case "requirements.txt":
 		return ParseRequirementsTxt
 	default:
