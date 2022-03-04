@@ -99,3 +99,34 @@ atomic (one feature per PR, since we squash when merging).
 Commit messages should be
 [conventional](https://www.conventionalcommits.org/en/v1.0.0/), to make it
 easier to write changelogs and determine version numbers when releasing.
+
+## Releasing a new version
+
+> This section is primarily for maintainers
+
+Releases are done by tagging commits with a semantic version prefixed with a
+`v`, which trigger a CI workflow that uses
+[`goreleaser`](https://goreleaser.com/) - once it's built a new release, it
+creates a new draft release on GitHub and pushes the freshly built artifacts.
+
+A maintainer should fill out the changelog for the release, and then publish it.
+Note that the changelog can be edited after a release has been published, so it
+doesn't have to be perfect.
+
+Version numbers should be based on what commits are in the new release - `fix:`
+commits represent patch versions, and `feat:` commits represent minor versions.
+So if a new version is made up of commits that are all `fix:`s, then it should
+be patch bump. If there's at least one `feat:` commit, it should be a minor bump
+(which resets the patch number to 0).
+
+See the
+[conventional commit spec](https://www.conventionalcommits.org/en/v1.0.0/) for
+more.
+
+The final version tag should be prefixed with a `v`:
+
+```
+v0.1.0
+v1.0.0
+v1.1.0
+```
