@@ -36,7 +36,7 @@ func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 	packages := make(
 		[]PackageDetails,
 		0,
-		uint64(len(parsedLockfile.Packages)+len(parsedLockfile.PackagesDev)),
+		uint64(len(parsedLockfile.Packages))+uint64(len(parsedLockfile.PackagesDev)),
 	)
 
 	for _, composerPackage := range parsedLockfile.Packages {
