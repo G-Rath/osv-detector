@@ -15,3 +15,6 @@ lint-with-golangci-lint:
 
 lint-with-go-fmt:
 	gofmt -s -d */**.go
+
+format-with-prettier:
+	npx prettier --prose-wrap always --write .
