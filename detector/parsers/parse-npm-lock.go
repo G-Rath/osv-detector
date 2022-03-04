@@ -29,7 +29,7 @@ type NpmLockfile struct {
 const NpmEcosystem Ecosystem = "npm"
 
 func pkgDetailsMapToSlice(m map[string]PackageDetails) []PackageDetails {
-	var details []PackageDetails
+	details := make([]PackageDetails, 0, len(m))
 
 	for _, detail := range m {
 		details = append(details, detail)

@@ -96,11 +96,9 @@ func parsePackageGroup(group []string) PackageDetails {
 }
 
 func ParseYarnLock(pathToLockfile string) ([]PackageDetails, error) {
-	var packages []PackageDetails
-
 	file, err := os.Open(pathToLockfile)
 	if err != nil {
-		return packages, fmt.Errorf("could not open %s: %w", pathToLockfile, err)
+		return []PackageDetails{}, fmt.Errorf("could not open %s: %w", pathToLockfile, err)
 	}
 	defer file.Close()
 
@@ -109,8 +107,10 @@ func ParseYarnLock(pathToLockfile string) ([]PackageDetails, error) {
 	packageGroups := groupPackageLines(scanner)
 
 	if err := scanner.Err(); err != nil {
-		return packages, fmt.Errorf("error while scanning %s: %w", pathToLockfile, err)
+		return []PackageDetails{}, fmt.Errorf("error while scanning %s: %w", pathToLockfile, err)
 	}
+
+	packages := make([]PackageDetails, 0, len(packageGroups))
 
 	for _, group := range packageGroups {
 		if group[0] == "__metadata:" {
