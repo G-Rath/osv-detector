@@ -38,6 +38,14 @@ func printEcosystems(db database.OSVDatabase) {
 	}
 }
 
+func printPackages(pathToLock string, packages []detector.PackageDetails) {
+	fmt.Printf("The following packages were found in %s:\n", pathToLock)
+
+	for _, details := range packages {
+		fmt.Printf("  %s: %s@%s\n", details.Ecosystem, details.Name, details.Version)
+	}
+}
+
 func printVulnerabilities(db database.OSVDatabase, pkg detector.PackageDetails) int {
 	vulnerabilities := db.VulnerabilitiesAffectingPackage(pkg)
 
@@ -66,6 +74,7 @@ func main() {
 	offline := flag.Bool("offline", false, "Update the OSV database")
 	parseAs := flag.String("parse-as", "", "Name of a supported lockfile to use to determine how to parse the given file")
 	listEcosystems := flag.Bool("list-ecosystems", false, "List all the ecosystems present in the loaded OSV database")
+	listPackages := flag.Bool("list-packages", false, "List all the packages that were parsed from the given file")
 
 	flag.Parse()
 	pathToLockOrDirectory := flag.Arg(0)
@@ -82,6 +91,11 @@ func main() {
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Error parsing %s: %s\n", pathToLockOrDirectory, err)
 		os.Exit(127)
+	}
+
+	if *listPackages {
+		printPackages(pathToLockOrDirectory, packages)
+		os.Exit(0)
 	}
 
 	file := path.Base(pathToLockOrDirectory)
