@@ -66,6 +66,14 @@ jobs:
             ${{ runner.os }}-go-
 
       - run: make test
+  golangci-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v2
   go-fmt:
     runs-on: ubuntu-latest
     steps:
@@ -79,6 +87,7 @@ jobs:
       - test-ubuntu
       - test-macos
       - test-windows
+      - golangci-lint
       - go-fmt
     steps:
       - uses: actions/checkout@v3
