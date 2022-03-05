@@ -110,6 +110,10 @@ func (osv *OSV) AffectsEcosystem(ecosystem detector.Ecosystem) bool {
 	return false
 }
 
+func (osv *OSV) Link() string {
+	return "https://github.com/advisories/" + osv.ID
+}
+
 func (osv *OSV) IsAffected(pkg detector.PackageDetails) bool {
 	if osv.Affected == nil {
 		fmt.Printf("Ignoring %s as it does not have an 'affected' property\n", osv.ID)
