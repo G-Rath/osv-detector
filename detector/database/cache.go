@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -35,7 +36,7 @@ func (db *OSVDatabase) fetchCache() (*Cache, error) {
 	}
 
 	if !db.Offline {
-		req, err := http.NewRequest("GET", db.ArchiveURL, nil)
+		req, err := http.NewRequestWithContext(context.Background(), "GET", db.ArchiveURL, nil)
 
 		if err != nil {
 			return nil, fmt.Errorf("could not retrieve OSV database archive: %w", err)
