@@ -48,33 +48,26 @@ make test
 ## Linting & formatting
 
 We use [`golangci-lint`](https://github.com/golangci/golangci-lint) & `gofmt` to
-keep the codebase healthy, which can be run with:
+keep the codebase healthy.
+
+These are run as part of CI and are required to pass before a change can be
+landed. You can run linting locally with:
 
 ```shell
 make lint
 ```
 
-Currently, there is _1_ unresolved linting errors which are yet to be handled -
-because of this, we're currently not running linting as part of CI. Changes
-should not include any additional linting errors.
-
-Here are the unresolved errors:
-
-```
-detector/database/cache.go:36:30: should rewrite http.NewRequestWithContext or add (*Request).WithContext (noctx)
-                req, err := http.NewRequest("GET", db.ArchiveURL, nil)
-                                           ^
-```
-
-Markdown documents and yaml files should ideally be formatted with
+Markdown documents, json, and yaml files should ideally be formatted with
 [`prettier`](https://prettier.io/) with
 [`--prose-wrap always`](https://prettier.io/).
 
 You can run this with:
 
 ```shell
-npx prettier --prose-wrap always --write .
+make format-with-prettier
 ```
+
+Running `prettier` is not included as part of CI.
 
 ## Submitting changes
 
