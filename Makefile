@@ -5,6 +5,9 @@ OS_ARCH=linux_amd64
 build:
 	go build -o ${BINARY}
 
+build-snapshot:
+	goreleaser build --single-target --snapshot --rm-dist -o osv-detector
+
 test:
 	go test ./... -parallel=4
 

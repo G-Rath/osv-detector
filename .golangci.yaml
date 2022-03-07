@@ -32,3 +32,6 @@ issues:
     - path: _test\.go
       linters:
         - goerr113
+    - path: main.go
+      linters:
+        - gochecknoglobals
