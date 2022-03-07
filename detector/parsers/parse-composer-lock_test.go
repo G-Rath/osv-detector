@@ -71,7 +71,7 @@ func TestParseComposerLock_OnePackageDev(t *testing.T) {
 	})
 }
 
-func TestParseComposerLock_TwoPackage(t *testing.T) {
+func TestParseComposerLock_TwoPackages(t *testing.T) {
 	t.Parallel()
 
 	packages, err := parsers.ParseComposerLock("fixtures/composer/two-packages.json")
@@ -94,7 +94,7 @@ func TestParseComposerLock_TwoPackage(t *testing.T) {
 	})
 }
 
-func TestParseComposerLock_TwoPackageAlt(t *testing.T) {
+func TestParseComposerLock_TwoPackagesAlt(t *testing.T) {
 	t.Parallel()
 
 	packages, err := parsers.ParseComposerLock("fixtures/composer/two-packages-alt.json")

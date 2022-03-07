@@ -14,7 +14,7 @@ func TestParseNpmLock_v1_FileDoesNotExist(t *testing.T) {
 	expectPackages(t, packages, []parsers.PackageDetails{})
 }
 
-func TestNpmLock_v1_InvalidJson(t *testing.T) {
+func TestParseNpmLock_v1_InvalidJson(t *testing.T) {
 	t.Parallel()
 
 	packages, err := parsers.ParseNpmLock("fixtures/npm/not-json.txt")
@@ -23,7 +23,7 @@ func TestNpmLock_v1_InvalidJson(t *testing.T) {
 	expectPackages(t, packages, []parsers.PackageDetails{})
 }
 
-func TestNpmLock_v1_NoPackages(t *testing.T) {
+func TestParseNpmLock_v1_NoPackages(t *testing.T) {
 	t.Parallel()
 
 	packages, err := parsers.ParseNpmLock("fixtures/npm/empty.v1.json")
@@ -35,7 +35,7 @@ func TestNpmLock_v1_NoPackages(t *testing.T) {
 	expectPackages(t, packages, []parsers.PackageDetails{})
 }
 
-func TestNpmLock_v1_OnePackage(t *testing.T) {
+func TestParseNpmLock_v1_OnePackage(t *testing.T) {
 	t.Parallel()
 
 	packages, err := parsers.ParseNpmLock("fixtures/npm/one-package.v1.json")
@@ -53,7 +53,7 @@ func TestNpmLock_v1_OnePackage(t *testing.T) {
 	})
 }
 
-func TestNpmLock_v1_OnePackageDev(t *testing.T) {
+func TestParseNpmLock_v1_OnePackageDev(t *testing.T) {
 	t.Parallel()
 
 	packages, err := parsers.ParseNpmLock("fixtures/npm/one-package-dev.v1.json")
@@ -71,7 +71,7 @@ func TestNpmLock_v1_OnePackageDev(t *testing.T) {
 	})
 }
 
-func TestNpmLock_v1_TwoPackage(t *testing.T) {
+func TestParseNpmLock_v1_TwoPackages(t *testing.T) {
 	t.Parallel()
 
 	packages, err := parsers.ParseNpmLock("fixtures/npm/two-packages.v1.json")
@@ -94,10 +94,10 @@ func TestNpmLock_v1_TwoPackage(t *testing.T) {
 	})
 }
 
-func TestNpmLock_v1_ScopedPackage(t *testing.T) {
+func TestParseNpmLock_v1_ScopedPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := parsers.ParseNpmLock("fixtures/npm/scoped-package.v1.json")
+	packages, err := parsers.ParseNpmLock("fixtures/npm/scoped-packages.v1.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -117,7 +117,7 @@ func TestNpmLock_v1_ScopedPackage(t *testing.T) {
 	})
 }
 
-func TestNpmLock_v1_NestedDependencies(t *testing.T) {
+func TestParseNpmLock_v1_NestedDependencies(t *testing.T) {
 	t.Parallel()
 
 	packages, err := parsers.ParseNpmLock("fixtures/npm/nested-dependencies.v1.json")
@@ -155,7 +155,7 @@ func TestNpmLock_v1_NestedDependencies(t *testing.T) {
 	})
 }
 
-func TestNpmLock_v1_NestedDependenciesDup(t *testing.T) {
+func TestParseNpmLock_v1_NestedDependenciesDup(t *testing.T) {
 	t.Parallel()
 
 	packages, err := parsers.ParseNpmLock("fixtures/npm/nested-dependencies-dup.v1.json")
