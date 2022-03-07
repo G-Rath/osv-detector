@@ -8,6 +8,8 @@ import (
 
 func findParser(pathToLockfile string) PackageDetailsParser {
 	switch pathToLockfile {
+	case "cargo.lock":
+		return ParseCargoLock
 	case "composer.lock":
 		return ParseComposerLock
 	case "Gemfile.lock":

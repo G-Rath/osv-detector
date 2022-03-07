@@ -2,7 +2,10 @@ module osv-detector
 
 go 1.17
 
-require github.com/fatih/color v1.13.0
+require (
+	github.com/BurntSushi/toml v1.0.0
+	github.com/fatih/color v1.13.0
+)
 
 require (
 	github.com/mattn/go-colorable v0.1.9 // indirect
