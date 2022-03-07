@@ -19,7 +19,8 @@ The detector supports parsing the following lockfiles:
 | -------------------- | ----------- | ---------- |
 | `cargo.lock`         | `crates.io` | `cargo`    |
 | `package-lock.json`  | `npm`       | `npm`      |
-| `yarn.lock`          | `npm`       | `yarn      |
+| `yarn.lock`          | `npm`       | `yarn`     |
+| `pnpm-lock.yaml`     | `npm`       | `pnpm`     |
 | `composer.lock`      | `Packagist` | `composer` |
 | `Gemfile.lock`       | `RubyGems`  | `bundler`  |
 | `requirements.txt`\* | `PyPI`      | `pip`      |
