@@ -12,6 +12,13 @@ import (
 	"path"
 )
 
+// these come from goreleaser
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
+
 func loadOSVDatabase(offline bool) database.OSVDatabase {
 	db, err := database.NewDB(offline, database.GithubOSVDatabaseArchiveURL)
 
@@ -81,10 +88,17 @@ func printVulnerabilities(db database.OSVDatabase, pkg detector.PackageDetails) 
 func main() {
 	offline := flag.Bool("offline", false, "Update the OSV database")
 	parseAs := flag.String("parse-as", "", "Name of a supported lockfile to use to determine how to parse the given file")
+	printVersion := flag.Bool("version", false, "Print version information")
 	listEcosystems := flag.Bool("list-ecosystems", false, "List all the ecosystems present in the loaded OSV database")
 	listPackages := flag.Bool("list-packages", false, "List all the packages that were parsed from the given file")
 
 	flag.Parse()
+
+	if *printVersion {
+		fmt.Printf("osv-detector %s (%s, commit %s)", version, date, commit)
+		os.Exit(0)
+	}
+
 	pathToLockOrDirectory := flag.Arg(0)
 
 	db := loadOSVDatabase(*offline)
