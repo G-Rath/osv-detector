@@ -17,6 +17,7 @@ The detector supports parsing the following lockfiles:
 
 | Lockfile             | Ecosystem   | Tool       |
 | -------------------- | ----------- | ---------- |
+| `cargo.lock`         | `crates.io` | `cargo`    |
 | `package-lock.json`  | `npm`       | `npm`      |
 | `yarn.lock`          | `npm`       | `yarn      |
 | `composer.lock`      | `Packagist` | `composer` |
