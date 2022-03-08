@@ -45,6 +45,7 @@ func TestTryParse_FindsExpectedParsers(t *testing.T) {
 		"pnpm-lock.yaml",
 		"composer.lock",
 		"Gemfile.lock",
+		"go.mod",
 		"requirements.txt",
 	}
 

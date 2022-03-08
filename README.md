@@ -23,6 +23,7 @@ The detector supports parsing the following lockfiles:
 | `pnpm-lock.yaml`     | `npm`       | `pnpm`     |
 | `composer.lock`      | `Packagist` | `composer` |
 | `Gemfile.lock`       | `RubyGems`  | `bundler`  |
+| `go.mod`             | `Go`        | `go mod`   |
 | `requirements.txt`\* | `PyPI`      | `pip`      |
 
 \*: `requirements.txt` support is currently very limited - it ignores anything
