@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"path"
+	"sort"
 )
 
 func findParser(pathToLockfile string) PackageDetailsParser {
@@ -42,5 +43,11 @@ func TryParse(pathToLockfile string, parseAs string) ([]PackageDetails, error) {
 		return []PackageDetails{}, fmt.Errorf("%w for %s", ErrParserNotFound, pathToLockfile)
 	}
 
-	return parser(pathToLockfile)
+	packages, err := parser(pathToLockfile)
+
+	sort.Slice(packages, func(i, j int) bool {
+		return packages[i].Name < packages[j].Name
+	})
+
+	return packages, err
 }
