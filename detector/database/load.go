@@ -10,9 +10,6 @@ import (
 	"strings"
 )
 
-// GithubOSVDatabaseArchiveURL represents GitHub's OSV database URL
-const GithubOSVDatabaseArchiveURL = "https://codeload.github.com/github/advisory-database/zip/main"
-
 // load fetches a zip archive of the OSV database and loads known vulnerabilities
 // from it (which are assumed to be in json files following the OSV spec).
 //
@@ -37,11 +34,6 @@ func (db *OSVDatabase) load() error {
 
 	// Read all the files from the zip archive
 	for _, zipFile := range zipReader.File {
-		// todo: somehow support passing these excludes generically, so it's more agnostic
-		if !strings.HasPrefix(zipFile.Name, "advisory-database-main/advisories") {
-			continue
-		}
-
 		if strings.HasPrefix(zipFile.Name, "advisory-database-main/advisories/unreviewed") {
 			continue
 		}

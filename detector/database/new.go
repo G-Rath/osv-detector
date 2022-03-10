@@ -10,11 +10,7 @@ type OSVDatabase struct {
 	UpdatedAt       string
 }
 
-// todo: support settings, including "way to load database"
-// e.g. we want to set rules for how to exclude json files
-// that way it'll be more agnostic
-
-// NewDB fetches the advisory DB from GitHub
+// NewDB creates an OSV database with vulnerabilities loaded from an archive
 func NewDB(offline bool, dbArchiveURL string) (*OSVDatabase, error) {
 	db := &OSVDatabase{Offline: offline, ArchiveURL: dbArchiveURL}
 	if err := db.load(); err != nil {
