@@ -95,7 +95,7 @@ func main() {
 	flag.Parse()
 
 	if *printVersion {
-		fmt.Printf("osv-detector %s (%s, commit %s)", version, date, commit)
+		fmt.Printf("osv-detector %s (%s, commit %s)\n", version, date, commit)
 		os.Exit(0)
 	}
 
