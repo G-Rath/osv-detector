@@ -32,7 +32,35 @@ func findParser(pathToLockfile string) PackageDetailsParser {
 
 var ErrParserNotFound = errors.New("could not determine parser")
 
-func TryParse(pathToLockfile string, parseAs string) ([]PackageDetails, error) {
+type Packages []PackageDetails
+
+func toSliceOfEcosystems(ecosystemsMap map[Ecosystem]struct{}) []Ecosystem {
+	ecosystems := make([]Ecosystem, 0, len(ecosystemsMap))
+
+	for ecosystem := range ecosystemsMap {
+		ecosystems = append(ecosystems, ecosystem)
+	}
+
+	return ecosystems
+}
+
+func (ps Packages) Ecosystems() []Ecosystem {
+	ecosystems := make(map[Ecosystem]struct{})
+
+	for _, pkg := range ps {
+		ecosystems[pkg.Ecosystem] = struct{}{}
+	}
+
+	slicedEcosystems := toSliceOfEcosystems(ecosystems)
+
+	sort.Slice(slicedEcosystems, func(i, j int) bool {
+		return slicedEcosystems[i] < slicedEcosystems[j]
+	})
+
+	return slicedEcosystems
+}
+
+func TryParse(pathToLockfile string, parseAs string) (Packages, error) {
 	if parseAs == "" {
 		parseAs = path.Base(pathToLockfile)
 	}
