@@ -14,6 +14,7 @@ import (
 
 // Cache stores the GitHub response to save bandwidth
 type Cache struct {
+	URL  string
 	ETag string
 	Date string
 	Body []byte
@@ -78,7 +79,7 @@ func (db *OSVDatabase) fetchCache() (*Cache, error) {
 		date := resp.Header.Get("Date")
 
 		if etag != "" || date != "" {
-			cache = &Cache{ETag: etag, Date: date, Body: body}
+			cache = &Cache{ETag: etag, Date: date, Body: body, URL: db.ArchiveURL}
 		}
 
 		cacheContents, err := json.Marshal(cache)
