@@ -23,13 +23,13 @@ func loadOSVDatabase(offline bool, archiveURL string) database.OSVDatabase {
 	db, err := database.NewDB(offline, archiveURL)
 
 	if err != nil {
-		msg := fmt.Sprintf("Error loading the OSV DB: %s", err)
+		msg := err.Error()
 
 		if errors.Is(err, database.ErrOfflineDatabaseNotFound) {
-			msg = "Error: --offline can only be used when a local version of the OSV database is available"
+			msg = color.RedString("no local version of the database was found, and --offline flag was set")
 		}
 
-		_, _ = fmt.Fprintf(os.Stderr, "%s\n", msg)
+		_, _ = fmt.Fprintf(os.Stderr, " %s\n", color.RedString("failed: %s", msg))
 		os.Exit(127)
 	}
 
@@ -88,7 +88,7 @@ type OSVDatabases []database.OSVDatabase
 func loadEcosystemDatabases(ecosystems []detector.Ecosystem, offline bool) OSVDatabases {
 	dbs := make(OSVDatabases, 0, len(ecosystems))
 
-	fmt.Printf("Loaded OSV databases for the following ecosystems:\n")
+	fmt.Printf("Loading OSV databases for the following ecosystems:\n")
 
 	for _, ecosystem := range ecosystems {
 		fmt.Printf("  %s", ecosystem)
