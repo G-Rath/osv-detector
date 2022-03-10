@@ -45,7 +45,7 @@ func loadOSVDatabase(offline bool) database.OSVDatabase {
 func printEcosystems(db database.OSVDatabase) {
 	ecosystems := db.ListEcosystems()
 
-	fmt.Print("The loaded OSV has vulnerabilities for the following ecosystems:")
+	fmt.Println("The loaded OSV has vulnerabilities for the following ecosystems:")
 
 	for _, ecosystem := range ecosystems {
 		fmt.Printf("  %s\n", ecosystem)
