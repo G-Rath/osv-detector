@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 )
 
-// Cache stores the GitHub response to save bandwidth
+// Cache stores the OSV database archive for re-use
 type Cache struct {
 	URL  string
 	ETag string
