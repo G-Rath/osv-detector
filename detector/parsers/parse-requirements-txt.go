@@ -45,10 +45,14 @@ func parseLine(line string) PackageDetails {
 	}
 
 	return PackageDetails{
-		Name:      name,
+		Name:      cleanupRequirementName(name),
 		Version:   version,
 		Ecosystem: PipEcosystem,
 	}
+}
+
+func cleanupRequirementName(name string) string {
+	return strings.Split(name, "[")[0]
 }
 
 func removeComments(line string) string {
