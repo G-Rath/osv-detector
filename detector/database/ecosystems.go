@@ -1,6 +1,9 @@
 package database
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
 func toSliceOfEcosystems(ecosystemsMap map[Ecosystem]struct{}) []Ecosystem {
 	ecosystems := make([]Ecosystem, 0, len(ecosystemsMap))
@@ -27,7 +30,13 @@ func (db *OSVDatabase) ListEcosystems() []Ecosystem {
 		}
 	}
 
-	return toSliceOfEcosystems(ecosystems)
+	slicedEcosystems := toSliceOfEcosystems(ecosystems)
+
+	sort.Slice(slicedEcosystems, func(i, j int) bool {
+		return slicedEcosystems[i] < slicedEcosystems[j]
+	})
+
+	return slicedEcosystems
 }
 
 func (db *OSVDatabase) ListEcosystemVulnerabilities(ecosystem Ecosystem) []OSV {
