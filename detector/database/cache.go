@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -20,9 +21,16 @@ type Cache struct {
 
 var ErrOfflineDatabaseNotFound = errors.New("no offline version of the OSV database is available")
 
+func (db *OSVDatabase) cachePath() string {
+	hash := sha256.Sum256([]byte(db.ArchiveURL))
+	fileName := fmt.Sprintf("osv-detector-%x-db.json", hash)
+
+	return filepath.Join(os.TempDir(), fileName)
+}
+
 func (db *OSVDatabase) fetchCache() (*Cache, error) {
 	var cache *Cache
-	cachePath := filepath.Join(os.TempDir(), "osv-detector-db.json")
+	cachePath := db.cachePath()
 	if cacheContent, err := ioutil.ReadFile(cachePath); err == nil {
 		err := json.Unmarshal(cacheContent, &cache)
 
