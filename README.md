@@ -1,7 +1,10 @@
 # Open Source Vulnerability Detector
 
-An auditing tool for detecting vulnerabilities using the
-[Open Source Vulnerability advisory database provided by GitHub](https://github.com/github/advisory-database)
+An auditing tool for detecting vulnerabilities, powered by advisory databases
+that follow the [OSV specification](https://ossf.github.io/osv-schema/).
+
+Currently, this uses the ecosystem databases provided by
+[osv.dev](https://osv.dev/).
 
 ## Usage
 
