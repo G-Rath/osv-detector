@@ -11,6 +11,9 @@ build-snapshot:
 test:
 	go test ./... -parallel=4
 
+test-with-coverage:
+	go test ./... -parallel=4 -cover
+
 lint:	lint-with-golangci-lint lint-with-go-fmt
 
 lint-with-golangci-lint:
