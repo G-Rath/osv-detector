@@ -262,3 +262,21 @@ func TestParseRequirementsTxt_FileFormatExample(t *testing.T) {
 		},
 	})
 }
+
+func TestParseRequirementsTxt_WithAddedSupport(t *testing.T) {
+	t.Parallel()
+
+	packages, err := parsers.ParseRequirementsTxt("fixtures/pip/with-added-support.txt")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []parsers.PackageDetails{
+		{
+			Name:      "twisted",
+			Version:   "20.3.0",
+			Ecosystem: parsers.PipEcosystem,
+		},
+	})
+}
