@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -11,8 +12,9 @@ import (
 	"path/filepath"
 )
 
-// Cache stores the GitHub response to save bandwidth
+// Cache stores the OSV database archive for re-use
 type Cache struct {
+	URL  string
 	ETag string
 	Date string
 	Body []byte
@@ -20,9 +22,16 @@ type Cache struct {
 
 var ErrOfflineDatabaseNotFound = errors.New("no offline version of the OSV database is available")
 
+func (db *OSVDatabase) cachePath() string {
+	hash := sha256.Sum256([]byte(db.ArchiveURL))
+	fileName := fmt.Sprintf("osv-detector-%x-db.json", hash)
+
+	return filepath.Join(os.TempDir(), fileName)
+}
+
 func (db *OSVDatabase) fetchCache() (*Cache, error) {
 	var cache *Cache
-	cachePath := filepath.Join(os.TempDir(), "osv-detector-db.json")
+	cachePath := db.cachePath()
 	if cacheContent, err := ioutil.ReadFile(cachePath); err == nil {
 		err := json.Unmarshal(cacheContent, &cache)
 
@@ -70,7 +79,7 @@ func (db *OSVDatabase) fetchCache() (*Cache, error) {
 		date := resp.Header.Get("Date")
 
 		if etag != "" || date != "" {
-			cache = &Cache{ETag: etag, Date: date, Body: body}
+			cache = &Cache{ETag: etag, Date: date, Body: body, URL: db.ArchiveURL}
 		}
 
 		cacheContents, err := json.Marshal(cache)

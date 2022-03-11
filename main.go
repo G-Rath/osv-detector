@@ -19,25 +19,19 @@ var (
 	date    = "unknown"
 )
 
-func loadOSVDatabase(offline bool) database.OSVDatabase {
-	db, err := database.NewDB(offline, database.GithubOSVDatabaseArchiveURL)
+func loadOSVDatabase(offline bool, archiveURL string) database.OSVDatabase {
+	db, err := database.NewDB(offline, archiveURL)
 
 	if err != nil {
-		msg := fmt.Sprintf("Error loading the OSV DB: %s", err)
+		msg := err.Error()
 
 		if errors.Is(err, database.ErrOfflineDatabaseNotFound) {
-			msg = "Error: --offline can only be used when a local version of the OSV database is available"
+			msg = color.RedString("no local version of the database was found, and --offline flag was set")
 		}
 
-		_, _ = fmt.Fprintf(os.Stderr, "%s\n", msg)
+		_, _ = fmt.Fprintf(os.Stderr, " %s\n", color.RedString("failed: %s", msg))
 		os.Exit(127)
 	}
-
-	fmt.Printf(
-		"Loaded %s vulnerabilities (including withdrawn, last updated %s)\n",
-		color.YellowString("%d", len(db.Vulnerabilities(true))),
-		db.UpdatedAt,
-	)
 
 	return *db
 }
@@ -85,6 +79,37 @@ func printVulnerabilities(db database.OSVDatabase, pkg detector.PackageDetails) 
 	return len(vulnerabilities)
 }
 
+func ecosystemDatabaseURL(ecosystem detector.Ecosystem) string {
+	return fmt.Sprintf("https://osv-vulnerabilities.storage.googleapis.com/%s/all.zip", ecosystem)
+}
+
+type OSVDatabases []database.OSVDatabase
+
+func loadEcosystemDatabases(ecosystems []detector.Ecosystem, offline bool) OSVDatabases {
+	dbs := make(OSVDatabases, 0, len(ecosystems))
+
+	fmt.Printf("Loading OSV databases for the following ecosystems:\n")
+
+	for _, ecosystem := range ecosystems {
+		fmt.Printf("  %s", ecosystem)
+		archiveURL := ecosystemDatabaseURL(ecosystem)
+
+		db := loadOSVDatabase(offline, archiveURL)
+
+		fmt.Printf(
+			" (%s vulnerabilities, including withdrawn - last updated %s)\n",
+			color.YellowString("%d", len(db.Vulnerabilities(true))),
+			db.UpdatedAt,
+		)
+
+		dbs = append(dbs, db)
+	}
+
+	fmt.Println()
+
+	return dbs
+}
+
 func main() {
 	offline := flag.Bool("offline", false, "Update the OSV database")
 	parseAs := flag.String("parse-as", "", "Name of a supported lockfile to use to determine how to parse the given file")
@@ -101,13 +126,6 @@ func main() {
 
 	pathToLockOrDirectory := flag.Arg(0)
 
-	db := loadOSVDatabase(*offline)
-
-	if *listEcosystems {
-		printEcosystems(db)
-		os.Exit(0)
-	}
-
 	packages, err := parsers.TryParse(pathToLockOrDirectory, *parseAs)
 
 	if err != nil {
@@ -120,11 +138,22 @@ func main() {
 		os.Exit(0)
 	}
 
+	dbs := loadEcosystemDatabases(packages.Ecosystems(), *offline)
+
+	if *listEcosystems {
+		for _, db := range dbs {
+			printEcosystems(db)
+		}
+		os.Exit(0)
+	}
+
 	file := path.Base(pathToLockOrDirectory)
 
 	knownVulnerabilitiesCount := 0
 	for _, pkg := range packages {
-		knownVulnerabilitiesCount += printVulnerabilities(db, pkg)
+		for _, db := range dbs {
+			knownVulnerabilitiesCount += printVulnerabilities(db, pkg)
+		}
 	}
 
 	if knownVulnerabilitiesCount == 0 {
