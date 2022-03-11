@@ -8,6 +8,14 @@ import (
 	"time"
 )
 
+func expectOSVDescription(t *testing.T, expected string, osv database.OSV) {
+	t.Helper()
+
+	if actual := osv.Describe(); actual != expected {
+		t.Errorf("Expected \"%s\" but got \"%s\"", expected, actual)
+	}
+}
+
 func expectIsAffected(t *testing.T, osv database.OSV, version string, expectAffected bool) {
 	t.Helper()
 
@@ -487,4 +495,66 @@ func TestOSV_IsAffected_OnlyVersions(t *testing.T) {
 	expectIsAffected(t, osv, "1.0.0", true)
 	expectIsAffected(t, osv, "1.0.0-beta1", false)
 	expectIsAffected(t, osv, "1.1.0", false)
+}
+
+func TestOSV_Describe_Text(t *testing.T) {
+	t.Parallel()
+
+	// use the summary of the advisory if present
+	expectOSVDescription(t, "This is a vulnerability!", database.OSV{Summary: "This is a vulnerability!"})
+
+	// otherwise, use the details of the advisory
+	expectOSVDescription(t, "It's very bad!", database.OSV{Details: "It's very bad!"})
+
+	// prefer the summary over details, as the former should be more concise
+	expectOSVDescription(t,
+		"This is a vulnerability!",
+		database.OSV{Summary: "This is a vulnerability!", Details: "It's very bad!"},
+	)
+
+	// advisories from GitHub should have a link included with their description
+	expectOSVDescription(t,
+		"This is a vulnerability! (https://github.com/advisories/GHSA-1)",
+		database.OSV{Summary: "This is a vulnerability!", ID: "GHSA-1"},
+	)
+
+	// if none of those are present, say that there are no details available
+	expectOSVDescription(t, "(no details available)", database.OSV{})
+}
+
+func TestOSV_Describe_Truncation(t *testing.T) {
+	t.Parallel()
+
+	// long details text should be truncated after 80 characters, based on words
+	expectOSVDescription(t,
+		"sqlparse is a non-validating SQL parser module for Python. In sqlparse versions...",
+		database.OSV{
+			Details: "sqlparse is a non-validating SQL parser module for Python. In sqlparse versions 0.4.0 and 0.4.1 there is a regular Expression Denial of Service in sqlparse vulnerability.",
+		},
+	)
+
+	// if a link is present, that isn't included in the truncating
+	expectOSVDescription(t,
+		"sqlparse is a non-validating SQL parser module for Python. In sqlparse versions... (https://github.com/advisories/GHSA-1)",
+		database.OSV{
+			Details: "sqlparse is a non-validating SQL parser module for Python. In sqlparse versions 0.4.0 and 0.4.1 there is a regular Expression Denial of Service in sqlparse vulnerability.",
+			ID:      "GHSA-1",
+		},
+	)
+
+	// long continuous text without any spaces before the limit should be forcefully truncated
+	expectOSVDescription(t,
+		"nannannannannannannannannannannannannannannannannannannannannannannannannannanna...",
+		database.OSV{
+			Details: "nannannannannannannannannannannannannannannannannannannannannannannannannannannannanan batman!",
+		},
+	)
+
+	// truncation shouldn't be applied to the summary text (as it should be short already)
+	expectOSVDescription(t,
+		"This is a vulnerability! It's very serious, and should not be taken lightly or bad things could happen!",
+		database.OSV{
+			Summary: "This is a vulnerability! It's very serious, and should not be taken lightly or bad things could happen!",
+		},
+	)
 }

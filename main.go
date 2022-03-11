@@ -69,10 +69,9 @@ func printVulnerabilities(db database.OSVDatabase, pkg detector.PackageDetails) 
 
 	for _, vulnerability := range vulnerabilities {
 		fmt.Printf(
-			"  %s %s (%s)\n",
+			"  %s %s\n",
 			color.CyanString("%s:", vulnerability.ID),
-			vulnerability.Summary,
-			vulnerability.Link(),
+			vulnerability.Describe(),
 		)
 	}
 
