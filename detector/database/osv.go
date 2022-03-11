@@ -100,9 +100,22 @@ type Reference struct {
 	URL  string `json:"url"`
 }
 
+type Versions []string
+
+func (vs Versions) includes(v string) bool {
+	for _, v2 := range vs {
+		if v == v2 {
+			return true
+		}
+	}
+
+	return false
+}
+
 type Affected struct {
-	Package Package `json:"package"`
-	Ranges  Affects `json:"ranges,omitempty"`
+	Package  Package  `json:"package"`
+	Versions Versions `json:"versions"`
+	Ranges   Affects  `json:"ranges,omitempty"`
 }
 
 // OSV represents an OSV style JSON vulnerability database entry
@@ -146,14 +159,18 @@ func (osv *OSV) IsAffected(pkg detector.PackageDetails) bool {
 	for _, affected := range osv.Affected {
 		if affected.Package.Ecosystem == pkg.Ecosystem &&
 			affected.Package.NormalizedName() == pkg.Name {
-			if len(affected.Ranges) == 0 {
+			if len(affected.Ranges) == 0 && len(affected.Versions) == 0 {
 				_, _ = fmt.Fprintf(
 					os.Stderr,
-					"%s does not have any ranges - this is probably a mistake!\n",
+					"%s does not have any ranges or versions - this is probably a mistake!\n",
 					osv.ID,
 				)
 
 				continue
+			}
+
+			if affected.Versions.includes(pkg.Version) {
+				return true
 			}
 
 			if affected.Ranges.affectsVersion(pkg.Version) {

@@ -472,3 +472,19 @@ func TestOSV_IsAffected_AffectsWithSemver_MultipleAffected(t *testing.T) {
 		expectIsAffected(t, osv, v, false)
 	}
 }
+
+func TestOSV_IsAffected_OnlyVersions(t *testing.T) {
+	t.Parallel()
+
+	osv := buildOSVWithAffected(
+		database.Affected{
+			Package:  database.Package{Ecosystem: parsers.NpmEcosystem, Name: "my-package"},
+			Versions: []string{"1.0.0"},
+		},
+	)
+
+	expectIsAffected(t, osv, "0.0.0", false)
+	expectIsAffected(t, osv, "1.0.0", true)
+	expectIsAffected(t, osv, "1.0.0-beta1", false)
+	expectIsAffected(t, osv, "1.1.0", false)
+}
