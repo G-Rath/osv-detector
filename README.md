@@ -41,17 +41,21 @@ flag:
 osv-detector --parse-as 'package-lock.json' path/to/my/file.lock
 ```
 
-The detector maintains a cache of the OSV database it's using locally, which is
-updated with any changes at the start of every run.
+Once packages have been parsed, the detector determines which ecosystem
+databases it needs to load from its cache. If an ecosystem database does not
+exist locally, or if the database is outdated, the detector downloads a new
+version and stores it for re-use.
 
-You can have the detector work solely off this cache with the `--offline` flag:
+You can have the detector work solely off the local version of the databases
+with the `--offline` flag:
 
 ```shell
-osv-detector --offline
+osv-detector --offline path/to/my/file.lock
 ```
 
-This requires the detector to have successfully cached an offline copy of the
-OSV database at least once.
+This requires the detector to have successfully downloaded a copy of ecosystem
+databases required to check the packages discovered during parsing at least
+once.
 
 ### Auxiliary output commands
 
