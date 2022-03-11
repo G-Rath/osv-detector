@@ -36,6 +36,10 @@ func buildEcosystemAffectsRange(events ...database.RangeEvent) database.AffectsR
 	return database.AffectsRange{Type: database.TypeEcosystem, Events: events}
 }
 
+func buildSemverAffectsRange(events ...database.RangeEvent) database.AffectsRange {
+	return database.AffectsRange{Type: database.TypeSemver, Events: events}
+}
+
 func TestPackage_NormalizedName(t *testing.T) {
 	t.Parallel()
 
@@ -336,5 +340,135 @@ func TestOSV_IsAffected_AffectsWithEcosystem_PipNamesAreNormalised(t *testing.T)
 
 	if osv.IsAffected(pkg) {
 		t.Errorf("Expected OSV not to normalize names of non-pip packages, but it did")
+	}
+}
+
+func TestOSV_IsAffected_AffectsWithSemver_DifferentEcosystem(t *testing.T) {
+	t.Parallel()
+
+	osv := buildOSVWithAffected(
+		database.Affected{
+			Package: database.Package{Ecosystem: parsers.PipEcosystem, Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildSemverAffectsRange(database.RangeEvent{Introduced: "0"}),
+			},
+		},
+	)
+
+	for _, v := range []string{"1.0.0", "1.1.1", "2.0.0"} {
+		expectIsAffected(t, osv, v, false)
+	}
+}
+
+func TestOSV_IsAffected_AffectsWithSemver_SingleAffected(t *testing.T) {
+	t.Parallel()
+
+	var osv database.OSV
+
+	// "Introduced: 0" means everything is affected
+	osv = buildOSVWithAffected(
+		database.Affected{
+			Package: database.Package{Ecosystem: parsers.NpmEcosystem, Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildSemverAffectsRange(database.RangeEvent{Introduced: "0"}),
+			},
+		},
+	)
+
+	for _, v := range []string{"v1.0.0", "v1.1.1", "v2.0.0"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	// "Fixed: 1" means all versions after this are not vulnerable
+	osv = buildOSVWithAffected(
+		database.Affected{
+			Package: database.Package{Ecosystem: parsers.NpmEcosystem, Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildSemverAffectsRange(
+					database.RangeEvent{Introduced: "0"},
+					database.RangeEvent{Fixed: "1.0.0"},
+				),
+			},
+		},
+	)
+
+	for _, v := range []string{"0.0.0", "0.1.0", "0.0.0.1", "1.0.0-rc"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	for _, v := range []string{"1.0.0", "1.1.0", "2.0.0"} {
+		expectIsAffected(t, osv, v, false)
+	}
+
+	// multiple fixes and introduced
+	osv = buildOSVWithAffected(
+		database.Affected{
+			Package: database.Package{Ecosystem: parsers.NpmEcosystem, Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildSemverAffectsRange(
+					database.RangeEvent{Introduced: "0"},
+					database.RangeEvent{Fixed: "1"},
+					database.RangeEvent{Introduced: "2.1.0"},
+					database.RangeEvent{Fixed: "3.2.0"},
+				),
+			},
+		},
+	)
+
+	for _, v := range []string{"0.0.0", "0.1.0", "0.0.0.1", "1.0.0-rc"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	for _, v := range []string{"1.0.0", "1.1.0", "2.0.0rc2", "2.0.1"} {
+		expectIsAffected(t, osv, v, false)
+	}
+
+	for _, v := range []string{"2.1.1", "2.3.4", "3.0.0", "3.0.0-rc"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	for _, v := range []string{"3.2.0", "3.2.1", "4.0.0"} {
+		expectIsAffected(t, osv, v, false)
+	}
+}
+
+func TestOSV_IsAffected_AffectsWithSemver_MultipleAffected(t *testing.T) {
+	t.Parallel()
+
+	osv := buildOSVWithAffected(
+		database.Affected{
+			Package: database.Package{Ecosystem: parsers.NpmEcosystem, Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildSemverAffectsRange(
+					database.RangeEvent{Introduced: "0"},
+					database.RangeEvent{Fixed: "1"},
+				),
+			},
+		},
+		database.Affected{
+			Package: database.Package{Ecosystem: parsers.NpmEcosystem, Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildSemverAffectsRange(
+					database.RangeEvent{Introduced: "2.1.0"},
+					database.RangeEvent{Fixed: "3.2.0"},
+				),
+			},
+		},
+	)
+
+	for _, v := range []string{"0.0.0", "0.1.0", "0.0.0.1", "1.0.0-rc"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	for _, v := range []string{"1.0.0", "1.1.0", "2.0.0rc2", "2.0.1"} {
+		expectIsAffected(t, osv, v, false)
+	}
+
+	for _, v := range []string{"2.1.1", "2.3.4", "3.0.0", "3.0.0-rc"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	for _, v := range []string{"3.2.0", "3.2.1", "4.0.0"} {
+		expectIsAffected(t, osv, v, false)
 	}
 }
