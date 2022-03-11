@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"unicode"
 )
 
 type AffectsRangeType string
@@ -145,8 +146,62 @@ func (osv *OSV) AffectsEcosystem(ecosystem detector.Ecosystem) bool {
 	return false
 }
 
+// truncate ensures that the given string is shorter than the provided limit.
+//
+// If the string is longer than the limit, it's trimmed and suffixed with an ellipsis.
+// Ideally the string will be trimmed at the space that's closest to the limit to
+// preserve whole words; if a string has no spaces before the limit, it'll be forcefully truncated.
+func truncate(str string, limit int) string {
+	count := 0
+	truncateAt := -1
+
+	for i, c := range str {
+		if unicode.IsSpace(c) {
+			truncateAt = i
+		}
+
+		count++
+
+		if count >= limit {
+			// ideally we want to keep words whole when truncating,
+			// but if we can't find a space just truncate at the limit
+			if truncateAt == -1 {
+				truncateAt = limit
+			}
+
+			return str[:truncateAt] + "..."
+		}
+	}
+
+	return str
+}
+
+func (osv OSV) Describe() string {
+	description := osv.Summary
+
+	if description == "" {
+		description += truncate(osv.Details, 80)
+	}
+
+	if description == "" {
+		description += "(no details available)"
+	}
+
+	if link := osv.Link(); link != "" {
+		description += " (" + link + ")"
+	}
+
+	return description
+}
+
+// Link returns a URL to the advisory, if possible.
+// Otherwise, an empty string is returned
 func (osv *OSV) Link() string {
-	return "https://github.com/advisories/" + osv.ID
+	if strings.HasPrefix(osv.ID, "GHSA") {
+		return "https://github.com/advisories/" + osv.ID
+	}
+
+	return ""
 }
 
 func (osv *OSV) IsAffected(pkg detector.PackageDetails) bool {
