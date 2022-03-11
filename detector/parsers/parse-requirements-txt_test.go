@@ -246,7 +246,7 @@ func TestParseRequirementsTxt_FileFormatExample(t *testing.T) {
 			Ecosystem: parsers.PipEcosystem,
 		},
 		{
-			Name:      "Mopidy-Dirble",
+			Name:      "mopidy-dirble",
 			Version:   "1.1",
 			Ecosystem: parsers.PipEcosystem,
 		},
@@ -273,6 +273,34 @@ func TestParseRequirementsTxt_WithAddedSupport(t *testing.T) {
 	}
 
 	expectPackages(t, packages, []parsers.PackageDetails{
+		{
+			Name:      "twisted",
+			Version:   "20.3.0",
+			Ecosystem: parsers.PipEcosystem,
+		},
+	})
+}
+
+func TestParseRequirementsTxt_NonNormalizedNames(t *testing.T) {
+	t.Parallel()
+
+	packages, err := parsers.ParseRequirementsTxt("fixtures/pip/non-normalized-names.txt")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []parsers.PackageDetails{
+		{
+			Name:      "zope-interface",
+			Version:   "5.4.0",
+			Ecosystem: parsers.PipEcosystem,
+		},
+		{
+			Name:      "pillow",
+			Version:   "1.0.0",
+			Ecosystem: parsers.PipEcosystem,
+		},
 		{
 			Name:      "twisted",
 			Version:   "20.3.0",
