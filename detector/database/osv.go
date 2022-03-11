@@ -55,8 +55,8 @@ type AffectsRange struct {
 	Events []RangeEvent     `json:"events"`
 }
 
-func (ar AffectsRange) containsEcosystem(v string) bool {
-	if ar.Type != TypeEcosystem {
+func (ar AffectsRange) containsVersion(v string) bool {
+	if ar.Type != TypeEcosystem && ar.Type != TypeSemver {
 		return false
 	}
 	// todo: we should probably warn here
@@ -80,14 +80,14 @@ func (ar AffectsRange) containsEcosystem(v string) bool {
 
 type Affects []AffectsRange
 
-// AffectsEcosystem checks if the given version is within the range
-// specified by the events of any "Ecosystem" type ranges
-func (a Affects) AffectsEcosystem(v string) bool {
+// affectsVersion checks if the given version is within the range
+// specified by the events of any "Ecosystem" or "Semver" type ranges
+func (a Affects) affectsVersion(v string) bool {
 	for _, r := range a {
-		if r.Type != TypeEcosystem {
-			continue
+		if r.Type != TypeEcosystem && r.Type != TypeSemver {
+			return false
 		}
-		if r.containsEcosystem(v) {
+		if r.containsVersion(v) {
 			return true
 		}
 	}
@@ -156,7 +156,7 @@ func (osv *OSV) IsAffected(pkg detector.PackageDetails) bool {
 				continue
 			}
 
-			if affected.Ranges.AffectsEcosystem(pkg.Version) {
+			if affected.Ranges.affectsVersion(pkg.Version) {
 				return true
 			}
 		}
