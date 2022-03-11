@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"os"
 	"osv-detector/detector"
+	"osv-detector/detector/parsers"
 	"osv-detector/detector/semver"
+	"regexp"
+	"strings"
 	"time"
 )
 
@@ -21,6 +24,25 @@ type Ecosystem = detector.Ecosystem
 type Package struct {
 	Name      string    `json:"name"`
 	Ecosystem Ecosystem `json:"ecosystem"`
+}
+
+// NormalizedName ensures that the package name is normalized based on ecosystem
+// in accordance to the OSV specification.
+//
+// This is required because currently both GitHub and Pip seem to be a bit
+// inconsistent in their package name handling, so we normalize them
+// to be on the safe side.
+//
+// In the future, it's hoped that this can be improved.
+func (p Package) NormalizedName() string {
+	if p.Ecosystem != parsers.PipEcosystem {
+		return p.Name
+	}
+
+	// per https://www.python.org/dev/peps/pep-0503/#normalized-names
+	name := regexp.MustCompile(`[-_.]+`).ReplaceAllString(p.Name, "-")
+
+	return strings.ToLower(name)
 }
 
 type RangeEvent struct {
@@ -122,7 +144,8 @@ func (osv *OSV) IsAffected(pkg detector.PackageDetails) bool {
 	}
 
 	for _, affected := range osv.Affected {
-		if affected.Package.Ecosystem == pkg.Ecosystem && affected.Package.Name == pkg.Name {
+		if affected.Package.Ecosystem == pkg.Ecosystem &&
+			affected.Package.NormalizedName() == pkg.Name {
 			if len(affected.Ranges) == 0 {
 				_, _ = fmt.Fprintf(
 					os.Stderr,

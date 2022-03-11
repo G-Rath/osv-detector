@@ -36,6 +36,61 @@ func buildEcosystemAffectsRange(events ...database.RangeEvent) database.AffectsR
 	return database.AffectsRange{Type: database.TypeEcosystem, Events: events}
 }
 
+func TestPackage_NormalizedName(t *testing.T) {
+	t.Parallel()
+
+	database.Package{
+		Name:      "",
+		Ecosystem: "",
+	}.NormalizedName()
+}
+
+func TestPackage_NormalizedName_PipEcosystem(t *testing.T) {
+	t.Parallel()
+
+	x := [][]string{
+		{"Pillow", "pillow"},
+		{"privacyIDEA", "privacyidea"},
+		{"Products.GenericSetup", "products-genericsetup"},
+	}
+
+	for _, strings := range x {
+		name := database.Package{Name: strings[0], Ecosystem: parsers.PipEcosystem}.NormalizedName()
+
+		if name != strings[1] {
+			t.Errorf(
+				"Expected package named %s to be normalized to %s but was normalized to %s instead",
+				strings[0],
+				strings[1],
+				name,
+			)
+		}
+	}
+}
+
+func TestPackage_NormalizedName_NotPipEcosystem(t *testing.T) {
+	t.Parallel()
+
+	x := []string{
+		"Proto",
+		"Pillow",
+		"privacyIDEA",
+		"Products.GenericSetup",
+	}
+
+	for _, na := range x {
+		name := database.Package{Name: na, Ecosystem: parsers.NpmEcosystem}.NormalizedName()
+
+		if name != na {
+			t.Errorf(
+				"Expected package named %s to be unchanged, but it was normalized to %s",
+				na,
+				name,
+			)
+		}
+	}
+}
+
 func TestOSV_AffectsEcosystem(t *testing.T) {
 	t.Parallel()
 
@@ -238,5 +293,48 @@ func TestOSV_IsAffected_AffectsWithEcosystem_MultipleAffected(t *testing.T) {
 
 	for _, v := range []string{"3.2.0", "3.2.1", "4.0.0"} {
 		expectIsAffected(t, osv, v, false)
+	}
+}
+
+func TestOSV_IsAffected_AffectsWithEcosystem_PipNamesAreNormalised(t *testing.T) {
+	t.Parallel()
+
+	var osv database.OSV
+	var pkg detector.PackageDetails
+
+	osv = buildOSVWithAffected(
+		database.Affected{
+			Package: database.Package{Ecosystem: parsers.PipEcosystem, Name: "Pillow"},
+			Ranges: []database.AffectsRange{
+				buildEcosystemAffectsRange(
+					database.RangeEvent{Introduced: "0"},
+					database.RangeEvent{Fixed: "1"},
+				),
+			},
+		},
+	)
+
+	pkg = detector.PackageDetails{Name: "pillow", Version: "0.5", Ecosystem: parsers.PipEcosystem}
+
+	if !osv.IsAffected(pkg) {
+		t.Errorf("Expected OSV to normalize names of pip packages, but did not")
+	}
+
+	osv = buildOSVWithAffected(
+		database.Affected{
+			Package: database.Package{Ecosystem: parsers.NpmEcosystem, Name: "Pillow"},
+			Ranges: []database.AffectsRange{
+				buildEcosystemAffectsRange(
+					database.RangeEvent{Introduced: "0"},
+					database.RangeEvent{Fixed: "1"},
+				),
+			},
+		},
+	)
+
+	pkg = detector.PackageDetails{Name: "pillow", Version: "0.5", Ecosystem: parsers.NpmEcosystem}
+
+	if osv.IsAffected(pkg) {
+		t.Errorf("Expected OSV not to normalize names of non-pip packages, but it did")
 	}
 }
