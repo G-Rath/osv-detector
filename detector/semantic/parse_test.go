@@ -1,15 +1,15 @@
-package semver_test
+package semantic_test
 
 import (
 	"bufio"
 	"fmt"
 	"os"
-	"osv-detector/detector/semver"
+	"osv-detector/detector/semantic"
 	"strings"
 	"testing"
 )
 
-func versionsEqual(expectedVersion semver.Version, actualVersion semver.Version) bool {
+func versionsEqual(expectedVersion semantic.Version, actualVersion semantic.Version) bool {
 	if expectedVersion.Build != actualVersion.Build {
 		return false
 	}
@@ -27,7 +27,7 @@ func versionsEqual(expectedVersion semver.Version, actualVersion semver.Version)
 	return true
 }
 
-func explainVersion(version semver.Version) string {
+func explainVersion(version semantic.Version) string {
 	str := "{ "
 
 	for i, component := range version.Components {
@@ -40,7 +40,7 @@ func explainVersion(version semver.Version) string {
 	return str
 }
 
-func notExpectedMessage(version string, expectedVersion semver.Version, actualVersion semver.Version) string {
+func notExpectedMessage(version string, expectedVersion semantic.Version, actualVersion semantic.Version) string {
 	str := fmt.Sprintf("'%s' was not parsed as expected:", version)
 
 	str += fmt.Sprintf("\n  Expected: %s", explainVersion(expectedVersion))
@@ -49,10 +49,10 @@ func notExpectedMessage(version string, expectedVersion semver.Version, actualVe
 	return str
 }
 
-func expectParsedVersionToMatchOriginalString(t *testing.T, str string) semver.Version {
+func expectParsedVersionToMatchOriginalString(t *testing.T, str string) semantic.Version {
 	t.Helper()
 
-	actualVersion := semver.Parse(str)
+	actualVersion := semantic.Parse(str)
 
 	if actualVersion.ToString() != str {
 		t.Errorf(
@@ -65,7 +65,7 @@ func expectParsedVersionToMatchOriginalString(t *testing.T, str string) semver.V
 	return actualVersion
 }
 
-func expectParsedAsVersion(t *testing.T, str string, expectedVersion semver.Version) {
+func expectParsedAsVersion(t *testing.T, str string, expectedVersion semantic.Version) {
 	t.Helper()
 
 	actualVersion := expectParsedVersionToMatchOriginalString(t, str)
@@ -79,11 +79,11 @@ func expectParsedVersionToMatchString(
 	t *testing.T,
 	str string,
 	expectedString string,
-	expectedVersion semver.Version,
+	expectedVersion semantic.Version,
 ) {
 	t.Helper()
 
-	actualVersion := semver.Parse(str)
+	actualVersion := semantic.Parse(str)
 
 	if actualVersion.ToString() != expectedString {
 		t.Errorf(
@@ -101,37 +101,37 @@ func expectParsedVersionToMatchString(
 func TestParse_Standard(t *testing.T) {
 	t.Parallel()
 
-	expectParsedAsVersion(t, "0.0.0.0", semver.Version{
+	expectParsedAsVersion(t, "0.0.0.0", semantic.Version{
 		Components: []int{0, 0, 0, 0},
 		Build:      "",
 	})
 
-	expectParsedAsVersion(t, "1.0.0.0", semver.Version{
+	expectParsedAsVersion(t, "1.0.0.0", semantic.Version{
 		Components: []int{1, 0, 0, 0},
 		Build:      "",
 	})
 
-	expectParsedAsVersion(t, "1.2.0.0", semver.Version{
+	expectParsedAsVersion(t, "1.2.0.0", semantic.Version{
 		Components: []int{1, 2, 0, 0},
 		Build:      "",
 	})
 
-	expectParsedAsVersion(t, "1.2.3.0", semver.Version{
+	expectParsedAsVersion(t, "1.2.3.0", semantic.Version{
 		Components: []int{1, 2, 3, 0},
 		Build:      "",
 	})
 
-	expectParsedAsVersion(t, "1.2.3.4", semver.Version{
+	expectParsedAsVersion(t, "1.2.3.4", semantic.Version{
 		Components: []int{1, 2, 3, 4},
 		Build:      "",
 	})
 
-	expectParsedAsVersion(t, "9.2.55826.0", semver.Version{
+	expectParsedAsVersion(t, "9.2.55826.0", semantic.Version{
 		Components: []int{9, 2, 55826, 0},
 		Build:      "",
 	})
 
-	expectParsedAsVersion(t, "3.2.22.3", semver.Version{
+	expectParsedAsVersion(t, "3.2.22.3", semantic.Version{
 		Components: []int{3, 2, 22, 3},
 		Build:      "",
 	})
@@ -140,22 +140,22 @@ func TestParse_Standard(t *testing.T) {
 func TestParse_Omitted(t *testing.T) {
 	t.Parallel()
 
-	expectParsedAsVersion(t, "1", semver.Version{
+	expectParsedAsVersion(t, "1", semantic.Version{
 		Components: []int{1},
 		Build:      "",
 	})
 
-	expectParsedAsVersion(t, "1.2", semver.Version{
+	expectParsedAsVersion(t, "1.2", semantic.Version{
 		Components: []int{1, 2},
 		Build:      "",
 	})
 
-	expectParsedAsVersion(t, "1.2.3", semver.Version{
+	expectParsedAsVersion(t, "1.2.3", semantic.Version{
 		Components: []int{1, 2, 3},
 		Build:      "",
 	})
 
-	expectParsedAsVersion(t, "1.2.3.", semver.Version{
+	expectParsedAsVersion(t, "1.2.3.", semantic.Version{
 		Components: []int{1, 2, 3},
 		Build:      ".",
 	})
@@ -164,42 +164,42 @@ func TestParse_Omitted(t *testing.T) {
 func TestParse_WithBuildString(t *testing.T) {
 	t.Parallel()
 
-	expectParsedAsVersion(t, "10.0.0.beta1", semver.Version{
+	expectParsedAsVersion(t, "10.0.0.beta1", semantic.Version{
 		Components: []int{10, 0, 0},
 		Build:      ".beta1",
 	})
 
-	expectParsedAsVersion(t, "1.0.0a20", semver.Version{
+	expectParsedAsVersion(t, "1.0.0a20", semantic.Version{
 		Components: []int{1, 0, 0},
 		Build:      "a20",
 	})
 
-	expectParsedAsVersion(t, "9.0.0.pre1", semver.Version{
+	expectParsedAsVersion(t, "9.0.0.pre1", semantic.Version{
 		Components: []int{9, 0, 0},
 		Build:      ".pre1",
 	})
 
-	expectParsedAsVersion(t, "9.4.16.v20190411", semver.Version{
+	expectParsedAsVersion(t, "9.4.16.v20190411", semantic.Version{
 		Components: []int{9, 4, 16},
 		Build:      ".v20190411",
 	})
 
-	expectParsedAsVersion(t, "0.3.0-beta.83", semver.Version{
+	expectParsedAsVersion(t, "0.3.0-beta.83", semantic.Version{
 		Components: []int{0, 3, 0},
 		Build:      "-beta.83",
 	})
 
-	expectParsedAsVersion(t, "3.0.0-beta.17.5", semver.Version{
+	expectParsedAsVersion(t, "3.0.0-beta.17.5", semantic.Version{
 		Components: []int{3, 0, 0},
 		Build:      "-beta.17.5",
 	})
 
-	expectParsedAsVersion(t, "4.0.0-milestone3", semver.Version{
+	expectParsedAsVersion(t, "4.0.0-milestone3", semantic.Version{
 		Components: []int{4, 0, 0},
 		Build:      "-milestone3",
 	})
 
-	expectParsedAsVersion(t, "13.6RC1", semver.Version{
+	expectParsedAsVersion(t, "13.6RC1", semantic.Version{
 		Components: []int{13, 6},
 		Build:      "RC1",
 	})
@@ -242,12 +242,12 @@ func TestParse_NoComponents(t *testing.T) {
 func TestParse_LeadingZerosAndDateLike(t *testing.T) {
 	t.Parallel()
 
-	expectParsedVersionToMatchString(t, "20.04.0", "20.4.0", semver.Version{
+	expectParsedVersionToMatchString(t, "20.04.0", "20.4.0", semantic.Version{
 		Components: []int{20, 4, 0},
 		Build:      "",
 	})
 
-	expectParsedVersionToMatchString(t, "4.3.04", "4.3.4", semver.Version{
+	expectParsedVersionToMatchString(t, "4.3.04", "4.3.4", semantic.Version{
 		Components: []int{4, 3, 4},
 		Build:      "",
 	})
@@ -263,32 +263,32 @@ func TestParse_LeadingZerosAndDateLike(t *testing.T) {
 func TestParse_DateLike(t *testing.T) {
 	t.Parallel()
 
-	expectParsedVersionToMatchString(t, "20.04.0", "20.4.0", semver.Version{
+	expectParsedVersionToMatchString(t, "20.04.0", "20.4.0", semantic.Version{
 		Components: []int{20, 4, 0},
 		Build:      "",
 	})
 
-	expectParsedVersionToMatchString(t, "4.3.04alpha01", "4.3.4alpha01", semver.Version{
+	expectParsedVersionToMatchString(t, "4.3.04alpha01", "4.3.4alpha01", semantic.Version{
 		Components: []int{4, 3, 4},
 		Build:      "alpha01",
 	})
 
-	expectParsedVersionToMatchString(t, "2019.03.6.1", "2019.3.6.1", semver.Version{
+	expectParsedVersionToMatchString(t, "2019.03.6.1", "2019.3.6.1", semantic.Version{
 		Components: []int{2019, 3, 6, 1},
 		Build:      "",
 	})
 
-	expectParsedVersionToMatchString(t, "19.04.15", "19.4.15", semver.Version{
+	expectParsedVersionToMatchString(t, "19.04.15", "19.4.15", semantic.Version{
 		Components: []int{19, 4, 15},
 		Build:      "",
 	})
 
-	expectParsedVersionToMatchString(t, "20.04.13", "20.4.13", semver.Version{
+	expectParsedVersionToMatchString(t, "20.04.13", "20.4.13", semantic.Version{
 		Components: []int{20, 4, 13},
 		Build:      "",
 	})
 
-	expectParsedVersionToMatchString(t, "2019.11.09", "2019.11.9", semver.Version{
+	expectParsedVersionToMatchString(t, "2019.11.09", "2019.11.9", semantic.Version{
 		Components: []int{2019, 11, 9},
 		Build:      "",
 	})

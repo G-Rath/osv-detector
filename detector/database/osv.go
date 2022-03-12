@@ -5,7 +5,7 @@ import (
 	"os"
 	"osv-detector/detector"
 	"osv-detector/detector/lockfile"
-	"osv-detector/detector/semver"
+	"osv-detector/detector/semantic"
 	"regexp"
 	"strings"
 	"time"
@@ -65,7 +65,7 @@ func (ar AffectsRange) containsVersion(v string) bool {
 		return false
 	}
 
-	vp := semver.Parse(v)
+	vp := semantic.Parse(v)
 
 	var affected bool
 	for _, e := range ar.Events {
