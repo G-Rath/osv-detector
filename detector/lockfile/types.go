@@ -1,4 +1,4 @@
-package parsers
+package lockfile
 
 import "osv-detector/detector"
 
