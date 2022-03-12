@@ -122,12 +122,33 @@ type Affected struct {
 // OSV represents an OSV style JSON vulnerability database entry
 type OSV struct {
 	ID        string     `json:"id"`
+	Aliases   []string   `json:"aliases"`
 	Summary   string     `json:"summary"`
 	Published time.Time  `json:"published"`
 	Modified  time.Time  `json:"modified"`
 	Withdrawn *time.Time `json:"withdrawn,omitempty"`
 	Details   string     `json:"details"`
 	Affected  []Affected `json:"affected"`
+}
+
+func (osv *OSV) isAliasOfID(id string) bool {
+	for _, alias := range osv.Aliases {
+		if alias == id {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (osv *OSV) isAliasOf(vulnerability OSV) bool {
+	for _, alias := range vulnerability.Aliases {
+		if osv.ID == alias || osv.isAliasOfID(alias) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (osv *OSV) AffectsEcosystem(ecosystem detector.Ecosystem) bool {
