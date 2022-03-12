@@ -125,7 +125,7 @@ func main() {
 
 	pathToLockOrDirectory := flag.Arg(0)
 
-	packages, err := lockfile.TryParse(pathToLockOrDirectory, *parseAs)
+	packages, err := lockfile.Parse(pathToLockOrDirectory, *parseAs)
 
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Error, %s\n", err)

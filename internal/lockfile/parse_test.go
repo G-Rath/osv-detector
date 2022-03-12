@@ -52,7 +52,7 @@ func TestTryParse_FindsExpectedParsers(t *testing.T) {
 	count := 0
 
 	for _, file := range lockfiles {
-		_, err := lockfile.TryParse("/path/to/my/"+file, "")
+		_, err := lockfile.Parse("/path/to/my/"+file, "")
 
 		if errors.Is(err, lockfile.ErrParserNotFound) {
 			t.Errorf("No parser was found for %s", file)
