@@ -60,7 +60,12 @@ func (ps Packages) Ecosystems() []Ecosystem {
 	return slicedEcosystems
 }
 
-func TryParse(pathToLockfile string, parseAs string) (Packages, error) {
+// Parse attempts to extract a collection of package details from a lockfile,
+// using one of the native parsers.
+//
+// The parser is selected based on the name of the file, which can be overridden
+// with the "parseAs" parameter.
+func Parse(pathToLockfile string, parseAs string) (Packages, error) {
 	if parseAs == "" {
 		parseAs = path.Base(pathToLockfile)
 	}
