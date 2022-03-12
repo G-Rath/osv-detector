@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"osv-detector/detector/semantic"
+	"osv-detector/internal/semantic"
 	"strings"
 	"testing"
 )

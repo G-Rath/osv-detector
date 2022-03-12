@@ -1,8 +1,6 @@
 package database
 
-import (
-	"osv-detector/detector"
-)
+import "osv-detector/internal"
 
 func (db *OSVDatabase) Vulnerabilities(includeWithdrawn bool) []OSV {
 	if includeWithdrawn {
@@ -39,7 +37,7 @@ func (vs Vulnerabilities) Includes(vulnerability OSV) bool {
 	return false
 }
 
-func (db *OSVDatabase) VulnerabilitiesAffectingPackage(pkg detector.PackageDetails) Vulnerabilities {
+func (db *OSVDatabase) VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) Vulnerabilities {
 	var vulnerabilities Vulnerabilities
 
 	for _, vulnerability := range db.Vulnerabilities(false) {

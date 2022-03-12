@@ -1,7 +1,7 @@
 package database_test
 
 import (
-	"osv-detector/detector/database"
+	"osv-detector/internal/database"
 	"testing"
 )
 

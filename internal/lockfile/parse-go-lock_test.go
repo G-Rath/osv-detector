@@ -1,7 +1,7 @@
 package lockfile_test
 
 import (
-	"osv-detector/detector/lockfile"
+	"osv-detector/internal/lockfile"
 	"testing"
 )
 

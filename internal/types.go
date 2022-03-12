@@ -1,4 +1,4 @@
-package detector
+package internal
 
 type PackageDetails struct {
 	Name      string
