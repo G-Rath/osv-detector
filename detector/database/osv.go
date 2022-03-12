@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"osv-detector/detector"
-	"osv-detector/detector/parsers"
+	"osv-detector/detector/lockfile"
 	"osv-detector/detector/semver"
 	"regexp"
 	"strings"
@@ -36,7 +36,7 @@ type Package struct {
 //
 // In the future, it's hoped that this can be improved.
 func (p Package) NormalizedName() string {
-	if p.Ecosystem != parsers.PipEcosystem {
+	if p.Ecosystem != lockfile.PipEcosystem {
 		return p.Name
 	}
 

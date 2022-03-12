@@ -8,7 +8,7 @@ import (
 	"os"
 	"osv-detector/detector"
 	"osv-detector/detector/database"
-	"osv-detector/detector/parsers"
+	"osv-detector/detector/lockfile"
 	"path"
 )
 
@@ -125,7 +125,7 @@ func main() {
 
 	pathToLockOrDirectory := flag.Arg(0)
 
-	packages, err := parsers.TryParse(pathToLockOrDirectory, *parseAs)
+	packages, err := lockfile.TryParse(pathToLockOrDirectory, *parseAs)
 
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Error, %s\n", err)

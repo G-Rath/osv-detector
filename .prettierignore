@@ -1,1 +1,1 @@
-detector/parsers/fixtures/pnpm/*.yaml
+detector/*/fixtures/pnpm/*.yaml

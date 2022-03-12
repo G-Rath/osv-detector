@@ -1,9 +1,9 @@
-package parsers_test
+package lockfile_test
 
 import (
 	"errors"
 	"io/ioutil"
-	"osv-detector/detector/parsers"
+	"osv-detector/detector/lockfile"
 	"strings"
 	"testing"
 )
@@ -51,11 +51,11 @@ func TestTryParse_FindsExpectedParsers(t *testing.T) {
 
 	count := 0
 
-	for _, lockfile := range lockfiles {
-		_, err := parsers.TryParse("/path/to/my/"+lockfile, "")
+	for _, file := range lockfiles {
+		_, err := lockfile.TryParse("/path/to/my/"+file, "")
 
-		if errors.Is(err, parsers.ErrParserNotFound) {
-			t.Errorf("No parser was found for %s", lockfile)
+		if errors.Is(err, lockfile.ErrParserNotFound) {
+			t.Errorf("No parser was found for %s", file)
 		}
 
 		count++

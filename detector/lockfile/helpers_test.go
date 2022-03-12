@@ -1,8 +1,8 @@
-package parsers_test
+package lockfile_test
 
 import (
 	"fmt"
-	"osv-detector/detector/parsers"
+	"osv-detector/detector/lockfile"
 	"strings"
 	"testing"
 )
@@ -19,11 +19,11 @@ func expectErrContaining(t *testing.T, err error, str string) {
 	}
 }
 
-func packageToString(pkg parsers.PackageDetails) string {
+func packageToString(pkg lockfile.PackageDetails) string {
 	return fmt.Sprintf("%s@%s (%s)", pkg.Name, pkg.Version, pkg.Ecosystem)
 }
 
-func hasPackage(packages []parsers.PackageDetails, pkg parsers.PackageDetails) bool {
+func hasPackage(packages []lockfile.PackageDetails, pkg lockfile.PackageDetails) bool {
 	for _, details := range packages {
 		if details == pkg {
 			return true
@@ -33,7 +33,7 @@ func hasPackage(packages []parsers.PackageDetails, pkg parsers.PackageDetails) b
 	return false
 }
 
-func expectPackage(t *testing.T, packages []parsers.PackageDetails, pkg parsers.PackageDetails) {
+func expectPackage(t *testing.T, packages []lockfile.PackageDetails, pkg lockfile.PackageDetails) {
 	t.Helper()
 
 	if !hasPackage(packages, pkg) {
@@ -46,8 +46,8 @@ func expectPackage(t *testing.T, packages []parsers.PackageDetails, pkg parsers.
 	}
 }
 
-func findMissingPackages(actualPackages []parsers.PackageDetails, expectedPackages []parsers.PackageDetails) []parsers.PackageDetails {
-	var missingPackages []parsers.PackageDetails
+func findMissingPackages(actualPackages []lockfile.PackageDetails, expectedPackages []lockfile.PackageDetails) []lockfile.PackageDetails {
+	var missingPackages []lockfile.PackageDetails
 
 	for _, pkg := range actualPackages {
 		if !hasPackage(expectedPackages, pkg) {
@@ -58,7 +58,7 @@ func findMissingPackages(actualPackages []parsers.PackageDetails, expectedPackag
 	return missingPackages
 }
 
-func expectPackages(t *testing.T, actualPackages []parsers.PackageDetails, expectedPackages []parsers.PackageDetails) {
+func expectPackages(t *testing.T, actualPackages []lockfile.PackageDetails, expectedPackages []lockfile.PackageDetails) {
 	t.Helper()
 
 	if len(expectedPackages) != len(actualPackages) {
