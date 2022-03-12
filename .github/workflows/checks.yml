@@ -82,3 +82,12 @@ jobs:
         uses: actions/checkout@v3
 
       - run: make lint-with-go-fmt
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+
+      - run: npx prettier --prose-wrap always --check .
