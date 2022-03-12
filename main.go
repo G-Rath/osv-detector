@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"os"
-	"osv-detector/detector"
-	"osv-detector/detector/database"
-	"osv-detector/detector/lockfile"
+	"osv-detector/internal"
+	"osv-detector/internal/database"
+	"osv-detector/internal/lockfile"
 	"path"
 )
 
@@ -46,7 +46,7 @@ func printEcosystems(db database.OSVDatabase) {
 	}
 }
 
-func printPackages(pathToLock string, packages []detector.PackageDetails) {
+func printPackages(pathToLock string, packages []internal.PackageDetails) {
 	fmt.Printf("The following packages were found in %s:\n", pathToLock)
 
 	for _, details := range packages {
@@ -54,7 +54,7 @@ func printPackages(pathToLock string, packages []detector.PackageDetails) {
 	}
 }
 
-func printVulnerabilities(db database.OSVDatabase, pkg detector.PackageDetails) int {
+func printVulnerabilities(db database.OSVDatabase, pkg internal.PackageDetails) int {
 	vulnerabilities := db.VulnerabilitiesAffectingPackage(pkg)
 
 	if len(vulnerabilities) == 0 {
@@ -78,13 +78,13 @@ func printVulnerabilities(db database.OSVDatabase, pkg detector.PackageDetails) 
 	return len(vulnerabilities)
 }
 
-func ecosystemDatabaseURL(ecosystem detector.Ecosystem) string {
+func ecosystemDatabaseURL(ecosystem internal.Ecosystem) string {
 	return fmt.Sprintf("https://osv-vulnerabilities.storage.googleapis.com/%s/all.zip", ecosystem)
 }
 
 type OSVDatabases []database.OSVDatabase
 
-func loadEcosystemDatabases(ecosystems []detector.Ecosystem, offline bool) OSVDatabases {
+func loadEcosystemDatabases(ecosystems []internal.Ecosystem, offline bool) OSVDatabases {
 	dbs := make(OSVDatabases, 0, len(ecosystems))
 
 	fmt.Printf("Loading OSV databases for the following ecosystems:\n")

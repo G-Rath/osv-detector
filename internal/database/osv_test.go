@@ -1,9 +1,9 @@
 package database_test
 
 import (
-	"osv-detector/detector"
-	"osv-detector/detector/database"
-	"osv-detector/detector/lockfile"
+	"osv-detector/internal"
+	"osv-detector/internal/database"
+	"osv-detector/internal/lockfile"
 	"testing"
 	"time"
 )
@@ -19,7 +19,7 @@ func expectOSVDescription(t *testing.T, expected string, osv database.OSV) {
 func expectIsAffected(t *testing.T, osv database.OSV, version string, expectAffected bool) {
 	t.Helper()
 
-	pkg := detector.PackageDetails{Name: "my-package", Version: version, Ecosystem: lockfile.NpmEcosystem}
+	pkg := internal.PackageDetails{Name: "my-package", Version: version, Ecosystem: lockfile.NpmEcosystem}
 
 	if osv.IsAffected(pkg) != expectAffected {
 		if expectAffected {
@@ -312,7 +312,7 @@ func TestOSV_IsAffected_AffectsWithEcosystem_PipNamesAreNormalised(t *testing.T)
 	t.Parallel()
 
 	var osv database.OSV
-	var pkg detector.PackageDetails
+	var pkg internal.PackageDetails
 
 	osv = buildOSVWithAffected(
 		database.Affected{
@@ -326,7 +326,7 @@ func TestOSV_IsAffected_AffectsWithEcosystem_PipNamesAreNormalised(t *testing.T)
 		},
 	)
 
-	pkg = detector.PackageDetails{Name: "pillow", Version: "0.5", Ecosystem: lockfile.PipEcosystem}
+	pkg = internal.PackageDetails{Name: "pillow", Version: "0.5", Ecosystem: lockfile.PipEcosystem}
 
 	if !osv.IsAffected(pkg) {
 		t.Errorf("Expected OSV to normalize names of pip packages, but did not")
@@ -344,7 +344,7 @@ func TestOSV_IsAffected_AffectsWithEcosystem_PipNamesAreNormalised(t *testing.T)
 		},
 	)
 
-	pkg = detector.PackageDetails{Name: "pillow", Version: "0.5", Ecosystem: lockfile.NpmEcosystem}
+	pkg = internal.PackageDetails{Name: "pillow", Version: "0.5", Ecosystem: lockfile.NpmEcosystem}
 
 	if osv.IsAffected(pkg) {
 		t.Errorf("Expected OSV not to normalize names of non-pip packages, but it did")

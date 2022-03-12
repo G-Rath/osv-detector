@@ -3,9 +3,9 @@ package database
 import (
 	"fmt"
 	"os"
-	"osv-detector/detector"
-	"osv-detector/detector/lockfile"
-	"osv-detector/detector/semantic"
+	"osv-detector/internal"
+	"osv-detector/internal/lockfile"
+	"osv-detector/internal/semantic"
 	"regexp"
 	"strings"
 	"time"
@@ -20,7 +20,7 @@ const (
 	TypeGit       AffectsRangeType = "GIT"
 )
 
-type Ecosystem = detector.Ecosystem
+type Ecosystem = internal.Ecosystem
 
 type Package struct {
 	Name      string    `json:"name"`
@@ -151,7 +151,7 @@ func (osv *OSV) isAliasOf(vulnerability OSV) bool {
 	return false
 }
 
-func (osv *OSV) AffectsEcosystem(ecosystem detector.Ecosystem) bool {
+func (osv *OSV) AffectsEcosystem(ecosystem internal.Ecosystem) bool {
 	if osv.Affected == nil {
 		fmt.Printf("Ignoring %s as it does not have an 'affected' property\n", osv.ID)
 
@@ -225,7 +225,7 @@ func (osv *OSV) Link() string {
 	return ""
 }
 
-func (osv *OSV) IsAffected(pkg detector.PackageDetails) bool {
+func (osv *OSV) IsAffected(pkg internal.PackageDetails) bool {
 	if osv.Affected == nil {
 		fmt.Printf("Ignoring %s as it does not have an 'affected' property\n", osv.ID)
 
