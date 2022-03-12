@@ -57,6 +57,16 @@ This requires the detector to have successfully downloaded a copy of ecosystem
 databases required to check the packages discovered during parsing at least
 once.
 
+You can have the detector cache the databases for all known ecosystems supported
+by the detector for later offline use with the `--cache-all-databases`:
+
+```shell
+osv-detector --cache-all-databases
+```
+
+This can be useful if you're planning to run the detector over a number of
+lockfiles in bulk.
+
 ### Auxiliary output commands
 
 The detector supports a few auxiliary commands that have it output information

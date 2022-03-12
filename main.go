@@ -109,17 +109,29 @@ func loadEcosystemDatabases(ecosystems []internal.Ecosystem, offline bool) OSVDa
 	return dbs
 }
 
+func cacheAllEcosystemDatabases() {
+	ecosystems := lockfile.KnownEcosystems()
+
+	loadEcosystemDatabases(ecosystems, false)
+}
+
 func main() {
 	offline := flag.Bool("offline", false, "Update the OSV database")
 	parseAs := flag.String("parse-as", "", "Name of a supported lockfile to use to determine how to parse the given file")
 	printVersion := flag.Bool("version", false, "Print version information")
 	listEcosystems := flag.Bool("list-ecosystems", false, "List all the ecosystems present in the loaded OSV database")
 	listPackages := flag.Bool("list-packages", false, "List all the packages that were parsed from the given file")
+	cacheAllDatabases := flag.Bool("cache-all-databases", false, "Cache all the known ecosystem databases for offline use")
 
 	flag.Parse()
 
 	if *printVersion {
 		fmt.Printf("osv-detector %s (%s, commit %s)\n", version, date, commit)
+		os.Exit(0)
+	}
+
+	if *cacheAllDatabases {
+		cacheAllEcosystemDatabases()
 		os.Exit(0)
 	}
 
