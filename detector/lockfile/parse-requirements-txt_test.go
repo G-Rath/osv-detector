@@ -41,7 +41,7 @@ func TestParseRequirementsTxt_CommentsOnly(t *testing.T) {
 func TestParseRequirementsTxt_OneRequirementUnconstrained(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/one-requirement-unconstrained.txt")
+	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/one-package-unconstrained.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -59,7 +59,7 @@ func TestParseRequirementsTxt_OneRequirementUnconstrained(t *testing.T) {
 func TestParseRequirementsTxt_OneRequirementConstrained(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/one-requirement-constrained.txt")
+	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/one-package-constrained.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -77,7 +77,7 @@ func TestParseRequirementsTxt_OneRequirementConstrained(t *testing.T) {
 func TestParseRequirementsTxt_MultipleRequirementsConstrained(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/multiple-requirements-constrained.txt")
+	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/multiple-packages-constrained.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -155,7 +155,7 @@ func TestParseRequirementsTxt_MultipleRequirementsConstrained(t *testing.T) {
 func TestParseRequirementsTxt_MultipleRequirementsMixed(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/multiple-requirements-mixed.txt")
+	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/multiple-packages-mixed.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
