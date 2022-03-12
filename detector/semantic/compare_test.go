@@ -1,7 +1,7 @@
-package semver_test
+package semantic_test
 
 import (
-	"osv-detector/detector/semver"
+	"osv-detector/detector/semantic"
 	"testing"
 )
 
@@ -24,8 +24,8 @@ func compareWord(t *testing.T, result int) string {
 
 func expectCompareResult(
 	t *testing.T,
-	a semver.Version,
-	b semver.Version,
+	a semantic.Version,
+	b semantic.Version,
 	expectedResult int,
 ) {
 	t.Helper()
@@ -41,8 +41,8 @@ func expectCompareResult(
 	}
 }
 
-func buildlessVersion(build string, components ...int) semver.Version {
-	return semver.Version{Components: components, Build: build}
+func buildlessVersion(build string, components ...int) semantic.Version {
+	return semantic.Version{Components: components, Build: build}
 }
 
 func TestVersion_Compare_BasicEqual(t *testing.T) {
