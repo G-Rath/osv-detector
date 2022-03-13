@@ -57,17 +57,14 @@ landed. You can run linting locally with:
 make lint
 ```
 
-Markdown documents, json, and yaml files should ideally be formatted with
-[`prettier`](https://prettier.io/) with
-[`--prose-wrap always`](https://prettier.io/).
-
-You can run this with:
+Markdown documents, json, and yaml files should be formatted with
+[`prettier`](https://prettier.io/). You can run this with:
 
 ```shell
 make format-with-prettier
 ```
 
-Running `prettier` is not included as part of CI.
+This is also run as part of CI.
 
 ## Submitting changes
 
