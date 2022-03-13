@@ -36,10 +36,10 @@ func loadOSVDatabase(offline bool, archiveURL string) database.OSVDatabase {
 	return *db
 }
 
-func printEcosystems(db database.OSVDatabase) {
-	ecosystems := db.ListEcosystems()
+func printKnownEcosystems() {
+	ecosystems := lockfile.KnownEcosystems()
 
-	fmt.Println("The loaded OSV has vulnerabilities for the following ecosystems:")
+	fmt.Println("The detector supports parsing for the following ecosystems:")
 
 	for _, ecosystem := range ecosystems {
 		fmt.Printf("  %s\n", ecosystem)
@@ -135,6 +135,11 @@ func main() {
 		os.Exit(0)
 	}
 
+	if *listEcosystems {
+		printKnownEcosystems()
+		os.Exit(0)
+	}
+
 	pathToLockOrDirectory := flag.Arg(0)
 
 	packages, err := lockfile.Parse(pathToLockOrDirectory, *parseAs)
@@ -150,13 +155,6 @@ func main() {
 	}
 
 	dbs := loadEcosystemDatabases(packages.Ecosystems(), *offline)
-
-	if *listEcosystems {
-		for _, db := range dbs {
-			printEcosystems(db)
-		}
-		os.Exit(0)
-	}
 
 	file := path.Base(pathToLockOrDirectory)
 

@@ -74,23 +74,18 @@ which can be useful for debugging issues and general exploring.
 
 #### `--list-ecosystems`
 
-Lists all the ecosystems that exist in the loaded OSV database. This can be
-useful when exploring new parsers, or building wrappers around the detector
-since a valid ecosystem is required to determine if a package has a
-vulnerability, and the ecosystem names are case-sensitive:
+Lists all the ecosystems that the detector knows about (aka there is a parser
+that results in packages from that ecosystem):
 
 ```
 $ osv-detector --list-ecosystems
-Loaded 6532 vulnerabilities (including withdrawn, last updated Fri, 04 Mar 2022 00:11:50 GMT)
-The loaded OSV has vulnerabilities for the following ecosystems:
-  Packagist
-  Go
+The detector supports parsing for the following ecosystems:
+  npm
   crates.io
   RubyGems
-  npm
+  Packagist
+  Go
   PyPI
-  Maven
-  NuGet
 ```
 
 #### `--list-packages`
