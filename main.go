@@ -81,22 +81,19 @@ type OSVDatabases []database.OSVDatabase
 
 func (dbs OSVDatabases) check(lockf lockfile.Lockfile) reporter.Report {
 	report := reporter.Report{
-		FilePath: lockf.FilePath,
-		ParsedAs: lockf.ParsedAs,
+		Lockfile: lockf,
 		Packages: make([]reporter.PackageDetailsWithVulnerabilities, 0, len(lockf.Packages)),
 	}
 
 	for _, pkg := range lockf.Packages {
-		var vulnerabilities database.Vulnerabilities
+		vulnerabilities := make(database.Vulnerabilities, 0)
 
 		for _, db := range dbs {
 			vulnerabilities = append(vulnerabilities, db.VulnerabilitiesAffectingPackage(pkg)...)
 		}
 
 		report.Packages = append(report.Packages, reporter.PackageDetailsWithVulnerabilities{
-			Name:            pkg.Name,
-			Version:         pkg.Version,
-			Ecosystem:       pkg.Ecosystem,
+			PackageDetails:  pkg,
 			Vulnerabilities: vulnerabilities,
 		})
 	}
@@ -107,10 +104,10 @@ func (dbs OSVDatabases) check(lockf lockfile.Lockfile) reporter.Report {
 func loadEcosystemDatabases(ecosystems []internal.Ecosystem, offline bool) (OSVDatabases, error) {
 	dbs := make(OSVDatabases, 0, len(ecosystems))
 
-	fmt.Printf("  Loading OSV databases for the following ecosystems:\n")
+	fmt.Fprintf(os.Stderr, "  Loading OSV databases for the following ecosystems:\n")
 
 	for _, ecosystem := range ecosystems {
-		fmt.Printf("    %s", ecosystem)
+		fmt.Fprintf(os.Stderr, "    %s", ecosystem)
 		archiveURL := ecosystemDatabaseURL(ecosystem)
 
 		db, err := database.NewDB(offline, archiveURL)
@@ -119,7 +116,7 @@ func loadEcosystemDatabases(ecosystems []internal.Ecosystem, offline bool) (OSVD
 			return dbs, fmt.Errorf("could not load database: %w", err)
 		}
 
-		fmt.Printf(
+		fmt.Fprintf(os.Stderr,
 			" (%s vulnerabilities, including withdrawn - last updated %s)\n",
 			color.YellowString("%d", len(db.Vulnerabilities(true))),
 			db.UpdatedAt,
@@ -128,7 +125,7 @@ func loadEcosystemDatabases(ecosystems []internal.Ecosystem, offline bool) (OSVD
 		dbs = append(dbs, *db)
 	}
 
-	fmt.Println()
+	fmt.Fprintln(os.Stderr)
 
 	return dbs, nil
 }
@@ -148,6 +145,7 @@ func run() int {
 	listEcosystems := flag.Bool("list-ecosystems", false, "List all the ecosystems present in the loaded OSV database")
 	listPackages := flag.Bool("list-packages", false, "List all the packages that were parsed from the given file")
 	cacheAllDatabases := flag.Bool("cache-all-databases", false, "Cache all the known ecosystem databases for offline use")
+	outputAsJSON := flag.Bool("json", false, "Cache all the known ecosystem databases for offline use")
 
 	flag.Parse()
 
@@ -197,7 +195,7 @@ func run() int {
 			continue
 		}
 
-		fmt.Printf(
+		fmt.Fprintf(os.Stderr,
 			"%s: found %s packages\n",
 			color.MagentaString("%s", lockf.FilePath),
 			color.YellowString("%d", len(lockf.Packages)),
@@ -224,9 +222,9 @@ func run() int {
 			continue
 		}
 
-		fmt.Println(report.Format(false))
+		fmt.Println(report.Format(*outputAsJSON))
 
-		fmt.Printf(
+		fmt.Fprintf(os.Stderr,
 			"\n  %s\n",
 			color.RedString(
 				"%d known vulnerabilities found in %s",

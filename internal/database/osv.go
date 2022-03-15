@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"osv-detector/internal"
@@ -102,6 +103,14 @@ type Reference struct {
 }
 
 type Versions []string
+
+func (vs Versions) MarshalJSON() ([]byte, error) {
+	if len(vs) == 0 {
+		return []byte("[]"), nil
+	}
+
+	return json.Marshal([]string(vs))
+}
 
 func (vs Versions) includes(v string) bool {
 	for _, v2 := range vs {

@@ -3,21 +3,19 @@ package reporter
 import (
 	"osv-detector/internal"
 	"osv-detector/internal/database"
+	"osv-detector/internal/lockfile"
 )
 
 type PackageDetailsWithVulnerabilities struct {
-	Name      string
-	Version   string
-	Ecosystem internal.Ecosystem
+	internal.PackageDetails
 
-	Vulnerabilities database.Vulnerabilities
+	Vulnerabilities database.Vulnerabilities `json:"vulnerabilities"`
 }
 
 type Report struct {
-	FilePath string
-	ParsedAs string
+	lockfile.Lockfile
 	// Packages is a map of packages and any vulnerabilities that they're affected by
-	Packages []PackageDetailsWithVulnerabilities
+	Packages []PackageDetailsWithVulnerabilities `json:"packages"`
 }
 
 func (r Report) CountKnownVulnerabilities() int {
