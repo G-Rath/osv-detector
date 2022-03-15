@@ -79,6 +79,10 @@ func Parse(pathToLockfile string, parseAs string) (Packages, error) {
 	packages, err := parser(pathToLockfile)
 
 	sort.Slice(packages, func(i, j int) bool {
+		if packages[i].Name == packages[j].Name {
+			return packages[i].Version < packages[j].Version
+		}
+
 		return packages[i].Name < packages[j].Name
 	})
 
