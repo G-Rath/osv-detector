@@ -9,6 +9,7 @@ import (
 	"osv-detector/internal"
 	"osv-detector/internal/database"
 	"osv-detector/internal/lockfile"
+	"osv-detector/internal/reporter"
 )
 
 // these come from goreleaser
@@ -40,10 +41,10 @@ func printKnownEcosystems() {
 	}
 }
 
-func printPackages(pathToLock string, packages []internal.PackageDetails) {
-	fmt.Printf("The following packages were found in %s:\n", pathToLock)
+func printPackages(lockf lockfile.Lockfile) {
+	fmt.Printf("The following packages were found in %s:\n", lockf.FilePath)
 
-	for _, details := range packages {
+	for _, details := range lockf.Packages {
 		fmt.Printf("  %s: %s@%s\n", details.Ecosystem, details.Name, details.Version)
 	}
 }
@@ -77,6 +78,31 @@ func ecosystemDatabaseURL(ecosystem internal.Ecosystem) string {
 }
 
 type OSVDatabases []database.OSVDatabase
+
+func (dbs OSVDatabases) check(lockf lockfile.Lockfile) reporter.Report {
+	report := reporter.Report{
+		FilePath: lockf.FilePath,
+		ParsedAs: lockf.ParsedAs,
+		Packages: make([]reporter.PackageDetailsWithVulnerabilities, 0, len(lockf.Packages)),
+	}
+
+	for _, pkg := range lockf.Packages {
+		var vulnerabilities database.Vulnerabilities
+
+		for _, db := range dbs {
+			vulnerabilities = append(vulnerabilities, db.VulnerabilitiesAffectingPackage(pkg)...)
+		}
+
+		report.Packages = append(report.Packages, reporter.PackageDetailsWithVulnerabilities{
+			Name:            pkg.Name,
+			Version:         pkg.Version,
+			Ecosystem:       pkg.Ecosystem,
+			Vulnerabilities: vulnerabilities,
+		})
+	}
+
+	return report
+}
 
 func loadEcosystemDatabases(ecosystems []internal.Ecosystem, offline bool) (OSVDatabases, error) {
 	dbs := make(OSVDatabases, 0, len(ecosystems))
@@ -162,7 +188,7 @@ func run() int {
 			fmt.Println()
 		}
 
-		packages, err := lockfile.Parse(pathToLockOrDirectory, *parseAs)
+		lockf, err := lockfile.Parse(pathToLockOrDirectory, *parseAs)
 
 		if err != nil {
 			_, _ = fmt.Fprintf(os.Stderr, "Error, %s\n", err)
@@ -173,17 +199,16 @@ func run() int {
 
 		fmt.Printf(
 			"%s: found %s packages\n",
-			color.MagentaString("%s", pathToLockOrDirectory),
-			color.YellowString("%d", len(packages)),
+			color.MagentaString("%s", lockf.FilePath),
+			color.YellowString("%d", len(lockf.Packages)),
 		)
 
 		if *listPackages {
-			printPackages(pathToLockOrDirectory, packages)
-
+			printPackages(lockf)
 			continue
 		}
 
-		dbs, err := loadEcosystemDatabases(packages.Ecosystems(), *offline)
+		dbs, err := loadEcosystemDatabases(lockf.Packages.Ecosystems(), *offline)
 
 		if err != nil {
 			exitCode = printDatabaseLoadErr(err)
@@ -191,24 +216,21 @@ func run() int {
 			continue
 		}
 
-		knownVulnerabilitiesCount := 0
-		for _, pkg := range packages {
-			for _, db := range dbs {
-				knownVulnerabilitiesCount += printVulnerabilities(db, pkg)
-			}
-		}
+		report := dbs.check(lockf)
 
-		if knownVulnerabilitiesCount == 0 {
+		if report.CountKnownVulnerabilities() == 0 {
 			fmt.Printf("%s\n", color.GreenString("  no known vulnerabilities found"))
 
 			continue
 		}
 
+		fmt.Println(report.Format(false))
+
 		fmt.Printf(
 			"\n  %s\n",
 			color.RedString(
 				"%d known vulnerabilities found in %s",
-				knownVulnerabilitiesCount,
+				report.CountKnownVulnerabilities(),
 				pathToLockOrDirectory,
 			),
 		)
