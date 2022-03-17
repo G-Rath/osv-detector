@@ -9,7 +9,6 @@ import (
 	"osv-detector/internal"
 	"osv-detector/internal/database"
 	"osv-detector/internal/lockfile"
-	"path"
 )
 
 // these come from goreleaser
@@ -57,14 +56,14 @@ func printVulnerabilities(db database.OSVDatabase, pkg internal.PackageDetails) 
 	}
 
 	fmt.Printf(
-		"%s %s\n",
+		"  %s %s\n",
 		color.YellowString("%s@%s", pkg.Name, pkg.Version),
 		color.RedString("is affected by the following vulnerabilities:"),
 	)
 
 	for _, vulnerability := range vulnerabilities {
 		fmt.Printf(
-			"  %s %s\n",
+			"    %s %s\n",
 			color.CyanString("%s:", vulnerability.ID),
 			vulnerability.Describe(),
 		)
@@ -82,10 +81,10 @@ type OSVDatabases []database.OSVDatabase
 func loadEcosystemDatabases(ecosystems []internal.Ecosystem, offline bool) (OSVDatabases, error) {
 	dbs := make(OSVDatabases, 0, len(ecosystems))
 
-	fmt.Printf("Loading OSV databases for the following ecosystems:\n")
+	fmt.Printf("  Loading OSV databases for the following ecosystems:\n")
 
 	for _, ecosystem := range ecosystems {
-		fmt.Printf("  %s", ecosystem)
+		fmt.Printf("    %s", ecosystem)
 		archiveURL := ecosystemDatabaseURL(ecosystem)
 
 		db, err := database.NewDB(offline, archiveURL)
@@ -148,50 +147,78 @@ func run() int {
 		return 0
 	}
 
-	pathToLockOrDirectory := flag.Arg(0)
+	pathsToCheck := flag.Args()
 
-	packages, err := lockfile.Parse(pathToLockOrDirectory, *parseAs)
+	if len(pathsToCheck) == 0 {
+		fmt.Fprintf(os.Stderr, "Error, no package information found (see --help for usage)")
 
-	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "Error, %s\n", err)
-
-		return 127
+		return 1
 	}
 
-	if *listPackages {
-		printPackages(pathToLockOrDirectory, packages)
+	exitCode := 0
 
-		return 0
-	}
+	for i, pathToLockOrDirectory := range pathsToCheck {
+		if i >= 1 {
+			fmt.Println()
+		}
 
-	dbs, err := loadEcosystemDatabases(packages.Ecosystems(), *offline)
+		packages, err := lockfile.Parse(pathToLockOrDirectory, *parseAs)
 
-	if err != nil {
-		return printDatabaseLoadErr(err)
-	}
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "Error, %s\n", err)
+			exitCode = 127
 
-	file := path.Base(pathToLockOrDirectory)
+			continue
+		}
 
-	knownVulnerabilitiesCount := 0
-	for _, pkg := range packages {
-		for _, db := range dbs {
-			knownVulnerabilitiesCount += printVulnerabilities(db, pkg)
+		fmt.Printf(
+			"%s: found %s packages\n",
+			color.MagentaString("%s", pathToLockOrDirectory),
+			color.YellowString("%d", len(packages)),
+		)
+
+		if *listPackages {
+			printPackages(pathToLockOrDirectory, packages)
+
+			continue
+		}
+
+		dbs, err := loadEcosystemDatabases(packages.Ecosystems(), *offline)
+
+		if err != nil {
+			exitCode = printDatabaseLoadErr(err)
+
+			continue
+		}
+
+		knownVulnerabilitiesCount := 0
+		for _, pkg := range packages {
+			for _, db := range dbs {
+				knownVulnerabilitiesCount += printVulnerabilities(db, pkg)
+			}
+		}
+
+		if knownVulnerabilitiesCount == 0 {
+			fmt.Printf("%s\n", color.GreenString("  no known vulnerabilities found"))
+
+			continue
+		}
+
+		fmt.Printf(
+			"\n  %s\n",
+			color.RedString(
+				"%d known vulnerabilities found in %s",
+				knownVulnerabilitiesCount,
+				pathToLockOrDirectory,
+			),
+		)
+
+		if exitCode == 0 {
+			exitCode = 1
 		}
 	}
 
-	if knownVulnerabilitiesCount == 0 {
-		fmt.Printf("%s\n", color.GreenString("%s has no known vulnerabilities!", file))
-
-		return 0
-	}
-
-	fmt.Printf("\n%s\n", color.RedString(
-		"%s is affected by %d vulnerabilities!",
-		file,
-		knownVulnerabilitiesCount,
-	))
-
-	return 1
+	return exitCode
 }
 
 func main() {
