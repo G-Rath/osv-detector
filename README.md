@@ -14,6 +14,9 @@ versions of packages:
 ```shell
 osv-detector path/to/my/package-lock.json
 osv-detector path/to/my/composer.lock
+
+# you can also pass multiple files
+osv-detector path/to/my/package-lock.json path/to/my/composer.lock
 ```
 
 The detector supports parsing the following lockfiles:
@@ -33,9 +36,9 @@ The detector supports parsing the following lockfiles:
 that is not a direct requirement (e.g. flags or files) & it assumes the _lowest_
 version possible for the constraint (or lack of)
 
-The detector will attempt to automatically determine the parser to use based on
-the filename - you can manually specify the parser to use with the `-parse-as`
-flag:
+The detector will attempt to automatically determine the parser to use for each
+file based on the filename - you can manually specify the parser to use for all
+files with the `-parse-as` flag:
 
 ```shell
 osv-detector --parse-as 'package-lock.json' path/to/my/file.lock
