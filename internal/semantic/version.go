@@ -8,6 +8,7 @@ import (
 type Components []int
 
 type Version struct {
+	LeadingV   bool
 	Components Components
 	Build      string
 }
@@ -22,6 +23,10 @@ func (components *Components) Fetch(n int) int {
 
 func (v Version) ToString() string {
 	str := ""
+
+	if v.LeadingV {
+		str += "v"
+	}
 
 	for _, component := range v.Components {
 		str += fmt.Sprintf("%d.", component)

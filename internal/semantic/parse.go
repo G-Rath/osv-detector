@@ -3,6 +3,7 @@ package semantic
 import (
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 func Parse(line string) Version {
@@ -13,6 +14,9 @@ func Parse(line string) Version {
 	currentCom := ""
 	foundBuild := false
 	emptyComponent := false
+
+	leadingV := strings.HasPrefix(line, "v")
+	line = strings.TrimPrefix(line, "v")
 
 	for _, c := range line {
 		if foundBuild {
@@ -76,7 +80,14 @@ func Parse(line string) Version {
 		currentCom = "." + currentCom
 	}
 
+	// if we found no components, then the v wasn't actually leading
+	if len(components) == 0 && leadingV {
+		leadingV = false
+		currentCom = "v" + currentCom
+	}
+
 	return Version{
+		LeadingV:   leadingV,
 		Components: components,
 		Build:      currentCom,
 	}

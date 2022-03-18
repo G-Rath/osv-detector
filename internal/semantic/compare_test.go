@@ -420,3 +420,38 @@ func TestVersion_Compare_MixedWithAndWithoutBuild(t *testing.T) {
 		-1,
 	)
 }
+
+// leading "v" is just cosmetic, and shouldn't change the comparing
+func TestVersion_Compare_BasicWithLeadingV(t *testing.T) {
+	t.Parallel()
+
+	expectCompareResult(t,
+		semantic.Version{LeadingV: false, Components: []int{1}, Build: ""},
+		semantic.Version{LeadingV: false, Components: []int{1}, Build: ""},
+		0,
+	)
+
+	expectCompareResult(t,
+		semantic.Version{LeadingV: true, Components: []int{1}, Build: ""},
+		semantic.Version{LeadingV: false, Components: []int{1}, Build: ""},
+		0,
+	)
+
+	expectCompareResult(t,
+		semantic.Version{LeadingV: false, Components: []int{1}, Build: ""},
+		semantic.Version{LeadingV: true, Components: []int{1}, Build: ""},
+		0,
+	)
+
+	expectCompareResult(t,
+		semantic.Version{LeadingV: true, Components: []int{1}, Build: ""},
+		semantic.Version{LeadingV: true, Components: []int{1}, Build: ""},
+		0,
+	)
+
+	expectCompareResult(t,
+		semantic.Version{LeadingV: true, Components: []int{2}, Build: ""},
+		semantic.Version{LeadingV: true, Components: []int{1}, Build: ""},
+		1,
+	)
+}
