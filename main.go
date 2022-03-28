@@ -181,6 +181,11 @@ func run() int {
 
 	exitCode := 0
 
+	r := reporter.New(os.Stdout, os.Stderr, *outputAsJSON)
+	if *outputAsJSON {
+		defer r.PrintJSONResults()
+	}
+
 	for i, pathToLockOrDirectory := range pathsToCheck {
 		if i >= 1 {
 			fmt.Println()
@@ -189,20 +194,21 @@ func run() int {
 		lockf, err := lockfile.Parse(pathToLockOrDirectory, *parseAs)
 
 		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "Error, %s\n", err)
+			r.PrintExtra(fmt.Sprintf("Error, %s\n", err))
 			exitCode = 127
 
 			continue
 		}
 
-		fmt.Fprintf(os.Stderr,
+		r.PrintExtra(fmt.Sprintf(
 			"%s: found %s packages\n",
 			color.MagentaString("%s", lockf.FilePath),
 			color.YellowString("%d", len(lockf.Packages)),
-		)
+		))
 
 		if *listPackages {
-			printPackages(lockf)
+			r.PrintPackages(lockf)
+
 			continue
 		}
 
@@ -216,24 +222,9 @@ func run() int {
 
 		report := dbs.check(lockf)
 
-		if report.CountKnownVulnerabilities() == 0 {
-			fmt.Printf("%s\n", color.GreenString("  no known vulnerabilities found"))
+		r.PrintResult(report)
 
-			continue
-		}
-
-		fmt.Println(report.Format(*outputAsJSON))
-
-		fmt.Fprintf(os.Stderr,
-			"\n  %s\n",
-			color.RedString(
-				"%d known vulnerabilities found in %s",
-				report.CountKnownVulnerabilities(),
-				pathToLockOrDirectory,
-			),
-		)
-
-		if exitCode == 0 {
+		if report.CountKnownVulnerabilities() > 0 && exitCode == 0 {
 			exitCode = 1
 		}
 	}
