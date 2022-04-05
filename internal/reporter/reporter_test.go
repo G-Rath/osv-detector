@@ -36,7 +36,7 @@ func TestReporter_PrintExtra(t *testing.T) {
 func TestReporter_PrintResult(t *testing.T) {
 	t.Parallel()
 
-	msg := "Hello world!"
+	msg := "Hello sunshine!"
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
 	r := reporter.New(stdout, stderr, false)
