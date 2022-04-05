@@ -104,12 +104,16 @@ type Reference struct {
 
 type Versions []string
 
+// MarshalJSON ensures that if there are no versions,
+// an empty array is used as the value instead of "null"
 func (vs Versions) MarshalJSON() ([]byte, error) {
 	if len(vs) == 0 {
 		return []byte("[]"), nil
 	}
 
-	return json.Marshal([]string(vs))
+	out, err := json.Marshal([]string(vs))
+
+	return out, fmt.Errorf("%w", err)
 }
 
 func (vs Versions) includes(v string) bool {
