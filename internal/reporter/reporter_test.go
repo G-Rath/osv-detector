@@ -2,16 +2,30 @@ package reporter_test
 
 import (
 	"bytes"
+	"encoding/json"
+	"fmt"
 	"osv-detector/internal/reporter"
+	"strings"
 	"testing"
 )
 
 type TestResult struct {
-	String string `json:"value"`
+	String               string `json:"value"`
+	ErrorWhenMarshalling bool   `json:"-"`
 }
 
 func (r TestResult) ToString() string {
 	return r.String
+}
+
+func (r TestResult) MarshalJSON() ([]byte, error) {
+	type rawTestResult TestResult
+
+	if r.ErrorWhenMarshalling {
+		return nil, fmt.Errorf("oh noes, an error")
+	}
+
+	return json.Marshal((rawTestResult)(r))
 }
 
 func TestReporter_PrintExtra(t *testing.T) {
@@ -56,7 +70,7 @@ func TestReporter_PrintResult_OutputAsJSON(t *testing.T) {
 	t.Parallel()
 
 	msg := "Hello world!"
-	json := "{\"results\":[{\"value\":\"Hello world!\"}]}"
+	expected := "{\"results\":[{\"value\":\"Hello world!\"}]}"
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
 	r := reporter.New(stdout, stderr, true)
@@ -73,11 +87,41 @@ func TestReporter_PrintResult_OutputAsJSON(t *testing.T) {
 
 	r.PrintJSONResults()
 
-	if gotStdout := stdout.String(); gotStdout != json {
-		t.Errorf("Expected stdout to be \"%s\", but got \"%s\"", json, gotStdout)
+	if gotStdout := stdout.String(); gotStdout != expected {
+		t.Errorf("Expected stdout to be \"%s\", but got \"%s\"", expected, gotStdout)
 	}
 
 	if gotStderr := stderr.String(); gotStderr != "" {
 		t.Errorf("Expected stderr to be empty, but got \"%s\"", gotStderr)
+	}
+}
+
+func TestReporter_PrintResult_OutputAsJSON_Error(t *testing.T) {
+	t.Parallel()
+
+	msg := "Hello world!"
+	expected := "an error occurred when printing results as JSON"
+	stdout := &bytes.Buffer{}
+	stderr := &bytes.Buffer{}
+	r := reporter.New(stdout, stderr, true)
+
+	r.PrintResult(TestResult{String: msg, ErrorWhenMarshalling: true})
+
+	if gotStdout := stdout.String(); gotStdout != "" {
+		t.Errorf("Expected stdout to be empty, but got \"%s\"", gotStdout)
+	}
+
+	if gotStderr := stderr.String(); gotStderr != "" {
+		t.Errorf("Expected stderr to be empty, but got \"%s\"", gotStderr)
+	}
+
+	r.PrintJSONResults()
+
+	if gotStdout := stdout.String(); gotStdout != "" {
+		t.Errorf("Expected stdout to be empty, but got \"%s\"", gotStdout)
+	}
+
+	if gotStderr := stderr.String(); !strings.Contains(gotStderr, expected) {
+		t.Errorf("Expected stderr to contain \"%s\", but got \"%s\"", expected, gotStderr)
 	}
 }
