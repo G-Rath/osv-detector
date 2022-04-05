@@ -25,7 +25,13 @@ func (r TestResult) MarshalJSON() ([]byte, error) {
 		return nil, fmt.Errorf("oh noes, an error")
 	}
 
-	return json.Marshal((rawTestResult)(r))
+	out, err := json.Marshal((rawTestResult)(r))
+
+	if err != nil {
+		return out, fmt.Errorf("%w", err)
+	}
+
+	return out, nil
 }
 
 func TestReporter_PrintExtra(t *testing.T) {

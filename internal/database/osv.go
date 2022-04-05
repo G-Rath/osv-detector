@@ -113,7 +113,11 @@ func (vs Versions) MarshalJSON() ([]byte, error) {
 
 	out, err := json.Marshal([]string(vs))
 
-	return out, fmt.Errorf("%w", err)
+	if err != nil {
+		return out, fmt.Errorf("%w", err)
+	}
+
+	return out, nil
 }
 
 func (vs Versions) includes(v string) bool {
