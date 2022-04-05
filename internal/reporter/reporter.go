@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"osv-detector/internal/lockfile"
 )
 
 type Reporter struct {
@@ -30,17 +29,6 @@ func (r *Reporter) PrintExtra(msg string) {
 
 type Result interface {
 	ToString() string
-}
-
-// PrintPackages handles outputting the packages contained in the given lockfile.
-//
-// If output is set to JSON, then output will be deferred to ...
-func (r *Reporter) PrintPackages(lockf lockfile.Lockfile) {
-	fmt.Printf("The following packages were found in %s:\n", lockf.FilePath)
-
-	for _, details := range lockf.Packages {
-		fmt.Printf("  %s: %s@%s\n", details.Ecosystem, details.Name, details.Version)
-	}
 }
 
 func (r *Reporter) PrintResult(result Result) {
