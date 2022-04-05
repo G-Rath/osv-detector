@@ -21,7 +21,11 @@ type Report struct {
 	Packages []PackageDetailsWithVulnerabilities `json:"packages"`
 }
 
-func (r Report) CountKnownVulnerabilities() int {
+func (r Report) HasKnownVulnerabilities() bool {
+	return r.countKnownVulnerabilities() > 0
+}
+
+func (r Report) countKnownVulnerabilities() int {
 	knownVulnerabilitiesCount := 0
 
 	for _, pkg := range r.Packages {
@@ -58,7 +62,7 @@ func (r Report) formatLineByLine() string {
 }
 
 func (r Report) ToString() string {
-	if r.CountKnownVulnerabilities() == 0 {
+	if r.countKnownVulnerabilities() == 0 {
 		return fmt.Sprintf("%s\n", color.GreenString("  no known vulnerabilities found"))
 	}
 
@@ -68,7 +72,7 @@ func (r Report) ToString() string {
 	out += fmt.Sprintf("\n  %s\n",
 		color.RedString(
 			"%d known vulnerabilities found in %s",
-			r.CountKnownVulnerabilities(),
+			r.countKnownVulnerabilities(),
 			r.FilePath,
 		),
 	)

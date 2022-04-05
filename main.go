@@ -192,7 +192,7 @@ func run() int {
 
 		r.PrintResult(report)
 
-		if report.CountKnownVulnerabilities() > 0 && exitCode == 0 {
+		if report.HasKnownVulnerabilities() && exitCode == 0 {
 			exitCode = 1
 		}
 	}
