@@ -6,6 +6,7 @@ import (
 	"osv-detector/internal"
 	"osv-detector/internal/database"
 	"osv-detector/internal/lockfile"
+	"strings"
 )
 
 type PackageDetailsWithVulnerabilities struct {
@@ -30,12 +31,30 @@ func (r Report) CountKnownVulnerabilities() int {
 	return knownVulnerabilitiesCount
 }
 
-func (r Report) Format(asJSON bool) string {
-	if asJSON {
-		return r.FormatJSON()
+func (r Report) formatLineByLine() string {
+	lines := make([]string, 0, len(r.Packages))
+
+	for _, pkg := range r.Packages {
+		if len(pkg.Vulnerabilities) == 0 {
+			continue
+		}
+
+		lines = append(lines, fmt.Sprintf(
+			"  %s %s",
+			color.YellowString("%s@%s", pkg.Name, pkg.Version),
+			color.RedString("is affected by the following vulnerabilities:"),
+		))
+
+		for _, vulnerability := range pkg.Vulnerabilities {
+			lines = append(lines, fmt.Sprintf(
+				"    %s %s",
+				color.CyanString("%s:", vulnerability.ID),
+				vulnerability.Describe(),
+			))
+		}
 	}
 
-	return r.FormatLineByLine()
+	return strings.Join(lines, "\n")
 }
 
 func (r Report) ToString() string {
@@ -43,7 +62,7 @@ func (r Report) ToString() string {
 		return fmt.Sprintf("%s\n", color.GreenString("  no known vulnerabilities found"))
 	}
 
-	out := r.FormatLineByLine()
+	out := r.formatLineByLine()
 	out += "\n"
 
 	out += fmt.Sprintf("\n  %s\n",

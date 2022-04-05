@@ -41,38 +41,6 @@ func printKnownEcosystems() {
 	}
 }
 
-func printPackages(lockf lockfile.Lockfile) {
-	fmt.Printf("The following packages were found in %s:\n", lockf.FilePath)
-
-	for _, details := range lockf.Packages {
-		fmt.Printf("  %s: %s@%s\n", details.Ecosystem, details.Name, details.Version)
-	}
-}
-
-func printVulnerabilities(db database.OSVDatabase, pkg internal.PackageDetails) int {
-	vulnerabilities := db.VulnerabilitiesAffectingPackage(pkg)
-
-	if len(vulnerabilities) == 0 {
-		return 0
-	}
-
-	fmt.Printf(
-		"  %s %s\n",
-		color.YellowString("%s@%s", pkg.Name, pkg.Version),
-		color.RedString("is affected by the following vulnerabilities:"),
-	)
-
-	for _, vulnerability := range vulnerabilities {
-		fmt.Printf(
-			"    %s %s\n",
-			color.CyanString("%s:", vulnerability.ID),
-			vulnerability.Describe(),
-		)
-	}
-
-	return len(vulnerabilities)
-}
-
 func ecosystemDatabaseURL(ecosystem internal.Ecosystem) string {
 	return fmt.Sprintf("https://osv-vulnerabilities.storage.googleapis.com/%s/all.zip", ecosystem)
 }
