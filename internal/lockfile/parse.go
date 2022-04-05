@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path"
 	"sort"
+	"strings"
 )
 
 func findParser(pathToLockfile string) PackageDetailsParser {
@@ -64,6 +65,18 @@ type Lockfile struct {
 	FilePath string   `json:"filePath"`
 	ParsedAs string   `json:"parsedAs"`
 	Packages Packages `json:"packages"`
+}
+
+func (l Lockfile) ToString() string {
+	lines := make([]string, 0, len(l.Packages))
+
+	for _, details := range l.Packages {
+		lines = append(lines,
+			fmt.Sprintf("  %s: %s@%s", details.Ecosystem, details.Name, details.Version),
+		)
+	}
+
+	return strings.Join(lines, "\n")
 }
 
 // Parse attempts to extract a collection of package details from a lockfile,

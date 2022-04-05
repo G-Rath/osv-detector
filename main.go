@@ -207,7 +207,7 @@ func run() int {
 		))
 
 		if *listPackages {
-			r.PrintPackages(lockf)
+			r.PrintResult(lockf)
 
 			continue
 		}

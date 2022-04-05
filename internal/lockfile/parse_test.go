@@ -63,3 +63,41 @@ func TestTryParse_FindsExpectedParsers(t *testing.T) {
 
 	expectNumberOfParsersCalled(t, count)
 }
+
+func TestLockfile_ToString(t *testing.T) {
+	expected := strings.Join([]string{
+		"  crates.io: addr2line@0.15.2",
+		"  npm: @typescript-eslint/types@5.13.0",
+		"  crates.io: wasi@0.10.2+wasi-snapshot-preview1",
+		"  Packagist: sentry/sdk@2.0.4",
+	}, "\n")
+
+	lockf := lockfile.Lockfile{
+		Packages: []lockfile.PackageDetails{
+			{
+				Name:      "addr2line",
+				Version:   "0.15.2",
+				Ecosystem: lockfile.CargoEcosystem,
+			},
+			{
+				Name:      "@typescript-eslint/types",
+				Version:   "5.13.0",
+				Ecosystem: lockfile.PnpmEcosystem,
+			},
+			{
+				Name:      "wasi",
+				Version:   "0.10.2+wasi-snapshot-preview1",
+				Ecosystem: lockfile.CargoEcosystem,
+			},
+			{
+				Name:      "sentry/sdk",
+				Version:   "2.0.4",
+				Ecosystem: lockfile.ComposerEcosystem,
+			},
+		},
+	}
+
+	if actual := lockf.ToString(); expected != actual {
+		t.Errorf("\nExpected:\n%s\nActual:\n%s", expected, actual)
+	}
+}
