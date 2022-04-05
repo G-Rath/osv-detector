@@ -65,6 +65,8 @@ func TestTryParse_FindsExpectedParsers(t *testing.T) {
 }
 
 func TestLockfile_ToString(t *testing.T) {
+	t.Parallel()
+
 	expected := strings.Join([]string{
 		"  crates.io: addr2line@0.15.2",
 		"  npm: @typescript-eslint/types@5.13.0",

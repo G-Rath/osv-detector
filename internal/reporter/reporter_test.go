@@ -15,6 +15,8 @@ func (r TestResult) ToString() string {
 }
 
 func TestReporter_PrintExtra(t *testing.T) {
+	t.Parallel()
+
 	msg := "Hello world!"
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
@@ -32,6 +34,8 @@ func TestReporter_PrintExtra(t *testing.T) {
 }
 
 func TestReporter_PrintResult(t *testing.T) {
+	t.Parallel()
+
 	msg := "Hello world!"
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
@@ -49,6 +53,8 @@ func TestReporter_PrintResult(t *testing.T) {
 }
 
 func TestReporter_PrintResult_OutputAsJSON(t *testing.T) {
+	t.Parallel()
+
 	msg := "Hello world!"
 	json := "{\"results\":[{\"value\":\"Hello world!\"}]}"
 	stdout := &bytes.Buffer{}
