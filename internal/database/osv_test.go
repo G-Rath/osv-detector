@@ -558,3 +558,51 @@ func TestOSV_Describe_Truncation(t *testing.T) {
 		},
 	)
 }
+
+func TestVersions_MarshalJSON(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		vs   database.Versions
+		want string
+	}{
+		{
+			name: "",
+			vs:   nil,
+			want: "[]",
+		},
+		{
+			name: "",
+			vs:   database.Versions(nil),
+			want: "[]",
+		},
+		{
+			name: "",
+			vs:   database.Versions{"1.0.0"},
+			want: "[\"1.0.0\"]",
+		},
+		{
+			name: "",
+			vs:   database.Versions{"1.0.0", "1.2.3", "4.5.6"},
+			want: "[\"1.0.0\",\"1.2.3\",\"4.5.6\"]",
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			got, err := tt.vs.MarshalJSON()
+			if err != nil {
+				t.Errorf("MarshalJSON() error = %v", err)
+
+				return
+			}
+
+			if gotStr := string(got); gotStr != tt.want {
+				t.Errorf("MarshalJSON() got = %v, want %v", gotStr, tt.want)
+			}
+		})
+	}
+}
