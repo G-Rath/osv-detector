@@ -5,6 +5,7 @@ import (
 	"osv-detector/internal/database"
 	"osv-detector/internal/lockfile"
 	"osv-detector/internal/reporter"
+	"strings"
 	"testing"
 )
 
@@ -93,5 +94,52 @@ func TestReport_HasKnownVulnerabilities(t *testing.T) {
 				t.Errorf("HasKnownVulnerabilities() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestReport_ToString_NoVulnerabilities(t *testing.T) {
+	t.Parallel()
+
+	msg := "no known vulnerabilities found"
+
+	r := reporter.Report{}
+
+	if actual := r.ToString(); !strings.Contains(actual, msg) {
+		t.Errorf("Expected \"%s\" to contain \"%s\" but it did not", actual, msg)
+	}
+}
+
+func TestReport_ToString_Vulnerabilities(t *testing.T) {
+	t.Parallel()
+
+	expected := strings.Join([]string{
+		"  my-package@1.2.3 is affected by the following vulnerabilities:",
+		"    GHSA-1: This is a vulnerability! (https://github.com/advisories/GHSA-1)",
+		"",
+		"  1 known vulnerabilities found in /path/to/my/lock",
+		"",
+	}, "\n")
+
+	r := reporter.Report{
+		Lockfile: lockfile.Lockfile{FilePath: "/path/to/my/lock"},
+		Packages: []reporter.PackageDetailsWithVulnerabilities{
+			{
+				PackageDetails: internal.PackageDetails{
+					Name:      "my-package",
+					Version:   "1.2.3",
+					Ecosystem: lockfile.BundlerEcosystem,
+				},
+				Vulnerabilities: []database.OSV{
+					{
+						ID:      "GHSA-1",
+						Summary: "This is a vulnerability!",
+					},
+				},
+			},
+		},
+	}
+
+	if actual := r.ToString(); expected != actual {
+		t.Errorf("\nExpected:\n%s\nActual:\n%s", expected, actual)
 	}
 }

@@ -105,7 +105,7 @@ func TestReporter_PrintResult_OutputAsJSON(t *testing.T) {
 func TestReporter_PrintResult_OutputAsJSON_Error(t *testing.T) {
 	t.Parallel()
 
-	msg := "Hello world!"
+	msg := "Hello sunshine!"
 	expected := "an error occurred when printing results as JSON"
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
