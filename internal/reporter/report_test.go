@@ -143,3 +143,61 @@ func TestReport_ToString_Vulnerabilities(t *testing.T) {
 		t.Errorf("\nExpected:\n%s\nActual:\n%s", expected, actual)
 	}
 }
+
+func TestReport_ToString_MultipleVulnerabilities(t *testing.T) {
+	t.Parallel()
+
+	expected := strings.Join([]string{
+		"  my-package@1.2.3 is affected by the following vulnerabilities:",
+		"    GHSA-1: This is a vulnerability! (https://github.com/advisories/GHSA-1)",
+		"  their-package@4.5.6 is affected by the following vulnerabilities:",
+		"    GHSA-2: This is another vulnerability! (https://github.com/advisories/GHSA-2)",
+		"",
+		"  2 known vulnerabilities found in /path/to/my/lock",
+		"",
+	}, "\n")
+
+	r := reporter.Report{
+		Lockfile: lockfile.Lockfile{FilePath: "/path/to/my/lock"},
+		Packages: []reporter.PackageDetailsWithVulnerabilities{
+			{
+				PackageDetails: internal.PackageDetails{
+					Name:      "my-package",
+					Version:   "1.2.3",
+					Ecosystem: lockfile.BundlerEcosystem,
+				},
+				Vulnerabilities: []database.OSV{
+					{
+						ID:      "GHSA-1",
+						Summary: "This is a vulnerability!",
+					},
+				},
+			},
+			{
+				PackageDetails: internal.PackageDetails{
+					Name:      "middle-package",
+					Version:   "1.2.0",
+					Ecosystem: lockfile.BundlerEcosystem,
+				},
+				Vulnerabilities: []database.OSV{},
+			},
+			{
+				PackageDetails: internal.PackageDetails{
+					Name:      "their-package",
+					Version:   "4.5.6",
+					Ecosystem: lockfile.BundlerEcosystem,
+				},
+				Vulnerabilities: []database.OSV{
+					{
+						ID:      "GHSA-2",
+						Summary: "This is another vulnerability!",
+					},
+				},
+			},
+		},
+	}
+
+	if actual := r.ToString(); expected != actual {
+		t.Errorf("\nExpected:\n%s\nActual:\n%s", expected, actual)
+	}
+}
