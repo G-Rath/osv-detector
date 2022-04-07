@@ -113,7 +113,7 @@ func run() int {
 	listEcosystems := flag.Bool("list-ecosystems", false, "List all the ecosystems present in the loaded OSV database")
 	listPackages := flag.Bool("list-packages", false, "List all the packages that were parsed from the given file")
 	cacheAllDatabases := flag.Bool("cache-all-databases", false, "Cache all the known ecosystem databases for offline use")
-	outputAsJSON := flag.Bool("json", false, "Cache all the known ecosystem databases for offline use")
+	outputAsJSON := flag.Bool("json", false, "Output the results in JSON format")
 
 	flag.Parse()
 
