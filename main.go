@@ -19,25 +19,25 @@ var (
 	date    = "unknown"
 )
 
-func printDatabaseLoadErr(err error) int {
+func printDatabaseLoadErr(r *reporter.Reporter, err error) int {
 	msg := err.Error()
 
 	if errors.Is(err, database.ErrOfflineDatabaseNotFound) {
 		msg = color.RedString("no local version of the database was found, and --offline flag was set")
 	}
 
-	_, _ = fmt.Fprintf(os.Stderr, " %s\n", color.RedString("failed: %s", msg))
+	r.PrintError(fmt.Sprintf(" %s\n", color.RedString("failed: %s", msg)))
 
 	return 127
 }
 
-func printKnownEcosystems() {
+func printKnownEcosystems(r *reporter.Reporter) {
 	ecosystems := lockfile.KnownEcosystems()
 
-	fmt.Println("The detector supports parsing for the following ecosystems:")
+	r.PrintText("The detector supports parsing for the following ecosystems:\n")
 
 	for _, ecosystem := range ecosystems {
-		fmt.Printf("  %s\n", ecosystem)
+		r.PrintText(fmt.Sprintf("  %s\n", ecosystem))
 	}
 }
 
@@ -117,29 +117,29 @@ func run() int {
 
 	flag.Parse()
 
-	if *printVersion {
-		fmt.Printf("osv-detector %s (%s, commit %s)\n", version, date, commit)
-
-		return 0
-	}
-
 	r := reporter.New(os.Stdout, os.Stderr, *outputAsJSON)
 	if *outputAsJSON {
 		defer r.PrintJSONResults()
+	}
+
+	if *printVersion {
+		r.PrintText(fmt.Sprintf("osv-detector %s (%s, commit %s)\n", version, date, commit))
+
+		return 0
 	}
 
 	if *cacheAllDatabases {
 		err := cacheAllEcosystemDatabases(r)
 
 		if err != nil {
-			return printDatabaseLoadErr(err)
+			return printDatabaseLoadErr(r, err)
 		}
 
 		return 0
 	}
 
 	if *listEcosystems {
-		printKnownEcosystems()
+		printKnownEcosystems(r)
 
 		return 0
 	}
@@ -147,7 +147,7 @@ func run() int {
 	pathsToCheck := flag.Args()
 
 	if len(pathsToCheck) == 0 {
-		fmt.Fprintf(os.Stderr, "Error, no package information found (see --help for usage)")
+		r.PrintError("Error, no package information found (see --help for usage)")
 
 		return 1
 	}
@@ -183,7 +183,7 @@ func run() int {
 		dbs, err := loadEcosystemDatabases(r, lockf.Packages.Ecosystems(), *offline)
 
 		if err != nil {
-			exitCode = printDatabaseLoadErr(err)
+			exitCode = printDatabaseLoadErr(r, err)
 
 			continue
 		}
