@@ -131,3 +131,57 @@ func TestReporter_PrintResult_OutputAsJSON_Error(t *testing.T) {
 		t.Errorf("Expected stderr to contain \"%s\", but got \"%s\"", expected, gotStderr)
 	}
 }
+
+func TestReporter_PrintText(t *testing.T) {
+	t.Parallel()
+
+	type args struct {
+		outputAsJSON bool
+		msg          string
+	}
+	tests := []struct {
+		name         string
+		args         args
+		wantedStdout string
+		wantedStderr string
+	}{
+		{
+			name: "",
+			args: args{
+				outputAsJSON: false,
+				msg:          "hello world",
+			},
+			wantedStdout: "hello world",
+			wantedStderr: "",
+		},
+		{
+			name: "",
+			args: args{
+				outputAsJSON: true,
+				msg:          "hello world",
+			},
+			wantedStdout: "",
+			wantedStderr: "hello world",
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			stdout := &bytes.Buffer{}
+			stderr := &bytes.Buffer{}
+
+			r := reporter.New(stdout, stderr, tt.args.outputAsJSON)
+			r.PrintText(tt.args.msg)
+
+			if gotStdout := stdout.String(); gotStdout != tt.wantedStdout {
+				t.Errorf("stdout got = %s, want %s", gotStdout, tt.wantedStdout)
+			}
+
+			if gotStderr := stderr.String(); gotStderr != tt.wantedStderr {
+				t.Errorf("stderr got = %s, want %s", gotStderr, tt.wantedStderr)
+			}
+		})
+	}
+}

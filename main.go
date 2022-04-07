@@ -69,13 +69,13 @@ func (dbs OSVDatabases) check(lockf lockfile.Lockfile) reporter.Report {
 	return report
 }
 
-func loadEcosystemDatabases(ecosystems []internal.Ecosystem, offline bool) (OSVDatabases, error) {
+func loadEcosystemDatabases(r *reporter.Reporter, ecosystems []internal.Ecosystem, offline bool) (OSVDatabases, error) {
 	dbs := make(OSVDatabases, 0, len(ecosystems))
 
-	fmt.Fprintf(os.Stderr, "  Loading OSV databases for the following ecosystems:\n")
+	r.PrintText("  Loading OSV databases for the following ecosystems:\n")
 
 	for _, ecosystem := range ecosystems {
-		fmt.Fprintf(os.Stderr, "    %s", ecosystem)
+		r.PrintText(fmt.Sprintf("    %s", ecosystem))
 		archiveURL := ecosystemDatabaseURL(ecosystem)
 
 		db, err := database.NewDB(offline, archiveURL)
@@ -84,24 +84,24 @@ func loadEcosystemDatabases(ecosystems []internal.Ecosystem, offline bool) (OSVD
 			return dbs, fmt.Errorf("could not load database: %w", err)
 		}
 
-		fmt.Fprintf(os.Stderr,
+		r.PrintText(fmt.Sprintf(
 			" (%s vulnerabilities, including withdrawn - last updated %s)\n",
 			color.YellowString("%d", len(db.Vulnerabilities(true))),
 			db.UpdatedAt,
-		)
+		))
 
 		dbs = append(dbs, *db)
 	}
 
-	fmt.Fprintln(os.Stderr)
+	r.PrintText("\n")
 
 	return dbs, nil
 }
 
-func cacheAllEcosystemDatabases() error {
+func cacheAllEcosystemDatabases(r *reporter.Reporter) error {
 	ecosystems := lockfile.KnownEcosystems()
 
-	_, err := loadEcosystemDatabases(ecosystems, false)
+	_, err := loadEcosystemDatabases(r, ecosystems, false)
 
 	return err
 }
@@ -123,8 +123,13 @@ func run() int {
 		return 0
 	}
 
+	r := reporter.New(os.Stdout, os.Stderr, *outputAsJSON)
+	if *outputAsJSON {
+		defer r.PrintJSONResults()
+	}
+
 	if *cacheAllDatabases {
-		err := cacheAllEcosystemDatabases()
+		err := cacheAllEcosystemDatabases(r)
 
 		if err != nil {
 			return printDatabaseLoadErr(err)
@@ -149,14 +154,9 @@ func run() int {
 
 	exitCode := 0
 
-	r := reporter.New(os.Stdout, os.Stderr, *outputAsJSON)
-	if *outputAsJSON {
-		defer r.PrintJSONResults()
-	}
-
 	for i, pathToLockOrDirectory := range pathsToCheck {
 		if i >= 1 {
-			fmt.Println()
+			r.PrintText("\n")
 		}
 
 		lockf, err := lockfile.Parse(pathToLockOrDirectory, *parseAs)
@@ -168,7 +168,7 @@ func run() int {
 			continue
 		}
 
-		r.PrintExtra(fmt.Sprintf(
+		r.PrintText(fmt.Sprintf(
 			"%s: found %s packages\n",
 			color.MagentaString("%s", lockf.FilePath),
 			color.YellowString("%d", len(lockf.Packages)),
@@ -180,7 +180,7 @@ func run() int {
 			continue
 		}
 
-		dbs, err := loadEcosystemDatabases(lockf.Packages.Ecosystems(), *offline)
+		dbs, err := loadEcosystemDatabases(r, lockf.Packages.Ecosystems(), *offline)
 
 		if err != nil {
 			exitCode = printDatabaseLoadErr(err)
