@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path"
 	"sort"
+	"strings"
 )
 
 func findParser(pathToLockfile string) PackageDetailsParser {
@@ -60,12 +61,30 @@ func (ps Packages) Ecosystems() []Ecosystem {
 	return slicedEcosystems
 }
 
+type Lockfile struct {
+	FilePath string   `json:"filePath"`
+	ParsedAs string   `json:"parsedAs"`
+	Packages Packages `json:"packages"`
+}
+
+func (l Lockfile) ToString() string {
+	lines := make([]string, 0, len(l.Packages))
+
+	for _, details := range l.Packages {
+		lines = append(lines,
+			fmt.Sprintf("  %s: %s@%s", details.Ecosystem, details.Name, details.Version),
+		)
+	}
+
+	return strings.Join(lines, "\n")
+}
+
 // Parse attempts to extract a collection of package details from a lockfile,
 // using one of the native parsers.
 //
 // The parser is selected based on the name of the file, which can be overridden
 // with the "parseAs" parameter.
-func Parse(pathToLockfile string, parseAs string) (Packages, error) {
+func Parse(pathToLockfile string, parseAs string) (Lockfile, error) {
 	if parseAs == "" {
 		parseAs = path.Base(pathToLockfile)
 	}
@@ -73,7 +92,7 @@ func Parse(pathToLockfile string, parseAs string) (Packages, error) {
 	parser := findParser(parseAs)
 
 	if parser == nil {
-		return []PackageDetails{}, fmt.Errorf("%w for %s", ErrParserNotFound, pathToLockfile)
+		return Lockfile{}, fmt.Errorf("%w for %s", ErrParserNotFound, pathToLockfile)
 	}
 
 	packages, err := parser(pathToLockfile)
@@ -86,5 +105,9 @@ func Parse(pathToLockfile string, parseAs string) (Packages, error) {
 		return packages[i].Name < packages[j].Name
 	})
 
-	return packages, err
+	return Lockfile{
+		FilePath: pathToLockfile,
+		ParsedAs: parseAs,
+		Packages: packages,
+	}, err
 }

@@ -70,6 +70,50 @@ osv-detector --cache-all-databases
 This can be useful if you're planning to run the detector over a number of
 lockfiles in bulk.
 
+You can use the `--json` flag to have the detector output its results as JSON:
+
+```shell
+osv-detector --json path/to/my/package-lock.json
+```
+
+This will result in a JSON object being printed to `stdout` with a `results`
+property that has an array containing the results of each lockfile that was
+passed:
+
+```json
+{
+  "results": [
+    {
+      "filePath": "path/to/my/go.mod",
+      "parsedAs": "go.mod",
+      "packages": [
+        {
+          "name": "github.com/BurntSushi/toml",
+          "version": "1.0.0",
+          "ecosystem": "Go",
+          "vulnerabilities": []
+        }
+      ]
+    },
+    {
+      "filePath": "path/to/my/package-lock.json",
+      "parsedAs": "package-lock.json",
+      "packages": [
+        {
+          "name": "wrappy",
+          "version": "1.0.2",
+          "ecosystem": "npm",
+          "vulnerabilities": []
+        }
+      ]
+    }
+  ]
+}
+```
+
+Errors are always sent to `stderr` as plain text, even if the `--json` flag is
+passed.
+
 ### Auxiliary output commands
 
 The detector supports a few auxiliary commands that have it output information

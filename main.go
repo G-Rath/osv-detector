@@ -9,6 +9,7 @@ import (
 	"osv-detector/internal"
 	"osv-detector/internal/database"
 	"osv-detector/internal/lockfile"
+	"osv-detector/internal/reporter"
 )
 
 // these come from goreleaser
@@ -18,58 +19,26 @@ var (
 	date    = "unknown"
 )
 
-func printDatabaseLoadErr(err error) int {
+func printDatabaseLoadErr(r *reporter.Reporter, err error) int {
 	msg := err.Error()
 
 	if errors.Is(err, database.ErrOfflineDatabaseNotFound) {
 		msg = color.RedString("no local version of the database was found, and --offline flag was set")
 	}
 
-	_, _ = fmt.Fprintf(os.Stderr, " %s\n", color.RedString("failed: %s", msg))
+	r.PrintError(fmt.Sprintf(" %s\n", color.RedString("failed: %s", msg)))
 
 	return 127
 }
 
-func printKnownEcosystems() {
+func printKnownEcosystems(r *reporter.Reporter) {
 	ecosystems := lockfile.KnownEcosystems()
 
-	fmt.Println("The detector supports parsing for the following ecosystems:")
+	r.PrintText("The detector supports parsing for the following ecosystems:\n")
 
 	for _, ecosystem := range ecosystems {
-		fmt.Printf("  %s\n", ecosystem)
+		r.PrintText(fmt.Sprintf("  %s\n", ecosystem))
 	}
-}
-
-func printPackages(pathToLock string, packages []internal.PackageDetails) {
-	fmt.Printf("The following packages were found in %s:\n", pathToLock)
-
-	for _, details := range packages {
-		fmt.Printf("  %s: %s@%s\n", details.Ecosystem, details.Name, details.Version)
-	}
-}
-
-func printVulnerabilities(db database.OSVDatabase, pkg internal.PackageDetails) int {
-	vulnerabilities := db.VulnerabilitiesAffectingPackage(pkg)
-
-	if len(vulnerabilities) == 0 {
-		return 0
-	}
-
-	fmt.Printf(
-		"  %s %s\n",
-		color.YellowString("%s@%s", pkg.Name, pkg.Version),
-		color.RedString("is affected by the following vulnerabilities:"),
-	)
-
-	for _, vulnerability := range vulnerabilities {
-		fmt.Printf(
-			"    %s %s\n",
-			color.CyanString("%s:", vulnerability.ID),
-			vulnerability.Describe(),
-		)
-	}
-
-	return len(vulnerabilities)
 }
 
 func ecosystemDatabaseURL(ecosystem internal.Ecosystem) string {
@@ -78,13 +47,35 @@ func ecosystemDatabaseURL(ecosystem internal.Ecosystem) string {
 
 type OSVDatabases []database.OSVDatabase
 
-func loadEcosystemDatabases(ecosystems []internal.Ecosystem, offline bool) (OSVDatabases, error) {
+func (dbs OSVDatabases) check(lockf lockfile.Lockfile) reporter.Report {
+	report := reporter.Report{
+		Lockfile: lockf,
+		Packages: make([]reporter.PackageDetailsWithVulnerabilities, 0, len(lockf.Packages)),
+	}
+
+	for _, pkg := range lockf.Packages {
+		vulnerabilities := make(database.Vulnerabilities, 0)
+
+		for _, db := range dbs {
+			vulnerabilities = append(vulnerabilities, db.VulnerabilitiesAffectingPackage(pkg)...)
+		}
+
+		report.Packages = append(report.Packages, reporter.PackageDetailsWithVulnerabilities{
+			PackageDetails:  pkg,
+			Vulnerabilities: vulnerabilities,
+		})
+	}
+
+	return report
+}
+
+func loadEcosystemDatabases(r *reporter.Reporter, ecosystems []internal.Ecosystem, offline bool) (OSVDatabases, error) {
 	dbs := make(OSVDatabases, 0, len(ecosystems))
 
-	fmt.Printf("  Loading OSV databases for the following ecosystems:\n")
+	r.PrintText("  Loading OSV databases for the following ecosystems:\n")
 
 	for _, ecosystem := range ecosystems {
-		fmt.Printf("    %s", ecosystem)
+		r.PrintText(fmt.Sprintf("    %s", ecosystem))
 		archiveURL := ecosystemDatabaseURL(ecosystem)
 
 		db, err := database.NewDB(offline, archiveURL)
@@ -93,24 +84,24 @@ func loadEcosystemDatabases(ecosystems []internal.Ecosystem, offline bool) (OSVD
 			return dbs, fmt.Errorf("could not load database: %w", err)
 		}
 
-		fmt.Printf(
+		r.PrintText(fmt.Sprintf(
 			" (%s vulnerabilities, including withdrawn - last updated %s)\n",
 			color.YellowString("%d", len(db.Vulnerabilities(true))),
 			db.UpdatedAt,
-		)
+		))
 
 		dbs = append(dbs, *db)
 	}
 
-	fmt.Println()
+	r.PrintText("\n")
 
 	return dbs, nil
 }
 
-func cacheAllEcosystemDatabases() error {
+func cacheAllEcosystemDatabases(r *reporter.Reporter) error {
 	ecosystems := lockfile.KnownEcosystems()
 
-	_, err := loadEcosystemDatabases(ecosystems, false)
+	_, err := loadEcosystemDatabases(r, ecosystems, false)
 
 	return err
 }
@@ -122,27 +113,33 @@ func run() int {
 	listEcosystems := flag.Bool("list-ecosystems", false, "List all the ecosystems present in the loaded OSV database")
 	listPackages := flag.Bool("list-packages", false, "List all the packages that were parsed from the given file")
 	cacheAllDatabases := flag.Bool("cache-all-databases", false, "Cache all the known ecosystem databases for offline use")
+	outputAsJSON := flag.Bool("json", false, "Output the results in JSON format")
 
 	flag.Parse()
 
+	r := reporter.New(os.Stdout, os.Stderr, *outputAsJSON)
+	if *outputAsJSON {
+		defer r.PrintJSONResults()
+	}
+
 	if *printVersion {
-		fmt.Printf("osv-detector %s (%s, commit %s)\n", version, date, commit)
+		r.PrintText(fmt.Sprintf("osv-detector %s (%s, commit %s)\n", version, date, commit))
 
 		return 0
 	}
 
 	if *cacheAllDatabases {
-		err := cacheAllEcosystemDatabases()
+		err := cacheAllEcosystemDatabases(r)
 
 		if err != nil {
-			return printDatabaseLoadErr(err)
+			return printDatabaseLoadErr(r, err)
 		}
 
 		return 0
 	}
 
 	if *listEcosystems {
-		printKnownEcosystems()
+		printKnownEcosystems(r)
 
 		return 0
 	}
@@ -150,7 +147,7 @@ func run() int {
 	pathsToCheck := flag.Args()
 
 	if len(pathsToCheck) == 0 {
-		fmt.Fprintf(os.Stderr, "Error, no package information found (see --help for usage)")
+		r.PrintError("Error, no package information found (see --help for usage)")
 
 		return 1
 	}
@@ -159,61 +156,43 @@ func run() int {
 
 	for i, pathToLockOrDirectory := range pathsToCheck {
 		if i >= 1 {
-			fmt.Println()
+			r.PrintText("\n")
 		}
 
-		packages, err := lockfile.Parse(pathToLockOrDirectory, *parseAs)
+		lockf, err := lockfile.Parse(pathToLockOrDirectory, *parseAs)
 
 		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "Error, %s\n", err)
+			r.PrintError(fmt.Sprintf("Error, %s\n", err))
 			exitCode = 127
 
 			continue
 		}
 
-		fmt.Printf(
+		r.PrintText(fmt.Sprintf(
 			"%s: found %s packages\n",
-			color.MagentaString("%s", pathToLockOrDirectory),
-			color.YellowString("%d", len(packages)),
-		)
+			color.MagentaString("%s", lockf.FilePath),
+			color.YellowString("%d", len(lockf.Packages)),
+		))
 
 		if *listPackages {
-			printPackages(pathToLockOrDirectory, packages)
+			r.PrintResult(lockf)
 
 			continue
 		}
 
-		dbs, err := loadEcosystemDatabases(packages.Ecosystems(), *offline)
+		dbs, err := loadEcosystemDatabases(r, lockf.Packages.Ecosystems(), *offline)
 
 		if err != nil {
-			exitCode = printDatabaseLoadErr(err)
+			exitCode = printDatabaseLoadErr(r, err)
 
 			continue
 		}
 
-		knownVulnerabilitiesCount := 0
-		for _, pkg := range packages {
-			for _, db := range dbs {
-				knownVulnerabilitiesCount += printVulnerabilities(db, pkg)
-			}
-		}
+		report := dbs.check(lockf)
 
-		if knownVulnerabilitiesCount == 0 {
-			fmt.Printf("%s\n", color.GreenString("  no known vulnerabilities found"))
+		r.PrintResult(report)
 
-			continue
-		}
-
-		fmt.Printf(
-			"\n  %s\n",
-			color.RedString(
-				"%d known vulnerabilities found in %s",
-				knownVulnerabilitiesCount,
-				pathToLockOrDirectory,
-			),
-		)
-
-		if exitCode == 0 {
+		if report.HasKnownVulnerabilities() && exitCode == 0 {
 			exitCode = 1
 		}
 	}

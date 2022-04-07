@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"osv-detector/internal"
@@ -102,6 +103,22 @@ type Reference struct {
 }
 
 type Versions []string
+
+// MarshalJSON ensures that if there are no versions,
+// an empty array is used as the value instead of "null"
+func (vs Versions) MarshalJSON() ([]byte, error) {
+	if len(vs) == 0 {
+		return []byte("[]"), nil
+	}
+
+	out, err := json.Marshal([]string(vs))
+
+	if err != nil {
+		return out, fmt.Errorf("%w", err)
+	}
+
+	return out, nil
+}
 
 func (vs Versions) includes(v string) bool {
 	for _, v2 := range vs {

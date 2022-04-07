@@ -1,9 +1,9 @@
 package internal
 
 type PackageDetails struct {
-	Name      string
-	Version   string
-	Ecosystem Ecosystem
+	Name      string    `json:"name"`
+	Version   string    `json:"version"`
+	Ecosystem Ecosystem `json:"ecosystem"`
 }
 
 type Ecosystem string
