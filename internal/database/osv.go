@@ -169,12 +169,6 @@ func (osv *OSV) isAliasOf(vulnerability OSV) bool {
 }
 
 func (osv *OSV) AffectsEcosystem(ecosystem internal.Ecosystem) bool {
-	if osv.Affected == nil {
-		fmt.Printf("Ignoring %s as it does not have an 'affected' property\n", osv.ID)
-
-		return false
-	}
-
 	for _, affected := range osv.Affected {
 		if affected.Package.Ecosystem == ecosystem {
 			return true
@@ -243,12 +237,6 @@ func (osv *OSV) Link() string {
 }
 
 func (osv *OSV) IsAffected(pkg internal.PackageDetails) bool {
-	if osv.Affected == nil {
-		fmt.Printf("Ignoring %s as it does not have an 'affected' property\n", osv.ID)
-
-		return false
-	}
-
 	for _, affected := range osv.Affected {
 		if affected.Package.Ecosystem == pkg.Ecosystem &&
 			affected.Package.NormalizedName() == pkg.Name {
