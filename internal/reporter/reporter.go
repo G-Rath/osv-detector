@@ -22,8 +22,9 @@ func New(stdout io.Writer, stderr io.Writer, outputAsJSON bool) *Reporter {
 	}
 }
 
-// PrintExtra writes the given message to stderr
-func (r *Reporter) PrintExtra(msg string) {
+// PrintError writes the given message to stderr, regardless of if the reporter
+// is outputting as JSON or not
+func (r *Reporter) PrintError(msg string) {
 	fmt.Fprint(r.stderr, msg)
 }
 
@@ -64,7 +65,7 @@ func (r *Reporter) PrintJSONResults() {
 	}{Results: r.results})
 
 	if err != nil {
-		r.PrintExtra(fmt.Sprintf("an error occurred when printing results as JSON: %v", err))
+		r.PrintError(fmt.Sprintf("an error occurred when printing results as JSON: %v", err))
 
 		return
 	}

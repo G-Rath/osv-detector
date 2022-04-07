@@ -162,7 +162,7 @@ func run() int {
 		lockf, err := lockfile.Parse(pathToLockOrDirectory, *parseAs)
 
 		if err != nil {
-			r.PrintExtra(fmt.Sprintf("Error, %s\n", err))
+			r.PrintError(fmt.Sprintf("Error, %s\n", err))
 			exitCode = 127
 
 			continue

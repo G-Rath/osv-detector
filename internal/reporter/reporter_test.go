@@ -34,7 +34,7 @@ func (r TestResult) MarshalJSON() ([]byte, error) {
 	return out, nil
 }
 
-func TestReporter_PrintExtra(t *testing.T) {
+func TestReporter_PrintError(t *testing.T) {
 	t.Parallel()
 
 	msg := "Hello world!"
@@ -42,7 +42,7 @@ func TestReporter_PrintExtra(t *testing.T) {
 	stderr := &bytes.Buffer{}
 	r := reporter.New(stdout, stderr, false)
 
-	r.PrintExtra(msg)
+	r.PrintError(msg)
 
 	if gotStdout := stdout.String(); gotStdout != "" {
 		t.Errorf("Expected stdout to be empty, but got \"%s\"", gotStdout)
