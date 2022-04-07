@@ -5,7 +5,6 @@ linters:
   disable:
     - tagliatelle      # we're parsing data from external sources
     - varnamelen       # maybe later
-    - forbidigo        # defaults to fmt.Print stuff, which we want
     - exhaustivestruct # overkill
     - forcetypeassert  # too hard
     - interfacer       # deprecated
