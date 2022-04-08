@@ -35,7 +35,48 @@ func expectNumberOfParsersCalled(t *testing.T, numberOfParsersCalled int) {
 	}
 }
 
-func TestTryParse_FindsExpectedParsers(t *testing.T) {
+func TestFindParser(t *testing.T) {
+	t.Parallel()
+
+	lockfiles := []string{
+		"cargo.lock",
+		"package-lock.json",
+		"yarn.lock",
+		"pnpm-lock.yaml",
+		"composer.lock",
+		"Gemfile.lock",
+		"go.mod",
+		"requirements.txt",
+	}
+
+	for _, file := range lockfiles {
+		parser, parsedAs := lockfile.FindParser("/path/to/my/"+file, "")
+
+		if parser == nil {
+			t.Errorf("Expected a parser to be found for %s but did not", file)
+		}
+
+		if file != parsedAs {
+			t.Errorf("Expected parsedAs to be %s but got %s instead", file, parsedAs)
+		}
+	}
+}
+
+func TestFindParser_ExplicitParseAs(t *testing.T) {
+	t.Parallel()
+
+	parser, parsedAs := lockfile.FindParser("/path/to/my/package-lock.json", "composer.lock")
+
+	if parser == nil {
+		t.Errorf("Expected a parser to be found for package-lock.json (overridden as composer.json) but did not")
+	}
+
+	if parsedAs != "composer.lock" {
+		t.Errorf("Expected parsedAs to be composer.lock but got %s instead", parsedAs)
+	}
+}
+
+func TestParse_FindsExpectedParsers(t *testing.T) {
 	t.Parallel()
 
 	lockfiles := []string{
@@ -62,6 +103,20 @@ func TestTryParse_FindsExpectedParsers(t *testing.T) {
 	}
 
 	expectNumberOfParsersCalled(t, count)
+}
+
+func TestParse_ParserNotFound(t *testing.T) {
+	t.Parallel()
+
+	_, err := lockfile.Parse("/path/to/my/", "")
+
+	if err == nil {
+		t.Errorf("Expected to get an error but did not")
+	}
+
+	if !errors.Is(err, lockfile.ErrParserNotFound) {
+		t.Errorf("Did not get the expected ErrParserNotFound error - got %v instead", err)
+	}
 }
 
 func TestLockfile_ToString(t *testing.T) {
