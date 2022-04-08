@@ -191,8 +191,7 @@ func run() int {
 		return 0
 	}
 
-	pathsToCheck := flag.Args()
-	pathsToLocks := findAllLockfiles(r, pathsToCheck)
+	pathsToLocks := findAllLockfiles(r, flag.Args())
 
 	if len(pathsToLocks) == 0 {
 		r.PrintError(
