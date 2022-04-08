@@ -24,6 +24,7 @@ var parsers = map[string]PackageDetailsParser{
 	"go.mod":            ParseGoLock,
 	"package-lock.json": ParseNpmLock,
 	"pnpm-lock.yaml":    ParsePnpmLock,
+	"pom.xml":           ParseMavenLock,
 	"requirements.txt":  ParseRequirementsTxt,
 	"yarn.lock":         ParseYarnLock,
 }
