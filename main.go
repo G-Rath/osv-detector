@@ -106,7 +106,7 @@ func cacheAllEcosystemDatabases(r *reporter.Reporter) error {
 	return err
 }
 
-func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string) []string {
+func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs string) []string {
 	lockfiles := make([]string, 0, 1)
 	file, err := os.Open(pathToLockOrDirectory)
 
@@ -123,7 +123,7 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string) []string 
 							continue
 						}
 
-						if p, _ := lockfile.FindParser(dir.Name(), ""); p == nil {
+						if p, _ := lockfile.FindParser(dir.Name(), parseAs); p == nil {
 							continue
 						}
 
@@ -143,11 +143,11 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string) []string 
 	return lockfiles
 }
 
-func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string) []string {
+func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs string) []string {
 	var paths []string
 
 	for _, pathToLockOrDirectory := range pathsToCheck {
-		paths = append(paths, findLockfiles(r, pathToLockOrDirectory)...)
+		paths = append(paths, findLockfiles(r, pathToLockOrDirectory, parseAs)...)
 	}
 
 	return paths
@@ -191,7 +191,7 @@ func run() int {
 		return 0
 	}
 
-	pathsToLocks := findAllLockfiles(r, flag.Args())
+	pathsToLocks := findAllLockfiles(r, flag.Args(), *parseAs)
 
 	if len(pathsToLocks) == 0 {
 		r.PrintError(
