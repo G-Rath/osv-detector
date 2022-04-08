@@ -106,6 +106,53 @@ func cacheAllEcosystemDatabases(r *reporter.Reporter) error {
 	return err
 }
 
+func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs string) []string {
+	lockfiles := make([]string, 0, 1)
+	file, err := os.Open(pathToLockOrDirectory)
+
+	if err == nil {
+		info, err := file.Stat()
+
+		if err == nil {
+			if info.IsDir() {
+				dirs, err := file.ReadDir(-1)
+
+				if err == nil {
+					for _, dir := range dirs {
+						if dir.IsDir() {
+							continue
+						}
+
+						if p, _ := lockfile.FindParser(dir.Name(), parseAs); p == nil {
+							continue
+						}
+
+						lockfiles = append(lockfiles, dir.Name())
+					}
+				}
+			} else {
+				lockfiles = append(lockfiles, pathToLockOrDirectory)
+			}
+		}
+	}
+
+	if err != nil {
+		r.PrintError(fmt.Sprintf("Error reading %s: %v", pathToLockOrDirectory, err))
+	}
+
+	return lockfiles
+}
+
+func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs string) []string {
+	var paths []string
+
+	for _, pathToLockOrDirectory := range pathsToCheck {
+		paths = append(paths, findLockfiles(r, pathToLockOrDirectory, parseAs)...)
+	}
+
+	return paths
+}
+
 func run() int {
 	offline := flag.Bool("offline", false, "Update the OSV database")
 	parseAs := flag.String("parse-as", "", "Name of a supported lockfile to use to determine how to parse the given file")
@@ -144,22 +191,24 @@ func run() int {
 		return 0
 	}
 
-	pathsToCheck := flag.Args()
+	pathsToLocks := findAllLockfiles(r, flag.Args(), *parseAs)
 
-	if len(pathsToCheck) == 0 {
-		r.PrintError("Error, no package information found (see --help for usage)")
+	if len(pathsToLocks) == 0 {
+		r.PrintError(
+			"You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)",
+		)
 
 		return 1
 	}
 
 	exitCode := 0
 
-	for i, pathToLockOrDirectory := range pathsToCheck {
+	for i, pathToLock := range pathsToLocks {
 		if i >= 1 {
 			r.PrintText("\n")
 		}
 
-		lockf, err := lockfile.Parse(pathToLockOrDirectory, *parseAs)
+		lockf, err := lockfile.Parse(pathToLock, *parseAs)
 
 		if err != nil {
 			r.PrintError(fmt.Sprintf("Error, %s\n", err))

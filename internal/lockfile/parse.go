@@ -8,6 +8,14 @@ import (
 	"strings"
 )
 
+func FindParser(pathToLockfile string, parseAs string) (PackageDetailsParser, string) {
+	if parseAs == "" {
+		parseAs = path.Base(pathToLockfile)
+	}
+
+	return findParser(parseAs), parseAs
+}
+
 func findParser(pathToLockfile string) PackageDetailsParser {
 	switch pathToLockfile {
 	case "cargo.lock":
@@ -85,11 +93,7 @@ func (l Lockfile) ToString() string {
 // The parser is selected based on the name of the file, which can be overridden
 // with the "parseAs" parameter.
 func Parse(pathToLockfile string, parseAs string) (Lockfile, error) {
-	if parseAs == "" {
-		parseAs = path.Base(pathToLockfile)
-	}
-
-	parser := findParser(parseAs)
+	parser, parsedAs := FindParser(pathToLockfile, parseAs)
 
 	if parser == nil {
 		return Lockfile{}, fmt.Errorf("%w for %s", ErrParserNotFound, pathToLockfile)
@@ -107,7 +111,7 @@ func Parse(pathToLockfile string, parseAs string) (Lockfile, error) {
 
 	return Lockfile{
 		FilePath: pathToLockfile,
-		ParsedAs: parseAs,
+		ParsedAs: parsedAs,
 		Packages: packages,
 	}, err
 }
