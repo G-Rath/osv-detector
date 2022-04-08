@@ -17,6 +17,9 @@ osv-detector path/to/my/composer.lock
 
 # you can also pass multiple files
 osv-detector path/to/my/package-lock.json path/to/my/composer.lock
+
+# or a directory which is expected to contain at least one supported lockfile
+osv-detector path/to/my/
 ```
 
 The detector supports parsing the following lockfiles:
