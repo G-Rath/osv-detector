@@ -123,11 +123,11 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string) []string 
 							continue
 						}
 
-						if p, _ := lockfile.FindParser(file.Name(), ""); p == nil {
+						if p, _ := lockfile.FindParser(dir.Name(), ""); p == nil {
 							continue
 						}
 
-						lockfiles = append(lockfiles, file.Name())
+						lockfiles = append(lockfiles, dir.Name())
 					}
 				}
 			} else {
