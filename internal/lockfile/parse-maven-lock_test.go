@@ -75,3 +75,26 @@ func TestParseMavenLock_TwoPackages(t *testing.T) {
 		},
 	})
 }
+
+func TestParseMavenLock_Interpolation(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParseMavenLock("fixtures/maven/interpolation.xml")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "mypackage",
+			Version:   "1.0.0",
+			Ecosystem: lockfile.MavenEcosystem,
+		},
+		{
+			Name:      "my.package",
+			Version:   "2.3.4",
+			Ecosystem: lockfile.MavenEcosystem,
+		},
+	})
+}

@@ -4,6 +4,8 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
+	"os"
+	"regexp"
 )
 
 type MavenLockDependency struct {
@@ -13,13 +15,65 @@ type MavenLockDependency struct {
 	Version string   `xml:"version"`
 }
 
+func (mld MavenLockDependency) ResolveVersion(lockfile MavenLockFile) string {
+	interpolationReg := regexp.MustCompile(`\${(.+)}`)
+
+	results := interpolationReg.FindStringSubmatch(mld.Version)
+
+	// no interpolation, so just return the version as-is
+	if results == nil {
+		return mld.Version
+	}
+	if val, ok := lockfile.Properties.m[results[1]]; ok {
+		return val
+	}
+
+	fmt.Fprintf(
+		os.Stderr,
+		"Failed to resolve version of %s: property \"%s\" could not be found",
+		mld.Name,
+		results[1],
+	)
+
+	return "0"
+}
+
 type MavenLockFile struct {
 	XMLName      xml.Name              `xml:"project"`
 	ModelVersion string                `xml:"modelVersion"`
+	Properties   MavenLockProperties   `xml:"properties"`
 	Dependencies []MavenLockDependency `xml:"dependencies>dependency"`
 }
 
 const MavenEcosystem Ecosystem = "Maven"
+
+type MavenLockProperties struct {
+	m map[string]string
+}
+
+func (p *MavenLockProperties) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	p.m = map[string]string{}
+
+	for {
+		t, _ := d.Token()
+
+		switch tt := t.(type) {
+		case xml.StartElement:
+			var s string
+
+			if err := d.DecodeElement(&s, &tt); err != nil {
+				return fmt.Errorf("%w", err)
+			}
+
+			p.m[tt.Name.Local] = s
+
+		case xml.EndElement:
+			if tt.Name == start.Name {
+				return nil
+			}
+		}
+	}
+}
 
 func ParseMavenLock(pathToLockfile string) ([]PackageDetails, error) {
 	var parsedLockfile *MavenLockFile
@@ -41,7 +95,7 @@ func ParseMavenLock(pathToLockfile string) ([]PackageDetails, error) {
 	for _, lockPackage := range parsedLockfile.Dependencies {
 		packages = append(packages, PackageDetails{
 			Name:      lockPackage.Name,
-			Version:   lockPackage.Version,
+			Version:   lockPackage.ResolveVersion(*parsedLockfile),
 			Ecosystem: MavenEcosystem,
 		})
 	}
