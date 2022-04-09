@@ -10,6 +10,7 @@ import (
 	"osv-detector/internal/database"
 	"osv-detector/internal/lockfile"
 	"osv-detector/internal/reporter"
+	"path"
 )
 
 // these come from goreleaser
@@ -127,7 +128,7 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs s
 							continue
 						}
 
-						lockfiles = append(lockfiles, dir.Name())
+						lockfiles = append(lockfiles, path.Join(pathToLockOrDirectory, dir.Name()))
 					}
 				}
 			} else {
