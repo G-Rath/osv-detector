@@ -138,7 +138,7 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs s
 	}
 
 	if err != nil {
-		r.PrintError(fmt.Sprintf("Error reading %s: %v", pathToLockOrDirectory, err))
+		r.PrintError(fmt.Sprintf("Error reading %s: %v\n", pathToLockOrDirectory, err))
 	}
 
 	return lockfiles
@@ -196,7 +196,7 @@ func run() int {
 
 	if len(pathsToLocks) == 0 {
 		r.PrintError(
-			"You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)",
+			"You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)\n",
 		)
 
 		return 1
