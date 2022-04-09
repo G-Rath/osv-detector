@@ -11,6 +11,7 @@
   <properties>
     <mypackageVersion>1.0.0</mypackageVersion>
     <my.package.version>2.3.4</my.package.version>
+    <version-range>[9.4.35.v20201120,9.5)</version-range>
   </properties>
 
   <dependencies>
@@ -24,6 +25,12 @@
       <groupId>org.mine</groupId>
       <artifactId>my.package</artifactId>
       <version>${my.package.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mine</groupId>
+      <artifactId>ranged-package</artifactId>
+      <version>${version-range}</version>
     </dependency>
   </dependencies>
 </project>

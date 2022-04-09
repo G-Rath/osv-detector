@@ -15,7 +15,19 @@ type MavenLockDependency struct {
 	Version string   `xml:"version"`
 }
 
-func (mld MavenLockDependency) ResolveVersion(lockfile MavenLockFile) string {
+func (mld MavenLockDependency) parseResolvedVersion(version string) string {
+	versionRequirementReg := regexp.MustCompile(`[[(]?(.*?)(?:,|[)\]]|$)`)
+
+	results := versionRequirementReg.FindStringSubmatch(version)
+
+	if results == nil || results[1] == "" {
+		return "0"
+	}
+
+	return results[1]
+}
+
+func (mld MavenLockDependency) resolveVersionValue(lockfile MavenLockFile) string {
 	interpolationReg := regexp.MustCompile(`\${(.+)}`)
 
 	results := interpolationReg.FindStringSubmatch(mld.Version)
@@ -36,6 +48,12 @@ func (mld MavenLockDependency) ResolveVersion(lockfile MavenLockFile) string {
 	)
 
 	return "0"
+}
+
+func (mld MavenLockDependency) ResolveVersion(lockfile MavenLockFile) string {
+	version := mld.resolveVersionValue(lockfile)
+
+	return mld.parseResolvedVersion(version)
 }
 
 type MavenLockFile struct {
