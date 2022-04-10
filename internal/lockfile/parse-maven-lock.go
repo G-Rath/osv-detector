@@ -9,10 +9,10 @@ import (
 )
 
 type MavenLockDependency struct {
-	// GroupId    string `xml:"groupId"`
-	XMLName xml.Name `xml:"dependency"`
-	Name    string   `xml:"artifactId"`
-	Version string   `xml:"version"`
+	XMLName    xml.Name `xml:"dependency"`
+	GroupID    string   `xml:"groupId"`
+	ArtifactID string   `xml:"artifactId"`
+	Version    string   `xml:"version"`
 }
 
 func (mld MavenLockDependency) parseResolvedVersion(version string) string {
@@ -43,7 +43,7 @@ func (mld MavenLockDependency) resolveVersionValue(lockfile MavenLockFile) strin
 	fmt.Fprintf(
 		os.Stderr,
 		"Failed to resolve version of %s: property \"%s\" could not be found",
-		mld.Name,
+		mld.GroupID+":"+mld.ArtifactID,
 		results[1],
 	)
 
@@ -112,7 +112,7 @@ func ParseMavenLock(pathToLockfile string) ([]PackageDetails, error) {
 
 	for _, lockPackage := range parsedLockfile.Dependencies {
 		packages = append(packages, PackageDetails{
-			Name:      lockPackage.Name,
+			Name:      lockPackage.GroupID + ":" + lockPackage.ArtifactID,
 			Version:   lockPackage.ResolveVersion(*parsedLockfile),
 			Ecosystem: MavenEcosystem,
 		})

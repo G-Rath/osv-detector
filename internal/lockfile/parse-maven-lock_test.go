@@ -46,7 +46,7 @@ func TestParseMavenLock_OnePackage(t *testing.T) {
 
 	expectPackages(t, packages, []lockfile.PackageDetails{
 		{
-			Name:      "maven-artifact",
+			Name:      "org.apache.maven:maven-artifact",
 			Version:   "1.0.0",
 			Ecosystem: lockfile.MavenEcosystem,
 		},
@@ -64,12 +64,12 @@ func TestParseMavenLock_TwoPackages(t *testing.T) {
 
 	expectPackages(t, packages, []lockfile.PackageDetails{
 		{
-			Name:      "netty-all",
+			Name:      "io.netty:netty-all",
 			Version:   "4.1.42.Final",
 			Ecosystem: lockfile.MavenEcosystem,
 		},
 		{
-			Name:      "slf4j-log4j12",
+			Name:      "org.slf4j:slf4j-log4j12",
 			Version:   "1.7.25",
 			Ecosystem: lockfile.MavenEcosystem,
 		},
@@ -87,17 +87,17 @@ func TestParseMavenLock_Interpolation(t *testing.T) {
 
 	expectPackages(t, packages, []lockfile.PackageDetails{
 		{
-			Name:      "mypackage",
+			Name:      "org.mine:mypackage",
 			Version:   "1.0.0",
 			Ecosystem: lockfile.MavenEcosystem,
 		},
 		{
-			Name:      "my.package",
+			Name:      "org.mine:my.package",
 			Version:   "2.3.4",
 			Ecosystem: lockfile.MavenEcosystem,
 		},
 		{
-			Name:      "ranged-package",
+			Name:      "org.mine:ranged-package",
 			Version:   "9.4.35.v20201120",
 			Ecosystem: lockfile.MavenEcosystem,
 		},
