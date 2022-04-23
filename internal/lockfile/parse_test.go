@@ -119,6 +119,20 @@ func TestParse_ParserNotFound(t *testing.T) {
 	}
 }
 
+func TestListParsers(t *testing.T) {
+	t.Parallel()
+
+	parsers := lockfile.ListParsers()
+
+	if first := parsers[0]; first != "cargo.lock" {
+		t.Errorf("Expected first element to be cargo.lock, but got %s", first)
+	}
+
+	if last := parsers[len(parsers)-1]; last != "yarn.lock" {
+		t.Errorf("Expected last element to be requirements.txt, but got %s", last)
+	}
+}
+
 func TestLockfile_ToString(t *testing.T) {
 	t.Parallel()
 

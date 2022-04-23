@@ -13,30 +13,33 @@ func FindParser(pathToLockfile string, parseAs string) (PackageDetailsParser, st
 		parseAs = path.Base(pathToLockfile)
 	}
 
-	return findParser(parseAs), parseAs
+	return parsers[parseAs], parseAs
 }
 
-func findParser(pathToLockfile string) PackageDetailsParser {
-	switch pathToLockfile {
-	case "cargo.lock":
-		return ParseCargoLock
-	case "composer.lock":
-		return ParseComposerLock
-	case "Gemfile.lock":
-		return ParseGemfileLock
-	case "package-lock.json":
-		return ParseNpmLock
-	case "yarn.lock":
-		return ParseYarnLock
-	case "go.mod":
-		return ParseGoLock
-	case "pnpm-lock.yaml":
-		return ParsePnpmLock
-	case "requirements.txt":
-		return ParseRequirementsTxt
-	default:
-		return nil
+// nolint:gochecknoglobals // this is an optimisation and read-only
+var parsers = map[string]PackageDetailsParser{
+	"cargo.lock":        ParseCargoLock,
+	"composer.lock":     ParseComposerLock,
+	"Gemfile.lock":      ParseGemfileLock,
+	"go.mod":            ParseGoLock,
+	"package-lock.json": ParseNpmLock,
+	"pnpm-lock.yaml":    ParsePnpmLock,
+	"requirements.txt":  ParseRequirementsTxt,
+	"yarn.lock":         ParseYarnLock,
+}
+
+func ListParsers() []string {
+	ps := make([]string, 0, len(parsers))
+
+	for s := range parsers {
+		ps = append(ps, s)
 	}
+
+	sort.Slice(ps, func(i, j int) bool {
+		return strings.ToLower(ps[i]) < strings.ToLower(ps[j])
+	})
+
+	return ps
 }
 
 var ErrParserNotFound = errors.New("could not determine parser")
