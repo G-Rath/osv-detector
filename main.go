@@ -199,7 +199,7 @@ func run() int {
 			"You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)\n",
 		)
 
-		return 1
+		return 127
 	}
 
 	exitCode := 0
