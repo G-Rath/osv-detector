@@ -20,7 +20,7 @@ var (
 	date    = "unknown"
 )
 
-func printDatabaseLoadErr(r *reporter.Reporter, err error) int {
+func printDatabaseLoadErr(r *reporter.Reporter, err error) {
 	msg := err.Error()
 
 	if errors.Is(err, database.ErrOfflineDatabaseNotFound) {
@@ -28,8 +28,6 @@ func printDatabaseLoadErr(r *reporter.Reporter, err error) int {
 	}
 
 	r.PrintError(fmt.Sprintf(" %s\n", color.RedString("failed: %s", msg)))
-
-	return 127
 }
 
 func printKnownEcosystems(r *reporter.Reporter) {
@@ -180,7 +178,9 @@ func run() int {
 		err := cacheAllEcosystemDatabases(r)
 
 		if err != nil {
-			return printDatabaseLoadErr(r, err)
+			printDatabaseLoadErr(r, err)
+
+			return 127
 		}
 
 		return 0
@@ -233,7 +233,8 @@ func run() int {
 		dbs, err := loadEcosystemDatabases(r, lockf.Packages.Ecosystems(), *offline)
 
 		if err != nil {
-			exitCode = printDatabaseLoadErr(r, err)
+			printDatabaseLoadErr(r, err)
+			exitCode = 127
 
 			continue
 		}
