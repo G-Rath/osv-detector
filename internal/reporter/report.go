@@ -13,6 +13,7 @@ type PackageDetailsWithVulnerabilities struct {
 	internal.PackageDetails
 
 	Vulnerabilities database.Vulnerabilities `json:"vulnerabilities"`
+	Ignored         database.Vulnerabilities `json:"ignored"`
 }
 
 type Report struct {

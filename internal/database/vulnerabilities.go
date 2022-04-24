@@ -1,6 +1,10 @@
 package database
 
-import "osv-detector/internal"
+import (
+	"encoding/json"
+	"fmt"
+	"osv-detector/internal"
+)
 
 func (db *OSVDatabase) Vulnerabilities(includeWithdrawn bool) []OSV {
 	if includeWithdrawn {
@@ -47,4 +51,22 @@ func (db *OSVDatabase) VulnerabilitiesAffectingPackage(pkg internal.PackageDetai
 	}
 
 	return vulnerabilities
+}
+
+// MarshalJSON ensures that if there are no vulnerabilities,
+// an empty array is used as the value instead of "null"
+func (vs Vulnerabilities) MarshalJSON() ([]byte, error) {
+	if len(vs) == 0 {
+		return []byte("[]"), nil
+	}
+
+	type innerVulnerabilities Vulnerabilities
+
+	out, err := json.Marshal(innerVulnerabilities(vs))
+
+	if err != nil {
+		return out, fmt.Errorf("%w", err)
+	}
+
+	return out, nil
 }
