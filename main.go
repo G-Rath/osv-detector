@@ -192,6 +192,18 @@ func run() int {
 		return 0
 	}
 
+	if *parseAs != "" {
+		if parser, parsedAs := lockfile.FindParser("", *parseAs); parser == nil {
+			r.PrintError(fmt.Sprintf("Don't know how to parse files as \"%s\" - supported values are:\n", parsedAs))
+
+			for _, s := range lockfile.ListParsers() {
+				r.PrintError(fmt.Sprintf("  %s\n", s))
+			}
+
+			return 127
+		}
+	}
+
 	pathsToLocks := findAllLockfiles(r, flag.Args(), *parseAs)
 
 	if len(pathsToLocks) == 0 {
