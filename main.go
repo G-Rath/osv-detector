@@ -83,9 +83,12 @@ func loadEcosystemDatabases(r *reporter.Reporter, ecosystems []internal.Ecosyste
 			return dbs, fmt.Errorf("could not load database: %w", err)
 		}
 
+		count := len(db.Vulnerabilities(true))
+
 		r.PrintText(fmt.Sprintf(
-			" (%s vulnerabilities, including withdrawn - last updated %s)\n",
-			color.YellowString("%d", len(db.Vulnerabilities(true))),
+			" (%s %s, including withdrawn - last updated %s)\n",
+			color.YellowString("%d", count),
+			reporter.Form(count, "vulnerability", "vulnerabilities"),
 			db.UpdatedAt,
 		))
 
@@ -231,9 +234,10 @@ func run() int {
 		}
 
 		r.PrintText(fmt.Sprintf(
-			"%s: found %s packages\n",
+			"%s: found %s %s\n",
 			color.MagentaString("%s", lockf.FilePath),
 			color.YellowString("%d", len(lockf.Packages)),
+			reporter.Form(len(lockf.Packages), "package", "packages"),
 		))
 
 		if *listPackages {

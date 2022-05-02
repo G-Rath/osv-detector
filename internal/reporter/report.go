@@ -61,8 +61,18 @@ func (r Report) formatLineByLine() string {
 	return strings.Join(lines, "\n")
 }
 
+func Form(count int, singular, plural string) string {
+	if count == 1 {
+		return singular
+	}
+
+	return plural
+}
+
 func (r Report) ToString() string {
-	if r.countKnownVulnerabilities() == 0 {
+	count := r.countKnownVulnerabilities()
+
+	if count == 0 {
 		return fmt.Sprintf("%s\n", color.GreenString("  no known vulnerabilities found"))
 	}
 
@@ -71,8 +81,9 @@ func (r Report) ToString() string {
 
 	out += fmt.Sprintf("\n  %s\n",
 		color.RedString(
-			"%d known vulnerabilities found in %s",
-			r.countKnownVulnerabilities(),
+			"%d known %s found in %s",
+			count,
+			Form(count, "vulnerability", "vulnerabilities"),
 			r.FilePath,
 		),
 	)
