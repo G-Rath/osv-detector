@@ -109,14 +109,14 @@ func TestReport_ToString_NoVulnerabilities(t *testing.T) {
 	}
 }
 
-func TestReport_ToString_Vulnerabilities(t *testing.T) {
+func TestReport_ToString_OneVulnerability(t *testing.T) {
 	t.Parallel()
 
 	expected := strings.Join([]string{
 		"  my-package@1.2.3 is affected by the following vulnerabilities:",
 		"    GHSA-1: This is a vulnerability! (https://github.com/advisories/GHSA-1)",
 		"",
-		"  1 known vulnerabilities found in /path/to/my/lock",
+		"  1 known vulnerability found in /path/to/my/lock",
 		"",
 	}, "\n")
 
