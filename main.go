@@ -156,11 +156,11 @@ func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs strin
 }
 
 func run() int {
-	offline := flag.Bool("offline", false, "Update the OSV database")
-	parseAs := flag.String("parse-as", "", "Name of a supported lockfile to use to determine how to parse the given file")
+	offline := flag.Bool("offline", false, "Perform checks using only the cached databases on disk")
+	parseAs := flag.String("parse-as", "", "Name of a supported lockfile to parse the input files as")
 	printVersion := flag.Bool("version", false, "Print version information")
-	listEcosystems := flag.Bool("list-ecosystems", false, "List all the ecosystems present in the loaded OSV database")
-	listPackages := flag.Bool("list-packages", false, "List all the packages that were parsed from the given file")
+	listEcosystems := flag.Bool("list-ecosystems", false, "List all of the known ecosystems that are supported by the detector")
+	listPackages := flag.Bool("list-packages", false, "List the packages that are parsed from the input files")
 	cacheAllDatabases := flag.Bool("cache-all-databases", false, "Cache all the known ecosystem databases for offline use")
 	outputAsJSON := flag.Bool("json", false, "Output the results in JSON format")
 
