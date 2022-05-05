@@ -7,7 +7,7 @@ on:
       - main
 
 env:
-  GO_VERSION: '1.17.2'
+  GO_VERSION: '1.17.9'
 
 jobs:
   test-ubuntu:
