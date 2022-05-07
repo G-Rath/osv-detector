@@ -1,8 +1,10 @@
 package lockfile
 
 import (
+	"encoding/csv"
 	"errors"
 	"fmt"
+	"io"
 	"path"
 	"sort"
 	"strings"
@@ -126,4 +128,44 @@ func Parse(pathToLockfile string, parseAs string) (Lockfile, error) {
 		ParsedAs: parsedAs,
 		Packages: packages,
 	}, err
+}
+
+func fromCSV(lines []string) PackageDetails {
+	return PackageDetails{
+		Name:      lines[1],
+		Version:   lines[2],
+		Ecosystem: Ecosystem(lines[0]),
+	}
+}
+
+func FromCSV(contents string) (Lockfile, error) {
+	var packages []PackageDetails
+
+	r := csv.NewReader(strings.NewReader(contents))
+
+	for {
+		record, err := r.Read()
+		if errors.Is(err, io.EOF) {
+			break
+		}
+		if err != nil {
+			return Lockfile{}, fmt.Errorf("%w", err)
+		}
+
+		packages = append(packages, fromCSV(record))
+	}
+
+	sort.Slice(packages, func(i, j int) bool {
+		if packages[i].Name == packages[j].Name {
+			return packages[i].Version < packages[j].Version
+		}
+
+		return packages[i].Name < packages[j].Name
+	})
+
+	return Lockfile{
+		FilePath: "csv",
+		ParsedAs: "csv",
+		Packages: packages,
+	}, nil
 }

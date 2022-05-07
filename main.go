@@ -11,6 +11,7 @@ import (
 	"osv-detector/pkg/database"
 	"osv-detector/pkg/lockfile"
 	"path"
+	"strings"
 )
 
 // these come from goreleaser
@@ -190,6 +191,46 @@ func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs strin
 	return paths
 }
 
+func handleParseAsCSV(r *reporter.Reporter, lines []string, offline bool, ignores []string) int {
+	if len(lines) == 0 {
+		r.PrintError("You must provide at least one CSV line to parse\n")
+
+		return 127
+	}
+
+	lockf, err := lockfile.FromCSV(strings.Join(lines, "\n"))
+
+	if err != nil {
+		r.PrintError(fmt.Sprintf("Error, %s\n", err))
+
+		return 127
+	}
+
+	r.PrintText(fmt.Sprintf(
+		"%s: found %s packages\n",
+		color.MagentaString("%s", lockf.FilePath),
+		color.YellowString("%d", len(lockf.Packages)),
+	))
+
+	dbs, err := loadEcosystemDatabases(r, lockf.Packages.Ecosystems(), offline)
+
+	if err != nil {
+		printDatabaseLoadErr(r, err)
+
+		return 127
+	}
+
+	report := dbs.check(lockf, ignores)
+
+	r.PrintResult(report)
+
+	if report.HasKnownVulnerabilities() {
+		return 1
+	}
+
+	return 0
+}
+
 type stringsFlag []string
 
 func (s *stringsFlag) String() string {
@@ -319,6 +360,7 @@ func run() int {
 
 	offline := flag.Bool("offline", false, "Perform checks using only the cached databases on disk")
 	parseAs := flag.String("parse-as", "", "Name of a supported lockfile to parse the input files as")
+	parseAsCSV := flag.Bool("parse-as-csv", false, "Parse the input as CSV rows and files")
 	configPath := flag.String("config", "", "Path to a config file to use for all lockfiles")
 	noConfig := flag.Bool("no-config", false, "Disable loading of any config files")
 	printVersion := flag.Bool("version", false, "Print version information")
@@ -374,6 +416,10 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 			return 127
 		}
+	}
+
+	if *parseAsCSV {
+		return handleParseAsCSV(r, flag.Args(), *offline, ignores)
 	}
 
 	pathsToLocks := findAllLockfiles(r, flag.Args(), *parseAs)
