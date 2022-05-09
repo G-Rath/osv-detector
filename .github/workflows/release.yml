@@ -18,7 +18,7 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cache/go-build
@@ -37,7 +37,7 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: |
             ~/Library/Caches/go-build
@@ -56,7 +56,7 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: |
             %LocalAppData%\go-build
@@ -102,7 +102,7 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cache/go-build
