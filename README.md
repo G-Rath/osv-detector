@@ -33,11 +33,15 @@ The detector supports parsing the following lockfiles:
 | `composer.lock`      | `Packagist` | `composer` |
 | `Gemfile.lock`       | `RubyGems`  | `bundler`  |
 | `go.mod`             | `Go`        | `go mod`   |
+| `pom.xml`\*          | `Maven`     | `maven`    |
 | `requirements.txt`\* | `PyPI`      | `pip`      |
 
-\*: `requirements.txt` support is currently very limited - it ignores anything
-that is not a direct requirement (e.g. flags or files) & it assumes the _lowest_
-version possible for the constraint (or lack of)
+\*: `pom.xml` and `requirements.txt` are technically not lockfiles, as they
+don't have to specify the complete dependency tree and can have version
+constraints/ranges. When parsing these files, the detector will assume the
+_lowest_ version possible for non-exact dependencies, and will ignore anything
+that is not a dependency specification (e.g. flags or files in the case of
+`requirements.txt`, though `<properties>` _is_ supported for `pom.xml`)
 
 The detector will attempt to automatically determine the parser to use for each
 file based on the filename - you can manually specify the parser to use for all
