@@ -98,7 +98,8 @@ passed:
           "name": "github.com/BurntSushi/toml",
           "version": "1.0.0",
           "ecosystem": "Go",
-          "vulnerabilities": []
+          "vulnerabilities": [],
+          "ignored": []
         }
       ]
     },
@@ -110,7 +111,8 @@ passed:
           "name": "wrappy",
           "version": "1.0.2",
           "ecosystem": "npm",
-          "vulnerabilities": []
+          "vulnerabilities": [],
+          "ignored": []
         }
       ]
     }
