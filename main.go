@@ -392,6 +392,9 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 				r.PrintError(fmt.Sprintf("  %s\n", s))
 			}
 
+			r.PrintError(fmt.Sprintf("  %s\n", parseAsCsvFile))
+			r.PrintError(fmt.Sprintf("  %s\n", parseAsCsvRow))
+
 			return 127
 		}
 	}
