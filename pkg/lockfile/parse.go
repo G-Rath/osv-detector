@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"path"
 	"sort"
 	"strings"
@@ -130,7 +131,7 @@ func Parse(pathToLockfile string, parseAs string) (Lockfile, error) {
 	}, err
 }
 
-func fromCSV(lines []string) PackageDetails {
+func fromCSVRecord(lines []string) PackageDetails {
 	return PackageDetails{
 		Name:      lines[1],
 		Version:   lines[2],
@@ -138,10 +139,10 @@ func fromCSV(lines []string) PackageDetails {
 	}
 }
 
-func FromCSV(contents string) (Lockfile, error) {
+func fromCSV(reader io.Reader) ([]PackageDetails, error) {
 	var packages []PackageDetails
 
-	r := csv.NewReader(strings.NewReader(contents))
+	r := csv.NewReader(reader)
 
 	for {
 		record, err := r.Read()
@@ -149,10 +150,10 @@ func FromCSV(contents string) (Lockfile, error) {
 			break
 		}
 		if err != nil {
-			return Lockfile{}, fmt.Errorf("%w", err)
+			return packages, fmt.Errorf("%w", err)
 		}
 
-		packages = append(packages, fromCSV(record))
+		packages = append(packages, fromCSVRecord(record))
 	}
 
 	sort.Slice(packages, func(i, j int) bool {
@@ -163,9 +164,31 @@ func FromCSV(contents string) (Lockfile, error) {
 		return packages[i].Name < packages[j].Name
 	})
 
+	return packages, nil
+}
+
+func FromCSVRows(rows []string, parseAs string) (Lockfile, error) {
+	packages, err := fromCSV(strings.NewReader(strings.Join(rows, "\n")))
+
 	return Lockfile{
-		FilePath: "csv",
-		ParsedAs: "csv",
+		FilePath: "-",
+		ParsedAs: parseAs,
 		Packages: packages,
-	}, nil
+	}, err
+}
+
+func FromCSVFile(pathToCSV string, parseAs string) (Lockfile, error) {
+	reader, err := os.Open(pathToCSV)
+
+	if err != nil {
+		return Lockfile{}, fmt.Errorf("could not read %s: %w", pathToCSV, err)
+	}
+
+	packages, err := fromCSV(reader)
+
+	return Lockfile{
+		FilePath: pathToCSV,
+		ParsedAs: parseAs,
+		Packages: packages,
+	}, err
 }
