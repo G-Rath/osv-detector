@@ -176,6 +176,287 @@ func TestLockfile_ToString(t *testing.T) {
 	}
 }
 
+func TestFromCSVRows(t *testing.T) {
+	t.Parallel()
+
+	type args struct {
+		filePath string
+		parseAs  string
+		rows     []string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    lockfile.Lockfile
+		wantErr bool
+	}{
+		{
+			name: "",
+			args: args{
+				filePath: "-",
+				parseAs:  "-",
+				rows:     nil,
+			},
+			want: lockfile.Lockfile{
+				FilePath: "-",
+				ParsedAs: "-",
+				Packages: nil,
+			},
+			wantErr: false,
+		},
+		{
+			name: "",
+			args: args{
+				filePath: "-",
+				parseAs:  "csv-row",
+				rows: []string{
+					"crates.io,addr2line,0.15.2",
+					"npm,@typescript-eslint/types,5.13.0",
+					"crates.io,wasi,0.10.2+wasi-snapshot-preview1",
+					"Packagist,sentry/sdk,2.0.4",
+				},
+			},
+			want: lockfile.Lockfile{
+				FilePath: "-",
+				ParsedAs: "csv-row",
+				Packages: []lockfile.PackageDetails{
+					{
+						Name:      "@typescript-eslint/types",
+						Version:   "5.13.0",
+						Ecosystem: lockfile.PnpmEcosystem,
+					},
+					{
+						Name:      "addr2line",
+						Version:   "0.15.2",
+						Ecosystem: lockfile.CargoEcosystem,
+					},
+					{
+						Name:      "sentry/sdk",
+						Version:   "2.0.4",
+						Ecosystem: lockfile.ComposerEcosystem,
+					},
+					{
+						Name:      "wasi",
+						Version:   "0.10.2+wasi-snapshot-preview1",
+						Ecosystem: lockfile.CargoEcosystem,
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "",
+			args: args{
+				filePath: "-",
+				parseAs:  "-",
+				rows: []string{
+					"NuGet,Yarp.ReverseProxy,",
+					"npm,@typescript-eslint/types,5.13.0",
+				},
+			},
+			want: lockfile.Lockfile{
+				FilePath: "-",
+				ParsedAs: "-",
+				Packages: []lockfile.PackageDetails{
+					{
+						Name:      "@typescript-eslint/types",
+						Version:   "5.13.0",
+						Ecosystem: lockfile.PnpmEcosystem,
+					},
+					{
+						Name:      "Yarp.ReverseProxy",
+						Version:   "",
+						Ecosystem: "NuGet",
+					},
+				},
+			},
+			wantErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			got, err := lockfile.FromCSVRows(tt.args.filePath, tt.args.parseAs, tt.args.rows)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FromCSVRows() error = %v, wantErr %v", err, tt.wantErr)
+
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FromCSVRows() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFromCSVFile(t *testing.T) {
+	type args struct {
+		pathToCSV string
+		parseAs   string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    lockfile.Lockfile
+		wantErr bool
+	}{
+		{
+			name: "",
+			args: args{
+				pathToCSV: "fixtures/csv/empty.csv",
+				parseAs:   "csv-file",
+			},
+			want: lockfile.Lockfile{
+				FilePath: "fixtures/csv/empty.csv",
+				ParsedAs: "csv-file",
+				Packages: nil,
+			},
+			wantErr: false,
+		},
+		{
+			name: "",
+			args: args{
+				pathToCSV: "fixtures/csv/multiple-rows.csv",
+				parseAs:   "csv-file",
+			},
+			want: lockfile.Lockfile{
+				FilePath: "fixtures/csv/multiple-rows.csv",
+				ParsedAs: "csv-file",
+				Packages: []lockfile.PackageDetails{
+					{
+						Name:      "@typescript-eslint/types",
+						Version:   "5.13.0",
+						Ecosystem: lockfile.PnpmEcosystem,
+					},
+					{
+						Name:      "addr2line",
+						Version:   "0.15.2",
+						Ecosystem: lockfile.CargoEcosystem,
+					},
+					{
+						Name:      "sentry/sdk",
+						Version:   "2.0.4",
+						Ecosystem: lockfile.ComposerEcosystem,
+					},
+					{
+						Name:      "wasi",
+						Version:   "0.10.2+wasi-snapshot-preview1",
+						Ecosystem: lockfile.CargoEcosystem,
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "",
+			args: args{
+				pathToCSV: "fixtures/csv/with-extra-columns.csv",
+				parseAs:   "csv-file",
+			},
+			want: lockfile.Lockfile{
+				FilePath: "fixtures/csv/with-extra-columns.csv",
+				ParsedAs: "csv-file",
+				Packages: []lockfile.PackageDetails{
+					{
+						Name:      "@typescript-eslint/types",
+						Version:   "5.13.0",
+						Ecosystem: lockfile.PnpmEcosystem,
+					},
+					{
+						Name:      "addr2line",
+						Version:   "0.15.2",
+						Ecosystem: lockfile.CargoEcosystem,
+					},
+					{
+						Name:      "sentry/sdk",
+						Version:   "2.0.4",
+						Ecosystem: lockfile.ComposerEcosystem,
+					},
+					{
+						Name:      "wasi",
+						Version:   "0.10.2+wasi-snapshot-preview1",
+						Ecosystem: lockfile.CargoEcosystem,
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "",
+			args: args{
+				pathToCSV: "fixtures/csv/two-rows.csv",
+				parseAs:   "-",
+			},
+			want: lockfile.Lockfile{
+				FilePath: "fixtures/csv/two-rows.csv",
+				ParsedAs: "-",
+				Packages: []lockfile.PackageDetails{
+					{
+						Name:      "@typescript-eslint/types",
+						Version:   "5.13.0",
+						Ecosystem: lockfile.PnpmEcosystem,
+					},
+					{
+						Name:      "Yarp.ReverseProxy",
+						Version:   "",
+						Ecosystem: "NuGet",
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "",
+			args: args{
+				pathToCSV: "fixtures/csv/with-headers.csv",
+				parseAs:   "-",
+			},
+			want: lockfile.Lockfile{
+				FilePath: "fixtures/csv/with-headers.csv",
+				ParsedAs: "-",
+				Packages: []lockfile.PackageDetails{
+					{
+						Name:      "@typescript-eslint/types",
+						Version:   "5.13.0",
+						Ecosystem: lockfile.PnpmEcosystem,
+					},
+					{
+						Name:      "Package",
+						Version:   "Version",
+						Ecosystem: "Ecosystem",
+					},
+					{
+						Name:      "sentry/sdk",
+						Version:   "2.0.4",
+						Ecosystem: lockfile.ComposerEcosystem,
+					},
+				},
+			},
+			wantErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			got, err := lockfile.FromCSVFile(tt.args.pathToCSV, tt.args.parseAs)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FromCSVFile() error = %v, wantErr %v", err, tt.wantErr)
+
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FromCSVFile() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestPackages_Ecosystems(t *testing.T) {
 	t.Parallel()
 

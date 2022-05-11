@@ -1,0 +1,4 @@
+crates.io,addr2line,0.15.2
+npm,"@typescript-eslint/types",5.13.0
+crates.io,wasi,0.10.2+wasi-snapshot-preview1
+Packagist,sentry/sdk,2.0.4
