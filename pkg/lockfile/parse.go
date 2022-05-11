@@ -167,11 +167,11 @@ func fromCSV(reader io.Reader) ([]PackageDetails, error) {
 	return packages, nil
 }
 
-func FromCSVRows(rows []string, parseAs string) (Lockfile, error) {
+func FromCSVRows(filePath string, parseAs string, rows []string) (Lockfile, error) {
 	packages, err := fromCSV(strings.NewReader(strings.Join(rows, "\n")))
 
 	return Lockfile{
-		FilePath: "-",
+		FilePath: filePath,
 		ParsedAs: parseAs,
 		Packages: packages,
 	}, err

@@ -201,7 +201,7 @@ func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs strin
 
 func parseLockfile(pathToLock string, parseAs string) (lockfile.Lockfile, error) {
 	if parseAs == parseAsCsvRow {
-		return lockfile.FromCSVRows(flag.Args(), parseAs)
+		return lockfile.FromCSVRows(pathToLock, parseAs, flag.Args())
 	}
 	if parseAs == parseAsCsvFile {
 		return lockfile.FromCSVFile(pathToLock, parseAs)
