@@ -77,6 +77,20 @@ osv-detector --cache-all-databases
 This can be useful if you're planning to run the detector over a number of
 lockfiles in bulk.
 
+By default, the detector will output the results to `stdout` as plain text, and
+exit with an error code of `1` if at least one vulnerability is found.
+
+you can use the `--ignore` flag to have the detector ignore a particular
+vulnerability - ignored vulnerabilities won't be included in the text output,
+and won't be counted when determining the code to exit with:
+
+```
+osv-detector --ignore GHSA-896r-f27r-55mw package-lock.json
+
+# you can pass multiple ignores
+osv-detector --ignore GHSA-896r-f27r-55mw --ignore GHSA-74fj-2j2h-c42q package-lock.json
+```
+
 You can use the `--json` flag to have the detector output its results as JSON:
 
 ```shell
@@ -98,7 +112,8 @@ passed:
           "name": "github.com/BurntSushi/toml",
           "version": "1.0.0",
           "ecosystem": "Go",
-          "vulnerabilities": []
+          "vulnerabilities": [],
+          "ignored": []
         }
       ]
     },
@@ -110,7 +125,8 @@ passed:
           "name": "wrappy",
           "version": "1.0.2",
           "ecosystem": "npm",
-          "vulnerabilities": []
+          "vulnerabilities": [],
+          "ignored": []
         }
       ]
     }

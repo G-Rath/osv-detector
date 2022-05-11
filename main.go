@@ -46,7 +46,17 @@ func ecosystemDatabaseURL(ecosystem internal.Ecosystem) string {
 
 type OSVDatabases []database.OSVDatabase
 
-func (dbs OSVDatabases) check(lockf lockfile.Lockfile) reporter.Report {
+func contains(items []string, value string) bool {
+	for _, item := range items {
+		if value == item {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (dbs OSVDatabases) check(lockf lockfile.Lockfile, ignores []string) reporter.Report {
 	report := reporter.Report{
 		Lockfile: lockf,
 		Packages: make([]reporter.PackageDetailsWithVulnerabilities, 0, len(lockf.Packages)),
@@ -54,14 +64,22 @@ func (dbs OSVDatabases) check(lockf lockfile.Lockfile) reporter.Report {
 
 	for _, pkg := range lockf.Packages {
 		vulnerabilities := make(database.Vulnerabilities, 0)
+		ignored := make(database.Vulnerabilities, 0)
 
 		for _, db := range dbs {
-			vulnerabilities = append(vulnerabilities, db.VulnerabilitiesAffectingPackage(pkg)...)
+			for _, vulnerability := range db.VulnerabilitiesAffectingPackage(pkg) {
+				if contains(ignores, vulnerability.ID) {
+					ignored = append(ignored, vulnerability)
+				} else {
+					vulnerabilities = append(vulnerabilities, vulnerability)
+				}
+			}
 		}
 
 		report.Packages = append(report.Packages, reporter.PackageDetailsWithVulnerabilities{
 			PackageDetails:  pkg,
 			Vulnerabilities: vulnerabilities,
+			Ignored:         ignored,
 		})
 	}
 
@@ -155,7 +173,21 @@ func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs strin
 	return paths
 }
 
+type stringsFlag []string
+
+func (s *stringsFlag) String() string {
+	return fmt.Sprint(*s)
+}
+
+func (s *stringsFlag) Set(value string) error {
+	*s = append(*s, value)
+
+	return nil
+}
+
 func run() int {
+	var ignores stringsFlag
+
 	offline := flag.Bool("offline", false, "Perform checks using only the cached databases on disk")
 	parseAs := flag.String("parse-as", "", "Name of a supported lockfile to parse the input files as")
 	printVersion := flag.Bool("version", false, "Print version information")
@@ -163,6 +195,9 @@ func run() int {
 	listPackages := flag.Bool("list-packages", false, "List the packages that are parsed from the input files")
 	cacheAllDatabases := flag.Bool("cache-all-databases", false, "Cache all the known ecosystem databases for offline use")
 	outputAsJSON := flag.Bool("json", false, "Output the results in JSON format")
+
+	flag.Var(&ignores, "ignore", `ID of an OSV to ignore when determining exit codes.
+This flag can be passed multiple times to ignore different vulnerabilities`)
 
 	flag.Parse()
 
@@ -255,7 +290,7 @@ func run() int {
 			continue
 		}
 
-		report := dbs.check(lockf)
+		report := dbs.check(lockf, ignores)
 
 		r.PrintResult(report)
 

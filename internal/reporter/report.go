@@ -13,6 +13,7 @@ type PackageDetailsWithVulnerabilities struct {
 	internal.PackageDetails
 
 	Vulnerabilities database.Vulnerabilities `json:"vulnerabilities"`
+	Ignored         database.Vulnerabilities `json:"ignored"`
 }
 
 type Report struct {
@@ -33,6 +34,20 @@ func (r Report) countKnownVulnerabilities() int {
 	}
 
 	return knownVulnerabilitiesCount
+}
+
+func (r Report) HasIgnoredVulnerabilities() bool {
+	return r.countIgnoredVulnerabilities() > 0
+}
+
+func (r Report) countIgnoredVulnerabilities() int {
+	ignoredVulnerabilitiesCount := 0
+
+	for _, pkg := range r.Packages {
+		ignoredVulnerabilitiesCount += len(pkg.Ignored)
+	}
+
+	return ignoredVulnerabilitiesCount
 }
 
 func (r Report) formatLineByLine() string {
@@ -69,23 +84,49 @@ func Form(count int, singular, plural string) string {
 	return plural
 }
 
-func (r Report) ToString() string {
-	count := r.countKnownVulnerabilities()
+func (r Report) describeIgnores() string {
+	count := r.countIgnoredVulnerabilities()
 
 	if count == 0 {
-		return fmt.Sprintf("%s\n", color.GreenString("  no known vulnerabilities found"))
+		return ""
+	}
+
+	return color.YellowString(
+		" (%d %s ignored)",
+		count,
+		Form(count, "was", "were"),
+	)
+}
+
+func (r Report) ToString() string {
+	count := r.countKnownVulnerabilities()
+	ignoreMsg := r.describeIgnores()
+	word := "known"
+
+	if ignoreMsg != "" {
+		word = "new"
+	}
+
+	if count == 0 {
+		return fmt.Sprintf(
+			"  %s%s\n",
+			color.GreenString("no %s vulnerabilities found", word),
+			ignoreMsg,
+		)
 	}
 
 	out := r.formatLineByLine()
 	out += "\n"
 
-	out += fmt.Sprintf("\n  %s\n",
+	out += fmt.Sprintf("\n  %s%s\n",
 		color.RedString(
-			"%d known %s found in %s",
+			"%d %s %s found in %s",
 			count,
+			word,
 			Form(count, "vulnerability", "vulnerabilities"),
 			r.FilePath,
 		),
+		ignoreMsg,
 	)
 
 	return out
