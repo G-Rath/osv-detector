@@ -143,6 +143,9 @@ func cacheAllEcosystemDatabases(r *reporter.Reporter) error {
 	return err
 }
 
+const parseAsCsvFile = "csv-file"
+const parseAsCsvRow = "csv-row"
+
 func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs string) []string {
 	lockfiles := make([]string, 0, 1)
 	file, err := os.Open(pathToLockOrDirectory)
@@ -160,7 +163,7 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs s
 							continue
 						}
 
-						if parseAs != "csv-file" {
+						if parseAs != parseAsCsvFile {
 							if p, _ := lockfile.FindParser(dir.Name(), parseAs); p == nil {
 								continue
 							}
@@ -185,7 +188,7 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs s
 func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs string) []string {
 	var paths []string
 
-	if parseAs == "csv-row" {
+	if parseAs == parseAsCsvRow {
 		return []string{"-"}
 	}
 
@@ -197,10 +200,10 @@ func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs strin
 }
 
 func parseLockfile(pathToLock string, parseAs string) (lockfile.Lockfile, error) {
-	if parseAs == "csv-row" {
+	if parseAs == parseAsCsvRow {
 		return lockfile.FromCSVRows(flag.Args(), parseAs)
 	}
-	if parseAs == "csv-file" {
+	if parseAs == parseAsCsvFile {
 		return lockfile.FromCSVFile(pathToLock, parseAs)
 	}
 
@@ -381,7 +384,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		return 0
 	}
 
-	if *parseAs != "" && *parseAs != "csv-file" && *parseAs != "csv-row" {
+	if *parseAs != "" && *parseAs != parseAsCsvFile && *parseAs != parseAsCsvRow {
 		if parser, parsedAs := lockfile.FindParser("", *parseAs); parser == nil {
 			r.PrintError(fmt.Sprintf("Don't know how to parse files as \"%s\" - supported values are:\n", parsedAs))
 
