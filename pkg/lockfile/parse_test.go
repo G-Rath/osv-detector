@@ -185,10 +185,9 @@ func TestFromCSVRows(t *testing.T) {
 		rows     []string
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    lockfile.Lockfile
-		wantErr bool
+		name string
+		args args
+		want lockfile.Lockfile
 	}{
 		{
 			name: "",
@@ -202,7 +201,6 @@ func TestFromCSVRows(t *testing.T) {
 				ParsedAs: "-",
 				Packages: nil,
 			},
-			wantErr: false,
 		},
 		{
 			name: "",
@@ -242,7 +240,6 @@ func TestFromCSVRows(t *testing.T) {
 					},
 				},
 			},
-			wantErr: false,
 		},
 		{
 			name: "",
@@ -270,7 +267,6 @@ func TestFromCSVRows(t *testing.T) {
 					},
 				},
 			},
-			wantErr: false,
 		},
 	}
 
@@ -280,8 +276,8 @@ func TestFromCSVRows(t *testing.T) {
 			t.Parallel()
 
 			got, err := lockfile.FromCSVRows(tt.args.filePath, tt.args.parseAs, tt.args.rows)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromCSVRows() error = %v, wantErr %v", err, tt.wantErr)
+			if err != nil {
+				t.Errorf("FromCSVFile() error = %v, was not expected", err)
 
 				return
 			}
@@ -368,20 +364,10 @@ func TestFromCSVFile(t *testing.T) {
 		parseAs   string
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    lockfile.Lockfile
-		wantErr bool
+		name string
+		args args
+		want lockfile.Lockfile
 	}{
-		{
-			name: "",
-			args: args{
-				pathToCSV: "fixtures/csv/does-not-exist",
-				parseAs:   "csv-file",
-			},
-			want:    lockfile.Lockfile{},
-			wantErr: true,
-		},
 		{
 			name: "",
 			args: args{
@@ -393,7 +379,6 @@ func TestFromCSVFile(t *testing.T) {
 				ParsedAs: "csv-file",
 				Packages: nil,
 			},
-			wantErr: false,
 		},
 		{
 			name: "",
@@ -432,7 +417,6 @@ func TestFromCSVFile(t *testing.T) {
 					},
 				},
 			},
-			wantErr: false,
 		},
 		{
 			name: "",
@@ -466,7 +450,6 @@ func TestFromCSVFile(t *testing.T) {
 					},
 				},
 			},
-			wantErr: false,
 		},
 		{
 			name: "",
@@ -485,7 +468,6 @@ func TestFromCSVFile(t *testing.T) {
 					},
 				},
 			},
-			wantErr: false,
 		},
 		{
 			name: "",
@@ -509,7 +491,6 @@ func TestFromCSVFile(t *testing.T) {
 					},
 				},
 			},
-			wantErr: false,
 		},
 		{
 			name: "",
@@ -538,7 +519,6 @@ func TestFromCSVFile(t *testing.T) {
 					},
 				},
 			},
-			wantErr: false,
 		},
 	}
 
@@ -548,8 +528,8 @@ func TestFromCSVFile(t *testing.T) {
 			t.Parallel()
 
 			got, err := lockfile.FromCSVFile(tt.args.pathToCSV, tt.args.parseAs)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromCSVFile() error = %v, wantErr %v", err, tt.wantErr)
+			if err != nil {
+				t.Errorf("FromCSVFile() error = %v, was not expected", err)
 
 				return
 			}
