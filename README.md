@@ -189,6 +189,46 @@ osv-detector --cache-all-databases
 This can be useful if you're planning to run the detector over a number of
 lockfiles in bulk.
 
+#### Passing arbitrary package details (advanced usage)
+
+The detector supports being passed arbitrary package details in CSV form to
+check for known vulnerabilities.
+
+This is useful for one-off manual checks (such as when deciding on a new
+library), or if you have packages that are not specified in a lock (such as
+vendored dependencies). It also allows you to check packages in ecosystems that
+the detector doesn't know about, such as `NuGet`.
+
+You can either pass in CSV rows:
+
+```
+osv-detector --parse-as csv-row 'npm,@typescript-eslint/types,5.13.0' 'Packagist,sentry/sdk,2.0.4'
+```
+
+or you can specify paths to csv files:
+
+```
+osv-detector --parse-as csv-file path/to/my/first-csv path/to/my/second-csv
+```
+
+The expected format is `"<ecosystem>","<package>",<"version">`, and CSV files
+cannot contain a header. The `ecosystem` does _not_ have to be one listed by the
+detector as known, meaning you can use any ecosystem that
+[osv.dev](https://osv.dev/) provides.
+
+> Currently, you cannot pass in a commit
+
+You can also omit the version to have the detector list all known
+vulnerabilities in the loaded database that apply to the given package:
+
+```
+osv-detector --parse-as csv-row 'NuGet,Yarp.ReverseProxy,'
+```
+
+While this uses the `--parse-as` flag, these are _not_ considered standard
+parsers so the detector will not automatically use them when checking
+directories for lockfiles.
+
 ### Auxiliary output commands
 
 The detector supports a few auxiliary commands that have it output information
