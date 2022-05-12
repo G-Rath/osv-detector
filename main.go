@@ -201,13 +201,31 @@ func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs strin
 
 func parseLockfile(pathToLock string, parseAs string) (lockfile.Lockfile, error) {
 	if parseAs == parseAsCsvRow {
-		return lockfile.FromCSVRows(pathToLock, parseAs, flag.Args())
+		l, err := lockfile.FromCSVRows(pathToLock, parseAs, flag.Args())
+
+		if err != nil {
+			err = fmt.Errorf("%w", err)
+		}
+
+		return l, err
 	}
 	if parseAs == parseAsCsvFile {
-		return lockfile.FromCSVFile(pathToLock, parseAs)
+		l, err := lockfile.FromCSVFile(pathToLock, parseAs)
+
+		if err != nil {
+			err = fmt.Errorf("%w", err)
+		}
+
+		return l, err
 	}
 
-	return lockfile.Parse(pathToLock, parseAs)
+	l, err := lockfile.Parse(pathToLock, parseAs)
+
+	if err != nil {
+		err = fmt.Errorf("%w", err)
+	}
+
+	return l, err
 }
 
 type stringsFlag []string
