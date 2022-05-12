@@ -293,6 +293,8 @@ func TestFromCSVRows(t *testing.T) {
 }
 
 func TestFromCSVFile(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		pathToCSV string
 		parseAs   string
@@ -303,6 +305,15 @@ func TestFromCSVFile(t *testing.T) {
 		want    lockfile.Lockfile
 		wantErr bool
 	}{
+		{
+			name: "",
+			args: args{
+				pathToCSV: "fixtures/csv/does-not-exist",
+				parseAs:   "csv-file",
+			},
+			want:    lockfile.Lockfile{},
+			wantErr: true,
+		},
 		{
 			name: "",
 			args: args{
@@ -326,6 +337,11 @@ func TestFromCSVFile(t *testing.T) {
 				FilePath: "fixtures/csv/multiple-rows.csv",
 				ParsedAs: "csv-file",
 				Packages: []lockfile.PackageDetails{
+					{
+						Name:      "@typescript-eslint/types",
+						Version:   "4.9.0",
+						Ecosystem: lockfile.PnpmEcosystem,
+					},
 					{
 						Name:      "@typescript-eslint/types",
 						Version:   "5.13.0",
@@ -379,6 +395,25 @@ func TestFromCSVFile(t *testing.T) {
 						Name:      "wasi",
 						Version:   "0.10.2+wasi-snapshot-preview1",
 						Ecosystem: lockfile.CargoEcosystem,
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "",
+			args: args{
+				pathToCSV: "fixtures/csv/one-row.csv",
+				parseAs:   "-",
+			},
+			want: lockfile.Lockfile{
+				FilePath: "fixtures/csv/one-row.csv",
+				ParsedAs: "-",
+				Packages: []lockfile.PackageDetails{
+					{
+						Name:      "@typescript-eslint/types",
+						Version:   "5.13.0",
+						Ecosystem: lockfile.PnpmEcosystem,
 					},
 				},
 			},
