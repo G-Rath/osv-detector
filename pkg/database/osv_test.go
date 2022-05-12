@@ -214,6 +214,9 @@ func TestOSV_IsAffected_AffectsWithEcosystem_SingleAffected(t *testing.T) {
 		expectIsAffected(t, osv, v, true)
 	}
 
+	// an empty version should always be treated as affected
+	expectIsAffected(t, osv, "", true)
+
 	// "Fixed: 1" means all versions after this are not vulnerable
 	osv = buildOSVWithAffected(
 		database.Affected{
@@ -234,6 +237,9 @@ func TestOSV_IsAffected_AffectsWithEcosystem_SingleAffected(t *testing.T) {
 	for _, v := range []string{"1.0.0", "1.1.0", "2.0.0"} {
 		expectIsAffected(t, osv, v, false)
 	}
+
+	// an empty version should always be treated as affected
+	expectIsAffected(t, osv, "", true)
 
 	// multiple fixes and introduced
 	osv = buildOSVWithAffected(
@@ -265,6 +271,9 @@ func TestOSV_IsAffected_AffectsWithEcosystem_SingleAffected(t *testing.T) {
 	for _, v := range []string{"3.2.0", "3.2.1", "4.0.0"} {
 		expectIsAffected(t, osv, v, false)
 	}
+
+	// an empty version should always be treated as affected
+	expectIsAffected(t, osv, "", true)
 }
 
 func TestOSV_IsAffected_AffectsWithEcosystem_MultipleAffected(t *testing.T) {
@@ -306,6 +315,9 @@ func TestOSV_IsAffected_AffectsWithEcosystem_MultipleAffected(t *testing.T) {
 	for _, v := range []string{"3.2.0", "3.2.1", "4.0.0"} {
 		expectIsAffected(t, osv, v, false)
 	}
+
+	// an empty version should always be treated as affected
+	expectIsAffected(t, osv, "", true)
 }
 
 func TestOSV_IsAffected_AffectsWithEcosystem_PipNamesAreNormalised(t *testing.T) {
@@ -438,6 +450,9 @@ func TestOSV_IsAffected_AffectsWithSemver_SingleAffected(t *testing.T) {
 	for _, v := range []string{"3.2.0", "3.2.1", "4.0.0"} {
 		expectIsAffected(t, osv, v, false)
 	}
+
+	// an empty version should always be treated as affected
+	expectIsAffected(t, osv, "", true)
 }
 
 func TestOSV_IsAffected_AffectsWithSemver_MultipleAffected(t *testing.T) {
@@ -479,6 +494,9 @@ func TestOSV_IsAffected_AffectsWithSemver_MultipleAffected(t *testing.T) {
 	for _, v := range []string{"3.2.0", "3.2.1", "4.0.0"} {
 		expectIsAffected(t, osv, v, false)
 	}
+
+	// an empty version should always be treated as affected
+	expectIsAffected(t, osv, "", true)
 }
 
 func TestOSV_IsAffected_OnlyVersions(t *testing.T) {
@@ -495,6 +513,9 @@ func TestOSV_IsAffected_OnlyVersions(t *testing.T) {
 	expectIsAffected(t, osv, "1.0.0", true)
 	expectIsAffected(t, osv, "1.0.0-beta1", false)
 	expectIsAffected(t, osv, "1.1.0", false)
+
+	// an empty version should always be treated as affected
+	expectIsAffected(t, osv, "", true)
 }
 
 func TestOSV_Describe_Text(t *testing.T) {
