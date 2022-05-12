@@ -292,6 +292,74 @@ func TestFromCSVRows(t *testing.T) {
 	}
 }
 
+func TestFromCSVRows_Errors(t *testing.T) {
+	t.Parallel()
+
+	type args struct {
+		filePath string
+		parseAs  string
+		rows     []string
+	}
+	tests := []struct {
+		name       string
+		args       args
+		wantErrMsg string
+	}{
+		{
+			name: "",
+			args: args{
+				filePath: "",
+				parseAs:  "",
+				rows:     []string{"one,,"},
+			},
+			wantErrMsg: "row 1: field 2 is empty (must be the name of a package)",
+		},
+		{
+			name: "",
+			args: args{
+				filePath: "",
+				parseAs:  "",
+				rows: []string{
+					"crates.io,addr2line,",
+					",,",
+				},
+			},
+			wantErrMsg: "row 2: field 1 is empty (must be the name of an ecosystem)",
+		},
+		{
+			name: "",
+			args: args{
+				filePath: "",
+				parseAs:  "",
+				rows: []string{
+					"crates.io,addr2line,",
+					",,,",
+				},
+			},
+			wantErrMsg: "record on line 2: wrong number of fields",
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			_, err := lockfile.FromCSVRows(tt.args.filePath, tt.args.parseAs, tt.args.rows)
+
+			if err == nil {
+				t.Errorf("FromCSVRows() did not error")
+
+				return
+			}
+
+			if !strings.Contains(err.Error(), tt.wantErrMsg) {
+				t.Errorf("FromCSVRows() error = \"%v\", wanted \"%s\"", err, tt.wantErrMsg)
+			}
+		})
+	}
+}
+
 func TestFromCSVFile(t *testing.T) {
 	t.Parallel()
 
@@ -570,6 +638,56 @@ func TestPackages_Ecosystems(t *testing.T) {
 
 			if got := tt.ps.Ecosystems(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Ecosystems() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFromCSVFile_Errors(t *testing.T) {
+	t.Parallel()
+
+	type args struct {
+		pathToCSV string
+		parseAs   string
+	}
+	tests := []struct {
+		name       string
+		args       args
+		wantErrMsg string
+	}{
+		{
+			name: "",
+			args: args{
+				pathToCSV: "fixtures/csv/does-not-exist",
+				parseAs:   "csv-file",
+			},
+			wantErrMsg: "could not read fixtures/csv/does-not-exist",
+		},
+		{
+			name: "",
+			args: args{
+				pathToCSV: "fixtures/csv/not-a-csv.xml",
+				parseAs:   "csv-file",
+			},
+			wantErrMsg: "fixtures/csv/not-a-csv.xml: row 1: not enough fields (missing at least ecosystem and package name)",
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			_, err := lockfile.FromCSVFile(tt.args.pathToCSV, tt.args.parseAs)
+
+			if err == nil {
+				t.Errorf("FromCSVFile() did not error")
+
+				return
+			}
+
+			if !strings.Contains(err.Error(), tt.wantErrMsg) {
+				t.Errorf("FromCSVFile() error = \"%v\", wanted \"%s\"", err, tt.wantErrMsg)
 			}
 		})
 	}
