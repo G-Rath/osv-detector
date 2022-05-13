@@ -24,6 +24,18 @@ func (db *OSVDatabase) Vulnerabilities(includeWithdrawn bool) []OSV {
 
 type Vulnerabilities []OSV
 
+func (vs Vulnerabilities) Unique() Vulnerabilities {
+	var vulnerabilities Vulnerabilities
+
+	for _, vulnerability := range vs {
+		if !vulnerabilities.Includes(vulnerability) {
+			vulnerabilities = append(vulnerabilities, vulnerability)
+		}
+	}
+
+	return vulnerabilities
+}
+
 func (vs Vulnerabilities) Includes(vulnerability OSV) bool {
 	for _, osv := range vs {
 		if osv.ID == vulnerability.ID {
@@ -41,7 +53,7 @@ func (vs Vulnerabilities) Includes(vulnerability OSV) bool {
 	return false
 }
 
-func (db *OSVDatabase) VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) Vulnerabilities {
+func (db OSVDatabase) VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) Vulnerabilities {
 	var vulnerabilities Vulnerabilities
 
 	for _, vulnerability := range db.Vulnerabilities(false) {

@@ -45,7 +45,10 @@ func ecosystemDatabaseURL(ecosystem internal.Ecosystem) string {
 	return fmt.Sprintf("https://osv-vulnerabilities.storage.googleapis.com/%s/all.zip", ecosystem)
 }
 
-type OSVDatabases []database.OSVDatabase
+type GenericOSVDatabase interface {
+	VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) database.Vulnerabilities
+}
+type OSVDatabases []GenericOSVDatabase
 
 func contains(items []string, value string) bool {
 	for _, item := range items {
@@ -65,10 +68,15 @@ func (dbs OSVDatabases) check(lockf lockfile.Lockfile, ignores []string) reporte
 
 	for _, pkg := range lockf.Packages {
 		vulnerabilities := make(database.Vulnerabilities, 0)
+		// present := make(database.Vulnerabilities, 0)
 		ignored := make(database.Vulnerabilities, 0)
 
 		for _, db := range dbs {
 			for _, vulnerability := range db.VulnerabilitiesAffectingPackage(pkg) {
+				if vulnerabilities.Includes(vulnerability) || ignored.Includes(vulnerability) {
+					continue
+				}
+
 				if contains(ignores, vulnerability.ID) {
 					ignored = append(ignored, vulnerability)
 				} else {
@@ -83,6 +91,35 @@ func (dbs OSVDatabases) check(lockf lockfile.Lockfile, ignores []string) reporte
 			Ignored:         ignored,
 		})
 	}
+
+	// for _, pkg := range lockf.Packages {
+	// 	vulnerabilities := make(database.Vulnerabilities, 0)
+	// 	present := make(database.Vulnerabilities, 0)
+	// 	ignored := make(database.Vulnerabilities, 0)
+	//
+	// 	for _, db := range dbs {
+	// 		for _, vulnerability := range db.VulnerabilitiesAffectingPackage(pkg) {
+	// 			if !vulnerabilities.Includes(vulnerability) {
+	// 				vulnerabilities = append(vulnerabilities, vulnerability)
+	// 			}
+	// 		}
+	// 		all = append(all, db.VulnerabilitiesAffectingPackage(pkg)...)
+	// 	}
+	//
+	// 	for _, vulnerability := range db.VulnerabilitiesAffectingPackage(pkg) {
+	// 		if contains(ignores, vulnerability.ID) {
+	// 			ignored = append(ignored, vulnerability)
+	// 		} else {
+	// 			vulnerabilities = append(vulnerabilities, vulnerability)
+	// 		}
+	// 	}
+	//
+	// 	report.Packages = append(report.Packages, reporter.PackageDetailsWithVulnerabilities{
+	// 		PackageDetails:  pkg,
+	// 		Vulnerabilities: present,
+	// 		Ignored:         ignored,
+	// 	})
+	// }
 
 	return report
 }
@@ -212,6 +249,8 @@ func run() int {
 	listPackages := flag.Bool("list-packages", false, "List the packages that are parsed from the input files")
 	cacheAllDatabases := flag.Bool("cache-all-databases", false, "Cache all the known ecosystem databases for offline use")
 	outputAsJSON := flag.Bool("json", false, "Output the results in JSON format")
+	useDatabases := flag.Bool("use-dbs", false, "Output the results in JSON format")
+	useApi := flag.Bool("use-api", false, "Output the results in JSON format")
 
 	flag.Var(&ignores, "ignore", `ID of an OSV to ignore when determining exit codes.
 This flag can be passed multiple times to ignore different vulnerabilities`)
@@ -340,13 +379,23 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 			))
 		}
 
-		dbs, err := loadEcosystemDatabases(r, lockf.Packages.Ecosystems(), *offline)
+		var dbs OSVDatabases
 
-		if err != nil {
-			printDatabaseLoadErr(r, err)
-			exitCode = 127
+		if *useDatabases {
+			loaded, err := loadEcosystemDatabases(r, lockf.Packages.Ecosystems(), *offline)
 
-			continue
+			if err != nil {
+				printDatabaseLoadErr(r, err)
+				exitCode = 127
+
+				continue
+			}
+
+			dbs = append(dbs, loaded...)
+		}
+
+		if *useApi {
+			dbs = append(dbs, database.APIOSVDatabase{})
 		}
 
 		report := dbs.check(lockf, allIgnores(config.Ignore, ignores))
