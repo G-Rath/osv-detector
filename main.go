@@ -160,7 +160,6 @@ func (dbs OSVDatabases) check(lockf lockfile.Lockfile, ignores []string, conLimi
 		}
 
 		report.Packages = append(report.Packages, r.res)
-
 	}
 
 	return report
@@ -292,7 +291,7 @@ func run() int {
 	cacheAllDatabases := flag.Bool("cache-all-databases", false, "Cache all the known ecosystem databases for offline use")
 	outputAsJSON := flag.Bool("json", false, "Output the results in JSON format")
 	useDatabases := flag.Bool("use-dbs", false, "Output the results in JSON format")
-	useApi := flag.Bool("use-api", false, "Output the results in JSON format")
+	useAPI := flag.Bool("use-api", false, "Output the results in JSON format")
 	conLimit := flag.Int("n", 1, "Output the results in JSON format")
 
 	flag.Var(&ignores, "ignore", `ID of an OSV to ignore when determining exit codes.
@@ -437,7 +436,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 			dbs = append(dbs, loaded...)
 		}
 
-		if *useApi {
+		if *useAPI {
 			dbs = append(dbs, database.APIOSVDatabase{})
 		}
 
