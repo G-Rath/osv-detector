@@ -56,7 +56,7 @@ func (db APIOSVDatabase) VulnerabilitiesAffectingPackage(pkg internal.PackageDet
 		return vulnerabilities
 	}
 
-	fmt.Println(req)
+	// fmt.Println(req)
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -77,7 +77,7 @@ func (db APIOSVDatabase) VulnerabilitiesAffectingPackage(pkg internal.PackageDet
 
 	body, err = io.ReadAll(resp.Body)
 
-	fmt.Println(string(body))
+	// fmt.Println(string(body))
 
 	if err != nil {
 		fmt.Printf("error reading response body: %v", err)
