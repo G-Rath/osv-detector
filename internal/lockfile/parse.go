@@ -83,9 +83,17 @@ func (l Lockfile) ToString() string {
 	lines := make([]string, 0, len(l.Packages))
 
 	for _, details := range l.Packages {
-		lines = append(lines,
-			fmt.Sprintf("  %s: %s@%s", details.Ecosystem, details.Name, details.Version),
-		)
+		ln := fmt.Sprintf("  %s: %s", details.Ecosystem, details.Name)
+
+		if details.Version != "" {
+			ln += "@" + details.Version
+		}
+
+		if details.Commit != "" {
+			ln += " (" + details.Commit + ")"
+		}
+
+		lines = append(lines, ln)
 	}
 
 	return strings.Join(lines, "\n")
