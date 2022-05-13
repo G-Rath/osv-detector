@@ -70,6 +70,12 @@ type result struct {
 }
 
 func (dbs OSVDatabases) parallelFetch(pkgs lockfile.Packages, ignores []string, concurrencyLimit int) []result {
+	var results []result
+
+	if len(pkgs) == 0 {
+		return results
+	}
+
 	// buffered channel which controls the number of concurrent operations
 	semaphoreChan := make(chan struct{}, concurrencyLimit)
 	resultsChan := make(chan *result)
@@ -98,8 +104,6 @@ func (dbs OSVDatabases) parallelFetch(pkgs lockfile.Packages, ignores []string, 
 			<-semaphoreChan
 		}(i, pkg)
 	}
-
-	var results []result
 
 	for {
 		result := <-resultsChan
