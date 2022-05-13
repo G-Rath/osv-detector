@@ -25,9 +25,14 @@ type apiPayload struct {
 func (db APIOSVDatabase) buildAPIPayload(pkg internal.PackageDetails) apiPayload {
 	var payload apiPayload
 
-	payload.Version = pkg.Version
+
+	if pkg.Commit == "" {
 	payload.Package.Name = pkg.Name
 	payload.Package.Ecosystem = pkg.Ecosystem
+		payload.Version = pkg.Version
+	} else {
+		payload.Commit = pkg.Commit
+	}
 
 	return payload
 }
