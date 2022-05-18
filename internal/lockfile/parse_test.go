@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"osv-detector/internal/lockfile"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -172,5 +173,88 @@ func TestLockfile_ToString(t *testing.T) {
 
 	if actual := lockf.ToString(); expected != actual {
 		t.Errorf("\nExpected:\n%s\nActual:\n%s", expected, actual)
+	}
+}
+
+func TestPackages_Ecosystems(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		ps   lockfile.Packages
+		want []lockfile.Ecosystem
+	}{
+		{name: "", ps: lockfile.Packages{}, want: []lockfile.Ecosystem{}},
+		{
+			name: "",
+			ps: lockfile.Packages{
+				{
+					Name:      "addr2line",
+					Version:   "0.15.2",
+					Ecosystem: lockfile.CargoEcosystem,
+				},
+			},
+			want: []lockfile.Ecosystem{
+				lockfile.CargoEcosystem,
+			},
+		},
+		{
+			name: "",
+			ps: lockfile.Packages{
+				{
+					Name:      "addr2line",
+					Version:   "0.15.2",
+					Ecosystem: lockfile.CargoEcosystem,
+				},
+				{
+					Name:      "wasi",
+					Version:   "0.10.2+wasi-snapshot-preview1",
+					Ecosystem: lockfile.CargoEcosystem,
+				},
+			},
+			want: []lockfile.Ecosystem{
+				lockfile.CargoEcosystem,
+			},
+		},
+		{
+			name: "",
+			ps: lockfile.Packages{
+				{
+					Name:      "addr2line",
+					Version:   "0.15.2",
+					Ecosystem: lockfile.CargoEcosystem,
+				},
+				{
+					Name:      "@typescript-eslint/types",
+					Version:   "5.13.0",
+					Ecosystem: lockfile.PnpmEcosystem,
+				},
+				{
+					Name:      "wasi",
+					Version:   "0.10.2+wasi-snapshot-preview1",
+					Ecosystem: lockfile.CargoEcosystem,
+				},
+				{
+					Name:      "sentry/sdk",
+					Version:   "2.0.4",
+					Ecosystem: lockfile.ComposerEcosystem,
+				},
+			},
+			want: []lockfile.Ecosystem{
+				lockfile.ComposerEcosystem,
+				lockfile.CargoEcosystem,
+				lockfile.PnpmEcosystem,
+			},
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			if got := tt.ps.Ecosystems(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Ecosystems() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
