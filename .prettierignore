@@ -1,1 +1,3 @@
 internal/*/fixtures/pnpm/*.yaml
+internal/configer/fixtures/ext-yaml-invalid/*.yaml
+internal/configer/fixtures/ext-yml-invalid/*.yml
