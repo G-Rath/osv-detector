@@ -206,6 +206,7 @@ func run() int {
 	offline := flag.Bool("offline", false, "Perform checks using only the cached databases on disk")
 	parseAs := flag.String("parse-as", "", "Name of a supported lockfile to parse the input files as")
 	configPath := flag.String("config", "", "Path to a config file to use for all lockfiles")
+	noConfig := flag.Bool("no-config", false, "Disable loading of any config files")
 	printVersion := flag.Bool("version", false, "Print version information")
 	listEcosystems := flag.Bool("list-ecosystems", false, "List all of the known ecosystems that are supported by the detector")
 	listPackages := flag.Bool("list-packages", false, "List the packages that are parsed from the input files")
@@ -272,7 +273,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 	var config configer.Config
 
-	if *configPath != "" {
+	if !*noConfig && *configPath != "" {
 		con, err := configer.Load(*configPath)
 
 		if err != nil {
@@ -291,7 +292,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 			r.PrintText("\n")
 		}
 
-		if *configPath == "" {
+		if !*noConfig && *configPath == "" {
 			base := path.Dir(pathToLock)
 			con, err := configer.Find(base)
 
