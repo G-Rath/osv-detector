@@ -137,6 +137,31 @@ passed:
 Errors are always sent to `stderr` as plain text, even if the `--json` flag is
 passed.
 
+### Config files
+
+The detector supports loading ignores from a YAML file, which can be useful for
+tracking ignored vulnerabilities per-project:
+
+```yaml
+ignore:
+  - GHSA-4 # "Prototype pollution in xyz"
+  - GHSA-5 # "RegExp DDoS in abc"
+  - GHSA-6 # "Command injection in hjk"
+```
+
+By default, the detector will look for a `.osv-detector.yaml` or
+`.osv-detector.yml` in the same folder as the current lockfile it's checking,
+and will _merge_ the config with any flags being passed.
+
+You can also provide a path to a specific config file that will be used for all
+lockfiles being checked with the `--config` flag:
+
+```shell
+osv-detector --config ruby-ignores.yml path/to/my/first-ruby-project path/to/my/second-ruby-project
+```
+
+You can disable loading any configs with the `--no-config` flag.
+
 ### Auxiliary output commands
 
 The detector supports a few auxiliary commands that have it output information

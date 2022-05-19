@@ -1,0 +1,4 @@
+ignore:
+  - GHSA-1 # "Prototype pollution in xyz"
+  - GHSA-2 # "RegExp DDoS in abc"
+  - GHSA-3 # "Command injection in hjk"

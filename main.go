@@ -7,6 +7,7 @@ import (
 	"github.com/fatih/color"
 	"os"
 	"osv-detector/internal"
+	"osv-detector/internal/configer"
 	"osv-detector/internal/database"
 	"osv-detector/internal/lockfile"
 	"osv-detector/internal/reporter"
@@ -185,11 +186,27 @@ func (s *stringsFlag) Set(value string) error {
 	return nil
 }
 
+func allIgnores(global, local []string) []string {
+	ignores := make(
+		[]string,
+		0,
+		// len cannot return negative numbers, but the types can't reflect that
+		uint64(len(global))+uint64(len(local)),
+	)
+
+	ignores = append(ignores, global...)
+	ignores = append(ignores, local...)
+
+	return ignores
+}
+
 func run() int {
 	var ignores stringsFlag
 
 	offline := flag.Bool("offline", false, "Perform checks using only the cached databases on disk")
 	parseAs := flag.String("parse-as", "", "Name of a supported lockfile to parse the input files as")
+	configPath := flag.String("config", "", "Path to a config file to use for all lockfiles")
+	noConfig := flag.Bool("no-config", false, "Disable loading of any config files")
 	printVersion := flag.Bool("version", false, "Print version information")
 	listEcosystems := flag.Bool("list-ecosystems", false, "List all of the known ecosystems that are supported by the detector")
 	listPackages := flag.Bool("list-packages", false, "List the packages that are parsed from the input files")
@@ -254,9 +271,39 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 	exitCode := 0
 
+	var config configer.Config
+
+	if !*noConfig && *configPath != "" {
+		con, err := configer.Load(*configPath)
+
+		if err != nil {
+			r.PrintError(fmt.Sprintf("Error, %s\n", err))
+
+			return 127
+		}
+
+		config = con
+	}
+
 	for i, pathToLock := range pathsToLocks {
+		config := config
+
 		if i >= 1 {
 			r.PrintText("\n")
+		}
+
+		if !*noConfig && *configPath == "" {
+			base := path.Dir(pathToLock)
+			con, err := configer.Find(base)
+
+			if err != nil {
+				r.PrintError(fmt.Sprintf("Error, %s\n", err))
+				exitCode = 127
+
+				continue
+			}
+
+			config = con
 		}
 
 		lockf, err := lockfile.Parse(pathToLock, *parseAs)
@@ -281,6 +328,18 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 			continue
 		}
 
+		// an empty FilePath means we didn't load a config
+		if config.FilePath != "" {
+			r.PrintText(fmt.Sprintf(
+				"  Using config at %s (%s)\n",
+				color.MagentaString(config.FilePath),
+				color.YellowString("%d %s",
+					len(config.Ignore),
+					reporter.Form(len(config.Ignore), "ignore", "ignores"),
+				),
+			))
+		}
+
 		dbs, err := loadEcosystemDatabases(r, lockf.Packages.Ecosystems(), *offline)
 
 		if err != nil {
@@ -290,7 +349,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 			continue
 		}
 
-		report := dbs.check(lockf, ignores)
+		report := dbs.check(lockf, allIgnores(config.Ignore, ignores))
 
 		r.PrintResult(report)
 
