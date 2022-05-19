@@ -65,6 +65,16 @@ func (db OSVDatabase) VulnerabilitiesAffectingPackage(pkg internal.PackageDetail
 	return vulnerabilities
 }
 
+func (db OSVDatabase) Check(pkgs []internal.PackageDetails) []Vulnerabilities {
+	vulnerabilities := make([]Vulnerabilities, 0, len(pkgs))
+
+	for _, pkg := range pkgs {
+		vulnerabilities = append(vulnerabilities, db.VulnerabilitiesAffectingPackage(pkg))
+	}
+
+	return vulnerabilities
+}
+
 // MarshalJSON ensures that if there are no vulnerabilities,
 // an empty array is used as the value instead of "null"
 func (vs Vulnerabilities) MarshalJSON() ([]byte, error) {

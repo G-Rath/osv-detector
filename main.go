@@ -46,9 +46,25 @@ func ecosystemDatabaseURL(ecosystem internal.Ecosystem) string {
 	return fmt.Sprintf("https://osv-vulnerabilities.storage.googleapis.com/%s/all.zip", ecosystem)
 }
 
+type VulnsOrError = struct {
+	database.Vulnerabilities
+	error
+}
+
+type GenericOSVDatabase2 interface {
+	Check(pkgs []internal.PackageDetails) []database.Vulnerabilities
+	// Check(pkgs []internal.PackageDetails) ([]VulnsOrError, error)
+}
+
 type GenericOSVDatabase interface {
+	Check(pkgs []internal.PackageDetails) []database.Vulnerabilities
 	VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) database.Vulnerabilities
 }
+
+type GenericOSVDatabaseWithBulk interface {
+	VulnerabilitiesAffectingPackages(pkgs lockfile.Packages) []database.Vulnerabilities
+}
+
 type OSVDatabases []GenericOSVDatabase
 
 func contains(items []string, value string) bool {
@@ -67,6 +83,44 @@ type result struct {
 	index int
 	res   reporter.PackageDetailsWithVulnerabilities
 	err   error
+}
+
+func (dbs OSVDatabases) parallelFetch2(pkgs lockfile.Packages, ignores []string, concurrencyLimit int) []result {
+	if concurrencyLimit > 1 {
+		return dbs.parallelFetch(pkgs, ignores, concurrencyLimit)
+	}
+
+	var results []result
+
+	if len(pkgs) == 0 {
+		return results
+	}
+
+	vulns := make([][]database.Vulnerabilities, 0, len(dbs))
+
+	for _, db := range dbs {
+		vs := db.Check(pkgs)
+
+		if len(vs) != len(pkgs) {
+			panic("oh noes!")
+		}
+
+		vulns = append(vulns, vs)
+	}
+
+	for i, pkg := range pkgs {
+		results = append(results, result{
+			index: i,
+			res:   dbs.transposePkgResults(pkg, ignores, i, vulns),
+			err:   nil,
+		})
+	}
+
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].index < results[j].index
+	})
+
+	return results
 }
 
 func (dbs OSVDatabases) parallelFetch(pkgs lockfile.Packages, ignores []string, concurrencyLimit int) []result {
@@ -121,6 +175,38 @@ func (dbs OSVDatabases) parallelFetch(pkgs lockfile.Packages, ignores []string, 
 	return results
 }
 
+func (dbs OSVDatabases) transposePkgResults(
+	pkg internal.PackageDetails,
+	ignores []string,
+	packageIndex int,
+	allVulns [][]database.Vulnerabilities,
+) reporter.PackageDetailsWithVulnerabilities {
+	vulnerabilities := make(database.Vulnerabilities, 0)
+	ignored := make(database.Vulnerabilities, 0)
+
+	for _, vulns1 := range allVulns {
+		vulns := vulns1[packageIndex]
+
+		for _, vulnerability := range vulns {
+			if vulnerabilities.Includes(vulnerability) || ignored.Includes(vulnerability) {
+				continue
+			}
+
+			if contains(ignores, vulnerability.ID) {
+				ignored = append(ignored, vulnerability)
+			} else {
+				vulnerabilities = append(vulnerabilities, vulnerability)
+			}
+		}
+	}
+
+	return reporter.PackageDetailsWithVulnerabilities{
+		PackageDetails:  pkg,
+		Vulnerabilities: vulnerabilities,
+		Ignored:         ignored,
+	}
+}
+
 func (dbs OSVDatabases) checkPkg(pkg internal.PackageDetails, ignores []string) reporter.PackageDetailsWithVulnerabilities {
 	vulnerabilities := make(database.Vulnerabilities, 0)
 	ignored := make(database.Vulnerabilities, 0)
@@ -156,7 +242,7 @@ func (dbs OSVDatabases) check(lockf lockfile.Lockfile, ignores []string, conLimi
 		Packages: make([]reporter.PackageDetailsWithVulnerabilities, 0, len(lockf.Packages)),
 	}
 
-	for _, r := range dbs.parallelFetch(lockf.Packages, ignores, conLimit) {
+	for _, r := range dbs.parallelFetch2(lockf.Packages, ignores, conLimit) {
 		if r.err != nil {
 			fmt.Printf("error happened: %v\n", r.err)
 
