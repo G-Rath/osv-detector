@@ -3,24 +3,7 @@ package database
 import (
 	"encoding/json"
 	"fmt"
-	"osv-detector/internal"
 )
-
-func (db *OSVDatabase) Vulnerabilities(includeWithdrawn bool) []OSV {
-	if includeWithdrawn {
-		return db.vulnerabilities
-	}
-
-	var vulnerabilities []OSV
-
-	for _, vulnerability := range db.vulnerabilities {
-		if vulnerability.Withdrawn == nil {
-			vulnerabilities = append(vulnerabilities, vulnerability)
-		}
-	}
-
-	return vulnerabilities
-}
 
 type Vulnerabilities []OSV
 
@@ -51,28 +34,6 @@ func (vs Vulnerabilities) Includes(vulnerability OSV) bool {
 	}
 
 	return false
-}
-
-func (db OSVDatabase) VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) Vulnerabilities {
-	var vulnerabilities Vulnerabilities
-
-	for _, vulnerability := range db.Vulnerabilities(false) {
-		if vulnerability.IsAffected(pkg) && !vulnerabilities.Includes(vulnerability) {
-			vulnerabilities = append(vulnerabilities, vulnerability)
-		}
-	}
-
-	return vulnerabilities
-}
-
-func (db OSVDatabase) Check(pkgs []internal.PackageDetails) []Vulnerabilities {
-	vulnerabilities := make([]Vulnerabilities, 0, len(pkgs))
-
-	for _, pkg := range pkgs {
-		vulnerabilities = append(vulnerabilities, db.VulnerabilitiesAffectingPackage(pkg))
-	}
-
-	return vulnerabilities
 }
 
 // MarshalJSON ensures that if there are no vulnerabilities,

@@ -12,7 +12,6 @@ import (
 	"osv-detector/internal/lockfile"
 	"osv-detector/internal/reporter"
 	"path"
-	"sort"
 )
 
 // these come from goreleaser
@@ -46,26 +45,7 @@ func ecosystemDatabaseURL(ecosystem internal.Ecosystem) string {
 	return fmt.Sprintf("https://osv-vulnerabilities.storage.googleapis.com/%s/all.zip", ecosystem)
 }
 
-type VulnsOrError = struct {
-	database.Vulnerabilities
-	error
-}
-
-type GenericOSVDatabase2 interface {
-	Check(pkgs []internal.PackageDetails) []database.Vulnerabilities
-	// Check(pkgs []internal.PackageDetails) ([]VulnsOrError, error)
-}
-
-type GenericOSVDatabase interface {
-	Check(pkgs []internal.PackageDetails) []database.Vulnerabilities
-	VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) database.Vulnerabilities
-}
-
-type GenericOSVDatabaseWithBulk interface {
-	VulnerabilitiesAffectingPackages(pkgs lockfile.Packages) []database.Vulnerabilities
-}
-
-type OSVDatabases []GenericOSVDatabase
+type OSVDatabases []database.DB
 
 func contains(items []string, value string) bool {
 	for _, item := range items {
@@ -77,109 +57,11 @@ func contains(items []string, value string) bool {
 	return false
 }
 
-// a struct to hold the result from each request including an index
-// which will be used for sorting the results after they come in
-type result struct {
-	index int
-	res   reporter.PackageDetailsWithVulnerabilities
-	err   error
-}
-
-func (dbs OSVDatabases) parallelFetch2(pkgs lockfile.Packages, ignores []string, concurrencyLimit int) []result {
-	if concurrencyLimit > 1 {
-		return dbs.parallelFetch(pkgs, ignores, concurrencyLimit)
-	}
-
-	var results []result
-
-	if len(pkgs) == 0 {
-		return results
-	}
-
-	vulns := make([][]database.Vulnerabilities, 0, len(dbs))
-
-	for _, db := range dbs {
-		vs := db.Check(pkgs)
-
-		if len(vs) != len(pkgs) {
-			panic("oh noes!")
-		}
-
-		vulns = append(vulns, vs)
-	}
-
-	for i, pkg := range pkgs {
-		results = append(results, result{
-			index: i,
-			res:   dbs.transposePkgResults(pkg, ignores, i, vulns),
-			err:   nil,
-		})
-	}
-
-	sort.Slice(results, func(i, j int) bool {
-		return results[i].index < results[j].index
-	})
-
-	return results
-}
-
-func (dbs OSVDatabases) parallelFetch(pkgs lockfile.Packages, ignores []string, concurrencyLimit int) []result {
-	var results []result
-
-	if len(pkgs) == 0 {
-		return results
-	}
-
-	// buffered channel which controls the number of concurrent operations
-	semaphoreChan := make(chan struct{}, concurrencyLimit)
-	resultsChan := make(chan *result)
-
-	defer func() {
-		close(semaphoreChan)
-		close(resultsChan)
-	}()
-
-	for i, pkg := range pkgs {
-		go func(i int, pkg lockfile.PackageDetails) {
-			// read from the buffered semaphore channel, which will block if we're
-			// already got as many goroutines as our concurrency limit allows
-			//
-			// when one of those routines finish they'll read from this channel,
-			// freeing up a slot to unblock this send
-			semaphoreChan <- struct{}{}
-
-			vulns := dbs.checkPkg(pkg, ignores)
-			result := &result{i, vulns, nil}
-
-			resultsChan <- result
-
-			// read from the buffered semaphore to free up a slot to allow
-			// another goroutine to start, since this one is wrapping up
-			<-semaphoreChan
-		}(i, pkg)
-	}
-
-	for {
-		result := <-resultsChan
-		results = append(results, *result)
-
-		if len(results) == len(pkgs) {
-			break
-		}
-	}
-
-	sort.Slice(results, func(i, j int) bool {
-		return results[i].index < results[j].index
-	})
-
-	return results
-}
-
 func (dbs OSVDatabases) transposePkgResults(
 	pkg internal.PackageDetails,
 	ignores []string,
 	packageIndex int,
-	allVulns [][]database.Vulnerabilities,
+	allVulns [][]database.VulnsOrError,
 ) reporter.PackageDetailsWithVulnerabilities {
 	vulnerabilities := make(database.Vulnerabilities, 0)
 	ignored := make(database.Vulnerabilities, 0)
@@ -187,7 +69,12 @@ func (dbs OSVDatabases) transposePkgResults(
 	for _, vulns1 := range allVulns {
 		vulns := vulns1[packageIndex]
 
-		for _, vulnerability := range vulns {
+		if vulns.Err != nil {
+			panic("there was an error")
+		}
+
+		for _, vulnerability := range vulns.Vulns {
+			// skip vulnerabilities that were already included from a previous database
 			if vulnerabilities.Includes(vulnerability) || ignored.Includes(vulnerability) {
 				continue
 			}
@@ -207,49 +94,35 @@ func (dbs OSVDatabases) transposePkgResults(
 	}
 }
 
-func (dbs OSVDatabases) checkPkg(pkg internal.PackageDetails, ignores []string) reporter.PackageDetailsWithVulnerabilities {
-	vulnerabilities := make(database.Vulnerabilities, 0)
-	ignored := make(database.Vulnerabilities, 0)
-
-	for i, db := range dbs {
-		for _, vulnerability := range db.VulnerabilitiesAffectingPackage(pkg) {
-			if vulnerabilities.Includes(vulnerability) || ignored.Includes(vulnerability) {
-				continue
-			}
-
-			if i > 0 {
-				fmt.Printf("oh noes!")
-			}
-
-			if contains(ignores, vulnerability.ID) {
-				ignored = append(ignored, vulnerability)
-			} else {
-				vulnerabilities = append(vulnerabilities, vulnerability)
-			}
-		}
-	}
-
-	return reporter.PackageDetailsWithVulnerabilities{
-		PackageDetails:  pkg,
-		Vulnerabilities: vulnerabilities,
-		Ignored:         ignored,
-	}
-}
-
-func (dbs OSVDatabases) check(lockf lockfile.Lockfile, ignores []string, conLimit int) reporter.Report {
+func (dbs OSVDatabases) check(r *reporter.Reporter, lockf lockfile.Lockfile, ignores []string) reporter.Report {
 	report := reporter.Report{
 		Lockfile: lockf,
 		Packages: make([]reporter.PackageDetailsWithVulnerabilities, 0, len(lockf.Packages)),
 	}
 
-	for _, r := range dbs.parallelFetch2(lockf.Packages, ignores, conLimit) {
-		if r.err != nil {
-			fmt.Printf("error happened: %v\n", r.err)
+	vulns := make([][]database.VulnsOrError, 0, len(dbs))
+
+	for _, db := range dbs {
+		results, err := db.Check(lockf.Packages)
+
+		if err != nil {
+			r.PrintError(color.RedString(fmt.Sprintf(
+				"  an api error occurred while trying to check the packages listed in %s: %v\n",
+				lockf.FilePath,
+				err,
+			)))
 
 			continue
 		}
 
-		report.Packages = append(report.Packages, r.res)
+		vulns = append(vulns, results)
+	}
+
+	for i, pkg := range lockf.Packages {
+		report.Packages = append(
+			report.Packages,
+			dbs.transposePkgResults(pkg, ignores, i, vulns),
+		)
 	}
 
 	return report
@@ -264,7 +137,7 @@ func loadEcosystemDatabases(r *reporter.Reporter, ecosystems []internal.Ecosyste
 		r.PrintText(fmt.Sprintf("    %s", ecosystem))
 		archiveURL := ecosystemDatabaseURL(ecosystem)
 
-		db, err := database.NewDB(offline, archiveURL)
+		db, err := database.NewZippedDB(archiveURL, offline)
 
 		if err != nil {
 			return dbs, fmt.Errorf("could not load database: %w", err)
@@ -382,7 +255,6 @@ func run() int {
 	outputAsJSON := flag.Bool("json", false, "Output the results in JSON format")
 	useDatabases := flag.Bool("use-dbs", false, "Output the results in JSON format")
 	useAPI := flag.Bool("use-api", false, "Output the results in JSON format")
-	conLimit := flag.Int("n", 1, "Output the results in JSON format")
 
 	flag.Var(&ignores, "ignore", `ID of an OSV to ignore when determining exit codes.
 This flag can be passed multiple times to ignore different vulnerabilities`)
@@ -527,10 +399,19 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		}
 
 		if *useAPI {
-			dbs = append(dbs, database.APIOSVDatabase{})
+			db, err := database.NewAPIDB("https://api.osv.dev/v1", *offline)
+
+			if err != nil {
+				printDatabaseLoadErr(r, err)
+				exitCode = 127
+
+				continue
+			}
+
+			dbs = append(dbs, db)
 		}
 
-		report := dbs.check(lockf, allIgnores(config.Ignore, ignores), *conLimit)
+		report := dbs.check(r, lockf, allIgnores(config.Ignore, ignores))
 
 		r.PrintResult(report)
 
