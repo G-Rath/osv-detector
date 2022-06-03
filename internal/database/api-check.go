@@ -35,6 +35,10 @@ func (db APIDB) bulkEndpoint() string {
 	return u.String()
 }
 
+type ObjectWithID struct {
+	ID string `json:"id"`
+}
+
 var ErrAPICouldNotMarshalPayload = errors.New("could not marshal payload")
 var ErrAPIRequestInvalid = errors.New("api request invalid")
 var ErrAPIRequestFailed = errors.New("api request failed")
@@ -96,7 +100,7 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([]VulnsOrError, erro
 
 	var parsed struct {
 		Results []struct {
-			Vulns Vulnerabilities `json:"vulns"`
+			Vulns []ObjectWithID `json:"vulns"`
 		} `json:"results"`
 	}
 
@@ -111,7 +115,7 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([]VulnsOrError, erro
 	for i, r := range parsed.Results {
 		vulnerabilities = append(vulnerabilities, VulnsOrError{
 			Index: i,
-			Vulns: r.Vulns,
+			Vulns: db.expand(r.Vulns),
 			Err:   nil,
 		})
 	}
@@ -126,6 +130,20 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([]VulnsOrError, erro
 	}
 
 	return vulnerabilities, nil
+}
+
+func (db APIDB) expand(ids []ObjectWithID) []OSV {
+	osvs := make([]OSV, 0, len(ids))
+
+	for _, withID := range ids {
+		// if we error, still report the vulnerability as hopefully the ID should be
+		// enough to manually look up the details - in future we should ideally warn
+		// the user too, but for now we just silently eat the error
+		osv, _ := db.Fetch(withID.ID)
+		osvs = append(osvs, osv)
+	}
+
+	return osvs
 }
 
 func batchPkgs(pkgs []internal.PackageDetails, batchSize int) [][]internal.PackageDetails {
