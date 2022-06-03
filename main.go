@@ -255,6 +255,7 @@ func run() int {
 	outputAsJSON := flag.Bool("json", false, "Output the results in JSON format")
 	useDatabases := flag.Bool("use-dbs", false, "Output the results in JSON format")
 	useAPI := flag.Bool("use-api", false, "Output the results in JSON format")
+	batchSize := flag.Int("n", 500, "The number of packages to include in each batch when using the api database")
 
 	flag.Var(&ignores, "ignore", `ID of an OSV to ignore when determining exit codes.
 This flag can be passed multiple times to ignore different vulnerabilities`)
@@ -399,7 +400,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		}
 
 		if *useAPI {
-			db, err := database.NewAPIDB("https://api.osv.dev/v1", *offline)
+			db, err := database.NewAPIDB("https://api.osv.dev/v1", *batchSize, *offline)
 
 			if err != nil {
 				printDatabaseLoadErr(r, err)

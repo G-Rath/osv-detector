@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"osv-detector/internal"
 	"path"
@@ -42,7 +43,7 @@ var ErrAPIUnreadableResponse = errors.New("could not read response body")
 var ErrAPIResponseNotJSON = errors.New("api response could not be parsed as json")
 var ErrAPIResultsCountMismatch = errors.New("api results count mismatch")
 
-func (db APIDB) Check(pkgs []internal.PackageDetails) ([]VulnsOrError, error) {
+func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([]VulnsOrError, error) {
 	payloads := make([]apiPayload, 0, len(pkgs))
 
 	for _, pkg := range pkgs {
@@ -122,6 +123,44 @@ func (db APIDB) Check(pkgs []internal.PackageDetails) ([]VulnsOrError, error) {
 			len(pkgs),
 			len(vulnerabilities),
 		)
+	}
+
+	return vulnerabilities, nil
+}
+
+func batchPkgs(pkgs []internal.PackageDetails, batchSize int) [][]internal.PackageDetails {
+	batches := make(
+		[][]internal.PackageDetails,
+		0,
+		(len(pkgs)/batchSize)+int(math.Min(float64(len(pkgs)%batchSize), 1)),
+	)
+
+	for i := 0; i < len(pkgs); i += batchSize {
+		end := i + batchSize
+
+		if end > len(pkgs) {
+			end = len(pkgs)
+		}
+
+		batches = append(batches, pkgs[i:end])
+	}
+
+	return batches
+}
+
+func (db APIDB) Check(pkgs []internal.PackageDetails) ([]VulnsOrError, error) {
+	batches := batchPkgs(pkgs, db.BatchSize)
+
+	vulnerabilities := make([]VulnsOrError, 0, len(pkgs))
+
+	for _, batch := range batches {
+		results, err := db.checkBatch(batch)
+
+		if err != nil {
+			return nil, err
+		}
+
+		vulnerabilities = append(vulnerabilities, results...)
 	}
 
 	return vulnerabilities, nil

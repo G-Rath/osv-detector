@@ -8,7 +8,8 @@ import (
 )
 
 type APIDB struct {
-	BaseURL *url.URL
+	BaseURL   *url.URL
+	BatchSize int
 }
 
 type apiPayload struct {
@@ -21,10 +22,15 @@ type apiPayload struct {
 }
 
 var ErrOfflineDatabaseNotSupported = errors.New("API database does not support being used offline")
+var ErrInvalidBatchSize = errors.New("batch size must be greater than 0")
 
-func NewAPIDB(baseURL string, offline bool) (*APIDB, error) {
+func NewAPIDB(baseURL string, batchSize int, offline bool) (*APIDB, error) {
 	if offline {
 		return nil, ErrOfflineDatabaseNotSupported
+	}
+
+	if batchSize < 1 {
+		return nil, ErrInvalidBatchSize
 	}
 
 	u, err := url.Parse(baseURL)
@@ -33,5 +39,5 @@ func NewAPIDB(baseURL string, offline bool) (*APIDB, error) {
 		return nil, fmt.Errorf("%s is not a valid url: %w", baseURL, err)
 	}
 
-	return &APIDB{BaseURL: u}, nil
+	return &APIDB{BaseURL: u, BatchSize: batchSize}, nil
 }
