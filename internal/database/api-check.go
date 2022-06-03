@@ -100,7 +100,7 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([]VulnsOrError, erro
 
 	var parsed struct {
 		Results []struct {
-			Vulns []ObjectWithID `json:"vulns"`
+			Vulns []OSV `json:"vulns"`
 		} `json:"results"`
 	}
 
@@ -115,7 +115,7 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([]VulnsOrError, erro
 	for i, r := range parsed.Results {
 		vulnerabilities = append(vulnerabilities, VulnsOrError{
 			Index: i,
-			Vulns: db.expand(r.Vulns),
+			Vulns: r.Vulns,
 			Err:   nil,
 		})
 	}
@@ -130,20 +130,6 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([]VulnsOrError, erro
 	}
 
 	return vulnerabilities, nil
-}
-
-func (db APIDB) expand(ids []ObjectWithID) []OSV {
-	osvs := make([]OSV, 0, len(ids))
-
-	for _, withID := range ids {
-		// if we error, still report the vulnerability as hopefully the ID should be
-		// enough to manually look up the details - in future we should ideally warn
-		// the user too, but for now we just silently eat the error
-		osv, _ := db.Fetch(withID.ID)
-		osvs = append(osvs, osv)
-	}
-
-	return osvs
 }
 
 func batchPkgs(pkgs []internal.PackageDetails, batchSize int) [][]internal.PackageDetails {
@@ -166,6 +152,16 @@ func batchPkgs(pkgs []internal.PackageDetails, batchSize int) [][]internal.Packa
 	return batches
 }
 
+func findOrDefault(vulns Vulnerabilities, def OSV) OSV {
+	for _, vuln := range vulns {
+		if vuln.ID == def.ID {
+			return vuln
+		}
+	}
+
+	return def
+}
+
 func (db APIDB) Check(pkgs []internal.PackageDetails) ([]VulnsOrError, error) {
 	batches := batchPkgs(pkgs, db.BatchSize)
 
@@ -179,6 +175,28 @@ func (db APIDB) Check(pkgs []internal.PackageDetails) ([]VulnsOrError, error) {
 		}
 
 		vulnerabilities = append(vulnerabilities, results...)
+	}
+
+	var osvs Vulnerabilities
+
+	for _, vulnsOrError := range vulnerabilities {
+		osvs = append(osvs, vulnsOrError.Vulns...)
+	}
+
+	osvs = osvs.Unique()
+
+	ids := make([]string, 0, len(osvs))
+
+	for _, osv := range osvs {
+		ids = append(ids, osv.ID)
+	}
+
+	osvs = db.FetchAll(ids)
+
+	for _, vulnsOrError := range vulnerabilities {
+		for i := range vulnsOrError.Vulns {
+			vulnsOrError.Vulns[i] = findOrDefault(osvs, vulnsOrError.Vulns[i])
+		}
 	}
 
 	return vulnerabilities, nil
