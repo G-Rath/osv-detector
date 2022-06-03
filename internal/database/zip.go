@@ -58,6 +58,7 @@ func (db *ZipDB) fetchZip() ([]byte, error) {
 
 		return cache.Body, nil
 	}
+
 	req, err := http.NewRequestWithContext(context.Background(), "GET", db.ArchiveURL, nil)
 
 	if err != nil {

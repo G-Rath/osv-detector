@@ -44,17 +44,35 @@ func (db APIDB) Fetch(id string) (OSV, error) {
 	body, err = io.ReadAll(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
-		return osv, fmt.Errorf("%w (%d)", ErrAPIUnexpectedResponse, resp.StatusCode)
+		return osv, fmt.Errorf(
+			"%w (%s %s %d)",
+			ErrAPIUnexpectedResponse,
+			resp.Request.Method,
+			resp.Request.URL,
+			resp.StatusCode,
+		)
 	}
 
 	if err != nil {
-		return osv, fmt.Errorf("%v: %w", ErrAPIUnreadableResponse, err)
+		return osv, fmt.Errorf(
+			"%v (%s %s): %w",
+			ErrAPIUnreadableResponse,
+			resp.Request.Method,
+			resp.Request.URL,
+			err,
+		)
 	}
 
 	err = json.Unmarshal(body, &osv)
 
 	if err != nil {
-		return osv, fmt.Errorf("%v: %w", ErrAPIResponseNotJSON, err)
+		return osv, fmt.Errorf(
+			"%v (%s %s): %w",
+			ErrAPIResponseNotJSON,
+			resp.Request.Method,
+			resp.Request.URL,
+			err,
+		)
 	}
 
 	return osv, nil

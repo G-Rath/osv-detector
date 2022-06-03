@@ -12,7 +12,7 @@ type APIDB struct {
 	BatchSize int
 }
 
-type apiPayload struct {
+type apiQuery struct {
 	Commit  string `json:"commit,omitempty"`
 	Version string `json:"version,omitempty"`
 	Package struct {
@@ -33,7 +33,7 @@ func NewAPIDB(baseURL string, batchSize int, offline bool) (*APIDB, error) {
 		return nil, ErrInvalidBatchSize
 	}
 
-	u, err := url.Parse(baseURL)
+	u, err := url.ParseRequestURI(baseURL)
 
 	if err != nil {
 		return nil, fmt.Errorf("%s is not a valid url: %w", baseURL, err)

@@ -13,18 +13,18 @@ import (
 	"path"
 )
 
-func (db APIDB) buildAPIPayload(pkg internal.PackageDetails) apiPayload {
-	var payload apiPayload
+func (db APIDB) buildAPIPayload(pkg internal.PackageDetails) apiQuery {
+	var query apiQuery
 
 	if pkg.Commit == "" {
-		payload.Package.Name = pkg.Name
-		payload.Package.Ecosystem = pkg.Ecosystem
-		payload.Version = pkg.Version
+		query.Package.Name = pkg.Name
+		query.Package.Ecosystem = pkg.Ecosystem
+		query.Version = pkg.Version
 	} else {
-		payload.Commit = pkg.Commit
+		query.Commit = pkg.Commit
 	}
 
-	return payload
+	return query
 }
 
 func (db APIDB) bulkEndpoint() string {
@@ -48,15 +48,15 @@ var ErrAPIResponseNotJSON = errors.New("api response could not be parsed as json
 var ErrAPIResultsCountMismatch = errors.New("api results count mismatch")
 
 func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([][]ObjectWithID, error) {
-	payloads := make([]apiPayload, 0, len(pkgs))
+	queries := make([]apiQuery, 0, len(pkgs))
 
 	for _, pkg := range pkgs {
-		payloads = append(payloads, db.buildAPIPayload(pkg))
+		queries = append(queries, db.buildAPIPayload(pkg))
 	}
 
 	jsonData, err := json.Marshal(struct {
-		Queries []apiPayload `json:"queries"`
-	}{payloads})
+		Queries []apiQuery `json:"queries"`
+	}{queries})
 
 	if err != nil {
 		return [][]ObjectWithID{}, fmt.Errorf("%v: %w", ErrAPICouldNotMarshalPayload, err)
@@ -85,11 +85,23 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([][]ObjectWithID, er
 	body, err = io.ReadAll(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
-		return [][]ObjectWithID{}, fmt.Errorf("%w (%d)", ErrAPIUnexpectedResponse, resp.StatusCode)
+		return [][]ObjectWithID{}, fmt.Errorf(
+			"%w (%s %s %d)",
+			ErrAPIUnexpectedResponse,
+			resp.Request.Method,
+			resp.Request.URL,
+			resp.StatusCode,
+		)
 	}
 
 	if err != nil {
-		return [][]ObjectWithID{}, fmt.Errorf("%v: %w", ErrAPIUnreadableResponse, err)
+		return [][]ObjectWithID{}, fmt.Errorf(
+			"%v (%s %s): %w",
+			ErrAPIUnreadableResponse,
+			resp.Request.Method,
+			resp.Request.URL,
+			err,
+		)
 	}
 
 	var parsed struct {
@@ -101,7 +113,13 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([][]ObjectWithID, er
 	err = json.Unmarshal(body, &parsed)
 
 	if err != nil {
-		return [][]ObjectWithID{}, fmt.Errorf("%v: %w", ErrAPIResponseNotJSON, err)
+		return [][]ObjectWithID{}, fmt.Errorf(
+			"%v (%s %s): %w",
+			ErrAPIResponseNotJSON,
+			resp.Request.Method,
+			resp.Request.URL,
+			err,
+		)
 	}
 
 	vulnerabilities := make([][]ObjectWithID, 0, len(parsed.Results))
