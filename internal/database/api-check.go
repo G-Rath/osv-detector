@@ -47,7 +47,7 @@ var ErrAPIUnreadableResponse = errors.New("could not read response body")
 var ErrAPIResponseNotJSON = errors.New("api response could not be parsed as json")
 var ErrAPIResultsCountMismatch = errors.New("api results count mismatch")
 
-func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([]VulnsOrError, error) {
+func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([][]ObjectWithID, error) {
 	payloads := make([]apiPayload, 0, len(pkgs))
 
 	for _, pkg := range pkgs {
@@ -59,7 +59,7 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([]VulnsOrError, erro
 	}{payloads})
 
 	if err != nil {
-		return []VulnsOrError{}, fmt.Errorf("%v: %w", ErrAPICouldNotMarshalPayload, err)
+		return [][]ObjectWithID{}, fmt.Errorf("%v: %w", ErrAPICouldNotMarshalPayload, err)
 	}
 
 	req, err := http.NewRequestWithContext(
@@ -70,13 +70,12 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([]VulnsOrError, erro
 	)
 
 	if err != nil {
-		return []VulnsOrError{}, fmt.Errorf("%v: %w", ErrAPIRequestInvalid, err)
+		return [][]ObjectWithID{}, fmt.Errorf("%v: %w", ErrAPIRequestInvalid, err)
 	}
 
-	// fmt.Println(req)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return []VulnsOrError{}, fmt.Errorf("%v: %w", ErrAPIRequestFailed, err)
+		return [][]ObjectWithID{}, fmt.Errorf("%v: %w", ErrAPIRequestFailed, err)
 	}
 
 	defer resp.Body.Close()
@@ -85,39 +84,30 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([]VulnsOrError, erro
 
 	body, err = io.ReadAll(resp.Body)
 
-	// fmt.Println(string(body))
 	if resp.StatusCode != http.StatusOK {
-		return []VulnsOrError{}, fmt.Errorf("%w (%d)", ErrAPIUnexpectedResponse, resp.StatusCode)
+		return [][]ObjectWithID{}, fmt.Errorf("%w (%d)", ErrAPIUnexpectedResponse, resp.StatusCode)
 	}
 
-	// body, err = io.ReadAll(resp.Body)
-
-	// fmt.Println(string(body))
-
 	if err != nil {
-		return []VulnsOrError{}, fmt.Errorf("%v: %w", ErrAPIUnreadableResponse, err)
+		return [][]ObjectWithID{}, fmt.Errorf("%v: %w", ErrAPIUnreadableResponse, err)
 	}
 
 	var parsed struct {
 		Results []struct {
-			Vulns []OSV `json:"vulns"`
+			Vulns []ObjectWithID `json:"vulns"`
 		} `json:"results"`
 	}
 
 	err = json.Unmarshal(body, &parsed)
 
 	if err != nil {
-		return []VulnsOrError{}, fmt.Errorf("%v: %w", ErrAPIResponseNotJSON, err)
+		return [][]ObjectWithID{}, fmt.Errorf("%v: %w", ErrAPIResponseNotJSON, err)
 	}
 
-	vulnerabilities := make([]VulnsOrError, 0, len(parsed.Results))
+	vulnerabilities := make([][]ObjectWithID, 0, len(parsed.Results))
 
-	for i, r := range parsed.Results {
-		vulnerabilities = append(vulnerabilities, VulnsOrError{
-			Index: i,
-			Vulns: r.Vulns,
-			Err:   nil,
-		})
+	for _, r := range parsed.Results {
+		vulnerabilities = append(vulnerabilities, r.Vulns)
 	}
 
 	if len(pkgs) != len(vulnerabilities) {
@@ -162,10 +152,10 @@ func findOrDefault(vulns Vulnerabilities, def OSV) OSV {
 	return def
 }
 
-func (db APIDB) Check(pkgs []internal.PackageDetails) ([]VulnsOrError, error) {
+func (db APIDB) Check(pkgs []internal.PackageDetails) ([]Vulnerabilities, error) {
 	batches := batchPkgs(pkgs, db.BatchSize)
 
-	vulnerabilities := make([]VulnsOrError, 0, len(pkgs))
+	vulnerabilities := make([]Vulnerabilities, 0, len(pkgs))
 
 	for _, batch := range batches {
 		results, err := db.checkBatch(batch)
@@ -174,13 +164,21 @@ func (db APIDB) Check(pkgs []internal.PackageDetails) ([]VulnsOrError, error) {
 			return nil, err
 		}
 
-		vulnerabilities = append(vulnerabilities, results...)
+		for _, withIDS := range results {
+			vulns := make(Vulnerabilities, 0, len(withIDS))
+
+			for _, withID := range withIDS {
+				vulns = append(vulns, OSV{ID: withID.ID})
+			}
+
+			vulnerabilities = append(vulnerabilities, vulns)
+		}
 	}
 
 	var osvs Vulnerabilities
 
-	for _, vulnsOrError := range vulnerabilities {
-		osvs = append(osvs, vulnsOrError.Vulns...)
+	for _, vulns := range vulnerabilities {
+		osvs = append(osvs, vulns...)
 	}
 
 	osvs = osvs.Unique()
@@ -193,9 +191,9 @@ func (db APIDB) Check(pkgs []internal.PackageDetails) ([]VulnsOrError, error) {
 
 	osvs = db.FetchAll(ids)
 
-	for _, vulnsOrError := range vulnerabilities {
-		for i := range vulnsOrError.Vulns {
-			vulnsOrError.Vulns[i] = findOrDefault(osvs, vulnsOrError.Vulns[i])
+	for _, vulns := range vulnerabilities {
+		for i := range vulns {
+			vulns[i] = findOrDefault(osvs, vulns[i])
 		}
 	}
 

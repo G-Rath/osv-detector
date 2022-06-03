@@ -20,7 +20,7 @@ func (db *ZipDB) Vulnerabilities(includeWithdrawn bool) []OSV {
 	return vulnerabilities
 }
 
-func (db ZipDB) VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) (Vulnerabilities, error) {
+func (db ZipDB) VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) Vulnerabilities {
 	var vulnerabilities Vulnerabilities
 
 	for _, vulnerability := range db.Vulnerabilities(false) {
@@ -29,20 +29,14 @@ func (db ZipDB) VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) (Vu
 		}
 	}
 
-	return vulnerabilities, nil
+	return vulnerabilities
 }
 
-func (db ZipDB) Check(pkgs []internal.PackageDetails) ([]VulnsOrError, error) {
-	vulnerabilities := make([]VulnsOrError, 0, len(pkgs))
+func (db ZipDB) Check(pkgs []internal.PackageDetails) ([]Vulnerabilities, error) {
+	vulnerabilities := make([]Vulnerabilities, 0, len(pkgs))
 
-	for i, pkg := range pkgs {
-		vulns, err := db.VulnerabilitiesAffectingPackage(pkg)
-
-		vulnerabilities = append(vulnerabilities, VulnsOrError{
-			Index: i,
-			Vulns: vulns,
-			Err:   err,
-		})
+	for _, pkg := range pkgs {
+		vulnerabilities = append(vulnerabilities, db.VulnerabilitiesAffectingPackage(pkg))
 	}
 
 	return vulnerabilities, nil

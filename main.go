@@ -61,7 +61,7 @@ func (dbs OSVDatabases) transposePkgResults(
 	pkg internal.PackageDetails,
 	ignores []string,
 	packageIndex int,
-	allVulns [][]database.VulnsOrError,
+	allVulns [][]database.Vulnerabilities,
 ) reporter.PackageDetailsWithVulnerabilities {
 	vulnerabilities := make(database.Vulnerabilities, 0)
 	ignored := make(database.Vulnerabilities, 0)
@@ -69,11 +69,7 @@ func (dbs OSVDatabases) transposePkgResults(
 	for _, vulns1 := range allVulns {
 		vulns := vulns1[packageIndex]
 
-		if vulns.Err != nil {
-			panic("there was an error")
-		}
-
-		for _, vulnerability := range vulns.Vulns {
+		for _, vulnerability := range vulns {
 			// skip vulnerabilities that were already included from a previous database
 			if vulnerabilities.Includes(vulnerability) || ignored.Includes(vulnerability) {
 				continue
@@ -100,7 +96,7 @@ func (dbs OSVDatabases) check(r *reporter.Reporter, lockf lockfile.Lockfile, ign
 		Packages: make([]reporter.PackageDetailsWithVulnerabilities, 0, len(lockf.Packages)),
 	}
 
-	vulns := make([][]database.VulnsOrError, 0, len(dbs))
+	vulns := make([][]database.Vulnerabilities, 0, len(dbs))
 
 	for _, db := range dbs {
 		results, err := db.Check(lockf.Packages)
