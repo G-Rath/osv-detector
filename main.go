@@ -249,9 +249,9 @@ func run() int {
 	listPackages := flag.Bool("list-packages", false, "List the packages that are parsed from the input files")
 	cacheAllDatabases := flag.Bool("cache-all-databases", false, "Cache all the known ecosystem databases for offline use")
 	outputAsJSON := flag.Bool("json", false, "Output the results in JSON format")
-	useDatabases := flag.Bool("use-dbs", false, "Output the results in JSON format")
-	useAPI := flag.Bool("use-api", false, "Output the results in JSON format")
-	batchSize := flag.Int("n", 500, "The number of packages to include in each batch when using the api database")
+	useDatabases := flag.Bool("use-dbs", true, "Use the databases from osv.dev to check for known vulnerabilities")
+	useAPI := flag.Bool("use-api", false, "Use the osv.dev API to check for known vulnerabilities")
+	batchSize := flag.Int("batch-size", 1000, "The number of packages to include in each batch when using the api database")
 
 	flag.Var(&ignores, "ignore", `ID of an OSV to ignore when determining exit codes.
 This flag can be passed multiple times to ignore different vulnerabilities`)
