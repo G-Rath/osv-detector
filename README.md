@@ -51,31 +51,34 @@ files with the `-parse-as` flag:
 osv-detector --parse-as 'package-lock.json' path/to/my/file.lock
 ```
 
+By default, the detector attempts to detect known vulnerabilities by checking
+the versions of packages specified by the parsed lockfile against the versions
+specified by the OSVs in the loaded OSV databases, using an internal
+semver-based package that aims to minimize false negatives (see
+[this section](#version-parsing-and-comparing) for more details about version
+handling).
+
+This allows the detector to be very fast and work offline, but does not support
+commits which means the detector can report false positives when using git-based
+dependencies.
+
+You can disable using the offline databases by passing `--use-dbs=false`.
+
+You can also have the detector use the `osv.dev` API to check for known
+vulnerabilities by supplying the `--use-api` flag. The API is very fast,
+typically a few hours ahead of the offline databases, and supports commits;
+however it currently can produce false negatives for some ecosystems.
+
+> While the API supports commits, the detector currently has limited support for
+> extracting them - only the `composer.lock` parser includes commit details
+
+You cannot use the API in `--offline` mode, but you can use both the offline
+databases and the API together; the detector will remove any duplicate results.
+
 Once packages have been parsed, the detector determines which ecosystem
 databases it needs to load from its cache. If an ecosystem database does not
 exist locally, or if the database is outdated, the detector downloads a new
 version and stores it for re-use.
-
-You can have the detector work solely off the local version of the databases
-with the `--offline` flag:
-
-```shell
-osv-detector --offline path/to/my/file.lock
-```
-
-This requires the detector to have successfully downloaded a copy of ecosystem
-databases required to check the packages discovered during parsing at least
-once.
-
-You can have the detector cache the databases for all known ecosystems supported
-by the detector for later offline use with the `--cache-all-databases`:
-
-```shell
-osv-detector --cache-all-databases
-```
-
-This can be useful if you're planning to run the detector over a number of
-lockfiles in bulk.
 
 By default, the detector will output the results to `stdout` as plain text, and
 exit with an error code of `1` if at least one vulnerability is found.
@@ -161,6 +164,29 @@ osv-detector --config ruby-ignores.yml path/to/my/first-ruby-project path/to/my/
 ```
 
 You can disable loading any configs with the `--no-config` flag.
+
+### Offline use
+
+When using the offline databases, the detector downloads the necessary ecosystem
+databases based on the packages being checked. These databases are cached along
+with the time they were last updated, to allow for offline use and to avoid
+bulky re-downloading of the same data.
+
+You can have the detector work purely in offline mode with the `--offline` flag:
+
+```shell
+osv-detector --offline path/to/my/file.lock
+```
+
+You can have the detector cache the databases for all known ecosystems supported
+by the detector for later offline use with the `--cache-all-databases`:
+
+```shell
+osv-detector --cache-all-databases
+```
+
+This can be useful if you're planning to run the detector over a number of
+lockfiles in bulk.
 
 ### Auxiliary output commands
 

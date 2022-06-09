@@ -9,6 +9,9 @@ import (
 type ComposerPackage struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
+	Dist    struct {
+		Reference string `json:"reference"`
+	} `json:"dist"`
 }
 
 type ComposerLock struct {
@@ -44,6 +47,7 @@ func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 		packages = append(packages, PackageDetails{
 			Name:      composerPackage.Name,
 			Version:   composerPackage.Version,
+			Commit:    composerPackage.Dist.Reference,
 			Ecosystem: ComposerEcosystem,
 		})
 	}
@@ -52,6 +56,7 @@ func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 		packages = append(packages, PackageDetails{
 			Name:      composerPackage.Name,
 			Version:   composerPackage.Version,
+			Commit:    composerPackage.Dist.Reference,
 			Ecosystem: ComposerEcosystem,
 		})
 	}
