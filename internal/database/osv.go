@@ -6,7 +6,7 @@ import (
 	"os"
 	"osv-detector/internal"
 	"osv-detector/pkg/lockfile"
-	"osv-detector/internal/semantic"
+	"osv-detector/pkg/semantic"
 	"regexp"
 	"strings"
 	"time"

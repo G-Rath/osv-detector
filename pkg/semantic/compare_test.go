@@ -1,7 +1,7 @@
 package semantic_test
 
 import (
-	"osv-detector/internal/semantic"
+	"osv-detector/pkg/semantic"
 	"testing"
 )
 
