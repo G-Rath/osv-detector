@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"osv-detector/internal/reporter"
+	"osv-detector/pkg/database"
 	"strings"
 	"testing"
 )
@@ -181,6 +182,141 @@ func TestReporter_PrintText(t *testing.T) {
 
 			if gotStderr := stderr.String(); gotStderr != tt.wantedStderr {
 				t.Errorf("stderr got = %s, want %s", gotStderr, tt.wantedStderr)
+			}
+		})
+	}
+}
+
+func TestReporter_PrintDatabaseLoadErr(t *testing.T) {
+	t.Parallel()
+
+	type args struct {
+		outputAsJSON bool
+		err          error
+	}
+	tests := []struct {
+		name         string
+		args         args
+		wantedStdout string
+		wantedStderr string
+	}{
+		{
+			name: "",
+			args: args{
+				outputAsJSON: false,
+				err:          fmt.Errorf("oh noes"),
+			},
+			wantedStdout: "",
+			wantedStderr: " failed: oh noes\n",
+		},
+		{
+			name: "",
+			args: args{
+				outputAsJSON: true,
+				err:          fmt.Errorf("oh noes"),
+			},
+			wantedStdout: "",
+			wantedStderr: " failed: oh noes\n",
+		},
+		{
+			name: "",
+			args: args{
+				outputAsJSON: false,
+				err:          database.ErrOfflineDatabaseNotFound,
+			},
+			wantedStdout: "",
+			wantedStderr: " failed: no local version of the database was found, and --offline flag was set\n",
+		},
+		{
+			name: "",
+			args: args{
+				outputAsJSON: true,
+				err:          database.ErrOfflineDatabaseNotFound,
+			},
+			wantedStdout: "",
+			wantedStderr: " failed: no local version of the database was found, and --offline flag was set\n",
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			stdout := &bytes.Buffer{}
+			stderr := &bytes.Buffer{}
+
+			r := reporter.New(stdout, stderr, tt.args.outputAsJSON)
+			r.PrintDatabaseLoadErr(tt.args.err)
+
+			if gotStdout := stdout.String(); gotStdout != tt.wantedStdout {
+				t.Errorf("stdout got = \"%s\", want \"%s\"", gotStdout, tt.wantedStdout)
+			}
+
+			if gotStderr := stderr.String(); gotStderr != tt.wantedStderr {
+				t.Errorf("stderr got = \"%s\", want \"%s\"", gotStderr, tt.wantedStderr)
+			}
+		})
+	}
+}
+
+func TestReporter_PrintKnownEcosystems(t *testing.T) {
+	t.Parallel()
+
+	expected := strings.Join([]string{
+		"The detector supports parsing for the following ecosystems:",
+		"  npm",
+		"  crates.io",
+		"  RubyGems",
+		"  Packagist",
+		"  Go",
+		"  Maven",
+		"  PyPI",
+		"",
+	}, "\n")
+
+	type args struct {
+		outputAsJSON bool
+	}
+	tests := []struct {
+		name         string
+		args         args
+		wantedStdout string
+		wantedStderr string
+	}{
+		{
+			name: "",
+			args: args{
+				outputAsJSON: false,
+			},
+			wantedStdout: expected,
+			wantedStderr: "",
+		},
+		{
+			name: "",
+			args: args{
+				outputAsJSON: true,
+			},
+			wantedStdout: "",
+			wantedStderr: expected,
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			stdout := &bytes.Buffer{}
+			stderr := &bytes.Buffer{}
+
+			r := reporter.New(stdout, stderr, tt.args.outputAsJSON)
+			r.PrintKnownEcosystems()
+
+			if gotStdout := stdout.String(); gotStdout != tt.wantedStdout {
+				t.Errorf("stdout got = \"%s\", want \"%s\"", gotStdout, tt.wantedStdout)
+			}
+
+			if gotStderr := stderr.String(); gotStderr != tt.wantedStderr {
+				t.Errorf("stderr got = \"%s\", want \"%s\"", gotStderr, tt.wantedStderr)
 			}
 		})
 	}
