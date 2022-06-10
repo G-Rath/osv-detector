@@ -2,9 +2,9 @@ package reporter_test
 
 import (
 	"osv-detector/internal"
+	"osv-detector/internal/reporter"
 	"osv-detector/pkg/database"
 	"osv-detector/pkg/lockfile"
-	"osv-detector/internal/reporter"
 	"strings"
 	"testing"
 )

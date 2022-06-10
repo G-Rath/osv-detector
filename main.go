@@ -8,9 +8,9 @@ import (
 	"os"
 	"osv-detector/internal"
 	"osv-detector/internal/configer"
+	"osv-detector/internal/reporter"
 	"osv-detector/pkg/database"
 	"osv-detector/pkg/lockfile"
-	"osv-detector/internal/reporter"
 	"path"
 )
 
