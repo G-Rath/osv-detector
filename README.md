@@ -271,3 +271,19 @@ Versions without a build string are considered to be higher than those with
 (provided they have the same components).
 
 Improvements to the build string comparor are welcome!
+
+## Public packages (`pkg/`)
+
+A couple of the core packages that power the detector have been made public to
+allow others to use in their own projects, and to help encourage improvements.
+
+These packages will not receive their own versions and so should be constrained
+based on their commit hash. They should also be considered as "hopefully
+stable" - while they're not expected to change, as the detector evolves it might
+become necessary to change their api in a manner that could be breaking to
+downstream consumers.
+
+It is hoped that someday these packages will be published independently, once
+their apis have proven to be truly stable.
+
+Improvements, feature requests, and bug reports for these packages are welcome!
