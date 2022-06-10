@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"osv-detector/internal"
-	"osv-detector/internal/database"
+	"osv-detector/pkg/database"
 	"osv-detector/pkg/lockfile"
 	"strings"
 )

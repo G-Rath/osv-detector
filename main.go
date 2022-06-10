@@ -8,7 +8,7 @@ import (
 	"os"
 	"osv-detector/internal"
 	"osv-detector/internal/configer"
-	"osv-detector/internal/database"
+	"osv-detector/pkg/database"
 	"osv-detector/pkg/lockfile"
 	"osv-detector/internal/reporter"
 	"path"

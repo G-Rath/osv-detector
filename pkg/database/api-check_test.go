@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"osv-detector/internal"
-	"osv-detector/internal/database"
+	"osv-detector/pkg/database"
 	"osv-detector/pkg/lockfile"
 	"reflect"
 	"testing"
