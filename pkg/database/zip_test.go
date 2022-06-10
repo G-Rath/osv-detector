@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"osv-detector/internal/database"
+	"osv-detector/pkg/database"
 	"path/filepath"
 	"reflect"
 	"sort"

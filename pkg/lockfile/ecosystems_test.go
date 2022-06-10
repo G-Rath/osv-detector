@@ -2,7 +2,7 @@ package lockfile_test
 
 import (
 	"io/ioutil"
-	"osv-detector/internal/lockfile"
+	"osv-detector/pkg/lockfile"
 	"strings"
 	"testing"
 )

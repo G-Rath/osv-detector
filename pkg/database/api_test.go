@@ -2,7 +2,7 @@ package database_test
 
 import (
 	"net/url"
-	"osv-detector/internal/database"
+	"osv-detector/pkg/database"
 	"reflect"
 	"testing"
 )

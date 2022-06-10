@@ -2,8 +2,8 @@ package database_test
 
 import (
 	"osv-detector/internal"
-	"osv-detector/internal/database"
-	"osv-detector/internal/lockfile"
+	"osv-detector/pkg/database"
+	"osv-detector/pkg/lockfile"
 	"testing"
 	"time"
 )
