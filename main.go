@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"github.com/fatih/color"
@@ -20,26 +19,6 @@ var (
 	commit  = "none"
 	date    = "unknown"
 )
-
-func printDatabaseLoadErr(r *reporter.Reporter, err error) {
-	msg := err.Error()
-
-	if errors.Is(err, database.ErrOfflineDatabaseNotFound) {
-		msg = color.RedString("no local version of the database was found, and --offline flag was set")
-	}
-
-	r.PrintError(fmt.Sprintf(" %s\n", color.RedString("failed: %s", msg)))
-}
-
-func printKnownEcosystems(r *reporter.Reporter) {
-	ecosystems := lockfile.KnownEcosystems()
-
-	r.PrintText("The detector supports parsing for the following ecosystems:\n")
-
-	for _, ecosystem := range ecosystems {
-		r.PrintText(fmt.Sprintf("  %s\n", ecosystem))
-	}
-}
 
 func ecosystemDatabaseURL(ecosystem internal.Ecosystem) string {
 	return fmt.Sprintf("https://osv-vulnerabilities.storage.googleapis.com/%s/all.zip", ecosystem)
@@ -314,7 +293,7 @@ func loadDatabases(
 		loaded, err := loadEcosystemDatabases(r, ecosystems, offline)
 
 		if err != nil {
-			printDatabaseLoadErr(r, err)
+			r.PrintDatabaseLoadErr(err)
 			errored = true
 		} else {
 			dbs = append(dbs, loaded...)
@@ -325,7 +304,7 @@ func loadDatabases(
 		db, err := database.NewAPIDB("https://api.osv.dev/v1", batchSize, offline)
 
 		if err != nil {
-			printDatabaseLoadErr(r, err)
+			r.PrintDatabaseLoadErr(err)
 			errored = true
 		} else {
 			dbs = append(dbs, db)
@@ -371,7 +350,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		err := cacheAllEcosystemDatabases(r)
 
 		if err != nil {
-			printDatabaseLoadErr(r, err)
+			r.PrintDatabaseLoadErr(err)
 
 			return 127
 		}
@@ -380,7 +359,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 	}
 
 	if *listEcosystems {
-		printKnownEcosystems(r)
+		r.PrintKnownEcosystems()
 
 		return 0
 	}

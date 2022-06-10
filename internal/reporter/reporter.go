@@ -2,8 +2,12 @@ package reporter
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/fatih/color"
 	"io"
+	"osv-detector/pkg/database"
+	"osv-detector/pkg/lockfile"
 )
 
 type Reporter struct {
@@ -71,4 +75,24 @@ func (r *Reporter) PrintJSONResults() {
 	}
 
 	fmt.Fprint(r.stdout, string(out))
+}
+
+func (r *Reporter) PrintDatabaseLoadErr(err error) {
+	msg := err.Error()
+
+	if errors.Is(err, database.ErrOfflineDatabaseNotFound) {
+		msg = color.RedString("no local version of the database was found, and --offline flag was set")
+	}
+
+	r.PrintError(fmt.Sprintf(" %s\n", color.RedString("failed: %s", msg)))
+}
+
+func (r *Reporter) PrintKnownEcosystems() {
+	ecosystems := lockfile.KnownEcosystems()
+
+	r.PrintText("The detector supports parsing for the following ecosystems:\n")
+
+	for _, ecosystem := range ecosystems {
+		r.PrintText(fmt.Sprintf("  %s\n", ecosystem))
+	}
 }
