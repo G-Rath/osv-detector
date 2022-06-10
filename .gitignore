@@ -16,7 +16,6 @@ pids
 .env
 .envrc
 .DS_STORE
-pkg/
 
 # Binaries for programs and plugins
 *.exe

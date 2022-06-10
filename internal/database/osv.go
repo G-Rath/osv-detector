@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"osv-detector/internal"
-	"osv-detector/internal/lockfile"
+	"osv-detector/pkg/lockfile"
 	"osv-detector/internal/semantic"
 	"regexp"
 	"strings"

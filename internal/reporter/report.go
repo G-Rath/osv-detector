@@ -5,7 +5,7 @@ import (
 	"github.com/fatih/color"
 	"osv-detector/internal"
 	"osv-detector/internal/database"
-	"osv-detector/internal/lockfile"
+	"osv-detector/pkg/lockfile"
 	"strings"
 )
 
