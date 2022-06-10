@@ -20,7 +20,13 @@ func expectErrContaining(t *testing.T, err error, str string) {
 }
 
 func packageToString(pkg lockfile.PackageDetails) string {
-	return fmt.Sprintf("%s@%s (%s)", pkg.Name, pkg.Version, pkg.Ecosystem)
+	commit := pkg.Commit
+
+	if commit == "" {
+		commit = "<no commit>"
+	}
+
+	return fmt.Sprintf("%s@%s (%s, %s)", pkg.Name, pkg.Version, pkg.Ecosystem, commit)
 }
 
 func hasPackage(packages []lockfile.PackageDetails, pkg lockfile.PackageDetails) bool {

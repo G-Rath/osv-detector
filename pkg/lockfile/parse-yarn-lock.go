@@ -3,6 +3,7 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
+	"net/url"
 	"os"
 	"regexp"
 	"strings"
@@ -76,9 +77,77 @@ func determineYarnPackageVersion(group []string) string {
 	return ""
 }
 
+func determineYarnPackageResolution(group []string) string {
+	re := regexp.MustCompile(`^ {2}(?:resolution:|resolved) "([^ '"]+)"$`)
+
+	for _, s := range group {
+		matched := re.FindStringSubmatch(s)
+
+		if matched != nil {
+			return matched[1]
+		}
+	}
+
+	// todo: decide what to do here - maybe panic...?
+	return ""
+}
+
+func tryExtractCommit(resolution string) string {
+	// language=GoRegExp
+	matchers := []string{
+		// ssh://...
+		// git://...
+		// git+ssh://...
+		// git+https://...
+		`(?:^|.+@)(?:git(?:\+(?:ssh|https))?|ssh)://.+#(\w+)$`,
+		// https://....git/...
+		`(?:^|.+@)https://.+\.git#(\w+)$`,
+		`https://codeload\.github\.com(?:/[\w-.]+){2}/tar\.gz/(\w+)$`,
+		`.+#commit[:=](\w+)$`,
+	}
+
+	for _, matcher := range matchers {
+		re := regexp.MustCompile(matcher)
+		matched := re.FindStringSubmatch(resolution)
+
+		if matched != nil {
+			return matched[1]
+		}
+	}
+
+	u, err := url.Parse(resolution)
+
+	if err == nil {
+		gitRepoHosts := []string{
+			"bitbucket.org",
+			"github.com",
+			"gitlab.com",
+		}
+
+		for _, host := range gitRepoHosts {
+			if u.Host != host {
+				continue
+			}
+
+			if u.RawQuery != "" {
+				queries := u.Query()
+
+				if queries.Has("ref") {
+					return queries.Get("ref")
+				}
+			}
+
+			return u.Fragment
+		}
+	}
+
+	return ""
+}
+
 func parsePackageGroup(group []string) PackageDetails {
 	name := extractYarnPackageName(group[0])
 	version := determineYarnPackageVersion(group)
+	resolution := determineYarnPackageResolution(group)
 
 	if version == "" {
 		_, _ = fmt.Fprintf(
@@ -92,6 +161,7 @@ func parsePackageGroup(group []string) PackageDetails {
 		Name:      name,
 		Version:   version,
 		Ecosystem: YarnEcosystem,
+		Commit:    tryExtractCommit(resolution),
 	}
 }
 
