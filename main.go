@@ -127,10 +127,10 @@ func (dbs OSVDatabases) check(r *reporter.Reporter, lockf lockfile.Lockfile, ign
 func loadEcosystemDatabases(r *reporter.Reporter, ecosystems []internal.Ecosystem, offline bool) (OSVDatabases, error) {
 	dbs := make(OSVDatabases, 0, len(ecosystems))
 
-	r.PrintText("  Loading OSV databases for the following ecosystems:\n")
+	r.PrintText("Loading OSV databases for the following ecosystems:\n")
 
 	for _, ecosystem := range ecosystems {
-		r.PrintText(fmt.Sprintf("    %s", ecosystem))
+		r.PrintText(fmt.Sprintf("  %s", ecosystem))
 		archiveURL := ecosystemDatabaseURL(ecosystem)
 
 		db, err := database.NewZippedDB(archiveURL, offline)
@@ -237,6 +237,104 @@ func allIgnores(global, local []string) []string {
 	return ignores
 }
 
+type lockfileAndConfigOrErr struct {
+	lockf  lockfile.Lockfile
+	config configer.Config
+	err    error
+}
+
+func readAllLockfiles(pathsToLocks []string, parseAs string, checkForLocalConfig bool, config configer.Config) []lockfileAndConfigOrErr {
+	lockfiles := make([]lockfileAndConfigOrErr, 0, len(pathsToLocks))
+
+	for _, pathToLock := range pathsToLocks {
+		if checkForLocalConfig {
+			base := path.Dir(pathToLock)
+			con, err := configer.Find(base)
+
+			if err != nil {
+				lockfiles = append(lockfiles, lockfileAndConfigOrErr{lockfile.Lockfile{}, config, err})
+
+				continue
+			}
+
+			config = con
+		}
+
+		lockf, err := lockfile.Parse(pathToLock, parseAs)
+		lockfiles = append(lockfiles, lockfileAndConfigOrErr{lockf, config, err})
+	}
+
+	return lockfiles
+}
+
+func collectEcosystems(files []lockfileAndConfigOrErr) []internal.Ecosystem {
+	var ecosystems []internal.Ecosystem
+
+	for _, result := range files {
+		if result.err != nil {
+			continue
+		}
+
+		for _, ecosystem := range result.lockf.Packages.Ecosystems() {
+			alreadyExists := false
+
+			for _, eco := range ecosystems {
+				if alreadyExists {
+					continue
+				}
+
+				if eco == ecosystem {
+					alreadyExists = true
+				}
+			}
+
+			if alreadyExists {
+				continue
+			}
+
+			ecosystems = append(ecosystems, ecosystem)
+		}
+	}
+
+	return ecosystems
+}
+
+func loadDatabases(
+	r *reporter.Reporter,
+	ecosystems []internal.Ecosystem,
+	useDatabases bool,
+	useAPI bool,
+	batchSize int,
+	offline bool,
+) (OSVDatabases, bool) {
+	var dbs OSVDatabases
+	errored := false
+
+	if useDatabases {
+		loaded, err := loadEcosystemDatabases(r, ecosystems, offline)
+
+		if err != nil {
+			printDatabaseLoadErr(r, err)
+			errored = true
+		} else {
+			dbs = append(dbs, loaded...)
+		}
+	}
+
+	if useAPI {
+		db, err := database.NewAPIDB("https://api.osv.dev/v1", batchSize, offline)
+
+		if err != nil {
+			printDatabaseLoadErr(r, err)
+			errored = true
+		} else {
+			dbs = append(dbs, db)
+		}
+	}
+
+	return dbs, errored
+}
+
 func run() int {
 	var ignores stringsFlag
 
@@ -312,8 +410,9 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 	exitCode := 0
 
 	var config configer.Config
+	loadLocalConfig := !*noConfig
 
-	if !*noConfig && *configPath != "" {
+	if loadLocalConfig && *configPath != "" {
 		con, err := configer.Load(*configPath)
 
 		if err != nil {
@@ -323,37 +422,40 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		}
 
 		config = con
+		loadLocalConfig = false
 	}
 
-	for i, pathToLock := range pathsToLocks {
-		config := config
+	files := readAllLockfiles(pathsToLocks, *parseAs, loadLocalConfig, config)
 
+	ecosystems := collectEcosystems(files)
+
+	dbs, errored := loadDatabases(
+		r,
+		ecosystems,
+		*useDatabases,
+		*useAPI,
+		*batchSize,
+		*offline,
+	)
+
+	if errored {
+		exitCode = 127
+	}
+
+	for i, result := range files {
 		if i >= 1 {
 			r.PrintText("\n")
 		}
 
-		if !*noConfig && *configPath == "" {
-			base := path.Dir(pathToLock)
-			con, err := configer.Find(base)
-
-			if err != nil {
-				r.PrintError(fmt.Sprintf("Error, %s\n", err))
-				exitCode = 127
-
-				continue
-			}
-
-			config = con
-		}
-
-		lockf, err := lockfile.Parse(pathToLock, *parseAs)
-
-		if err != nil {
-			r.PrintError(fmt.Sprintf("Error, %s\n", err))
+		if result.err != nil {
+			r.PrintError(fmt.Sprintf("Error, %s\n", result.err))
 			exitCode = 127
 
 			continue
 		}
+
+		config := result.config
+		lockf := result.lockf
 
 		r.PrintText(fmt.Sprintf(
 			"%s: found %s %s\n",
@@ -378,34 +480,6 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 					reporter.Form(len(config.Ignore), "ignore", "ignores"),
 				),
 			))
-		}
-
-		var dbs OSVDatabases
-
-		if *useDatabases {
-			loaded, err := loadEcosystemDatabases(r, lockf.Packages.Ecosystems(), *offline)
-
-			if err != nil {
-				printDatabaseLoadErr(r, err)
-				exitCode = 127
-
-				continue
-			}
-
-			dbs = append(dbs, loaded...)
-		}
-
-		if *useAPI {
-			db, err := database.NewAPIDB("https://api.osv.dev/v1", *batchSize, *offline)
-
-			if err != nil {
-				printDatabaseLoadErr(r, err)
-				exitCode = 127
-
-				continue
-			}
-
-			dbs = append(dbs, db)
 		}
 
 		report := dbs.check(r, lockf, allIgnores(config.Ignore, ignores))
