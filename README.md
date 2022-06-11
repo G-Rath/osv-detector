@@ -70,7 +70,8 @@ typically a few hours ahead of the offline databases, and supports commits;
 however it currently can produce false negatives for some ecosystems.
 
 > While the API supports commits, the detector currently has limited support for
-> extracting them - only the `composer.lock` parser includes commit details
+> extracting them - only the `composer.lock` & `yarn.lock` parsers include
+> commit details
 
 You cannot use the API in `--offline` mode, but you can use both the offline
 databases and the API together; the detector will remove any duplicate results.
