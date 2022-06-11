@@ -15,6 +15,7 @@ type NpmLockDependency struct {
 
 type NpmLockPackage struct {
 	Version      string            `json:"version"`
+	Resolved     string            `json:"resolved"`
 	Dependencies map[string]string `json:"dependencies"`
 }
 
@@ -60,10 +61,24 @@ func parseNpmLockDependencies(dependencies map[string]NpmLockDependency) map[str
 			details = mergePkgDetailsMap(details, parseNpmLockDependencies(detail.Dependencies))
 		}
 
-		details[name+"@"+detail.Version] = PackageDetails{
+		version := detail.Version
+		finalVersion := version
+		commit := tryExtractCommit(detail.Version)
+
+		// if there is a commit, we want to deduplicate based on that rather than
+		// the version (the versions must match anyway for the commits to match)
+		//
+		// we also don't actually know what the "version" is, so blank it
+		if commit != "" {
+			finalVersion = ""
+			version = commit
+		}
+
+		details[name+"@"+version] = PackageDetails{
 			Name:      name,
-			Version:   detail.Version,
+			Version:   finalVersion,
 			Ecosystem: NpmEcosystem,
+			Commit:    commit,
 		}
 	}
 
@@ -89,11 +104,21 @@ func parseNpmLockPackages(packages map[string]NpmLockPackage) map[string]Package
 			continue
 		}
 		finalName := extractNpmPackageName(namePath)
+		finalVersion := detail.Version
 
-		details[finalName+"@"+detail.Version] = PackageDetails{
+		commit := tryExtractCommit(detail.Resolved)
+
+		// if there is a commit, we want to deduplicate based on that rather than
+		// the version (the versions must match anyway for the commits to match)
+		if commit != "" {
+			finalVersion = commit
+		}
+
+		details[finalName+"@"+finalVersion] = PackageDetails{
 			Name:      finalName,
 			Version:   detail.Version,
 			Ecosystem: NpmEcosystem,
+			Commit:    commit,
 		}
 	}
 
