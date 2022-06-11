@@ -8,9 +8,17 @@ import (
 	"strings"
 )
 
+type PnpmLockPackageResolution struct {
+	Tarball string `yaml:"tarball"`
+	Commit  string `yaml:"commit"`
+	Repo    string `yaml:"repo"`
+	Type    string `yaml:"type"`
+}
+
 type PnpmLockPackage struct {
-	Name    string `yaml:"name"`
-	Version string `yaml:"version"`
+	Resolution PnpmLockPackageResolution `yaml:"resolution"`
+	Name       string                    `yaml:"name"`
+	Version    string                    `yaml:"version"`
 }
 
 type PnpmLockfile struct {
@@ -79,10 +87,22 @@ func parsePnpmLock(lockfile PnpmLockfile) []PackageDetails {
 			continue
 		}
 
+		commit := pkg.Resolution.Commit
+
+		if strings.HasPrefix(pkg.Resolution.Tarball, "https://codeload.github.com") {
+			re := regexp.MustCompile(`https://codeload\.github\.com(?:/[\w-.]+){2}/tar\.gz/(\w+)$`)
+			matched := re.FindStringSubmatch(pkg.Resolution.Tarball)
+
+			if matched != nil {
+				commit = matched[1]
+			}
+		}
+
 		packages = append(packages, PackageDetails{
 			Name:      name,
 			Version:   version,
 			Ecosystem: PnpmEcosystem,
+			Commit:    commit,
 		})
 	}
 
