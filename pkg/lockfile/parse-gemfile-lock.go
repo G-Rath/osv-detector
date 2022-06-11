@@ -39,6 +39,9 @@ type gemfileLockfileParser struct {
 	dependencies   []PackageDetails
 	bundlerVersion string
 	rubyVersion    string
+
+	// holds the commit of the gem that is currently being parsed, if found
+	currentGemCommit string
 }
 
 func (parser *gemfileLockfileParser) addDependency(name string, version string) {
@@ -46,6 +49,7 @@ func (parser *gemfileLockfileParser) addDependency(name string, version string) 
 		Name:      name,
 		Version:   version,
 		Ecosystem: BundlerEcosystem,
+		Commit:    parser.currentGemCommit,
 	})
 }
 
@@ -83,6 +87,14 @@ func (parser *gemfileLockfileParser) parseSource(line string) {
 	options := optionsRegexp.FindStringSubmatch(line)
 
 	if options != nil {
+		commit := strings.TrimPrefix(options[0], "  revision: ")
+
+		// if the prefix was removed then the gem being parsed is git based, so
+		// we store the commit to be included later
+		if commit != options[0] {
+			parser.currentGemCommit = commit
+		}
+
 		return
 	}
 
@@ -120,6 +132,9 @@ func (parser *gemfileLockfileParser) parse(contents string) {
 
 	for _, line := range lines {
 		if isSourceSection(line) {
+			// clear the stateful package details,
+			// since we're now parsing a new group
+			parser.currentGemCommit = ""
 			parser.state = parserStateSource
 			parser.parseSource(line)
 
