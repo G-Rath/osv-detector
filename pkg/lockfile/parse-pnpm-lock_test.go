@@ -281,6 +281,25 @@ func TestParsePnpmLock_MultipleVersions(t *testing.T) {
 	})
 }
 
+func TestParsePnpmLock_Tarball(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/tarball.yaml")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "@my-org/my-package",
+			Version:   "3.2.3",
+			Ecosystem: lockfile.PnpmEcosystem,
+			Commit:    "",
+		},
+	})
+}
+
 func TestParsePnpmLock_Exotic(t *testing.T) {
 	t.Parallel()
 
