@@ -290,3 +290,28 @@ func TestParseNpmLock_v1_Commits(t *testing.T) {
 		},
 	})
 }
+
+func TestParseNpmLock_v1_Files(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParseNpmLock("fixtures/npm/files.v1.json")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "lodash",
+			Version:   "1.3.1",
+			Ecosystem: lockfile.NpmEcosystem,
+			Commit:    "",
+		},
+		{
+			Name:      "other_package",
+			Version:   "",
+			Ecosystem: lockfile.NpmEcosystem,
+			Commit:    "",
+		},
+	})
+}

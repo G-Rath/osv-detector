@@ -390,3 +390,28 @@ func TestParsePnpmLock_Commits(t *testing.T) {
 		},
 	})
 }
+
+func TestParsePnpmLock_Files(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/files.yaml")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "my-file-package",
+			Version:   "0.0.0",
+			Ecosystem: lockfile.NpmEcosystem,
+			Commit:    "",
+		},
+		{
+			Name:      "a-local-package",
+			Version:   "1.0.0",
+			Ecosystem: lockfile.NpmEcosystem,
+			Commit:    "",
+		},
+	})
+}

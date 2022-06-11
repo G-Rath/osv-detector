@@ -274,3 +274,34 @@ func TestParseNpmLock_v2_Commits(t *testing.T) {
 		},
 	})
 }
+
+func TestParseNpmLock_v2_Files(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParseNpmLock("fixtures/npm/files.v2.json")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "etag",
+			Version:   "1.8.0",
+			Ecosystem: lockfile.NpmEcosystem,
+			Commit:    "",
+		},
+		{
+			Name:      "abbrev",
+			Version:   "1.0.9",
+			Ecosystem: lockfile.NpmEcosystem,
+			Commit:    "",
+		},
+		{
+			Name:      "abbrev",
+			Version:   "2.3.4",
+			Ecosystem: lockfile.NpmEcosystem,
+			Commit:    "",
+		},
+	})
+}

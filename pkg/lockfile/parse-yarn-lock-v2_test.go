@@ -205,3 +205,22 @@ func TestYarnLock_v2_Commits(t *testing.T) {
 		},
 	})
 }
+
+func TestYarnLock_v2_Files(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParseYarnLock("fixtures/yarn/files.v2.lock")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "my-package",
+			Version:   "0.0.2",
+			Ecosystem: lockfile.YarnEcosystem,
+			Commit:    "",
+		},
+	})
+}
