@@ -8,7 +8,10 @@ import (
 	"strings"
 )
 
-type PnpmLockPackage struct{}
+type PnpmLockPackage struct {
+	Name    string `yaml:"name"`
+	Version string `yaml:"version"`
+}
 
 type PnpmLockfile struct {
 	Version  float64                    `yaml:"lockfileVersion"`
@@ -57,8 +60,20 @@ func extractPnpmPackageNameAndVersion(dependencyPath string) (string, string) {
 func parsePnpmLock(lockfile PnpmLockfile) []PackageDetails {
 	packages := make([]PackageDetails, 0, len(lockfile.Packages))
 
-	for s := range lockfile.Packages {
+	for s, pkg := range lockfile.Packages {
 		name, version := extractPnpmPackageNameAndVersion(s)
+
+		// "name" is only present if it's not in the dependency path and takes
+		// priority over whatever name we think we've extracted (if any)
+		if pkg.Name != "" {
+			name = pkg.Name
+		}
+
+		// "version" is only present if it's not in the dependency path and takes
+		// priority over whatever version we think we've extracted (if any)
+		if pkg.Version != "" {
+			version = pkg.Version
+		}
 
 		if name == "" || version == "" {
 			continue
