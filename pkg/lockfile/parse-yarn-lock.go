@@ -104,6 +104,10 @@ func tryExtractCommit(resolution string) string {
 		`(?:^|.+@)https://.+\.git#(\w+)$`,
 		`https://codeload\.github\.com(?:/[\w-.]+){2}/tar\.gz/(\w+)$`,
 		`.+#commit[:=](\w+)$`,
+		// github:...
+		// gitlab:...
+		// bitbucket:...
+		`^(?:github|gitlab|bitbucket):.+#(\w+)$`,
 	}
 
 	for _, matcher := range matchers {
