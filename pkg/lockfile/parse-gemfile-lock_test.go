@@ -619,3 +619,46 @@ func TestParseGemfileLock_HasLocalGem(t *testing.T) {
 		},
 	})
 }
+
+func TestParseGemfileLock_HasGitGem(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParseGemfileLock("fixtures/bundler/has-git-gem.lock")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "hanami-controller",
+			Version:   "2.0.0.alpha1",
+			Ecosystem: lockfile.BundlerEcosystem,
+			Commit:    "027dbe2e56397b534e859fc283990cad1b6addd6",
+		},
+		{
+			Name:      "hanami-utils",
+			Version:   "2.0.0.alpha1",
+			Ecosystem: lockfile.BundlerEcosystem,
+			Commit:    "5904fc9a70683b8749aa2861257d0c8c01eae4aa",
+		},
+		{
+			Name:      "concurrent-ruby",
+			Version:   "1.1.7",
+			Ecosystem: lockfile.BundlerEcosystem,
+			Commit:    "",
+		},
+		{
+			Name:      "rack",
+			Version:   "2.2.3",
+			Ecosystem: lockfile.BundlerEcosystem,
+			Commit:    "",
+		},
+		{
+			Name:      "transproc",
+			Version:   "1.1.1",
+			Ecosystem: lockfile.BundlerEcosystem,
+			Commit:    "",
+		},
+	})
+}
