@@ -3,6 +3,7 @@ package lockfile
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 
 	"golang.org/x/mod/modfile"
@@ -18,6 +19,18 @@ func deduplicatePackages(packages map[string]PackageDetails) map[string]PackageD
 	}
 
 	return details
+}
+
+func parseGoModVersion(version string) (string, string, string) {
+	re := regexp.MustCompile(`^v([\d.]+(?:-[\w.]+)?)[-.](\d{14})-(\w{12})$`)
+
+	matched := re.FindStringSubmatch(version)
+
+	if matched == nil {
+		return version, "", ""
+	}
+
+	return matched[1], matched[2], matched[3]
 }
 
 func ParseGoLock(pathToLockfile string) ([]PackageDetails, error) {
@@ -36,11 +49,14 @@ func ParseGoLock(pathToLockfile string) ([]PackageDetails, error) {
 	packages := map[string]PackageDetails{}
 
 	for _, require := range parsedLockfile.Require {
+		version, _, commit := parseGoModVersion(require.Mod.Version)
+
 		packages[require.Mod.Path+"@"+require.Mod.Version] = PackageDetails{
 			Name:      require.Mod.Path,
-			Version:   strings.TrimPrefix(require.Mod.Version, "v"),
+			Version:   strings.TrimPrefix(version, "v"),
 			Ecosystem: GoEcosystem,
 			CompareAs: GoEcosystem,
+			Commit:    commit,
 		}
 	}
 
@@ -66,11 +82,14 @@ func ParseGoLock(pathToLockfile string) ([]PackageDetails, error) {
 		}
 
 		for _, replacement := range replacements {
+			version, _, commit := parseGoModVersion(replace.New.Version)
+
 			packages[replacement] = PackageDetails{
 				Name:      replace.New.Path,
-				Version:   strings.TrimPrefix(replace.New.Version, "v"),
+				Version:   strings.TrimPrefix(version, "v"),
 				Ecosystem: GoEcosystem,
 				CompareAs: GoEcosystem,
+				Commit:    commit,
 			}
 		}
 	}

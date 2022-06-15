@@ -116,9 +116,10 @@ func TestParseGoLock_IndirectPackages(t *testing.T) {
 		},
 		{
 			Name:      "golang.org/x/sys",
-			Version:   "0.0.0-20210630005230-0f9fa26af87c",
+			Version:   "0.0.0",
 			Ecosystem: lockfile.GoEcosystem,
 			CompareAs: lockfile.GoEcosystem,
+			Commit:    "0f9fa26af87c",
 		},
 	})
 }
