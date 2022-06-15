@@ -63,15 +63,22 @@ func parseNpmLockDependencies(dependencies map[string]NpmLockDependency) map[str
 
 		version := detail.Version
 		finalVersion := version
-		commit := tryExtractCommit(detail.Version)
+		commit := ""
 
-		// if there is a commit, we want to deduplicate based on that rather than
-		// the version (the versions must match anyway for the commits to match)
-		//
-		// we also don't actually know what the "version" is, so blank it
-		if commit != "" {
+		// we can't resolve a version from a "file:" dependency
+		if strings.HasPrefix(detail.Version, "file:") {
 			finalVersion = ""
-			version = commit
+		} else {
+			commit = tryExtractCommit(detail.Version)
+
+			// if there is a commit, we want to deduplicate based on that rather than
+			// the version (the versions must match anyway for the commits to match)
+			//
+			// we also don't actually know what the "version" is, so blank it
+			if commit != "" {
+				finalVersion = ""
+				version = commit
+			}
 		}
 
 		details[name+"@"+version] = PackageDetails{

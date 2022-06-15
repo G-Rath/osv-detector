@@ -50,7 +50,11 @@ func extractPnpmPackageNameAndVersion(dependencyPath string) (string, string) {
 		parts = parts[1:]
 	}
 
-	version := parts[0]
+	version := ""
+
+	if len(parts) != 0 {
+		version = parts[0]
+	}
 
 	if version == "" || !startsWithNumber(version) {
 		return "", ""

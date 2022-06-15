@@ -304,3 +304,52 @@ func TestYarnLock_v1_Commits(t *testing.T) {
 		},
 	})
 }
+
+func TestYarnLock_v1_Files(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParseYarnLock("fixtures/yarn/files.v1.lock")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "etag",
+			Version:   "1.8.1",
+			Ecosystem: lockfile.YarnEcosystem,
+			Commit:    "",
+		},
+		{
+			Name:      "filedep",
+			Version:   "1.2.0",
+			Ecosystem: lockfile.YarnEcosystem,
+			Commit:    "",
+		},
+		{
+			Name:      "lodash",
+			Version:   "1.3.1",
+			Ecosystem: lockfile.YarnEcosystem,
+			Commit:    "",
+		},
+		{
+			Name:      "other_package",
+			Version:   "0.0.2",
+			Ecosystem: lockfile.YarnEcosystem,
+			Commit:    "",
+		},
+		{
+			Name:      "sprintf-js",
+			Version:   "0.0.0",
+			Ecosystem: lockfile.YarnEcosystem,
+			Commit:    "",
+		},
+		{
+			Name:      "etag",
+			Version:   "1.8.0",
+			Ecosystem: lockfile.YarnEcosystem,
+			Commit:    "",
+		},
+	})
+}
