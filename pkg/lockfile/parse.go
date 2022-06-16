@@ -83,7 +83,13 @@ func (l Lockfile) ToString() string {
 	lines := make([]string, 0, len(l.Packages))
 
 	for _, details := range l.Packages {
-		ln := fmt.Sprintf("  %s: %s", details.Ecosystem, details.Name)
+		ecosystem := details.Ecosystem
+
+		if ecosystem == "" {
+			ecosystem = "<unknown>"
+		}
+
+		ln := fmt.Sprintf("  %s: %s", ecosystem, details.Name)
 
 		if details.Version != "" {
 			ln += "@" + details.Version
