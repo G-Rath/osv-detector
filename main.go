@@ -143,6 +143,9 @@ func cacheAllEcosystemDatabases(r *reporter.Reporter) error {
 	return err
 }
 
+const parseAsCsvFile = "csv-file"
+const parseAsCsvRow = "csv-row"
+
 func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs string) []string {
 	lockfiles := make([]string, 0, 1)
 	file, err := os.Open(pathToLockOrDirectory)
@@ -160,8 +163,10 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs s
 							continue
 						}
 
-						if p, _ := lockfile.FindParser(dir.Name(), parseAs); p == nil {
-							continue
+						if parseAs != parseAsCsvFile {
+							if p, _ := lockfile.FindParser(dir.Name(), parseAs); p == nil {
+								continue
+							}
 						}
 
 						lockfiles = append(lockfiles, path.Join(pathToLockOrDirectory, dir.Name()))
@@ -183,11 +188,44 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs s
 func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs string) []string {
 	var paths []string
 
+	if parseAs == parseAsCsvRow {
+		return []string{"-"}
+	}
+
 	for _, pathToLockOrDirectory := range pathsToCheck {
 		paths = append(paths, findLockfiles(r, pathToLockOrDirectory, parseAs)...)
 	}
 
 	return paths
+}
+
+func parseLockfile(pathToLock string, parseAs string) (lockfile.Lockfile, error) {
+	if parseAs == parseAsCsvRow {
+		l, err := lockfile.FromCSVRows(pathToLock, parseAs, flag.Args())
+
+		if err != nil {
+			err = fmt.Errorf("%w", err)
+		}
+
+		return l, err
+	}
+	if parseAs == parseAsCsvFile {
+		l, err := lockfile.FromCSVFile(pathToLock, parseAs)
+
+		if err != nil {
+			err = fmt.Errorf("%w", err)
+		}
+
+		return l, err
+	}
+
+	l, err := lockfile.Parse(pathToLock, parseAs)
+
+	if err != nil {
+		err = fmt.Errorf("%w", err)
+	}
+
+	return l, err
 }
 
 type stringsFlag []string
@@ -239,7 +277,7 @@ func readAllLockfiles(pathsToLocks []string, parseAs string, checkForLocalConfig
 			config = con
 		}
 
-		lockf, err := lockfile.Parse(pathToLock, parseAs)
+		lockf, err := parseLockfile(pathToLock, parseAs)
 		lockfiles = append(lockfiles, lockfileAndConfigOrErr{lockf, config, err})
 	}
 
@@ -364,13 +402,16 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		return 0
 	}
 
-	if *parseAs != "" {
+	if *parseAs != "" && *parseAs != parseAsCsvFile && *parseAs != parseAsCsvRow {
 		if parser, parsedAs := lockfile.FindParser("", *parseAs); parser == nil {
 			r.PrintError(fmt.Sprintf("Don't know how to parse files as \"%s\" - supported values are:\n", parsedAs))
 
 			for _, s := range lockfile.ListParsers() {
 				r.PrintError(fmt.Sprintf("  %s\n", s))
 			}
+
+			r.PrintError(fmt.Sprintf("  %s\n", parseAsCsvFile))
+			r.PrintError(fmt.Sprintf("  %s\n", parseAsCsvRow))
 
 			return 127
 		}

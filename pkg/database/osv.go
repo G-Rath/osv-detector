@@ -257,6 +257,10 @@ func (osv *OSV) IsAffected(pkg internal.PackageDetails) bool {
 			if affected.Ranges.affectsVersion(pkg.Version) {
 				return true
 			}
+
+			if pkg.Version == "" {
+				return true
+			}
 		}
 	}
 
