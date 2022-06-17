@@ -48,7 +48,7 @@ func (r *Reporter) PrintText(msg string) {
 }
 
 type Result interface {
-	ToString() string
+	String() string
 }
 
 func (r *Reporter) PrintResult(result Result) {
@@ -58,7 +58,7 @@ func (r *Reporter) PrintResult(result Result) {
 		return
 	}
 
-	fmt.Fprint(r.stdout, result.ToString())
+	fmt.Fprint(r.stdout, result.String())
 }
 
 // PrintJSONResults prints any results that this reporter has collected to

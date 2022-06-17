@@ -11,12 +11,12 @@ import (
 )
 
 type TestResult struct {
-	String               string `json:"value"`
+	Value                string `json:"value"`
 	ErrorWhenMarshalling bool   `json:"-"`
 }
 
-func (r TestResult) ToString() string {
-	return r.String
+func (r TestResult) String() string {
+	return r.Value
 }
 
 func (r TestResult) MarshalJSON() ([]byte, error) {
@@ -62,7 +62,7 @@ func TestReporter_PrintResult(t *testing.T) {
 	stderr := &bytes.Buffer{}
 	r := reporter.New(stdout, stderr, false)
 
-	r.PrintResult(TestResult{String: msg})
+	r.PrintResult(TestResult{Value: msg})
 
 	if gotStdout := stdout.String(); gotStdout != msg {
 		t.Errorf("Expected stdout to have \"%s\", but got \"%s\"", msg, gotStdout)
@@ -82,7 +82,7 @@ func TestReporter_PrintResult_OutputAsJSON(t *testing.T) {
 	stderr := &bytes.Buffer{}
 	r := reporter.New(stdout, stderr, true)
 
-	r.PrintResult(TestResult{String: msg})
+	r.PrintResult(TestResult{Value: msg})
 
 	if gotStdout := stdout.String(); gotStdout != "" {
 		t.Errorf("Expected stdout to be empty, but got \"%s\"", gotStdout)
@@ -112,7 +112,7 @@ func TestReporter_PrintResult_OutputAsJSON_Error(t *testing.T) {
 	stderr := &bytes.Buffer{}
 	r := reporter.New(stdout, stderr, true)
 
-	r.PrintResult(TestResult{String: msg, ErrorWhenMarshalling: true})
+	r.PrintResult(TestResult{Value: msg, ErrorWhenMarshalling: true})
 
 	if gotStdout := stdout.String(); gotStdout != "" {
 		t.Errorf("Expected stdout to be empty, but got \"%s\"", gotStdout)
