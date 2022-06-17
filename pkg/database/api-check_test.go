@@ -94,7 +94,7 @@ func TestAPIDB_Check_NoPackages(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	db, err := database.NewAPIDB(ts.URL, 1, false)
+	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
 
 	if err != nil {
 		t.Fatalf("Check() unexpected error \"%v\"", err)
@@ -114,7 +114,7 @@ func TestAPIDB_Check_NoPackages(t *testing.T) {
 func TestAPIDB_Check_UnsupportedProtocol(t *testing.T) {
 	t.Parallel()
 
-	db, err := database.NewAPIDB("file://hello-world", 1, false)
+	db, err := database.NewAPIDB(database.Config{URL: "file://hello-world"}, false, 1)
 
 	if err != nil {
 		t.Fatalf("Check() unexpected error \"%v\"", err)
@@ -152,7 +152,7 @@ func TestAPIDB_Check_NotOK(t *testing.T) {
 	ts := httptest.NewServer(mux)
 	defer ts.Close()
 
-	db, err := database.NewAPIDB(ts.URL, 1, false)
+	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
 
 	if err != nil {
 		t.Fatalf("Check() unexpected error \"%v\"", err)
@@ -190,7 +190,7 @@ func TestAPIDB_Check_InvalidBody(t *testing.T) {
 	ts := httptest.NewServer(mux)
 	defer ts.Close()
 
-	db, err := database.NewAPIDB(ts.URL, 1, false)
+	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
 
 	if err != nil {
 		t.Fatalf("Check() unexpected error \"%v\"", err)
@@ -234,7 +234,7 @@ func TestAPIDB_Check_UnbalancedResponse(t *testing.T) {
 	ts := httptest.NewServer(mux)
 	defer ts.Close()
 
-	db, err := database.NewAPIDB(ts.URL, 2, false)
+	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 2)
 
 	if err != nil {
 		t.Fatalf("Check() unexpected error \"%v\"", err)
@@ -285,7 +285,7 @@ func TestAPIDB_Check_FetchSuccessful(t *testing.T) {
 	ts := httptest.NewServer(mux)
 	defer ts.Close()
 
-	db, err := database.NewAPIDB(ts.URL, 1, false)
+	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
 
 	if err != nil {
 		t.Fatalf("Check() unexpected error \"%v\"", err)
@@ -341,7 +341,7 @@ func TestAPIDB_Check_FetchFails(t *testing.T) {
 	ts := httptest.NewServer(mux)
 	defer ts.Close()
 
-	db, err := database.NewAPIDB(ts.URL, 1, false)
+	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
 
 	if err != nil {
 		t.Fatalf("Check() unexpected error \"%v\"", err)
@@ -398,7 +398,7 @@ func TestAPIDB_Check_FetchMixed(t *testing.T) {
 	ts := httptest.NewServer(mux)
 	defer ts.Close()
 
-	db, err := database.NewAPIDB(ts.URL, 1, false)
+	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
 
 	if err != nil {
 		t.Fatalf("Check() unexpected error \"%v\"", err)
@@ -440,7 +440,7 @@ func TestAPIDB_Check_WithCommit(t *testing.T) {
 	ts := httptest.NewServer(mux)
 	defer ts.Close()
 
-	db, err := database.NewAPIDB(ts.URL, 1, false)
+	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
 
 	if err != nil {
 		t.Fatalf("Check() unexpected error \"%v\"", err)
@@ -510,7 +510,7 @@ func TestAPIDB_Check_Batches(t *testing.T) {
 	ts := httptest.NewServer(mux)
 	defer ts.Close()
 
-	db, err := database.NewAPIDB(ts.URL, 2, false)
+	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 2)
 
 	if err != nil {
 		t.Fatalf("Check() unexpected error \"%v\"", err)

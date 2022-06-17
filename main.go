@@ -26,6 +26,24 @@ func ecosystemDatabaseURL(ecosystem internal.Ecosystem) string {
 	return fmt.Sprintf("https://osv-vulnerabilities.storage.googleapis.com/%s/all.zip", ecosystem)
 }
 
+func makeAPIDBConfig() database.Config {
+	return database.NewConfig(
+		"osv.dev v1 API",
+		"api",
+		"https://api.osv.dev/v1",
+		"",
+	)
+}
+
+func makeEcosystemDBConfig(ecosystem internal.Ecosystem) database.Config {
+	return database.NewConfig(
+		string(ecosystem),
+		"zip",
+		fmt.Sprintf("https://osv-vulnerabilities.storage.googleapis.com/%s/all.zip", ecosystem),
+		"",
+	)
+}
+
 type OSVDatabases []database.DB
 
 func contains(items []string, value string) bool {
@@ -105,44 +123,154 @@ func (dbs OSVDatabases) check(r *reporter.Reporter, lockf lockfile.Lockfile, ign
 	return report
 }
 
-func loadEcosystemDatabases(r *reporter.Reporter, ecosystems []internal.Ecosystem, offline bool) (OSVDatabases, error) {
-	dbs := make(OSVDatabases, 0, len(ecosystems))
+func (dbs OSVDatabases) pick(dbConfigs []database.Config) OSVDatabases {
+	specificDBs := make(OSVDatabases, 0)
 
-	r.PrintText("Loading OSV databases for the following ecosystems:\n")
+	for _, db := range dbs {
+		for _, dbConfig := range dbConfigs {
+			if dbConfig.Identifier() == db.Identifier() {
+				specificDBs = append(specificDBs, db)
+			}
+		}
+	}
 
-	for _, ecosystem := range ecosystems {
-		r.PrintText(fmt.Sprintf("  %s", ecosystem))
-		archiveURL := ecosystemDatabaseURL(ecosystem)
+	return specificDBs
+}
 
-		db, err := database.NewZippedDB(archiveURL, offline)
+/*
+func (ps Packages) Ecosystems() []Ecosystem {
+	ecosystems := make(map[Ecosystem]struct{})
+	var slicedEcosystems []Ecosystem
 
-		if err != nil {
-			return dbs, fmt.Errorf("could not load database: %w", err)
+	for _, pkg := range ps {
+		if _, ok := ecosystems[pkg.Ecosystem]; ok {
+			continue
 		}
 
-		count := len(db.Vulnerabilities(true))
+		ecosystems[pkg.Ecosystem] = struct{}{}
+		slicedEcosystems = append(slicedEcosystems, pkg.Ecosystem)
+	}
 
-		r.PrintText(fmt.Sprintf(
-			" (%s %s, including withdrawn - last updated %s)\n",
+	return slicedEcosystems
+}
+*/
+
+func uniqueDBConfigs(configs []*configer.Config) []database.Config {
+	var dbConfigs []database.Config
+
+	for _, config := range configs {
+		for _, dbConfig := range config.Databases {
+			alreadyExists := false
+
+			for _, eco := range dbConfigs {
+				if alreadyExists {
+					continue
+				}
+
+				if eco.Identifier() == dbConfig.Identifier() {
+					alreadyExists = true
+				}
+			}
+
+			if alreadyExists {
+				continue
+			}
+
+			dbConfigs = append(dbConfigs, dbConfig)
+		}
+	}
+
+	return dbConfigs
+}
+
+func describeDB(db database.DB) string {
+	switch tt := db.(type) {
+	case *database.APIDB:
+		return fmt.Sprintf(
+			"using batches of %s",
+			color.YellowString("%d", tt.BatchSize),
+		)
+	case *database.ZipDB:
+		count := len(tt.Vulnerabilities(true))
+
+		return fmt.Sprintf(
+			"%s %s, including withdrawn - last updated %s",
 			color.YellowString("%d", count),
 			reporter.Form(count, "vulnerability", "vulnerabilities"),
-			db.UpdatedAt,
-		))
+			tt.UpdatedAt,
+		)
+	case *database.DirDB:
+		count := len(tt.Vulnerabilities(true))
 
-		dbs = append(dbs, *db)
+		return fmt.Sprintf(
+			"%s %s, including withdrawn",
+			color.YellowString("%d", count),
+			reporter.Form(count, "vulnerability", "vulnerabilities"),
+		)
+	}
+
+	return ""
+}
+
+func loadDatabases(
+	r *reporter.Reporter,
+	dbConfigs []database.Config,
+	listPackages bool,
+	offline bool,
+	batchSize int,
+) (OSVDatabases, bool) {
+	dbs := make(OSVDatabases, 0, len(dbConfigs))
+
+	// an easy dirty little optimisation: we don't need any databases
+	// if we're going to be listing packages, so return the empty slice
+	if listPackages {
+		return dbs, false
+	}
+
+	errored := false
+
+	r.PrintText("Loaded the following OSV databases:\n")
+
+	for _, dbConfig := range dbConfigs {
+		r.PrintText(fmt.Sprintf("  %s", dbConfig.Name))
+
+		db, err := database.Load(dbConfig, offline, batchSize)
+
+		if err != nil {
+			r.PrintDatabaseLoadErr(err)
+			errored = true
+
+			continue
+		}
+
+		desc := describeDB(db)
+
+		if desc != "" {
+			desc = fmt.Sprintf(" (%s)", desc)
+		}
+
+		r.PrintText(fmt.Sprintf("%s\n", desc))
+
+		dbs = append(dbs, db)
 	}
 
 	r.PrintText("\n")
 
-	return dbs, nil
+	return dbs, errored
 }
 
-func cacheAllEcosystemDatabases(r *reporter.Reporter) error {
+func cacheAllEcosystemDatabases(r *reporter.Reporter) bool {
 	ecosystems := lockfile.KnownEcosystems()
 
-	_, err := loadEcosystemDatabases(r, ecosystems, false)
+	configs := make([]database.Config, 0, len(ecosystems))
 
-	return err
+	for _, ecosystem := range ecosystems {
+		configs = append(configs, makeEcosystemDBConfig(ecosystem))
+	}
+
+	_, errored := loadDatabases(r, configs, false, 0)
+
+	return errored
 }
 
 const parseAsCsvFile = "csv-file"
@@ -264,26 +392,84 @@ func allIgnores(global, local []string) []string {
 
 type lockfileAndConfigOrErr struct {
 	lockf  lockfile.Lockfile
-	config configer.Config
+	config *configer.Config
 	err    error
 }
 
+type lockfileAndConfigOrErrs []lockfileAndConfigOrErr
+
+func (files lockfileAndConfigOrErrs) getDBConfigs() []database.Config {
+	dbConfigs := make([]database.Config, 0, len(files))
+
+	for _, file := range files {
+		if file.err != nil {
+			continue
+		}
+
+		dbConfigs = append(dbConfigs, file.config.Databases...)
+	}
+
+	return dbConfigs
+}
+
+func (files lockfileAndConfigOrErrs) getConfigs() []*configer.Config {
+	configs := make([]*configer.Config, 0, len(files))
+
+	for _, file := range files {
+		if file.err != nil {
+			continue
+		}
+
+		configs = append(configs, file.config)
+	}
+
+	return configs
+}
+
+func (files *lockfileAndConfigOrErrs) addExtraDBConfigs(
+	addDefaultAPIDatabase bool,
+	addEcosystemDatabases bool,
+) {
+	var extraDBConfigs []database.Config
+
+	if addDefaultAPIDatabase {
+		extraDBConfigs = append(extraDBConfigs, makeAPIDBConfig())
+	}
+
+	if addEcosystemDatabases {
+		ecosystems := collectEcosystems(*files)
+
+		for _, ecosystem := range ecosystems {
+			extraDBConfigs = append(extraDBConfigs, makeEcosystemDBConfig(ecosystem))
+		}
+	}
+
+	for _, file := range *files {
+		if file.err != nil {
+			continue
+		}
+
+		file.config.Databases = append(file.config.Databases, extraDBConfigs...)
+	}
+}
+
 func readAllLockfiles(
+	r *reporter.Reporter,
 	pathsToLocks []string,
 	parseAs string,
 	args []string,
 	checkForLocalConfig bool,
 	config configer.Config,
-) []lockfileAndConfigOrErr {
+) lockfileAndConfigOrErrs {
 	lockfiles := make([]lockfileAndConfigOrErr, 0, len(pathsToLocks))
 
 	for _, pathToLock := range pathsToLocks {
 		if checkForLocalConfig {
 			base := path.Dir(pathToLock)
-			con, err := configer.Find(base)
+			con, err := configer.Find(r, base)
 
 			if err != nil {
-				lockfiles = append(lockfiles, lockfileAndConfigOrErr{lockfile.Lockfile{}, config, err})
+				lockfiles = append(lockfiles, lockfileAndConfigOrErr{lockfile.Lockfile{}, &config, err})
 
 				continue
 			}
@@ -292,7 +478,7 @@ func readAllLockfiles(
 		}
 
 		lockf, err := parseLockfile(pathToLock, parseAs, args)
-		lockfiles = append(lockfiles, lockfileAndConfigOrErr{lockf, config, err})
+		lockfiles = append(lockfiles, lockfileAndConfigOrErr{lockf, &config, err})
 	}
 
 	return lockfiles
@@ -330,49 +516,8 @@ func collectEcosystems(files []lockfileAndConfigOrErr) []internal.Ecosystem {
 	return ecosystems
 }
 
-func loadDatabases(
-	r *reporter.Reporter,
-	ecosystems []internal.Ecosystem,
-	listPackages bool,
-	useDatabases bool,
-	useAPI bool,
-	batchSize int,
-	offline bool,
-) (OSVDatabases, bool) {
-	var dbs OSVDatabases
-
-	// an easy dirty little optimisation: we don't need any databases
-	// if we're going to be listing packages, so return the empty slice
-	if listPackages {
-		return dbs, false
-	}
-
-	errored := false
-
-	if useDatabases {
-		loaded, err := loadEcosystemDatabases(r, ecosystems, offline)
-
-		if err != nil {
-			r.PrintDatabaseLoadErr(err)
-			errored = true
-		} else {
-			dbs = append(dbs, loaded...)
-		}
-	}
-
-	if useAPI {
-		db, err := database.NewAPIDB("https://api.osv.dev/v1", batchSize, offline)
-
-		if err != nil {
-			r.PrintDatabaseLoadErr(err)
-			errored = true
-		} else {
-			dbs = append(dbs, db)
-		}
-	}
-
-	return dbs, errored
-}
+// func loadConfigDatabases(r *reporter.Reporter)
+// ecosystems := collectEcosystems(files)
 
 func run(args []string, stdout, stderr io.Writer) int {
 	var ignores stringsFlag
@@ -409,11 +554,9 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 	}
 
 	if *cacheAllDatabases {
-		err := cacheAllEcosystemDatabases(r)
+		errored := cacheAllEcosystemDatabases(r)
 
-		if err != nil {
-			r.PrintDatabaseLoadErr(err)
-
+		if errored {
 			return 127
 		}
 
@@ -460,7 +603,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 	if *listPackages {
 		loadLocalConfig = false
 	} else if loadLocalConfig && *configPath != "" {
-		con, err := configer.Load(*configPath)
+		con, err := configer.Load(r, *configPath)
 
 		if err != nil {
 			r.PrintError(fmt.Sprintf("Error, %s\n", err))
@@ -472,18 +615,27 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		loadLocalConfig = false
 	}
 
-	files := readAllLockfiles(pathsToLocks, *parseAs, cli.Args(), loadLocalConfig, config)
+	files := readAllLockfiles(r, pathsToLocks, *parseAs, cli.Args(), loadLocalConfig, config)
 
-	ecosystems := collectEcosystems(files)
+	// expandDBConfigs(files)
+
+	// ecosystems := collectEcosystems(files)
+
+	// 1. load lockfiles / packages
+	// 2. "expand" db configs to include extra defaults
+	// 3. load databases based on configs
+	// 4. check using databases based on config
+
+	files.addExtraDBConfigs(*useAPI, *useDatabases)
 
 	dbs, errored := loadDatabases(
 		r,
-		ecosystems,
+		uniqueDBConfigs(files.getConfigs()),
 		*listPackages,
-		*useDatabases,
-		*useAPI,
-		*batchSize,
+		// *useDatabases,
+		// *useAPI,
 		*offline,
+		*batchSize,
 	)
 
 	if errored {
@@ -530,7 +682,25 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 			))
 		}
 
-		report := dbs.check(r, lockf, allIgnores(config.Ignore, ignores))
+		picked := dbs.pick(config.Databases)
+
+		for _, db := range picked {
+			desc := describeDB(db)
+
+			if desc != "" {
+				desc = fmt.Sprintf(" (%s)", desc)
+			}
+
+			r.PrintText(fmt.Sprintf(
+				"  Using db %s%s\n",
+				color.HiCyanString(db.Name()),
+				desc,
+			))
+
+		}
+		r.PrintText("\n")
+
+		report := dbs.pick(config.Databases).check(r, lockf, allIgnores(config.Ignore, ignores))
 
 		r.PrintResult(report)
 
@@ -541,6 +711,16 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 	return exitCode
 }
+
+// func expandDBConfigs(files []lockfileAndConfigOrErr) {
+// 	for _, file := range files {
+// 		if file.err != nil {
+// 			continue
+// 		}
+//
+// 		file.config.Databases
+// 	}
+// }
 
 func main() {
 	os.Exit(run(os.Args[1:], os.Stdout, os.Stderr))

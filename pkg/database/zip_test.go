@@ -101,7 +101,7 @@ func TestNewZippedDB_Offline_WithoutCache(t *testing.T) {
 	})
 	defer cleanup()
 
-	_, err := database.NewZippedDB(ts.URL, true)
+	_, err := database.NewZippedDB(database.Config{URL: ts.URL}, true)
 
 	if !errors.Is(err, database.ErrOfflineDatabaseNotFound) {
 		t.Errorf("expected \"%v\" error but got \"%v\"", database.ErrOfflineDatabaseNotFound, err)
@@ -170,7 +170,7 @@ func TestNewZippedDB_BadZip(t *testing.T) {
 	})
 	defer cleanup()
 
-	_, err := database.NewZippedDB(ts.URL, false)
+	_, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
 
 	if err == nil {
 		t.Errorf("expected an error but did not get one")
@@ -180,7 +180,7 @@ func TestNewZippedDB_BadZip(t *testing.T) {
 func TestNewZippedDB_UnsupportedProtocol(t *testing.T) {
 	t.Parallel()
 
-	_, err := database.NewZippedDB("file://hello-world", false)
+	_, err := database.NewZippedDB(database.Config{URL: "file://hello-world"}, false)
 
 	if err == nil {
 		t.Errorf("expected an error but did not get one")
@@ -209,7 +209,7 @@ func TestNewZippedDB_Online_WithoutCache(t *testing.T) {
 	})
 	defer cleanup()
 
-	db, err := database.NewZippedDB(ts.URL, false)
+	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
 
 	if err != nil {
 		t.Errorf("unexpected error \"%v\"", err)
@@ -402,7 +402,7 @@ func TestNewZippedDB_FileChecks(t *testing.T) {
 	})
 	defer cleanup()
 
-	db, err := database.NewZippedDB(ts.URL, false)
+	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
 
 	if err != nil {
 		t.Errorf("unexpected error \"%v\"", err)

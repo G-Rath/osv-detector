@@ -69,7 +69,7 @@ func TestNewAPIDB(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			got, err := database.NewAPIDB(tt.args.baseURL, tt.args.batchSize, tt.args.offline)
+			got, err := database.NewAPIDB(database.Config{URL: tt.args.baseURL}, tt.args.offline, tt.args.batchSize)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("NewAPIDB() error = %v, wantErr %v", err, tt.wantErr)
 			}
