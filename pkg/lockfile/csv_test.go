@@ -99,6 +99,34 @@ func TestFromCSVRows(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "",
+			args: args{
+				filePath: "-",
+				parseAs:  "-",
+				rows: []string{
+					"NuGet,Yarp.ReverseProxy,",
+					",vue,bb253db0b3e17124b6d1fe93fbf2db35470a1347",
+				},
+			},
+			want: lockfile.Lockfile{
+				FilePath: "-",
+				ParsedAs: "-",
+				Packages: []lockfile.PackageDetails{
+					{
+						Name:      "Yarp.ReverseProxy",
+						Version:   "",
+						Ecosystem: "NuGet",
+					},
+					{
+						Name:      "vue",
+						Version:   "",
+						Ecosystem: "",
+						Commit:    "bb253db0b3e17124b6d1fe93fbf2db35470a1347",
+					},
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -151,7 +179,31 @@ func TestFromCSVRows_Errors(t *testing.T) {
 					",,",
 				},
 			},
-			wantErrMsg: "row 2: field 1 is empty (must be the name of an ecosystem)",
+			wantErrMsg: "row 2: field 3 is empty (must be a commit)",
+		},
+		{
+			name: "",
+			args: args{
+				filePath: "",
+				parseAs:  "",
+				rows: []string{
+					"crates.io,addr2line,",
+					"npm,,",
+				},
+			},
+			wantErrMsg: "row 2: field 2 is empty (must be the name of a package)",
+		},
+		{
+			name: "",
+			args: args{
+				filePath: "",
+				parseAs:  "",
+				rows: []string{
+					"crates.io,addr2line,",
+					",,,",
+				},
+			},
+			wantErrMsg: "record on line 2: wrong number of fields",
 		},
 		{
 			name: "",
@@ -347,6 +399,41 @@ func TestFromCSVFile(t *testing.T) {
 						Name:      "sentry/sdk",
 						Version:   "2.0.4",
 						Ecosystem: lockfile.ComposerEcosystem,
+					},
+				},
+			},
+		},
+		{
+			name: "",
+			args: args{
+				pathToCSV: "fixtures/csv/commits.csv",
+				parseAs:   "-",
+			},
+			want: lockfile.Lockfile{
+				FilePath: "fixtures/csv/commits.csv",
+				ParsedAs: "-",
+				Packages: []lockfile.PackageDetails{
+					{
+						Name:      "@typescript-eslint/types",
+						Version:   "4.9.0",
+						Ecosystem: lockfile.PnpmEcosystem,
+					},
+					{
+						Name:      "addr2line",
+						Version:   "0.15.2",
+						Ecosystem: lockfile.CargoEcosystem,
+					},
+					{
+						Name:      "babel-preset-php",
+						Version:   "",
+						Ecosystem: "",
+						Commit:    "c5a7ba5e0ad98b8db1cb8ce105403dd4b768cced",
+					},
+					{
+						Name:      "vue",
+						Version:   "",
+						Ecosystem: "",
+						Commit:    "bb253db0b3e17124b6d1fe93fbf2db35470a1347",
 					},
 				},
 			},

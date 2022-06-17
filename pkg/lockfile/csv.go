@@ -11,26 +11,37 @@ import (
 )
 
 var errCSVRecordNotEnoughFields = errors.New("not enough fields (missing at least ecosystem and package name)")
-var errCSVRecordMissingEcosystemField = errors.New("field 1 is empty (must be the name of an ecosystem)")
 var errCSVRecordMissingPackageField = errors.New("field 2 is empty (must be the name of a package)")
+var errCSVRecordMissingCommitField = errors.New("field 3 is empty (must be a commit)")
 
 func fromCSVRecord(lines []string) (PackageDetails, error) {
 	if len(lines) < 2 {
 		return PackageDetails{}, errCSVRecordNotEnoughFields
 	}
 
-	if lines[0] == "" {
-		return PackageDetails{}, errCSVRecordMissingEcosystemField
+	ecosystem := Ecosystem(lines[0])
+	name := lines[1]
+	version := lines[2]
+	commit := ""
+
+	if ecosystem == "" {
+		if version == "" {
+			return PackageDetails{}, errCSVRecordMissingCommitField
+		}
+
+		commit = version
+		version = ""
 	}
 
-	if lines[1] == "" {
+	if name == "" {
 		return PackageDetails{}, errCSVRecordMissingPackageField
 	}
 
 	return PackageDetails{
-		Name:      lines[1],
-		Version:   lines[2],
-		Ecosystem: Ecosystem(lines[0]),
+		Name:      name,
+		Version:   version,
+		Ecosystem: ecosystem,
+		Commit:    commit,
 	}, nil
 }
 

@@ -51,6 +51,10 @@ func toSliceOfEcosystems(ecosystemsMap map[Ecosystem]struct{}) []Ecosystem {
 	ecosystems := make([]Ecosystem, 0, len(ecosystemsMap))
 
 	for ecosystem := range ecosystemsMap {
+		if ecosystem == "" {
+			continue
+		}
+
 		ecosystems = append(ecosystems, ecosystem)
 	}
 

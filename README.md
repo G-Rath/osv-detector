@@ -72,6 +72,9 @@ however it currently can produce false negatives for some ecosystems.
 > While the API supports commits, the detector currently has limited support for
 > extracting them - only the `composer.lock`, `Gemfile.lock`,
 > `package-lock.json`, `yarn.lock`, & `pnpm.yaml` parsers include commit details
+>
+> See [this section](#passing-arbitrary-package-details-advanced-usage) for how
+> you can provide the detector with arbitrary commits to check
 
 You cannot use the API in `--offline` mode, but you can use both the offline
 databases and the API together; the detector will remove any duplicate results.
@@ -216,7 +219,12 @@ cannot contain a header. The `ecosystem` does _not_ have to be one listed by the
 detector as known, meaning you can use any ecosystem that
 [osv.dev](https://osv.dev/) provides.
 
-> Currently, you cannot pass in a commit
+If you don't provide an ecosystem, then the `version` column is expected to be a
+commit. In this case, the `package` column is decorative as only the commit is
+passed to the API.
+
+> Remember to tell the detector to use the `osv.dev` API via the `--use-api`
+> flag if you're wanting to check commits!
 
 You can also omit the version to have the detector list all known
 vulnerabilities in the loaded database that apply to the given package:
