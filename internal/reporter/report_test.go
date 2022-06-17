@@ -234,19 +234,19 @@ func TestReport_HasIgnoredVulnerabilities(t *testing.T) {
 	}
 }
 
-func TestReport_ToString_NoVulnerabilities(t *testing.T) {
+func TestReport_String_NoVulnerabilities(t *testing.T) {
 	t.Parallel()
 
 	msg := "no known vulnerabilities found"
 
 	r := reporter.Report{}
 
-	if actual := r.ToString(); !strings.Contains(actual, msg) {
+	if actual := r.String(); !strings.Contains(actual, msg) {
 		t.Errorf("Expected \"%s\" to contain \"%s\" but it did not", actual, msg)
 	}
 }
 
-func TestReport_ToString_OneVulnerability(t *testing.T) {
+func TestReport_String_OneVulnerability(t *testing.T) {
 	t.Parallel()
 
 	expected := strings.Join([]string{
@@ -276,12 +276,12 @@ func TestReport_ToString_OneVulnerability(t *testing.T) {
 		},
 	}
 
-	if actual := r.ToString(); expected != actual {
+	if actual := r.String(); expected != actual {
 		t.Errorf("\nExpected:\n%s\nActual:\n%s", expected, actual)
 	}
 }
 
-func TestReport_ToString_MultipleVulnerabilities(t *testing.T) {
+func TestReport_String_MultipleVulnerabilities(t *testing.T) {
 	t.Parallel()
 
 	expected := strings.Join([]string{
@@ -334,12 +334,12 @@ func TestReport_ToString_MultipleVulnerabilities(t *testing.T) {
 		},
 	}
 
-	if actual := r.ToString(); expected != actual {
+	if actual := r.String(); expected != actual {
 		t.Errorf("\nExpected:\n%s\nActual:\n%s", expected, actual)
 	}
 }
 
-func TestReport_ToString_AllIgnoredVulnerabilities(t *testing.T) {
+func TestReport_String_AllIgnoredVulnerabilities(t *testing.T) {
 	t.Parallel()
 
 	msg := "no new vulnerabilities found (2 were ignored)"
@@ -376,12 +376,12 @@ func TestReport_ToString_AllIgnoredVulnerabilities(t *testing.T) {
 		},
 	}
 
-	if actual := r.ToString(); !strings.Contains(actual, msg) {
+	if actual := r.String(); !strings.Contains(actual, msg) {
 		t.Errorf("Expected \"%s\" to contain \"%s\" but it did not", actual, msg)
 	}
 }
 
-func TestReport_ToString_SomeIgnoredVulnerability(t *testing.T) {
+func TestReport_String_SomeIgnoredVulnerability(t *testing.T) {
 	t.Parallel()
 
 	expected := strings.Join([]string{
@@ -424,7 +424,7 @@ func TestReport_ToString_SomeIgnoredVulnerability(t *testing.T) {
 		},
 	}
 
-	if actual := r.ToString(); expected != actual {
+	if actual := r.String(); expected != actual {
 		t.Errorf("\nExpected:\n%s\nActual:\n%s", expected, actual)
 	}
 }

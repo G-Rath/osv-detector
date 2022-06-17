@@ -83,7 +83,7 @@ type Lockfile struct {
 	Packages Packages `json:"packages"`
 }
 
-func (l Lockfile) ToString() string {
+func (l Lockfile) String() string {
 	lines := make([]string, 0, len(l.Packages))
 
 	for _, details := range l.Packages {

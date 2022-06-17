@@ -33,9 +33,9 @@ func expectCompareResult(
 	if actualResult := a.Compare(b); actualResult != expectedResult {
 		t.Errorf(
 			"Expected %s to be %s %s, but it was %s",
-			a.ToString(),
+			a.String(),
 			compareWord(t, expectedResult),
-			b.ToString(),
+			b.String(),
 			compareWord(t, actualResult),
 		)
 	}

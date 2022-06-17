@@ -54,10 +54,10 @@ func expectParsedVersionToMatchOriginalString(t *testing.T, str string) semantic
 
 	actualVersion := semantic.Parse(str)
 
-	if actualVersion.ToString() != str {
+	if actualVersion.String() != str {
 		t.Errorf(
 			"Parsed version as a string did not equal original: %s != %s",
-			actualVersion.ToString(),
+			actualVersion.String(),
 			str,
 		)
 	}
@@ -85,10 +85,10 @@ func expectParsedVersionToMatchString(
 
 	actualVersion := semantic.Parse(str)
 
-	if actualVersion.ToString() != expectedString {
+	if actualVersion.String() != expectedString {
 		t.Errorf(
 			"Parsed version as a string did not equal expected: %s != %s",
-			actualVersion.ToString(),
+			actualVersion.String(),
 			expectedString,
 		)
 	}

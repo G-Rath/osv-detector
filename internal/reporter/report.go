@@ -98,7 +98,7 @@ func (r Report) describeIgnores() string {
 	)
 }
 
-func (r Report) ToString() string {
+func (r Report) String() string {
 	count := r.countKnownVulnerabilities()
 	ignoreMsg := r.describeIgnores()
 	word := "known"

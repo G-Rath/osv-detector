@@ -136,7 +136,7 @@ func TestListParsers(t *testing.T) {
 	}
 }
 
-func TestLockfile_ToString(t *testing.T) {
+func TestLockfile_String(t *testing.T) {
 	t.Parallel()
 
 	expected := strings.Join([]string{
@@ -190,7 +190,7 @@ func TestLockfile_ToString(t *testing.T) {
 		},
 	}
 
-	if actual := lockf.ToString(); expected != actual {
+	if actual := lockf.String(); expected != actual {
 		t.Errorf("\nExpected:\n%s\nActual:\n%s", expected, actual)
 	}
 }
