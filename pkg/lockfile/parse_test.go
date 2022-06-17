@@ -144,6 +144,9 @@ func TestLockfile_ToString(t *testing.T) {
 		"  npm: @typescript-eslint/types@5.13.0",
 		"  crates.io: wasi@0.10.2+wasi-snapshot-preview1",
 		"  Packagist: sentry/sdk@2.0.4",
+		"  crates.io: no-version",
+		"  <unknown>: no-ecosystem@1.2.3",
+		"  <unknown>: no-ecosystem@1.2.3 (with-commit)",
 	}, "\n")
 
 	lockf := lockfile.Lockfile{
@@ -167,6 +170,22 @@ func TestLockfile_ToString(t *testing.T) {
 				Name:      "sentry/sdk",
 				Version:   "2.0.4",
 				Ecosystem: lockfile.ComposerEcosystem,
+			},
+			{
+				Name:      "no-version",
+				Version:   "",
+				Ecosystem: lockfile.CargoEcosystem,
+			},
+			{
+				Name:      "no-ecosystem",
+				Version:   "1.2.3",
+				Ecosystem: "",
+			},
+			{
+				Name:      "no-ecosystem",
+				Version:   "1.2.3",
+				Ecosystem: "",
+				Commit:    "with-commit",
 			},
 		},
 	}
