@@ -4,7 +4,6 @@ import (
 	"errors"
 	"osv-detector/pkg/database"
 	"reflect"
-	"sort"
 	"testing"
 )
 
@@ -19,18 +18,7 @@ func TestNewDirDB(t *testing.T) {
 		t.Errorf("unexpected error \"%v\"", err)
 	}
 
-	vulns := db.Vulnerabilities(false)
-
-	sort.Slice(vulns, func(i, j int) bool {
-		return vulns[i].ID < vulns[j].ID
-	})
-	sort.Slice(osvs, func(i, j int) bool {
-		return osvs[i].ID < osvs[j].ID
-	})
-
-	if !reflect.DeepEqual(vulns, osvs) {
-		t.Errorf("db is missing some vulnerabilities: %v vs %v", vulns, osvs)
-	}
+	expectDBToHaveOSVs(t, db, osvs)
 }
 
 func TestNewDirDB_InvalidURI(t *testing.T) {

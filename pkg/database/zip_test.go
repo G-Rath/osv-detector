@@ -17,6 +17,29 @@ import (
 	"testing"
 )
 
+func expectDBToHaveOSVs(
+	t *testing.T,
+	db interface {
+		Vulnerabilities(includeWithdrawn bool) []database.OSV
+	},
+	actual []database.OSV,
+) {
+	t.Helper()
+
+	vulns := db.Vulnerabilities(true)
+
+	sort.Slice(vulns, func(i, j int) bool {
+		return vulns[i].ID < vulns[j].ID
+	})
+	sort.Slice(actual, func(i, j int) bool {
+		return actual[i].ID < actual[j].ID
+	})
+
+	if !reflect.DeepEqual(vulns, actual) {
+		t.Errorf("db is missing some vulnerabilities: %v vs %v", vulns, actual)
+	}
+}
+
 type CleanUpZipServerFn = func()
 
 func cachePath(url string) string {
@@ -138,7 +161,7 @@ func TestNewZippedDB_Offline_WithCache(t *testing.T) {
 		}),
 	})
 
-	db, err := database.NewZippedDB(ts.URL, true)
+	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, true)
 
 	if err != nil {
 		t.Errorf("unexpected error \"%v\"", err)
@@ -148,18 +171,7 @@ func TestNewZippedDB_Offline_WithCache(t *testing.T) {
 		t.Errorf("db.UpdatedAt got = \"%s\", want = \"%s\"", db.UpdatedAt, date)
 	}
 
-	vulns := db.Vulnerabilities(true)
-
-	sort.Slice(vulns, func(i, j int) bool {
-		return vulns[i].ID < vulns[j].ID
-	})
-	sort.Slice(osvs, func(i, j int) bool {
-		return osvs[i].ID < osvs[j].ID
-	})
-
-	if !reflect.DeepEqual(vulns, osvs) {
-		t.Errorf("db is missing some vulnerabilities: %v vs %v", vulns, osvs)
-	}
+	expectDBToHaveOSVs(t, db, osvs)
 }
 
 func TestNewZippedDB_BadZip(t *testing.T) {
@@ -215,18 +227,7 @@ func TestNewZippedDB_Online_WithoutCache(t *testing.T) {
 		t.Errorf("unexpected error \"%v\"", err)
 	}
 
-	vulns := db.Vulnerabilities(true)
-
-	sort.Slice(vulns, func(i, j int) bool {
-		return vulns[i].ID < vulns[j].ID
-	})
-	sort.Slice(osvs, func(i, j int) bool {
-		return osvs[i].ID < osvs[j].ID
-	})
-
-	if !reflect.DeepEqual(vulns, osvs) {
-		t.Errorf("db is missing some vulnerabilities: %v vs %v", vulns, osvs)
-	}
+	expectDBToHaveOSVs(t, db, osvs)
 }
 
 func TestNewZippedDB_Online_WithCache(t *testing.T) {
@@ -259,7 +260,7 @@ func TestNewZippedDB_Online_WithCache(t *testing.T) {
 		}),
 	})
 
-	db, err := database.NewZippedDB(ts.URL, false)
+	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -269,18 +270,7 @@ func TestNewZippedDB_Online_WithCache(t *testing.T) {
 		t.Errorf("db.UpdatedAt got = \"%s\", want = \"%s\"", db.UpdatedAt, date)
 	}
 
-	vulns := db.Vulnerabilities(true)
-
-	sort.Slice(vulns, func(i, j int) bool {
-		return vulns[i].ID < vulns[j].ID
-	})
-	sort.Slice(osvs, func(i, j int) bool {
-		return osvs[i].ID < osvs[j].ID
-	})
-
-	if !reflect.DeepEqual(vulns, osvs) {
-		t.Errorf("db is missing some vulnerabilities: %v vs %v", vulns, osvs)
-	}
+	expectDBToHaveOSVs(t, db, osvs)
 }
 
 func TestNewZippedDB_Online_WithOldCache(t *testing.T) {
@@ -322,7 +312,7 @@ func TestNewZippedDB_Online_WithOldCache(t *testing.T) {
 		}),
 	})
 
-	db, err := database.NewZippedDB(ts.URL, false)
+	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -332,18 +322,7 @@ func TestNewZippedDB_Online_WithOldCache(t *testing.T) {
 		t.Errorf("db.UpdatedAt got = \"%s\", want = \"%s\"", db.UpdatedAt, "Today")
 	}
 
-	vulns := db.Vulnerabilities(true)
-
-	sort.Slice(vulns, func(i, j int) bool {
-		return vulns[i].ID < vulns[j].ID
-	})
-	sort.Slice(osvs, func(i, j int) bool {
-		return osvs[i].ID < osvs[j].ID
-	})
-
-	if !reflect.DeepEqual(vulns, osvs) {
-		t.Errorf("db is missing some vulnerabilities: %v vs %v", vulns, osvs)
-	}
+	expectDBToHaveOSVs(t, db, osvs)
 }
 
 func TestNewZippedDB_Online_WithBadCache(t *testing.T) {
@@ -366,24 +345,13 @@ func TestNewZippedDB_Online_WithBadCache(t *testing.T) {
 
 	cacheWriteBad(t, ts.URL, "this is not json!")
 
-	db, err := database.NewZippedDB(ts.URL, false)
+	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
 	}
 
-	vulns := db.Vulnerabilities(true)
-
-	sort.Slice(vulns, func(i, j int) bool {
-		return vulns[i].ID < vulns[j].ID
-	})
-	sort.Slice(osvs, func(i, j int) bool {
-		return osvs[i].ID < osvs[j].ID
-	})
-
-	if !reflect.DeepEqual(vulns, osvs) {
-		t.Errorf("db is missing some vulnerabilities: %v vs %v", vulns, osvs)
-	}
+	expectDBToHaveOSVs(t, db, osvs)
 }
 
 func TestNewZippedDB_FileChecks(t *testing.T) {
@@ -408,18 +376,7 @@ func TestNewZippedDB_FileChecks(t *testing.T) {
 		t.Errorf("unexpected error \"%v\"", err)
 	}
 
-	vulns := db.Vulnerabilities(false)
-
-	sort.Slice(vulns, func(i, j int) bool {
-		return vulns[i].ID < vulns[j].ID
-	})
-	sort.Slice(osvs, func(i, j int) bool {
-		return osvs[i].ID < osvs[j].ID
-	})
-
-	if !reflect.DeepEqual(vulns, osvs) {
-		t.Errorf("db is missing some vulnerabilities: %v vs %v", vulns, osvs)
-	}
+	expectDBToHaveOSVs(t, db, osvs)
 }
 
 func TestNewZippedDB_WorkingDirectory(t *testing.T) {
@@ -442,7 +399,5 @@ func TestNewZippedDB_WorkingDirectory(t *testing.T) {
 		t.Errorf("unexpected error \"%v\"", err)
 	}
 
-	if !reflect.DeepEqual(db.Vulnerabilities(false), osvs) {
-		t.Errorf("db is missing some vulnerabilities: %v vs %v", db.Vulnerabilities(false), osvs)
-	}
+	expectDBToHaveOSVs(t, db, osvs)
 }

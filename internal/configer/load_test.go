@@ -10,6 +10,7 @@ import (
 	"testing"
 )
 
+// nolint:unparam
 func newReporter(t *testing.T) (*reporter.Reporter, *bytes.Buffer, *bytes.Buffer) {
 	t.Helper()
 
