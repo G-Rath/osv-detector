@@ -19,18 +19,6 @@ type rawDatabaseConfig struct {
 	WorkingDirectory string `yaml:"working-directory"`
 }
 
-// ExpectedIdentifier returns the identifier that should be used to identifier
-// a database that has been loaded using this DatabaseConfig
-func (rdbc rawDatabaseConfig) ExpectedIdentifier() string {
-	id := rdbc.Type + "#" + rdbc.URL
-
-	if rdbc.WorkingDirectory != "" {
-		id += "#" + rdbc.WorkingDirectory
-	}
-
-	return id
-}
-
 type rawConfig struct {
 	FilePath  string
 	Ignore    []string            `yaml:"ignore"`

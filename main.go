@@ -22,10 +22,6 @@ var (
 	date    = "unknown"
 )
 
-func ecosystemDatabaseURL(ecosystem internal.Ecosystem) string {
-	return fmt.Sprintf("https://osv-vulnerabilities.storage.googleapis.com/%s/all.zip", ecosystem)
-}
-
 func makeAPIDBConfig() database.Config {
 	return database.NewConfig(
 		"osv.dev v1 API",
@@ -137,24 +133,6 @@ func (dbs OSVDatabases) pick(dbConfigs []database.Config) OSVDatabases {
 	return specificDBs
 }
 
-/*
-func (ps Packages) Ecosystems() []Ecosystem {
-	ecosystems := make(map[Ecosystem]struct{})
-	var slicedEcosystems []Ecosystem
-
-	for _, pkg := range ps {
-		if _, ok := ecosystems[pkg.Ecosystem]; ok {
-			continue
-		}
-
-		ecosystems[pkg.Ecosystem] = struct{}{}
-		slicedEcosystems = append(slicedEcosystems, pkg.Ecosystem)
-	}
-
-	return slicedEcosystems
-}
-*/
-
 func uniqueDBConfigs(configs []*configer.Config) []database.Config {
 	var dbConfigs []database.Config
 
@@ -162,12 +140,12 @@ func uniqueDBConfigs(configs []*configer.Config) []database.Config {
 		for _, dbConfig := range config.Databases {
 			alreadyExists := false
 
-			for _, eco := range dbConfigs {
+			for _, dbc := range dbConfigs {
 				if alreadyExists {
 					continue
 				}
 
-				if eco.Identifier() == dbConfig.Identifier() {
+				if dbc.Identifier() == dbConfig.Identifier() {
 					alreadyExists = true
 				}
 			}
@@ -268,7 +246,7 @@ func cacheAllEcosystemDatabases(r *reporter.Reporter) bool {
 		configs = append(configs, makeEcosystemDBConfig(ecosystem))
 	}
 
-	_, errored := loadDatabases(r, configs, false, 0)
+	_, errored := loadDatabases(r, configs, false, false, 0)
 
 	return errored
 }
@@ -398,20 +376,6 @@ type lockfileAndConfigOrErr struct {
 
 type lockfileAndConfigOrErrs []lockfileAndConfigOrErr
 
-func (files lockfileAndConfigOrErrs) getDBConfigs() []database.Config {
-	dbConfigs := make([]database.Config, 0, len(files))
-
-	for _, file := range files {
-		if file.err != nil {
-			continue
-		}
-
-		dbConfigs = append(dbConfigs, file.config.Databases...)
-	}
-
-	return dbConfigs
-}
-
 func (files lockfileAndConfigOrErrs) getConfigs() []*configer.Config {
 	configs := make([]*configer.Config, 0, len(files))
 
@@ -516,9 +480,6 @@ func collectEcosystems(files []lockfileAndConfigOrErr) []internal.Ecosystem {
 	return ecosystems
 }
 
-// func loadConfigDatabases(r *reporter.Reporter)
-// ecosystems := collectEcosystems(files)
-
 func run(args []string, stdout, stderr io.Writer) int {
 	var ignores stringsFlag
 	cli := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
@@ -617,23 +578,12 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 	files := readAllLockfiles(r, pathsToLocks, *parseAs, cli.Args(), loadLocalConfig, config)
 
-	// expandDBConfigs(files)
-
-	// ecosystems := collectEcosystems(files)
-
-	// 1. load lockfiles / packages
-	// 2. "expand" db configs to include extra defaults
-	// 3. load databases based on configs
-	// 4. check using databases based on config
-
 	files.addExtraDBConfigs(*useAPI, *useDatabases)
 
 	dbs, errored := loadDatabases(
 		r,
 		uniqueDBConfigs(files.getConfigs()),
 		*listPackages,
-		// *useDatabases,
-		// *useAPI,
 		*offline,
 		*batchSize,
 	)
@@ -711,16 +661,6 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 	return exitCode
 }
-
-// func expandDBConfigs(files []lockfileAndConfigOrErr) {
-// 	for _, file := range files {
-// 		if file.err != nil {
-// 			continue
-// 		}
-//
-// 		file.config.Databases
-// 	}
-// }
 
 func main() {
 	os.Exit(run(os.Args[1:], os.Stdout, os.Stderr))

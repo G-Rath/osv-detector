@@ -20,18 +20,6 @@ func NewConfig(name, explicitType, url, workingDirectory string) Config {
 	}
 }
 
-// func (dbc Config) Name() string {
-// 	if dbc.Name2 != "" {
-// 		return dbc.Name2
-// 	}
-//
-// 	if dbc.name != "" {
-// 		return dbc.name
-// 	}
-//
-// 	return dbc.Identifier()
-// }
-
 // Identifier returns a unique string that can be used to check if a loaded
 // database has been configured with this Config
 func (dbc Config) Identifier() string {
@@ -44,19 +32,7 @@ func (dbc Config) Identifier() string {
 	return id
 }
 
-// func (dbc Config) Type() string {
-// 	switch {
-// 	case dbc.explicitType != "":
-// 		return dbc.explicitType
-// 	case strings.HasSuffix(dbc.URL, ".zip"):
-// 		return "zip"
-// 	case strings.HasPrefix(dbc.URL, "file://"):
-// 		return "file"
-// 	default:
-// 		return "api"
-// 	}
-// }
-
+// Load initializes a new OSV database based on the given Config
 func Load(config Config, offline bool, batchSize int) (DB, error) {
 	switch config.Type {
 	case "zip":
