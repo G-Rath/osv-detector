@@ -56,6 +56,8 @@ func (db *ZipDB) fetchZip() ([]byte, error) {
 			return nil, ErrOfflineDatabaseNotFound
 		}
 
+		db.UpdatedAt = cache.Date
+
 		return cache.Body, nil
 	}
 
