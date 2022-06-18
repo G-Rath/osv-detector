@@ -16,9 +16,10 @@ import (
 )
 
 type ZipDB struct {
+	memDB
+
 	name             string
 	identifier       string
-	vulnerabilities  []OSV
 	ArchiveURL       string
 	WorkingDirectory string
 	Offline          bool

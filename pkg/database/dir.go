@@ -12,9 +12,10 @@ import (
 )
 
 type DirDB struct {
+	memDB
+
 	name             string
 	identifier       string
-	vulnerabilities  []OSV
 	LocalPath        string
 	WorkingDirectory string
 	Offline          bool
