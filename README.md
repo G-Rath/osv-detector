@@ -192,7 +192,7 @@ osv-detector --cache-all-databases
 This can be useful if you're planning to run the detector over a number of
 lockfiles in bulk.
 
-#### Passing arbitrary package details (advanced usage)
+### Passing arbitrary package details (advanced usage)
 
 The detector supports being passed arbitrary package details in CSV form to
 check for known vulnerabilities.
