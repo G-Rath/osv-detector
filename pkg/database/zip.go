@@ -174,7 +174,7 @@ func (db *ZipDB) load() error {
 
 	// Read all the files from the zip archive
 	for _, zipFile := range zipReader.File {
-		if strings.HasPrefix(zipFile.Name, "advisory-database-main/advisories/unreviewed") {
+		if !strings.HasPrefix(zipFile.Name, db.WorkingDirectory) {
 			continue
 		}
 

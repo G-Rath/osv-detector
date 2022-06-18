@@ -389,20 +389,54 @@ func TestNewZippedDB_Online_WithBadCache(t *testing.T) {
 func TestNewZippedDB_FileChecks(t *testing.T) {
 	t.Parallel()
 
-	osvs := []database.OSV{{ID: "GHSA-1234"}}
+	osvs := []database.OSV{{ID: "GHSA-1234"}, {ID: "GHSA-4321"}}
 
 	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
 			"file.json": {ID: "GHSA-1234"},
 			// only files with .json suffix should be loaded
 			"file.yaml": {ID: "GHSA-5678"},
-			// special case for the GH security database
+			// (no longer) special case for the GH security database
 			"advisory-database-main/advisories/unreviewed/file.json": {ID: "GHSA-4321"},
 		}))
 	})
 	defer cleanup()
 
 	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+
+	if err != nil {
+		t.Errorf("unexpected error \"%v\"", err)
+	}
+
+	vulns := db.Vulnerabilities(false)
+
+	sort.Slice(vulns, func(i, j int) bool {
+		return vulns[i].ID < vulns[j].ID
+	})
+	sort.Slice(osvs, func(i, j int) bool {
+		return osvs[i].ID < osvs[j].ID
+	})
+
+	if !reflect.DeepEqual(vulns, osvs) {
+		t.Errorf("db is missing some vulnerabilities: %v vs %v", vulns, osvs)
+	}
+}
+
+func TestNewZippedDB_WorkingDirectory(t *testing.T) {
+	t.Parallel()
+
+	osvs := []database.OSV{{ID: "GHSA-1234"}, {ID: "GHSA-5678"}}
+
+	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
+			"reviewed/file.json":        {ID: "GHSA-1234"},
+			"reviewed/nested/file.json": {ID: "GHSA-5678"},
+			"unreviewed/file.json":      {ID: "GHSA-4321"},
+		}))
+	})
+	defer cleanup()
+
+	db, err := database.NewZippedDB(database.Config{URL: ts.URL, WorkingDirectory: "reviewed"}, false)
 
 	if err != nil {
 		t.Errorf("unexpected error \"%v\"", err)
