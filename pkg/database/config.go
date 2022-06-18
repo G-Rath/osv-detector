@@ -11,15 +11,6 @@ type Config struct {
 	WorkingDirectory string `yaml:"working-directory"`
 }
 
-func NewConfig(name, explicitType, url, workingDirectory string) Config {
-	return Config{
-		Name:             name,
-		Type:             explicitType,
-		URL:              url,
-		WorkingDirectory: workingDirectory,
-	}
-}
-
 // Identifier returns a unique string that can be used to check if a loaded
 // database has been configured with this Config
 func (dbc Config) Identifier() string {

@@ -21,13 +21,8 @@ type DirDB struct {
 	Offline          bool
 }
 
-func (db DirDB) Name() string {
-	return db.name
-}
-
-func (db DirDB) Identifier() string {
-	return db.identifier
-}
+func (db DirDB) Name() string       { return db.name }
+func (db DirDB) Identifier() string { return db.identifier }
 
 // load walks the filesystem starting with the working directory within the local path,
 // loading all OSVs found along the way.
@@ -67,6 +62,7 @@ func (db *DirDB) load() error {
 
 		content, err := os.ReadFile(path)
 		if err != nil {
+			errored = true
 			_, _ = fmt.Fprintf(os.Stderr, "\n%v", err)
 
 			return nil
@@ -74,6 +70,7 @@ func (db *DirDB) load() error {
 
 		var pa OSV
 		if err := json.Unmarshal(content, &pa); err != nil {
+			errored = true
 			_, _ = fmt.Fprintf(os.Stderr, "%s is not a valid JSON file: %v\n", info.Name(), err)
 
 			return nil

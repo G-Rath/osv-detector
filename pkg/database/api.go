@@ -14,13 +14,8 @@ type APIDB struct {
 	BatchSize  int
 }
 
-func (db APIDB) Identifier() string {
-	return db.identifier
-}
-
-func (db APIDB) Name() string {
-	return db.name
-}
+func (db APIDB) Name() string       { return db.name }
+func (db APIDB) Identifier() string { return db.identifier }
 
 type apiQuery struct {
 	Commit  string `json:"commit,omitempty"`

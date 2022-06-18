@@ -23,21 +23,19 @@ var (
 )
 
 func makeAPIDBConfig() database.Config {
-	return database.NewConfig(
-		"osv.dev v1 API",
-		"api",
-		"https://api.osv.dev/v1",
-		"",
-	)
+	return database.Config{
+		Name: "osv.dev v1 API",
+		Type: "api",
+		URL:  "https://api.osv.dev/v1",
+	}
 }
 
 func makeEcosystemDBConfig(ecosystem internal.Ecosystem) database.Config {
-	return database.NewConfig(
-		string(ecosystem),
-		"zip",
-		fmt.Sprintf("https://osv-vulnerabilities.storage.googleapis.com/%s/all.zip", ecosystem),
-		"",
-	)
+	return database.Config{
+		Name: string(ecosystem),
+		Type: "zip",
+		URL:  fmt.Sprintf("https://osv-vulnerabilities.storage.googleapis.com/%s/all.zip", ecosystem),
+	}
 }
 
 type OSVDatabases []database.DB
