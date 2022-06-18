@@ -10,18 +10,14 @@ import (
 func TestNewAPIDB(t *testing.T) {
 	t.Parallel()
 
-	u, _ := url.Parse("https://my-api.com")
-
 	type args struct {
 		baseURL   string
 		batchSize int
 		offline   bool
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    *database.APIDB
-		wantErr bool
+		name string
+		args args
 	}{
 		{
 			name: "Offline is true",
@@ -30,8 +26,6 @@ func TestNewAPIDB(t *testing.T) {
 				batchSize: 100,
 				offline:   true,
 			},
-			want:    nil,
-			wantErr: true,
 		},
 		{
 			name: "Batch size is less than 1",
@@ -40,8 +34,6 @@ func TestNewAPIDB(t *testing.T) {
 				batchSize: 0,
 				offline:   false,
 			},
-			want:    nil,
-			wantErr: true,
 		},
 		{
 			name: "URL is not valid",
@@ -50,18 +42,6 @@ func TestNewAPIDB(t *testing.T) {
 				batchSize: 100,
 				offline:   false,
 			},
-			want:    nil,
-			wantErr: true,
-		},
-		{
-			name: "Everything is valid",
-			args: args{
-				baseURL:   "https://my-api.com",
-				batchSize: 100,
-				offline:   false,
-			},
-			want:    &database.APIDB{BaseURL: u, BatchSize: 100},
-			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
@@ -70,12 +50,50 @@ func TestNewAPIDB(t *testing.T) {
 			t.Parallel()
 
 			got, err := database.NewAPIDB(database.Config{URL: tt.args.baseURL}, tt.args.offline, tt.args.batchSize)
-			if (err != nil) != tt.wantErr {
-				t.Fatalf("NewAPIDB() error = %v, wantErr %v", err, tt.wantErr)
+			if err == nil {
+				t.Errorf("NewAPIDB() did not error as expected")
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewAPIDB() got = %v, want %v", got, tt.want)
+			if got != nil {
+				t.Errorf("NewAPIDB() returned a db even though there was an error")
 			}
 		})
+	}
+}
+
+func TestNewAPIDB_Valid(t *testing.T) {
+	t.Parallel()
+
+	u, _ := url.Parse("https://my-api.com")
+
+	config := database.Config{URL: "https://my-api.com", Name: "my-api"}
+
+	db, err := database.NewAPIDB(
+		config,
+		false,
+		100,
+	)
+
+	if err != nil {
+		t.Errorf("NewAPIDB() unexpected error \"%v\"", err)
+	}
+
+	if db == nil {
+		t.Fatalf("NewAPIDB() db unexpectedly nil")
+	}
+
+	if !reflect.DeepEqual(db.BaseURL, u) {
+		t.Errorf("NewAPIDB() db has incorrect url (%s)", u)
+	}
+
+	if db.BatchSize != 100 {
+		t.Errorf("NewAPIDB() db has incorrect batch size (%d)", db.BatchSize)
+	}
+
+	if db.Identifier() != config.Identifier() {
+		t.Errorf("NewAPIDB() db identifier got = %s, want %s", db.Identifier(), config.Identifier())
+	}
+
+	if db.Name() != config.Name {
+		t.Errorf("NewAPIDB() db name got = %s, want %s", db.Name(), config.Name)
 	}
 }

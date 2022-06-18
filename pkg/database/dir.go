@@ -34,6 +34,10 @@ func (db DirDB) Identifier() string {
 func (db *DirDB) load() error {
 	db.vulnerabilities = []OSV{}
 
+	if !strings.HasPrefix(db.LocalPath, "file:") {
+		return fmt.Errorf("directory path must start with \"file:\" protocal")
+	}
+
 	u, err := url.ParseRequestURI(db.LocalPath)
 
 	if err != nil {
