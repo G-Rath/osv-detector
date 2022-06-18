@@ -163,6 +163,7 @@ func TestLoad(t *testing.T) {
 	}
 
 	if isMissingStderrMessage {
+		// nolint:forbidigo
 		fmt.Println(gotStderr)
 	}
 

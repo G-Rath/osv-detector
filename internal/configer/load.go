@@ -57,7 +57,7 @@ func (rdbc rawDatabaseConfig) toConfig() (database.Config, error) {
 	finalType := rdbc.inferDBType()
 
 	if finalType != "zip" && finalType != "api" && finalType != "dir" {
-		return database.Config{}, fmt.Errorf("unsupported database source type %s", finalType)
+		return database.Config{}, fmt.Errorf("%w %s", database.ErrUnsupportedDatabaseType, finalType)
 	}
 
 	config := database.Config{
@@ -85,7 +85,6 @@ func newConfig(r *reporter.Reporter, raw rawConfig) (Config, error) {
 		dbc, err := d.toConfig()
 
 		if err != nil {
-			fmt.Println("error")
 			r.PrintError(fmt.Sprintf("%s contains an invalid database: %v\n", raw.FilePath, err))
 
 			continue

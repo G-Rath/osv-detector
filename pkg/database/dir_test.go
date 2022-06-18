@@ -1,6 +1,7 @@
 package database_test
 
 import (
+	"errors"
 	"osv-detector/pkg/database"
 	"reflect"
 	"sort"
@@ -53,6 +54,10 @@ func TestNewDirDB_NotFileProtocol(t *testing.T) {
 
 	if err == nil {
 		t.Fatalf("NewDirDB() did not return expected error")
+	}
+
+	if !errors.Is(err, database.ErrDirPathWrongProtocol) {
+		t.Errorf("NewDirDB() returned wrong error %v", err)
 	}
 
 	if db != nil {

@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -23,7 +24,10 @@ func (dbc Config) Identifier() string {
 	return id
 }
 
+var ErrUnsupportedDatabaseType = errors.New("unsupported database source type")
+
 // Load initializes a new OSV database based on the given Config
+// nolint:ireturn
 func Load(config Config, offline bool, batchSize int) (DB, error) {
 	switch config.Type {
 	case "zip":
@@ -34,5 +38,5 @@ func Load(config Config, offline bool, batchSize int) (DB, error) {
 		return NewDirDB(config, offline)
 	}
 
-	return nil, fmt.Errorf("oh noes")
+	return nil, fmt.Errorf("%w %s", ErrUnsupportedDatabaseType, config.Type)
 }

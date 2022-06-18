@@ -2,6 +2,7 @@ package database
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/fs"
 	"net/url"
@@ -24,19 +25,21 @@ type DirDB struct {
 func (db DirDB) Name() string       { return db.name }
 func (db DirDB) Identifier() string { return db.identifier }
 
+var ErrDirPathWrongProtocol = errors.New("directory path must start with \"file:\" protocol")
+
 // load walks the filesystem starting with the working directory within the local path,
 // loading all OSVs found along the way.
 func (db *DirDB) load() error {
 	db.vulnerabilities = []OSV{}
 
 	if !strings.HasPrefix(db.LocalPath, "file:") {
-		return fmt.Errorf("directory path must start with \"file:\" protocal")
+		return ErrDirPathWrongProtocol
 	}
 
 	u, err := url.ParseRequestURI(db.LocalPath)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
 	// since this will always be an absolute _url_ we need to remove the

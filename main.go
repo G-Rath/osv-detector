@@ -644,7 +644,6 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 				color.HiCyanString(db.Name()),
 				desc,
 			))
-
 		}
 		r.PrintText("\n")
 
