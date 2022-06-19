@@ -425,7 +425,7 @@ func readAllLockfiles(
 	parseAs string,
 	args []string,
 	checkForLocalConfig bool,
-	config configer.Config,
+	config *configer.Config,
 ) lockfileAndConfigOrErrs {
 	lockfiles := make([]lockfileAndConfigOrErr, 0, len(pathsToLocks))
 
@@ -435,16 +435,19 @@ func readAllLockfiles(
 			con, err := configer.Find(r, base)
 
 			if err != nil {
-				lockfiles = append(lockfiles, lockfileAndConfigOrErr{lockfile.Lockfile{}, &config, err})
+				// treat config errors as the same as if we failed to load the lockfile
+				// as continuing without the desired config could cause different results
+				// e.g. if the config has ignores or custom databases
+				lockfiles = append(lockfiles, lockfileAndConfigOrErr{lockfile.Lockfile{}, config, err})
 
 				continue
 			}
 
-			config = con
+			config = &con
 		}
 
 		lockf, err := parseLockfile(pathToLock, parseAs, args)
-		lockfiles = append(lockfiles, lockfileAndConfigOrErr{lockf, &config, err})
+		lockfiles = append(lockfiles, lockfileAndConfigOrErr{lockf, config, err})
 	}
 
 	return lockfiles
@@ -578,7 +581,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		loadLocalConfig = false
 	}
 
-	files := readAllLockfiles(r, pathsToLocks, *parseAs, cli.Args(), loadLocalConfig, config)
+	files := readAllLockfiles(r, pathsToLocks, *parseAs, cli.Args(), loadLocalConfig, &config)
 
 	files.addExtraDBConfigs(*useAPI, *useDatabases)
 
