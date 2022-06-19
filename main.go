@@ -411,7 +411,11 @@ func (files *lockfileAndConfigOrErrs) addExtraDBConfigs(
 			continue
 		}
 
-		file.config.Databases = append(file.config.Databases, extraDBConfigs...)
+		// a bit of a hack to let us reuse this method...
+		file.config.Databases = uniqueDBConfigs([]*configer.Config{
+			file.config,
+			{Databases: extraDBConfigs},
+		})
 	}
 }
 
