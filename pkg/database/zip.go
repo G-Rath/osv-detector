@@ -116,6 +116,35 @@ func (db *ZipDB) fetchZip() ([]byte, error) {
 	return body, nil
 }
 
+// Loads the given zip file into the database as an OSV.
+// It is assumed that the file is JSON and in the working directory of the db
+func (db *ZipDB) loadZipFile(zipFile *zip.File) {
+	file, err := zipFile.Open()
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "Could not read %s: %v", zipFile.Name, err)
+
+		return
+	}
+	defer file.Close()
+
+	content, err := io.ReadAll(file)
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "Could not read %s: %v", zipFile.Name, err)
+
+		return
+	}
+
+	var osv OSV
+
+	if err := json.Unmarshal(content, &osv); err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "%s is not a valid JSON file: %v", zipFile.Name, err)
+
+		return
+	}
+
+	db.vulnerabilities = append(db.vulnerabilities, osv)
+}
+
 // load fetches a zip archive of the OSV database and loads known vulnerabilities
 // from it (which are assumed to be in json files following the OSV spec).
 //
@@ -146,27 +175,7 @@ func (db *ZipDB) load() error {
 			continue
 		}
 
-		file, err := zipFile.Open()
-		if err != nil {
-			return fmt.Errorf("could not open OSV database archive: %w", err)
-		}
-		defer file.Close()
-
-		content, err := io.ReadAll(file)
-		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "Could not read %s: %v", zipFile.Name, err)
-
-			continue
-		}
-
-		var pa OSV
-		if err := json.Unmarshal(content, &pa); err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "%s is not a valid JSON file: %v", zipFile.Name, err)
-
-			continue
-		}
-
-		db.vulnerabilities = append(db.vulnerabilities, pa)
+		db.loadZipFile(zipFile)
 	}
 
 	return nil
