@@ -296,6 +296,66 @@ func TestRun_Configs(t *testing.T) {
 			`,
 			wantStderr: "",
 		},
+		// when a global config is provided, any local configs should be ignored
+		{
+			name:         "",
+			args:         []string{"--config", "fixtures/my-config.yml", "./fixtures/configs-one/yarn.lock"},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+
+				./fixtures/configs-one/yarn.lock: found 0 packages
+					Using config at fixtures/my-config.yml (1 ignore)
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
+		{
+			name:         "",
+			args:         []string{"--config", "fixtures/my-config.yml", "./fixtures/configs-two"},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/configs-two/Gemfile.lock: found 1 package
+					Using config at fixtures/my-config.yml (1 ignore)
+					no known vulnerabilities found
+
+				fixtures/configs-two/yarn.lock: found 0 packages
+					Using config at fixtures/my-config.yml (1 ignore)
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
+		{
+			name:         "",
+			args:         []string{"--config", "fixtures/my-config.yml", "./fixtures/configs-one/yarn.lock", "./fixtures/locks-many"},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				./fixtures/configs-one/yarn.lock: found 0 packages
+					Using config at fixtures/my-config.yml (1 ignore)
+					no known vulnerabilities found
+
+				fixtures/locks-many/Gemfile.lock: found 1 package
+					Using config at fixtures/my-config.yml (1 ignore)
+					no known vulnerabilities found
+
+				fixtures/locks-many/composer.lock: found 1 package
+					Using config at fixtures/my-config.yml (1 ignore)
+					no known vulnerabilities found
+
+				fixtures/locks-many/yarn.lock: found 1 package
+					Using config at fixtures/my-config.yml (1 ignore)
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
 	}
 	for _, tt := range tests {
 		tt := tt
