@@ -268,10 +268,12 @@ func TestRun_Lockfile(t *testing.T) {
 			args:         []string{"./fixtures/locks-one"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/locks-one/yarn.lock: found 1 package
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 			`,
 			wantStderr: "",
@@ -281,18 +283,30 @@ func TestRun_Lockfile(t *testing.T) {
 			args:         []string{"./fixtures/locks-many"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/locks-many/Gemfile.lock: found 1 package
+					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 
 				fixtures/locks-many/composer.lock: found 1 package
+					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 
 				fixtures/locks-many/yarn.lock: found 1 package
+					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 			`,
 			wantStderr: "",
@@ -302,15 +316,18 @@ func TestRun_Lockfile(t *testing.T) {
 			args:         []string{"./fixtures/locks-empty"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 
 				fixtures/locks-empty/Gemfile.lock: found 0 packages
+
 					no known vulnerabilities found
 
 				fixtures/locks-empty/composer.lock: found 0 packages
+
 					no known vulnerabilities found
 
 				fixtures/locks-empty/yarn.lock: found 0 packages
+
 					no known vulnerabilities found
 			`,
 			wantStderr: "",
@@ -321,10 +338,12 @@ func TestRun_Lockfile(t *testing.T) {
 			args:         []string{"--parse-as", "package-lock.json", "./fixtures/locks-insecure/my-package-lock.json"},
 			wantExitCode: 1,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
@@ -341,10 +360,12 @@ func TestRun_Lockfile(t *testing.T) {
 				{"results":[{"filePath":"fixtures/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm","vulnerabilities":[],"ignored":[]}]}]}
 			`,
 			wantStderr: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
           npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/locks-one/yarn.lock: found 1 package
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 			`,
 		},
 	}
@@ -442,10 +463,12 @@ func TestRun_ParseAs(t *testing.T) {
 			args:         []string{"--parse-as", "package-lock.json", "./fixtures/locks-insecure/my-package-lock.json"},
 			wantExitCode: 1,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
@@ -459,13 +482,17 @@ func TestRun_ParseAs(t *testing.T) {
 			args:         []string{"--parse-as", "package-lock.json", "./fixtures/locks-insecure"},
 			wantExitCode: 1,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/locks-insecure/composer.lock: found 0 packages
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 
 				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
@@ -479,10 +506,11 @@ func TestRun_ParseAs(t *testing.T) {
 			args:         []string{"--parse-as", "package-lock.json", "./fixtures/locks-empty"},
 			wantExitCode: 127,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 
 
 				fixtures/locks-empty/composer.lock: found 0 packages
+
 					no known vulnerabilities found
 
 			`,
@@ -497,18 +525,24 @@ func TestRun_ParseAs(t *testing.T) {
 			args:         []string{"--parse-as", "package-lock.json", "./fixtures/locks-empty", "./fixtures/locks-insecure"},
 			wantExitCode: 127,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 
 				fixtures/locks-empty/composer.lock: found 0 packages
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 
 
 				fixtures/locks-insecure/composer.lock: found 0 packages
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 
 				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
@@ -710,10 +744,11 @@ func TestRun_Configs(t *testing.T) {
 			args:         []string{"./fixtures/configs-one/yarn.lock"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 
 				fixtures/configs-one/yarn.lock: found 0 packages
 					Using config at fixtures/configs-one/.osv-detector.yaml (0 ignores)
+
 					no known vulnerabilities found
 			`,
 			wantStderr: "",
@@ -723,10 +758,11 @@ func TestRun_Configs(t *testing.T) {
 			args:         []string{"./fixtures/configs-two/yarn.lock"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 
 				fixtures/configs-two/yarn.lock: found 0 packages
 					Using config at fixtures/configs-two/.osv-detector.yaml (0 ignores)
+
 					no known vulnerabilities found
 			`,
 			wantStderr: "",
@@ -737,10 +773,11 @@ func TestRun_Configs(t *testing.T) {
 			args:         []string{"./fixtures/configs-one"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 
 				fixtures/configs-one/yarn.lock: found 0 packages
 					Using config at fixtures/configs-one/.osv-detector.yaml (0 ignores)
+
 					no known vulnerabilities found
 			`,
 			wantStderr: "",
@@ -750,15 +787,19 @@ func TestRun_Configs(t *testing.T) {
 			args:         []string{"./fixtures/configs-two"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/configs-two/Gemfile.lock: found 1 package
 					Using config at fixtures/configs-two/.osv-detector.yaml (0 ignores)
+					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 
 				fixtures/configs-two/yarn.lock: found 0 packages
 					Using config at fixtures/configs-two/.osv-detector.yaml (0 ignores)
+					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 			`,
 			wantStderr: "",
@@ -769,22 +810,38 @@ func TestRun_Configs(t *testing.T) {
 			args:         []string{"./fixtures/configs-one/yarn.lock", "./fixtures/locks-many"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/configs-one/yarn.lock: found 0 packages
 					Using config at fixtures/configs-one/.osv-detector.yaml (0 ignores)
+					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 
 				fixtures/locks-many/Gemfile.lock: found 1 package
+					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 
 				fixtures/locks-many/composer.lock: found 1 package
+					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 
 				fixtures/locks-many/yarn.lock: found 1 package
+					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 			`,
 			wantStderr: "",
@@ -795,10 +852,11 @@ func TestRun_Configs(t *testing.T) {
 			args:         []string{"--config", "fixtures/my-config.yml", "./fixtures/configs-one/yarn.lock"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 
 				fixtures/configs-one/yarn.lock: found 0 packages
 					Using config at fixtures/my-config.yml (1 ignore)
+
 					no known vulnerabilities found
 			`,
 			wantStderr: "",
@@ -808,15 +866,19 @@ func TestRun_Configs(t *testing.T) {
 			args:         []string{"--config", "fixtures/my-config.yml", "./fixtures/configs-two"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/configs-two/Gemfile.lock: found 1 package
 					Using config at fixtures/my-config.yml (1 ignore)
+					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 
 				fixtures/configs-two/yarn.lock: found 0 packages
 					Using config at fixtures/my-config.yml (1 ignore)
+					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 			`,
 			wantStderr: "",
@@ -826,25 +888,41 @@ func TestRun_Configs(t *testing.T) {
 			args:         []string{"--config", "fixtures/my-config.yml", "./fixtures/configs-one/yarn.lock", "./fixtures/locks-many"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/configs-one/yarn.lock: found 0 packages
 					Using config at fixtures/my-config.yml (1 ignore)
+					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 
 				fixtures/locks-many/Gemfile.lock: found 1 package
 					Using config at fixtures/my-config.yml (1 ignore)
+					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 
 				fixtures/locks-many/composer.lock: found 1 package
 					Using config at fixtures/my-config.yml (1 ignore)
+					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 
 				fixtures/locks-many/yarn.lock: found 1 package
 					Using config at fixtures/my-config.yml (1 ignore)
+					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 			`,
 			wantStderr: "",
@@ -856,19 +934,21 @@ func TestRun_Configs(t *testing.T) {
 			args:         []string{"./fixtures/configs-invalid", "./fixtures/locks-one"},
 			wantExitCode: 127,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 
 
 				fixtures/locks-one/yarn.lock: found 1 package
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 			`,
 			wantStderr: `
 				Error, could not read fixtures/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
-					line 1: cannot unmarshal !!str ` + "`ignore ...`" + ` into configer.Config
+					line 1: cannot unmarshal !!str ` + "`ignore ...`" + ` into configer.rawConfig
 				Error, could not read fixtures/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
-					line 1: cannot unmarshal !!str ` + "`ignore ...`" + ` into configer.Config
+					line 1: cannot unmarshal !!str ` + "`ignore ...`" + ` into configer.rawConfig
 			`,
 		},
 		// when a global config is invalid, none of the lockfiles should be checked
@@ -885,7 +965,7 @@ func TestRun_Configs(t *testing.T) {
 			wantStdout:   "",
 			wantStderr: `
 				Error, could not read fixtures/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
-					line 1: cannot unmarshal !!str ` + "`ignore ...`" + ` into configer.Config
+					line 1: cannot unmarshal !!str ` + "`ignore ...`" + ` into configer.rawConfig
 			`,
 		},
 	}
@@ -927,10 +1007,12 @@ func TestRun_Ignores(t *testing.T) {
 			args:         []string{"--ignore", "GHSA-1234", "--ignore", "GHSA-5678", "./fixtures/locks-one"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/locks-one/yarn.lock: found 1 package
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 			`,
 			wantStderr: "",
@@ -944,10 +1026,12 @@ func TestRun_Ignores(t *testing.T) {
 			},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no new vulnerabilities found (1 was ignored)
 			`,
 			wantStderr: "",
@@ -964,10 +1048,12 @@ func TestRun_Ignores(t *testing.T) {
 			},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no new vulnerabilities found (1 was ignored)
 			`,
 			wantStderr: "",
@@ -983,11 +1069,13 @@ func TestRun_Ignores(t *testing.T) {
 			},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/locks-insecure/my-package-lock.json: found 1 package
 					Using config at fixtures/my-config.yml (1 ignore)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no new vulnerabilities found (1 was ignored)
 			`,
 			wantStderr: "",
