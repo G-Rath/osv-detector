@@ -17,15 +17,7 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          cache: true
 
       - run: make test
   test-macos:
@@ -36,15 +28,7 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/Library/Caches/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          cache: true
 
       - run: make test
   test-windows:
@@ -55,15 +39,7 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            %LocalAppData%\go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          cache: true
 
       - run: make test
   golangci-lint:
@@ -75,6 +51,7 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
+          cache: true
 
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v3
@@ -101,15 +78,7 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          cache: true
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
