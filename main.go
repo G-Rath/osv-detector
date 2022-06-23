@@ -11,6 +11,7 @@ import (
 	"osv-detector/pkg/database"
 	"osv-detector/pkg/lockfile"
 	"path"
+	"sort"
 )
 
 // these come from goreleaser
@@ -181,6 +182,10 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs s
 	if err != nil {
 		r.PrintError(fmt.Sprintf("Error reading %s: %v\n", pathToLockOrDirectory, err))
 	}
+
+	sort.Slice(lockfiles, func(i, j int) bool {
+		return lockfiles[i] < lockfiles[j]
+	})
 
 	return lockfiles
 }
