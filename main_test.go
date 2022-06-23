@@ -126,6 +126,39 @@ func TestRun(t *testing.T) {
 				You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)
 			`,
 		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ec, stdout, stderr := runCLI(t, tt.args)
+
+			if ec != tt.wantExitCode {
+				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
+			}
+
+			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
+				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
+			}
+
+			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
+				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
+			}
+		})
+	}
+}
+
+func TestRun_Lockfile(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name         string
+		args         []string
+		wantExitCode int
+		wantStdout   string
+		wantStderr   string
+	}{
 		{
 			name:         "",
 			args:         []string{"./fixtures/locks-one"},
