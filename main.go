@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/fatih/color"
+	"io"
 	"os"
 	"osv-detector/internal"
 	"osv-detector/internal/configer"
@@ -357,28 +358,30 @@ func loadDatabases(
 	return dbs, errored
 }
 
-func run() int {
+func run(args []string, stdout, stderr io.Writer) int {
 	var ignores stringsFlag
+	cli := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 
-	offline := flag.Bool("offline", false, "Perform checks using only the cached databases on disk")
-	parseAs := flag.String("parse-as", "", "Name of a supported lockfile to parse the input files as")
-	configPath := flag.String("config", "", "Path to a config file to use for all lockfiles")
-	noConfig := flag.Bool("no-config", false, "Disable loading of any config files")
-	printVersion := flag.Bool("version", false, "Print version information")
-	listEcosystems := flag.Bool("list-ecosystems", false, "List all of the known ecosystems that are supported by the detector")
-	listPackages := flag.Bool("list-packages", false, "List the packages that are parsed from the input files")
-	cacheAllDatabases := flag.Bool("cache-all-databases", false, "Cache all the known ecosystem databases for offline use")
-	outputAsJSON := flag.Bool("json", false, "Output the results in JSON format")
-	useDatabases := flag.Bool("use-dbs", true, "Use the databases from osv.dev to check for known vulnerabilities")
-	useAPI := flag.Bool("use-api", false, "Use the osv.dev API to check for known vulnerabilities")
-	batchSize := flag.Int("batch-size", 1000, "The number of packages to include in each batch when using the api database")
+	offline := cli.Bool("offline", false, "Perform checks using only the cached databases on disk")
+	parseAs := cli.String("parse-as", "", "Name of a supported lockfile to parse the input files as")
+	configPath := cli.String("config", "", "Path to a config file to use for all lockfiles")
+	noConfig := cli.Bool("no-config", false, "Disable loading of any config files")
+	printVersion := cli.Bool("version", false, "Print version information")
+	listEcosystems := cli.Bool("list-ecosystems", false, "List all of the known ecosystems that are supported by the detector")
+	listPackages := cli.Bool("list-packages", false, "List the packages that are parsed from the input files")
+	cacheAllDatabases := cli.Bool("cache-all-databases", false, "Cache all the known ecosystem databases for offline use")
+	outputAsJSON := cli.Bool("json", false, "Output the results in JSON format")
+	useDatabases := cli.Bool("use-dbs", true, "Use the databases from osv.dev to check for known vulnerabilities")
+	useAPI := cli.Bool("use-api", false, "Use the osv.dev API to check for known vulnerabilities")
+	batchSize := cli.Int("batch-size", 1000, "The number of packages to include in each batch when using the api database")
 
-	flag.Var(&ignores, "ignore", `ID of an OSV to ignore when determining exit codes.
+	cli.Var(&ignores, "ignore", `ID of an OSV to ignore when determining exit codes.
 This flag can be passed multiple times to ignore different vulnerabilities`)
 
-	flag.Parse()
+	// cli is set for ExitOnError so this will never return an error
+	_ = cli.Parse(args)
 
-	r := reporter.New(os.Stdout, os.Stderr, *outputAsJSON)
+	r := reporter.New(stdout, stderr, *outputAsJSON)
 	if *outputAsJSON {
 		defer r.PrintJSONResults()
 	}
@@ -422,7 +425,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		}
 	}
 
-	pathsToLocks := findAllLockfiles(r, flag.Args(), *parseAs)
+	pathsToLocks := findAllLockfiles(r, cli.Args(), *parseAs)
 
 	if len(pathsToLocks) == 0 {
 		r.PrintError(
@@ -520,5 +523,5 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 }
 
 func main() {
-	os.Exit(run())
+	os.Exit(run(os.Args[1:], os.Stdout, os.Stderr))
 }
