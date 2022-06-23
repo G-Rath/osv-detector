@@ -178,6 +178,139 @@ func TestRun(t *testing.T) {
 			`,
 			wantStderr: "",
 		},
+		// parse-as + known vulnerability exits with error code 1
+		{
+			name:         "",
+			args:         []string{"--parse-as", "package-lock.json", "./fixtures/locks-insecure/my-package-lock.json"},
+			wantExitCode: 1,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				./fixtures/locks-insecure/my-package-lock.json: found 1 package
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in ./fixtures/locks-insecure/my-package-lock.json
+			`,
+			wantStderr: "",
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ec, stdout, stderr := runCLI(t, tt.args)
+
+			if ec != tt.wantExitCode {
+				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
+			}
+
+			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
+				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
+			}
+
+			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
+				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
+			}
+		})
+	}
+}
+
+func TestRun_ParseAs(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name         string
+		args         []string
+		wantExitCode int
+		wantStdout   string
+		wantStderr   string
+	}{
+		// when a path to a file is given, parse-as is applied to that file
+		{
+			name:         "",
+			args:         []string{"--parse-as", "package-lock.json", "./fixtures/locks-insecure/my-package-lock.json"},
+			wantExitCode: 1,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				./fixtures/locks-insecure/my-package-lock.json: found 1 package
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in ./fixtures/locks-insecure/my-package-lock.json
+			`,
+			wantStderr: "",
+		},
+		// when a path to a directory is given, parse-as is applied to all files in the directory
+		{
+			name:         "",
+			args:         []string{"--parse-as", "package-lock.json", "./fixtures/locks-insecure"},
+			wantExitCode: 1,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/composer.lock: found 0 packages
+					no known vulnerabilities found
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+			`,
+			wantStderr: "",
+		},
+		// files that error on parsing don't stop parsable files from being checked
+		{
+			name:         "",
+			args:         []string{"--parse-as", "package-lock.json", "./fixtures/locks-empty"},
+			wantExitCode: 127,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+
+
+				fixtures/locks-empty/composer.lock: found 0 packages
+					no known vulnerabilities found
+
+			`,
+			wantStderr: `
+				Error, could not parse fixtures/locks-empty/Gemfile.lock: unexpected end of JSON input
+				Error, could not parse fixtures/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+			`,
+		},
+		// files that error on parsing don't stop parsable files from being checked
+		{
+			name:         "",
+			args:         []string{"--parse-as", "package-lock.json", "./fixtures/locks-empty", "./fixtures/locks-insecure"},
+			wantExitCode: 127,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+
+				fixtures/locks-empty/composer.lock: found 0 packages
+					no known vulnerabilities found
+
+
+				fixtures/locks-insecure/composer.lock: found 0 packages
+					no known vulnerabilities found
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+			`,
+			wantStderr: `
+				Error, could not parse fixtures/locks-empty/Gemfile.lock: unexpected end of JSON input
+				Error, could not parse fixtures/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+			`,
+		},
 	}
 	for _, tt := range tests {
 		tt := tt
