@@ -200,3 +200,121 @@ func TestRun(t *testing.T) {
 		})
 	}
 }
+
+func TestRun_Configs(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name         string
+		args         []string
+		wantExitCode int
+		wantStdout   string
+		wantStderr   string
+	}{
+		// when given a path to a single lockfile, the local config should be used
+		{
+			name:         "",
+			args:         []string{"./fixtures/configs-one/yarn.lock"},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+
+				./fixtures/configs-one/yarn.lock: found 0 packages
+					Using config at fixtures/configs-one/.osv-detector.yaml (0 ignores)
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
+		{
+			name:         "",
+			args:         []string{"./fixtures/configs-two/yarn.lock"},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+
+				./fixtures/configs-two/yarn.lock: found 0 packages
+					Using config at fixtures/configs-two/.osv-detector.yaml (0 ignores)
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
+		// when given a path to a directory, the local config should be used for all lockfiles
+		{
+			name:         "",
+			args:         []string{"./fixtures/configs-one"},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+
+				fixtures/configs-one/yarn.lock: found 0 packages
+					Using config at fixtures/configs-one/.osv-detector.yaml (0 ignores)
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
+		{
+			name:         "",
+			args:         []string{"./fixtures/configs-two"},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/configs-two/Gemfile.lock: found 1 package
+					Using config at fixtures/configs-two/.osv-detector.yaml (0 ignores)
+					no known vulnerabilities found
+
+				fixtures/configs-two/yarn.lock: found 0 packages
+					Using config at fixtures/configs-two/.osv-detector.yaml (0 ignores)
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
+		// local configs should be applied based on directory of each lockfile
+		{
+			name:         "",
+			args:         []string{"./fixtures/configs-one/yarn.lock", "./fixtures/locks-many"},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				./fixtures/configs-one/yarn.lock: found 0 packages
+					Using config at fixtures/configs-one/.osv-detector.yaml (0 ignores)
+					no known vulnerabilities found
+
+				fixtures/locks-many/Gemfile.lock: found 1 package
+					no known vulnerabilities found
+
+				fixtures/locks-many/composer.lock: found 1 package
+					no known vulnerabilities found
+
+				fixtures/locks-many/yarn.lock: found 1 package
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ec, stdout, stderr := runCLI(t, tt.args)
+
+			if ec != tt.wantExitCode {
+				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
+			}
+
+			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
+				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
+			}
+
+			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
+				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
+			}
+		})
+	}
+}
