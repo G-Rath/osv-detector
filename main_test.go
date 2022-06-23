@@ -165,9 +165,6 @@ func TestRun_ListPackages(t *testing.T) {
 			args:         []string{"--list-packages", "./fixtures/locks-one"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
-					npm (%% vulnerabilities, including withdrawn - last updated %%)
-
 				fixtures/locks-one/yarn.lock: found 1 package
 					npm: balanced-match@1.0.2
 			`,
@@ -178,11 +175,6 @@ func TestRun_ListPackages(t *testing.T) {
 			args:         []string{"--list-packages", "./fixtures/locks-many"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
-					RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
-					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
-					npm (%% vulnerabilities, including withdrawn - last updated %%)
-
 				fixtures/locks-many/Gemfile.lock: found 1 package
 					RubyGems: ast@2.4.2
 				fixtures/locks-many/composer.lock: found 1 package
@@ -197,8 +189,6 @@ func TestRun_ListPackages(t *testing.T) {
 			args:         []string{"--list-packages", "./fixtures/locks-empty"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
-
 				fixtures/locks-empty/Gemfile.lock: found 0 packages
 
 				fixtures/locks-empty/composer.lock: found 0 packages
@@ -216,9 +206,6 @@ func TestRun_ListPackages(t *testing.T) {
 				{"results":[{"filePath":"fixtures/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm"}]}]}
 			`,
 			wantStderr: `
-				Loading OSV databases for the following ecosystems:
-          npm (%% vulnerabilities, including withdrawn - last updated %%)
-
 				fixtures/locks-one/yarn.lock: found 1 package
 			`,
 		},

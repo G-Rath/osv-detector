@@ -325,12 +325,20 @@ func collectEcosystems(files []lockfileAndConfigOrErr) []internal.Ecosystem {
 func loadDatabases(
 	r *reporter.Reporter,
 	ecosystems []internal.Ecosystem,
+	listPackages bool,
 	useDatabases bool,
 	useAPI bool,
 	batchSize int,
 	offline bool,
 ) (OSVDatabases, bool) {
 	var dbs OSVDatabases
+
+	// an easy dirty little optimisation: we don't need any databases
+	// if we're going to be listing packages, so return the empty slice
+	if listPackages {
+		return dbs, false
+	}
+
 	errored := false
 
 	if useDatabases {
@@ -440,7 +448,10 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 	var config configer.Config
 	loadLocalConfig := !*noConfig
 
-	if loadLocalConfig && *configPath != "" {
+	// if we're listing packages, then we don't need to do _any_ config loading
+	if *listPackages {
+		loadLocalConfig = false
+	} else if loadLocalConfig && *configPath != "" {
 		con, err := configer.Load(*configPath)
 
 		if err != nil {
@@ -460,6 +471,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 	dbs, errored := loadDatabases(
 		r,
 		ecosystems,
+		*listPackages,
 		*useDatabases,
 		*useAPI,
 		*batchSize,
