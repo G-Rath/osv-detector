@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"os"
+	"path"
 )
 
 type Config struct {
@@ -47,6 +48,8 @@ func Find(pathToDirectory string) (Config, error) {
 
 func Load(pathToConfig string) (Config, error) {
 	var config Config
+
+	pathToConfig = path.Clean(pathToConfig)
 
 	config.FilePath = pathToConfig
 

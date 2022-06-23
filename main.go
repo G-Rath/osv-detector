@@ -199,7 +199,9 @@ func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs strin
 	}
 
 	for _, pathToLockOrDirectory := range pathsToCheck {
-		paths = append(paths, findLockfiles(r, pathToLockOrDirectory, parseAs)...)
+		for _, p := range findLockfiles(r, pathToLockOrDirectory, parseAs) {
+			paths = append(paths, path.Clean(p))
+		}
 	}
 
 	return paths
