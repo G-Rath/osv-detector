@@ -303,11 +303,11 @@ func TestRun_Lockfile(t *testing.T) {
 				Loading OSV databases for the following ecosystems:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				./fixtures/locks-insecure/my-package-lock.json: found 1 package
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
-					1 known vulnerability found in ./fixtures/locks-insecure/my-package-lock.json
+					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
 			`,
 			wantStderr: "",
 		},
@@ -368,11 +368,11 @@ func TestRun_ParseAs(t *testing.T) {
 				Loading OSV databases for the following ecosystems:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				./fixtures/locks-insecure/my-package-lock.json: found 1 package
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
-					1 known vulnerability found in ./fixtures/locks-insecure/my-package-lock.json
+					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
 			`,
 			wantStderr: "",
 		},
@@ -483,7 +483,7 @@ func TestRun_Configs(t *testing.T) {
 			wantStdout: `
 				Loading OSV databases for the following ecosystems:
 
-				./fixtures/configs-one/yarn.lock: found 0 packages
+				fixtures/configs-one/yarn.lock: found 0 packages
 					Using config at fixtures/configs-one/.osv-detector.yaml (0 ignores)
 					no known vulnerabilities found
 			`,
@@ -496,7 +496,7 @@ func TestRun_Configs(t *testing.T) {
 			wantStdout: `
 				Loading OSV databases for the following ecosystems:
 
-				./fixtures/configs-two/yarn.lock: found 0 packages
+				fixtures/configs-two/yarn.lock: found 0 packages
 					Using config at fixtures/configs-two/.osv-detector.yaml (0 ignores)
 					no known vulnerabilities found
 			`,
@@ -545,7 +545,7 @@ func TestRun_Configs(t *testing.T) {
 					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				./fixtures/configs-one/yarn.lock: found 0 packages
+				fixtures/configs-one/yarn.lock: found 0 packages
 					Using config at fixtures/configs-one/.osv-detector.yaml (0 ignores)
 					no known vulnerabilities found
 
@@ -568,7 +568,7 @@ func TestRun_Configs(t *testing.T) {
 			wantStdout: `
 				Loading OSV databases for the following ecosystems:
 
-				./fixtures/configs-one/yarn.lock: found 0 packages
+				fixtures/configs-one/yarn.lock: found 0 packages
 					Using config at fixtures/my-config.yml (1 ignore)
 					no known vulnerabilities found
 			`,
@@ -602,7 +602,7 @@ func TestRun_Configs(t *testing.T) {
 					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				./fixtures/configs-one/yarn.lock: found 0 packages
+				fixtures/configs-one/yarn.lock: found 0 packages
 					Using config at fixtures/my-config.yml (1 ignore)
 					no known vulnerabilities found
 
@@ -655,7 +655,7 @@ func TestRun_Configs(t *testing.T) {
 			wantExitCode: 127,
 			wantStdout: "",
 			wantStderr: `
-				Error, could not read ./fixtures/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
+				Error, could not read fixtures/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
 					line 1: cannot unmarshal !!str ` + "`ignore ...`" + ` into configer.Config
 			`,
 		},
@@ -718,7 +718,7 @@ func TestRun_Ignores(t *testing.T) {
 				Loading OSV databases for the following ecosystems:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				./fixtures/locks-insecure/my-package-lock.json: found 1 package
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
 					no new vulnerabilities found (1 was ignored)
 			`,
 			wantStderr: "",
@@ -738,7 +738,7 @@ func TestRun_Ignores(t *testing.T) {
 				Loading OSV databases for the following ecosystems:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				./fixtures/locks-insecure/my-package-lock.json: found 1 package
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
 					no new vulnerabilities found (1 was ignored)
 			`,
 			wantStderr: "",
@@ -757,8 +757,8 @@ func TestRun_Ignores(t *testing.T) {
 				Loading OSV databases for the following ecosystems:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				./fixtures/locks-insecure/my-package-lock.json: found 1 package
-					Using config at ./fixtures/my-config.yml (1 ignore)
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using config at fixtures/my-config.yml (1 ignore)
 					no new vulnerabilities found (1 was ignored)
 			`,
 			wantStderr: "",
