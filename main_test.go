@@ -117,6 +117,67 @@ func TestRun(t *testing.T) {
 					csv-row
 			`,
 		},
+		{
+			name:         "",
+			args:         []string{"./fixtures/locks-none"},
+			wantExitCode: 127,
+			wantStdout:   "",
+			wantStderr: `
+				You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)
+			`,
+		},
+		{
+			name:         "",
+			args:         []string{"./fixtures/locks-one"},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-one/yarn.lock: found 1 package
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
+		{
+			name:         "",
+			args:         []string{"./fixtures/locks-many"},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-many/Gemfile.lock: found 1 package
+					no known vulnerabilities found
+
+				fixtures/locks-many/composer.lock: found 1 package
+					no known vulnerabilities found
+
+				fixtures/locks-many/yarn.lock: found 1 package
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
+		{
+			name:         "",
+			args:         []string{"./fixtures/locks-empty"},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+
+				fixtures/locks-empty/Gemfile.lock: found 0 packages
+					no known vulnerabilities found
+
+				fixtures/locks-empty/composer.lock: found 0 packages
+					no known vulnerabilities found
+
+				fixtures/locks-empty/yarn.lock: found 0 packages
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
 	}
 	for _, tt := range tests {
 		tt := tt
