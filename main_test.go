@@ -149,6 +149,101 @@ func TestRun(t *testing.T) {
 	}
 }
 
+func TestRun_ListPackages(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name         string
+		args         []string
+		wantExitCode int
+		wantStdout   string
+		wantStderr   string
+	}{
+		{
+			name:         "",
+			args:         []string{"--list-packages", "./fixtures/locks-one"},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-one/yarn.lock: found 1 package
+					npm: balanced-match@1.0.2
+			`,
+			wantStderr: "",
+		},
+		{
+			name:         "",
+			args:         []string{"--list-packages", "./fixtures/locks-many"},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-many/Gemfile.lock: found 1 package
+					RubyGems: ast@2.4.2
+				fixtures/locks-many/composer.lock: found 1 package
+					Packagist: sentry/sdk@2.0.4 (4c115873c86ad5bd0ac6d962db70ca53bf8fb874)
+				fixtures/locks-many/yarn.lock: found 1 package
+					npm: balanced-match@1.0.2
+			`,
+			wantStderr: "",
+		},
+		{
+			name:         "",
+			args:         []string{"--list-packages", "./fixtures/locks-empty"},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+
+				fixtures/locks-empty/Gemfile.lock: found 0 packages
+
+				fixtures/locks-empty/composer.lock: found 0 packages
+
+				fixtures/locks-empty/yarn.lock: found 0 packages
+			`,
+			wantStderr: "",
+		},
+		// json results in non-json output going to stderr
+		{
+			name:         "",
+			args:         []string{"--list-packages", "--json", "./fixtures/locks-one"},
+			wantExitCode: 0,
+			wantStdout: `
+				{"results":[{"filePath":"fixtures/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm"}]}]}
+			`,
+			wantStderr: `
+				Loading OSV databases for the following ecosystems:
+          npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-one/yarn.lock: found 1 package
+			`,
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ec, stdout, stderr := runCLI(t, tt.args)
+
+			if ec != tt.wantExitCode {
+				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
+			}
+
+			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
+				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
+			}
+
+			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
+				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
+			}
+		})
+	}
+}
+
 func TestRun_Lockfile(t *testing.T) {
 	t.Parallel()
 
