@@ -511,3 +511,107 @@ func TestRun_Configs(t *testing.T) {
 		})
 	}
 }
+
+func TestRun_Ignores(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name         string
+		args         []string
+		wantExitCode int
+		wantStdout   string
+		wantStderr   string
+	}{
+		// no ignore count is printed if there is nothing ignored
+		{
+			name:         "",
+			args:         []string{"--ignore", "GHSA-1234", "--ignore", "GHSA-5678", "./fixtures/locks-one"},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-one/yarn.lock: found 1 package
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
+		{
+			name: "",
+			args: []string{
+				"--ignore", "GHSA-whgm-jr23-g3j9",
+				"--parse-as", "package-lock.json",
+				"./fixtures/locks-insecure/my-package-lock.json",
+			},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				./fixtures/locks-insecure/my-package-lock.json: found 1 package
+					no new vulnerabilities found (1 was ignored)
+			`,
+			wantStderr: "",
+		},
+		// the ignored count reflects the number of vulnerabilities ignored,
+		// not the number of ignores that were provided
+		{
+			name: "",
+			args: []string{
+				"--ignore", "GHSA-whgm-jr23-g3j9",
+				"--ignore", "GHSA-whgm-jr23-1234",
+				"--parse-as", "package-lock.json",
+				"./fixtures/locks-insecure/my-package-lock.json",
+			},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				./fixtures/locks-insecure/my-package-lock.json: found 1 package
+					no new vulnerabilities found (1 was ignored)
+			`,
+			wantStderr: "",
+		},
+		// ignores passed by flags are _merged_ with those specified in configs
+		{
+			name: "",
+			args: []string{
+				"--config", "./fixtures/my-config.yml",
+				"--ignore", "GHSA-1234",
+				"--parse-as", "package-lock.json",
+				"./fixtures/locks-insecure/my-package-lock.json",
+			},
+			wantExitCode: 0,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				./fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using config at ./fixtures/my-config.yml (1 ignore)
+					no new vulnerabilities found (1 was ignored)
+			`,
+			wantStderr: "",
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ec, stdout, stderr := runCLI(t, tt.args)
+
+			if ec != tt.wantExitCode {
+				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
+			}
+
+			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
+				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
+			}
+
+			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
+				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
+			}
+		})
+	}
+}
