@@ -522,6 +522,45 @@ func TestRun_Configs(t *testing.T) {
 			`,
 			wantStderr: "",
 		},
+		// when a local config is invalid, none of the lockfiles in that directory should
+		// be checked (as the results could be different due to e.g. missing ignores)
+		{
+			name:         "",
+			args:         []string{"./fixtures/configs-invalid", "./fixtures/locks-one"},
+			wantExitCode: 127,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+
+
+				fixtures/locks-one/yarn.lock: found 1 package
+					no known vulnerabilities found
+			`,
+			wantStderr: `
+				Error, could not read fixtures/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
+					line 1: cannot unmarshal !!str ` + "`ignore ...`" + ` into configer.Config
+				Error, could not read fixtures/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
+					line 1: cannot unmarshal !!str ` + "`ignore ...`" + ` into configer.Config
+			`,
+		},
+		// when a global config is invalid, none of the lockfiles should be checked
+		// (as the results could be different due to e.g. missing ignores)
+		{
+			name: "",
+			args: []string{
+				"--config", "./fixtures/configs-invalid/.osv-detector.yaml",
+				"./fixtures/configs-invalid",
+				"./fixtures/locks-one",
+				"./fixtures/locks-many",
+			},
+			wantExitCode: 127,
+			wantStdout: "",
+			wantStderr: `
+				Error, could not read ./fixtures/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
+					line 1: cannot unmarshal !!str ` + "`ignore ...`" + ` into configer.Config
+			`,
+		},
 	}
 	for _, tt := range tests {
 		tt := tt
