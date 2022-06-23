@@ -228,6 +228,21 @@ func TestRun_Lockfile(t *testing.T) {
 			`,
 			wantStderr: "",
 		},
+		// json results in non-json output going to stderr
+		{
+			name:         "",
+			args:         []string{"--json", "./fixtures/locks-one"},
+			wantExitCode: 0,
+			wantStdout: `
+				{"results":[{"filePath":"fixtures/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm","vulnerabilities":[],"ignored":[]}]}]}
+			`,
+			wantStderr: `
+				Loading OSV databases for the following ecosystems:
+          npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-one/yarn.lock: found 1 package
+			`,
+		},
 	}
 	for _, tt := range tests {
 		tt := tt
