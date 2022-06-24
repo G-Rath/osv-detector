@@ -17,7 +17,7 @@ func ParseMixLock(pathToLockfile string) ([]PackageDetails, error) {
 	}
 	defer file.Close()
 
-	re := regexp.MustCompile(`^ +"\w+": \{`)
+	re := regexp.MustCompile(`^ +"(\w+)": \{.+,$`)
 
 	scanner := bufio.NewScanner(file)
 
@@ -26,11 +26,13 @@ func ParseMixLock(pathToLockfile string) ([]PackageDetails, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if !re.MatchString(line) {
+		match := re.FindStringSubmatch(line)
+
+		if match == nil {
 			continue
 		}
 
-		// we only care about the second, third, and fourth "rows" which are all strings,
+		// we only care about the third and fourth "rows" which are both strings,
 		// so we can safely split the line as if it's a set of comma-separated fields
 		// even though that'll actually poorly represent nested arrays & objects
 		fields := strings.FieldsFunc(line, func(r rune) bool {
@@ -46,13 +48,17 @@ func ParseMixLock(pathToLockfile string) ([]PackageDetails, error) {
 			continue
 		}
 
-		name := strings.TrimSpace(fields[1])
+		name := match[1]
 		version := strings.TrimSpace(fields[2])
 		commit := strings.TrimSpace(fields[3])
 
-		name = strings.TrimPrefix(name, ":")
 		version = strings.TrimSuffix(strings.TrimPrefix(version, `"`), `"`)
 		commit = strings.TrimSuffix(strings.TrimPrefix(commit, `"`), `"`)
+
+		if strings.HasSuffix(fields[0], ":git") {
+			commit = version
+			version = ""
+		}
 
 		packages = append(packages, PackageDetails{
 			Name:      name,

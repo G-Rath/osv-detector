@@ -208,3 +208,34 @@ func TestParseMixLock_Many(t *testing.T) {
 		},
 	})
 }
+
+func TestParseMixLock_GitPackages(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParseMixLock("fixtures/mix/git.lock")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "foe",
+			Version:   "",
+			Ecosystem: lockfile.MixEcosystem,
+			Commit:    "a9574ab75d6ed01e1288c453ae1d943d7a964595",
+		},
+		{
+			Name:      "foo",
+			Version:   "",
+			Ecosystem: lockfile.MixEcosystem,
+			Commit:    "fc94cce7830fa4dc455024bc2a83720afe244531",
+		},
+		{
+			Name:      "bar",
+			Version:   "",
+			Ecosystem: lockfile.MixEcosystem,
+			Commit:    "bef3ee1d3618017061498b96c75043e8449ef9b5",
+		},
+	})
+}
