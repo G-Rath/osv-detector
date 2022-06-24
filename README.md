@@ -62,7 +62,8 @@ This allows the detector to be very fast and work offline, but does not support
 commits which means the detector can report false positives when using git-based
 dependencies.
 
-You can disable using the offline databases by passing `--use-dbs=false`.
+You can disable dynamically loading the ecosystem databases by passing
+`--use-dbs=false`.
 
 You can also have the detector use the `osv.dev` API to check for known
 vulnerabilities by supplying the `--use-api` flag. The API is very fast,
@@ -79,24 +80,21 @@ however it currently can produce false negatives for some ecosystems.
 You cannot use the API in `--offline` mode, but you can use both the offline
 databases and the API together; the detector will remove any duplicate results.
 
-Once packages have been parsed, the detector determines which ecosystem
-databases it needs to load from its cache. If an ecosystem database does not
-exist locally, or if the database is outdated, the detector downloads a new
-version and stores it for re-use.
+Once all the lockfiles have been pared, the detector will then determine all the
+databases to load - if `--use-dbs` is `true` (which it is by default) then this
+will include ecosystem specific databases based on the parsed packages.
+
+See [this section](#extra-databases) for details on how to configure extra
+databases for the detector to use.
+
+> Remotely sourced databases will be cached along with their etag and
+> last-modified date for future checks, to determine if those databases need to
+> be updated.
 
 By default, the detector will output the results to `stdout` as plain text, and
-exit with an error code of `1` if at least one vulnerability is found.
-
-you can use the `--ignore` flag to have the detector ignore a particular
-vulnerability - ignored vulnerabilities won't be included in the text output,
-and won't be counted when determining the code to exit with:
-
-```
-osv-detector --ignore GHSA-896r-f27r-55mw package-lock.json
-
-# you can pass multiple ignores
-osv-detector --ignore GHSA-896r-f27r-55mw --ignore GHSA-74fj-2j2h-c42q package-lock.json
-```
+exit with an error code of `1` if at least one vulnerability is found. See
+[here](#ignoring-certain-vulnerabilities) for how to configure the detector to
+ignore certain vulnerabilities.
 
 You can use the `--json` flag to have the detector output its results as JSON:
 
@@ -146,15 +144,10 @@ passed.
 
 ### Config files
 
-The detector supports loading ignores from a YAML file, which can be useful for
-tracking ignored vulnerabilities per-project:
-
-```yaml
-ignore:
-  - GHSA-4 # "Prototype pollution in xyz"
-  - GHSA-5 # "RegExp DDoS in abc"
-  - GHSA-6 # "Command injection in hjk"
-```
+The detector supports loading configuration details from a YAML file, which
+makes it easy to provide advanced settings (such as extra databases), provide a
+consistent results whenever the detector is run on a project, and provide an
+audit trail of ignored vulnerabilities (through version control).
 
 By default, the detector will look for a `.osv-detector.yaml` or
 `.osv-detector.yml` in the same folder as the current lockfile it's checking,
@@ -167,20 +160,125 @@ lockfiles being checked with the `--config` flag:
 osv-detector --config ruby-ignores.yml path/to/my/first-ruby-project path/to/my/second-ruby-project
 ```
 
-You can disable loading any configs with the `--no-config` flag.
+Finally, you can disable loading any configs with the `--no-config` flag.
 
-### Offline use
+#### Ignoring certain vulnerabilities
 
-When using the offline databases, the detector downloads the necessary ecosystem
-databases based on the packages being checked. These databases are cached along
-with the time they were last updated, to allow for offline use and to avoid
-bulky re-downloading of the same data.
+> Ignored vulnerabilities won't be included in the text output, and won't be
+> counted when determined the code to exit with.
 
-You can have the detector work purely in offline mode with the `--offline` flag:
+You can provide the detector with a list of IDs for OSVs to ignore when checking
+lockfiles with the `ignore` property:
+
+```yaml
+ignore:
+  - GHSA-4 # "Prototype pollution in xyz"
+  - GHSA-5 # "RegExp DDoS in abc"
+  - GHSA-6 # "Command injection in hjk"
+```
+
+You can also use the `--ignore` flag:
+
+```
+osv-detector --ignore GHSA-896r-f27r-55mw package-lock.json
+
+# you can pass multiple ignores
+osv-detector --ignore GHSA-896r-f27r-55mw --ignore GHSA-74fj-2j2h-c42q package-lock.json
+```
+
+Ignores provided via the flag will be combined with any ignores specified in the
+loaded config file.
+
+You can use `jq` to generate a list of OSV ids if you want to ignore all current
+known vulnerabilities found by the detector:
+
+```shell
+osv-detector-t --json . | jq -r  '.results[].packages | map("- " + .vulnerabilities[].id) | unique | sort | .[]'
+```
+
+#### Extra Databases
+
+You can configure the detector to use extra databases with the `extra-databases`
+property:
+
+```yaml
+extra-databases:
+  - url: https://github.com/github/advisory-database/archive/refs/heads/main.zip
+    name: GitHub Advisory Database
+    working-directory: 'advisory-database-main/advisories/github-reviewed' # only load the reviewed advisories
+```
+
+Each extra database must have a `url` property which specifies the source of the
+database (for local databases this must begin with `file:`), but all other
+properties are optional.
+
+The `url` should be either:
+
+- the path to a local directory, in which case the `url` must start with `file:`
+- a url for a remote zip archive; if the url does not end with `.zip`, you must
+  specify the `type` as `zip`
+  - if you host your OSV database as a repository on GitHub, it can be consumed
+    as a zip archive
+- a url for a rest API that implements the [osv.dev](https://osv.dev/docs/) API
+  - the `url` _should_ include the `/v1` e.g. if you wanted to use the `osv.dev`
+    staging API you would specify `https://api-staging.osv.dev/v1` as the `url`
+
+> The detector will attempt to detect the type of each database based on the
+> above, however you can explicitly provide the type if needed with the `type`
+> property (such as if you have a zip archive whose url does not end with
+> `.zip`)
+
+For the file based database sources (`dir` and `zip`), the detector will
+recursively load all `.json` files from the `working-directory` relative to the
+root of the database as OSVs.
+
+This is a very powerful feature as it enables you to create custom OSVs that can
+be easily consumed by multiple projects and that cover anything you want - for
+example you could write OSVs to check if you're using versions of packages that
+are now considered end of life.
+
+This can also be useful for drafting new OSVs or modifications to existing ones,
+and becomes even more powerful when combined with the ability to pass arbitrary
+package details, as you can have custom ecosystems and write custom tools to
+handle extracting the package details.
+
+Here are some further examples of `extra-databases`:
+
+```yaml
+extra-databases:
+  # include a specific osv.dev ecosystem database for any lockfiles being checked
+  - url: https://osv-vulnerabilities.storage.googleapis.com/OSS-Fuzz/all.zip
+    name: OSS-Fuzz
+
+  # include all the unreviewed advisories
+  - url: https://github.com/github/advisory-database/archive/refs/heads/main.zip
+    name: GitHub Advisory Database (unreviewed)
+    working-directory: 'advisory-database-main/advisories/unreviewed'
+
+  # include the osv staging api
+  - url: https://api-staging.osv.dev/v1
+    name: GitHub Advisory Database (unreviewed)
+
+  # include a local directory database (relative)
+  - url: file:/../relative/path/to/dir
+    name: My local database (relative)
+
+  # include a local directory database (root)
+  - url: file:////root/path/to/dir
+    name: My local database (root)
+```
+
+### Offline mode
+
+You can have the detector run purely in offline mode with the `--offline` flag:
 
 ```shell
 osv-detector --offline path/to/my/file.lock
 ```
+
+Remotely sourced databases can only be used in offline mode if they have been
+cached by the detector as part of a previous run, and API-based databases will
+be skipped entirely.
 
 You can have the detector cache the databases for all known ecosystems supported
 by the detector for later offline use with the `--cache-all-databases`:
