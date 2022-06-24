@@ -89,6 +89,7 @@ func TestParse_FindsExpectedParsers(t *testing.T) {
 		"composer.lock",
 		"Gemfile.lock",
 		"go.mod",
+		"mix.lock",
 		"pom.xml",
 		"requirements.txt",
 	}
