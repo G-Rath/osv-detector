@@ -137,6 +137,16 @@ func TestRun(t *testing.T) {
 				You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)
 			`,
 		},
+		// only the files in the given directories are checked (no recursion)
+		{
+			name:         "",
+			args:         []string{"./fixtures/"},
+			wantExitCode: 127,
+			wantStdout:   "",
+			wantStderr: `
+				You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)
+			`,
+		},
 	}
 	for _, tt := range tests {
 		tt := tt
