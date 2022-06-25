@@ -127,6 +127,16 @@ func TestRun(t *testing.T) {
 				You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)
 			`,
 		},
+		{
+			name:         "",
+			args:         []string{"./fixtures/does/not/exist"},
+			wantExitCode: 127,
+			wantStdout:   "",
+			wantStderr: `
+				Error reading ./fixtures/does/not/exist: open ./fixtures/does/not/exist: no such file or directory
+				You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)
+			`,
+		},
 	}
 	for _, tt := range tests {
 		tt := tt
