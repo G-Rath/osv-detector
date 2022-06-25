@@ -663,7 +663,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		}
 		r.PrintText("\n")
 
-		report := dbs.pick(config.Databases).check(r, lockf, allIgnores(config.Ignore, ignores))
+		report := picked.check(r, lockf, allIgnores(config.Ignore, ignores))
 
 		r.PrintResult(report)
 
