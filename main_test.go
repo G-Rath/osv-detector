@@ -132,8 +132,9 @@ func TestRun(t *testing.T) {
 			args:         []string{"./fixtures/does/not/exist"},
 			wantExitCode: 127,
 			wantStdout:   "",
+			// "file not found" message is different on Windows vs other OSs
 			wantStderr: `
-				Error reading ./fixtures/does/not/exist: open ./fixtures/does/not/exist: no such file or directory
+				Error reading ./fixtures/does/not/exist: open ./fixtures/does/not/exist: %%
 				You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)
 			`,
 		},
@@ -541,6 +542,66 @@ func TestRun_ParseAs(t *testing.T) {
 	}
 }
 
+func TestRun_ParseAs_CsvFile(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name         string
+		args         []string
+		wantExitCode int
+		wantStdout   string
+		wantStderr   string
+	}{
+		{
+			name:         "",
+			args:         []string{"--parse-as", "csv-file", "./fixtures/csvs-files/two-rows.csv"},
+			wantExitCode: 1,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					NuGet (%% vulnerabilities, including withdrawn - last updated %%)
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/csvs-files/two-rows.csv: found 2 packages
+					Yarp.ReverseProxy@ is affected by the following vulnerabilities:
+						GHSA-8xc6-g8xw-h2c4: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-8xc6-g8xw-h2c4)
+
+					1 known vulnerability found in fixtures/csvs-files/two-rows.csv
+			`,
+			wantStderr: "",
+		},
+		{
+			name:         "",
+			args:         []string{"--parse-as", "csv-file", "./fixtures/csvs-files/not-a-csv.xml"},
+			wantExitCode: 127,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+
+			`,
+			wantStderr: "Error, fixtures/csvs-files/not-a-csv.xml: row 1: not enough fields (missing at least ecosystem and package name)",
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ec, stdout, stderr := runCLI(t, tt.args)
+
+			if ec != tt.wantExitCode {
+				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
+			}
+
+			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
+				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
+			}
+
+			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
+				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
+			}
+		})
+	}
+}
+
 func TestRun_Configs(t *testing.T) {
 	t.Parallel()
 
@@ -729,7 +790,7 @@ func TestRun_Configs(t *testing.T) {
 				"./fixtures/locks-many",
 			},
 			wantExitCode: 127,
-			wantStdout: "",
+			wantStdout:   "",
 			wantStderr: `
 				Error, could not read fixtures/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
 					line 1: cannot unmarshal !!str ` + "`ignore ...`" + ` into configer.Config
