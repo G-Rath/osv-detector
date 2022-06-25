@@ -392,23 +392,22 @@ func (files *lockfileAndConfigOrErrs) addExtraDBConfigs(
 	addDefaultAPIDatabase bool,
 	addEcosystemDatabases bool,
 ) {
-	var extraDBConfigs []database.Config
-
-	if addDefaultAPIDatabase {
-		extraDBConfigs = append(extraDBConfigs, makeAPIDBConfig())
-	}
-
-	if addEcosystemDatabases {
-		ecosystems := collectEcosystems(*files)
-
-		for _, ecosystem := range ecosystems {
-			extraDBConfigs = append(extraDBConfigs, makeEcosystemDBConfig(ecosystem))
-		}
-	}
-
 	for _, file := range *files {
 		if file.err != nil {
 			continue
+		}
+		var extraDBConfigs []database.Config
+
+		if addDefaultAPIDatabase {
+			extraDBConfigs = append(extraDBConfigs, makeAPIDBConfig())
+		}
+
+		if addEcosystemDatabases {
+			ecosystems := collectEcosystems([]lockfileAndConfigOrErr{file})
+
+			for _, ecosystem := range ecosystems {
+				extraDBConfigs = append(extraDBConfigs, makeEcosystemDBConfig(ecosystem))
+			}
 		}
 
 		// a bit of a hack to let us reuse this method...
@@ -444,6 +443,16 @@ func readAllLockfiles(
 			}
 
 			config = &con
+		} else if config.FilePath != "" {
+			// if there's a global config, then copy it - otherwise all lockfiles
+			// will hold a reference to the same config, which can result in configs
+			// for ecosystem-specific databases being used unnecessarily for lockfiles
+			// that don't have any packages that are part of that ecosystem
+			config = &configer.Config{
+				FilePath:  config.FilePath,
+				Ignore:    config.Ignore,
+				Databases: config.Databases,
+			}
 		}
 
 		lockf, err := parseLockfile(pathToLock, parseAs, args)

@@ -290,21 +290,15 @@ func TestRun_Lockfile(t *testing.T) {
 
 				fixtures/locks-many/Gemfile.lock: found 1 package
 					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
 				fixtures/locks-many/composer.lock: found 1 package
-					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
 				fixtures/locks-many/yarn.lock: found 1 package
-					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
@@ -486,7 +480,6 @@ func TestRun_ParseAs(t *testing.T) {
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/locks-insecure/composer.lock: found 0 packages
-					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
@@ -530,13 +523,11 @@ func TestRun_ParseAs(t *testing.T) {
 
 
 				fixtures/locks-empty/composer.lock: found 0 packages
-					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
 
 				fixtures/locks-insecure/composer.lock: found 0 packages
-					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
@@ -798,7 +789,6 @@ func TestRun_Configs(t *testing.T) {
 
 				fixtures/configs-two/yarn.lock: found 0 packages
 					Using config at fixtures/configs-two/.osv-detector.yaml (0 ignores)
-					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 			`,
@@ -817,29 +807,20 @@ func TestRun_Configs(t *testing.T) {
 
 				fixtures/configs-one/yarn.lock: found 0 packages
 					Using config at fixtures/configs-one/.osv-detector.yaml (0 ignores)
-					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
 				fixtures/locks-many/Gemfile.lock: found 1 package
 					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
 				fixtures/locks-many/composer.lock: found 1 package
-					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
 				fixtures/locks-many/yarn.lock: found 1 package
-					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
@@ -877,7 +858,6 @@ func TestRun_Configs(t *testing.T) {
 
 				fixtures/configs-two/yarn.lock: found 0 packages
 					Using config at fixtures/my-config.yml (1 ignore)
-					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 			`,
@@ -895,32 +875,23 @@ func TestRun_Configs(t *testing.T) {
 
 				fixtures/configs-one/yarn.lock: found 0 packages
 					Using config at fixtures/my-config.yml (1 ignore)
-					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
 				fixtures/locks-many/Gemfile.lock: found 1 package
 					Using config at fixtures/my-config.yml (1 ignore)
 					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
 				fixtures/locks-many/composer.lock: found 1 package
 					Using config at fixtures/my-config.yml (1 ignore)
-					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
 				fixtures/locks-many/yarn.lock: found 1 package
 					Using config at fixtures/my-config.yml (1 ignore)
-					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
-					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
