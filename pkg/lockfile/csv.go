@@ -10,12 +10,12 @@ import (
 	"strings"
 )
 
-var errCSVRecordNotEnoughFields = errors.New("not enough fields (missing at least ecosystem and package name)")
+var errCSVRecordNotEnoughFields = errors.New("not enough fields (expected at least three)")
 var errCSVRecordMissingPackageField = errors.New("field 2 is empty (must be the name of a package)")
 var errCSVRecordMissingCommitField = errors.New("field 3 is empty (must be a commit)")
 
 func fromCSVRecord(lines []string) (PackageDetails, error) {
-	if len(lines) < 2 {
+	if len(lines) < 3 {
 		return PackageDetails{}, errCSVRecordNotEnoughFields
 	}
 

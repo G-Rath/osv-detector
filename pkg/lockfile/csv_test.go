@@ -217,6 +217,18 @@ func TestFromCSVRows_Errors(t *testing.T) {
 			},
 			wantErrMsg: "record on line 2: wrong number of fields",
 		},
+		{
+			name: "",
+			args: args{
+				filePath: "",
+				parseAs:  "",
+				rows: []string{
+					"NuGet,",
+					"npm,@typescript-eslint/types,5.13.0",
+				},
+			},
+			wantErrMsg: "row 1: not enough fields (expected at least three)",
+		},
 	}
 
 	for _, tt := range tests {
@@ -484,7 +496,7 @@ func TestFromCSVFile_Errors(t *testing.T) {
 				pathToCSV: "fixtures/csv/not-a-csv.xml",
 				parseAs:   "csv-file",
 			},
-			wantErrMsg: "fixtures/csv/not-a-csv.xml: row 1: not enough fields (missing at least ecosystem and package name)",
+			wantErrMsg: "fixtures/csv/not-a-csv.xml: row 1: not enough fields (expected at least three)",
 		},
 	}
 
