@@ -827,6 +827,25 @@ func TestRun_Configs(t *testing.T) {
 			`,
 			wantStderr: "",
 		},
+		// invalid databases should be skipped
+		{
+			name: "",
+			args: []string{"./fixtures/configs-extra-dbs/yarn.lock"},
+			wantExitCode: 127,
+			wantStdout: `
+				Loaded the following OSV databases:
+					api#https://example.com/v1 (using batches of 1000)
+					dir#file:/fixtures/configs-extra-dbs (0 vulnerabilities, including withdrawn)
+					zip#https://example.com/osvs/all
+				fixtures/configs-extra-dbs/yarn.lock: found 0 packages
+					Using config at fixtures/configs-extra-dbs/.osv-detector.yaml (0 ignores)
+					Using db api#https://example.com/v1 (using batches of 1000)
+					Using db dir#file:/fixtures/configs-extra-dbs (0 vulnerabilities, including withdrawn)
+
+					no known vulnerabilities found
+			`,
+			wantStderr: " failed: unable to fetch OSV database: could not read OSV database archive: zip: not a valid zip file",
+		},
 		// when a global config is provided, any local configs should be ignored
 		{
 			name:         "",
