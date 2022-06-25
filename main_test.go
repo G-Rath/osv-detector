@@ -596,6 +596,21 @@ func TestRun_ParseAs_CsvRow(t *testing.T) {
 			`,
 			wantStderr: "",
 		},
+		{
+			name: "",
+			args: []string{
+				"--no-config",
+				"--parse-as", "csv-row",
+				"NuGet,",
+				"npm,@typescript-eslint/types,5.13.0",
+			},
+			wantExitCode: 127,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+
+			`,
+			wantStderr: "Error, row 1: not enough fields (expected at least three)",
+		},
 	}
 	for _, tt := range tests {
 		tt := tt
@@ -654,7 +669,7 @@ func TestRun_ParseAs_CsvFile(t *testing.T) {
 				Loading OSV databases for the following ecosystems:
 
 			`,
-			wantStderr: "Error, fixtures/csvs-files/not-a-csv.xml: row 1: not enough fields (missing at least ecosystem and package name)",
+			wantStderr: "Error, fixtures/csvs-files/not-a-csv.xml: row 1: not enough fields (expected at least three)",
 		},
 	}
 	for _, tt := range tests {
