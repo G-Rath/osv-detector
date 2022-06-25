@@ -214,12 +214,14 @@ or you can specify paths to csv files:
 osv-detector --parse-as csv-file path/to/my/first-csv path/to/my/second-csv
 ```
 
-The expected format is `"<ecosystem>","<package>",<"version">`, and CSV files
-cannot contain a header. The `ecosystem` does _not_ have to be one listed by the
-detector as known, meaning you can use any ecosystem that
-[osv.dev](https://osv.dev/) provides.
+Each CSV row must have at least three fields which hold the ecosystem, package
+name, and version (or commit) respectively, and CSV files cannot contain a
+header.
 
-If you don't provide an ecosystem, then the `version` column is expected to be a
+The `ecosystem` does _not_ have to be one listed by the detector as known,
+meaning you can use any ecosystem that [osv.dev](https://osv.dev/) provides.
+
+If the ecosystem field is empty, then the `version` field is expected to be a
 commit. In this case, the `package` column is decorative as only the commit is
 passed to the API.
 
