@@ -117,7 +117,9 @@ func (dbs OSVDatabases) check(r *reporter.Reporter, lockf lockfile.Lockfile, ign
 	return report
 }
 
-func (dbs OSVDatabases) pick(dbConfigs []database.Config) OSVDatabases {
+// returns the OSV databases to use for the given database configs,
+// assuming they have already been loaded
+func (dbs OSVDatabases) forConfigs(dbConfigs []database.Config) OSVDatabases {
 	specificDBs := make(OSVDatabases, 0)
 
 	for _, db := range dbs {
@@ -646,9 +648,8 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 			))
 		}
 
-		picked := dbs.pick(config.Databases)
-
-		for _, db := range picked {
+		dbs := dbs.forConfigs(config.Databases)
+		for _, db := range dbs {
 			desc := describeDB(db)
 
 			if desc != "" {
@@ -663,7 +664,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		}
 		r.PrintText("\n")
 
-		report := picked.check(r, lockf, allIgnores(config.Ignore, ignores))
+		report := dbs.check(r, lockf, allIgnores(config.Ignore, ignores))
 
 		r.PrintResult(report)
 
