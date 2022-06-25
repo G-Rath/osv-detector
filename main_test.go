@@ -400,7 +400,10 @@ func TestRun_DBs(t *testing.T) {
 			args:         []string{"--use-dbs=false", "./fixtures/locks-one"},
 			wantExitCode: 0,
 			wantStdout: `
+				Loaded the following OSV databases:
+
 				fixtures/locks-one/yarn.lock: found 1 package
+
 					no known vulnerabilities found
 			`,
 			wantStderr: "",
@@ -410,10 +413,14 @@ func TestRun_DBs(t *testing.T) {
 			args:         []string{"--use-api", "./fixtures/locks-one"},
 			wantExitCode: 0,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
+					osv.dev v1 API (using batches of 1000)
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/locks-one/yarn.lock: found 1 package
+					Using db osv.dev v1 API (using batches of 1000)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					no known vulnerabilities found
 			`,
 			wantStderr: "",
@@ -588,10 +595,12 @@ func TestRun_ParseAs_CsvRow(t *testing.T) {
 			},
 			wantExitCode: 1,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					NuGet (%% vulnerabilities, including withdrawn - last updated %%)
 
 				-: found 1 package
+					Using db NuGet (%% vulnerabilities, including withdrawn - last updated %%)
+
 					Yarp.ReverseProxy@ is affected by the following vulnerabilities:
 						GHSA-8xc6-g8xw-h2c4: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-8xc6-g8xw-h2c4)
 
@@ -609,11 +618,14 @@ func TestRun_ParseAs_CsvRow(t *testing.T) {
 			},
 			wantExitCode: 1,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					NuGet (%% vulnerabilities, including withdrawn - last updated %%)
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				-: found 2 packages
+					Using db NuGet (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					Yarp.ReverseProxy@ is affected by the following vulnerabilities:
 						GHSA-8xc6-g8xw-h2c4: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-8xc6-g8xw-h2c4)
 
@@ -631,7 +643,7 @@ func TestRun_ParseAs_CsvRow(t *testing.T) {
 			},
 			wantExitCode: 127,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 
 			`,
 			wantStderr: "Error, row 1: not enough fields (expected at least three)",
@@ -674,11 +686,14 @@ func TestRun_ParseAs_CsvFile(t *testing.T) {
 			args:         []string{"--parse-as", "csv-file", "./fixtures/csvs-files/two-rows.csv"},
 			wantExitCode: 1,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 					NuGet (%% vulnerabilities, including withdrawn - last updated %%)
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/csvs-files/two-rows.csv: found 2 packages
+					Using db NuGet (%% vulnerabilities, including withdrawn - last updated %%)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
 					Yarp.ReverseProxy@ is affected by the following vulnerabilities:
 						GHSA-8xc6-g8xw-h2c4: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-8xc6-g8xw-h2c4)
 
@@ -691,7 +706,7 @@ func TestRun_ParseAs_CsvFile(t *testing.T) {
 			args:         []string{"--parse-as", "csv-file", "./fixtures/csvs-files/not-a-csv.xml"},
 			wantExitCode: 127,
 			wantStdout: `
-				Loading OSV databases for the following ecosystems:
+				Loaded the following OSV databases:
 
 			`,
 			wantStderr: "Error, fixtures/csvs-files/not-a-csv.xml: row 1: not enough fields (expected at least three)",
