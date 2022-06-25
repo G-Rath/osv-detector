@@ -542,6 +542,83 @@ func TestRun_ParseAs(t *testing.T) {
 	}
 }
 
+func TestRun_ParseAs_CsvRow(t *testing.T) {
+	t.Parallel()
+
+	// these tests use "--no-config" in case the repo ever has a
+	// default config (which can be useful during development)
+	tests := []struct {
+		name         string
+		args         []string
+		wantExitCode int
+		wantStdout   string
+		wantStderr   string
+	}{
+		{
+			name: "",
+			args: []string{
+				"--no-config",
+				"--parse-as", "csv-row",
+				"NuGet,Yarp.ReverseProxy,",
+			},
+			wantExitCode: 1,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					NuGet (%% vulnerabilities, including withdrawn - last updated %%)
+
+				-: found 1 package
+					Yarp.ReverseProxy@ is affected by the following vulnerabilities:
+						GHSA-8xc6-g8xw-h2c4: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-8xc6-g8xw-h2c4)
+
+					1 known vulnerability found in -
+			`,
+			wantStderr: "",
+		},
+		{
+			name: "",
+			args: []string{
+				"--no-config",
+				"--parse-as", "csv-row",
+				"NuGet,Yarp.ReverseProxy,",
+				"npm,@typescript-eslint/types,5.13.0",
+			},
+			wantExitCode: 1,
+			wantStdout: `
+				Loading OSV databases for the following ecosystems:
+					NuGet (%% vulnerabilities, including withdrawn - last updated %%)
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				-: found 2 packages
+					Yarp.ReverseProxy@ is affected by the following vulnerabilities:
+						GHSA-8xc6-g8xw-h2c4: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-8xc6-g8xw-h2c4)
+
+					1 known vulnerability found in -
+			`,
+			wantStderr: "",
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ec, stdout, stderr := runCLI(t, tt.args)
+
+			if ec != tt.wantExitCode {
+				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
+			}
+
+			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
+				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
+			}
+
+			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
+				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
+			}
+		})
+	}
+}
+
 func TestRun_ParseAs_CsvFile(t *testing.T) {
 	t.Parallel()
 

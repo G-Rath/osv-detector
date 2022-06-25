@@ -207,9 +207,9 @@ func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs strin
 	return paths
 }
 
-func parseLockfile(pathToLock string, parseAs string) (lockfile.Lockfile, error) {
+func parseLockfile(pathToLock string, parseAs string, args []string) (lockfile.Lockfile, error) {
 	if parseAs == parseAsCsvRow {
-		l, err := lockfile.FromCSVRows(pathToLock, parseAs, flag.Args())
+		l, err := lockfile.FromCSVRows(pathToLock, parseAs, args)
 
 		if err != nil {
 			err = fmt.Errorf("%w", err)
@@ -268,7 +268,13 @@ type lockfileAndConfigOrErr struct {
 	err    error
 }
 
-func readAllLockfiles(pathsToLocks []string, parseAs string, checkForLocalConfig bool, config configer.Config) []lockfileAndConfigOrErr {
+func readAllLockfiles(
+	pathsToLocks []string,
+	parseAs string,
+	args []string,
+	checkForLocalConfig bool,
+	config configer.Config,
+) []lockfileAndConfigOrErr {
 	lockfiles := make([]lockfileAndConfigOrErr, 0, len(pathsToLocks))
 
 	for _, pathToLock := range pathsToLocks {
@@ -285,7 +291,7 @@ func readAllLockfiles(pathsToLocks []string, parseAs string, checkForLocalConfig
 			config = con
 		}
 
-		lockf, err := parseLockfile(pathToLock, parseAs)
+		lockf, err := parseLockfile(pathToLock, parseAs, args)
 		lockfiles = append(lockfiles, lockfileAndConfigOrErr{lockf, config, err})
 	}
 
@@ -466,7 +472,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		loadLocalConfig = false
 	}
 
-	files := readAllLockfiles(pathsToLocks, *parseAs, loadLocalConfig, config)
+	files := readAllLockfiles(pathsToLocks, *parseAs, cli.Args(), loadLocalConfig, config)
 
 	ecosystems := collectEcosystems(files)
 
