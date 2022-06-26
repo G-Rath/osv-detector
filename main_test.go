@@ -63,25 +63,42 @@ func areEqual(t *testing.T, actual, expect string) bool {
 	return re.MatchString(actual)
 }
 
-func runCLI(t *testing.T, args []string) (int, string, string) {
+type cliTestCase struct {
+	name         string
+	args         []string
+	wantExitCode int
+	wantStdout   string
+	wantStderr   string
+}
+
+func testCli(t *testing.T, tc cliTestCase) {
 	t.Helper()
 
-	stdout := &bytes.Buffer{}
-	stderr := &bytes.Buffer{}
+	stdoutBuffer := &bytes.Buffer{}
+	stderrBuffer := &bytes.Buffer{}
 
-	return run(args, stdout, stderr), stdout.String(), stderr.String()
+	ec := run(tc.args, stdoutBuffer, stderrBuffer)
+
+	stdout := stdoutBuffer.String()
+	stderr := stderrBuffer.String()
+
+	if ec != tc.wantExitCode {
+		t.Errorf("cli exited with code %d, not %d", ec, tc.wantExitCode)
+	}
+
+	if !areEqual(t, dedent(t, stdout), dedent(t, tc.wantStdout)) {
+		t.Errorf("stdout\n got:\n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tc.wantStdout))
+	}
+
+	if !areEqual(t, dedent(t, stderr), dedent(t, tc.wantStderr)) {
+		t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tc.wantStderr))
+	}
 }
 
 func TestRun(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		name         string
-		args         []string
-		wantExitCode int
-		wantStdout   string
-		wantStderr   string
-	}{
+	tests := []cliTestCase{
 		{
 			name:         "",
 			args:         []string{},
@@ -154,19 +171,7 @@ func TestRun(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			ec, stdout, stderr := runCLI(t, tt.args)
-
-			if ec != tt.wantExitCode {
-				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
-			}
-
-			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
-				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
-			}
-
-			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
-				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
-			}
+			testCli(t, tt)
 		})
 	}
 }
@@ -174,13 +179,7 @@ func TestRun(t *testing.T) {
 func TestRun_ListPackages(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		name         string
-		args         []string
-		wantExitCode int
-		wantStdout   string
-		wantStderr   string
-	}{
+	tests := []cliTestCase{
 		{
 			name:         "",
 			args:         []string{"--list-packages", "./fixtures/locks-one"},
@@ -236,19 +235,7 @@ func TestRun_ListPackages(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			ec, stdout, stderr := runCLI(t, tt.args)
-
-			if ec != tt.wantExitCode {
-				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
-			}
-
-			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
-				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
-			}
-
-			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
-				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
-			}
+			testCli(t, tt)
 		})
 	}
 }
@@ -256,13 +243,7 @@ func TestRun_ListPackages(t *testing.T) {
 func TestRun_Lockfile(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		name         string
-		args         []string
-		wantExitCode int
-		wantStdout   string
-		wantStderr   string
-	}{
+	tests := []cliTestCase{
 		{
 			name:         "",
 			args:         []string{"./fixtures/locks-one"},
@@ -368,19 +349,7 @@ func TestRun_Lockfile(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			ec, stdout, stderr := runCLI(t, tt.args)
-
-			if ec != tt.wantExitCode {
-				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
-			}
-
-			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
-				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
-			}
-
-			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
-				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
-			}
+			testCli(t, tt)
 		})
 	}
 }
@@ -388,13 +357,7 @@ func TestRun_Lockfile(t *testing.T) {
 func TestRun_DBs(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		name         string
-		args         []string
-		wantExitCode int
-		wantStdout   string
-		wantStderr   string
-	}{
+	tests := []cliTestCase{
 		{
 			name:         "",
 			args:         []string{"--use-dbs=false", "./fixtures/locks-one"},
@@ -431,19 +394,7 @@ func TestRun_DBs(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			ec, stdout, stderr := runCLI(t, tt.args)
-
-			if ec != tt.wantExitCode {
-				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
-			}
-
-			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
-				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
-			}
-
-			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
-				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
-			}
+			testCli(t, tt)
 		})
 	}
 }
@@ -451,13 +402,7 @@ func TestRun_DBs(t *testing.T) {
 func TestRun_ParseAs(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		name         string
-		args         []string
-		wantExitCode int
-		wantStdout   string
-		wantStderr   string
-	}{
+	tests := []cliTestCase{
 		// when a path to a file is given, parse-as is applied to that file
 		{
 			name:         "",
@@ -557,19 +502,7 @@ func TestRun_ParseAs(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			ec, stdout, stderr := runCLI(t, tt.args)
-
-			if ec != tt.wantExitCode {
-				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
-			}
-
-			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
-				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
-			}
-
-			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
-				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
-			}
+			testCli(t, tt)
 		})
 	}
 }
@@ -579,13 +512,7 @@ func TestRun_ParseAs_CsvRow(t *testing.T) {
 
 	// these tests use "--no-config" in case the repo ever has a
 	// default config (which can be useful during development)
-	tests := []struct {
-		name         string
-		args         []string
-		wantExitCode int
-		wantStdout   string
-		wantStderr   string
-	}{
+	tests := []cliTestCase{
 		{
 			name: "",
 			args: []string{
@@ -654,19 +581,7 @@ func TestRun_ParseAs_CsvRow(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			ec, stdout, stderr := runCLI(t, tt.args)
-
-			if ec != tt.wantExitCode {
-				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
-			}
-
-			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
-				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
-			}
-
-			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
-				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
-			}
+			testCli(t, tt)
 		})
 	}
 }
@@ -674,13 +589,7 @@ func TestRun_ParseAs_CsvRow(t *testing.T) {
 func TestRun_ParseAs_CsvFile(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		name         string
-		args         []string
-		wantExitCode int
-		wantStdout   string
-		wantStderr   string
-	}{
+	tests := []cliTestCase{
 		{
 			name:         "",
 			args:         []string{"--parse-as", "csv-file", "./fixtures/csvs-files/two-rows.csv"},
@@ -717,19 +626,7 @@ func TestRun_ParseAs_CsvFile(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			ec, stdout, stderr := runCLI(t, tt.args)
-
-			if ec != tt.wantExitCode {
-				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
-			}
-
-			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
-				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
-			}
-
-			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
-				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
-			}
+			testCli(t, tt)
 		})
 	}
 }
@@ -737,13 +634,7 @@ func TestRun_ParseAs_CsvFile(t *testing.T) {
 func TestRun_Configs(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		name         string
-		args         []string
-		wantExitCode int
-		wantStdout   string
-		wantStderr   string
-	}{
+	tests := []cliTestCase{
 		// when given a path to a single lockfile, the local config should be used
 		{
 			name:         "",
@@ -844,8 +735,8 @@ func TestRun_Configs(t *testing.T) {
 		},
 		// invalid databases should be skipped
 		{
-			name: "",
-			args: []string{"./fixtures/configs-extra-dbs/yarn.lock"},
+			name:         "",
+			args:         []string{"./fixtures/configs-extra-dbs/yarn.lock"},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -979,19 +870,7 @@ func TestRun_Configs(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			ec, stdout, stderr := runCLI(t, tt.args)
-
-			if ec != tt.wantExitCode {
-				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
-			}
-
-			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
-				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
-			}
-
-			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
-				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
-			}
+			testCli(t, tt)
 		})
 	}
 }
@@ -999,13 +878,7 @@ func TestRun_Configs(t *testing.T) {
 func TestRun_Ignores(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		name         string
-		args         []string
-		wantExitCode int
-		wantStdout   string
-		wantStderr   string
-	}{
+	tests := []cliTestCase{
 		// no ignore count is printed if there is nothing ignored
 		{
 			name:         "",
@@ -1091,19 +964,7 @@ func TestRun_Ignores(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			ec, stdout, stderr := runCLI(t, tt.args)
-
-			if ec != tt.wantExitCode {
-				t.Errorf("cli exited with code %d, not %d", ec, tt.wantExitCode)
-			}
-
-			if !areEqual(t, dedent(t, stdout), dedent(t, tt.wantStdout)) {
-				t.Errorf("stdout\n got: \n%s\n\n want:\n%s", dedent(t, stdout), dedent(t, tt.wantStdout))
-			}
-
-			if !areEqual(t, dedent(t, stderr), dedent(t, tt.wantStderr)) {
-				t.Errorf("stderr\n got:\n%s\n\n want:\n%s", dedent(t, stderr), dedent(t, tt.wantStderr))
-			}
+			testCli(t, tt)
 		})
 	}
 }
