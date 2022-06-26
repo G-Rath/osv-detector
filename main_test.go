@@ -105,7 +105,7 @@ func TestRun(t *testing.T) {
 			wantExitCode: 127,
 			wantStdout:   "",
 			wantStderr: `
-				You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)
+				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
 			`,
 		},
 		{
@@ -141,7 +141,7 @@ func TestRun(t *testing.T) {
 			wantExitCode: 127,
 			wantStdout:   "",
 			wantStderr: `
-				You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)
+				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
 			`,
 		},
 		{
@@ -152,7 +152,7 @@ func TestRun(t *testing.T) {
 			// "file not found" message is different on Windows vs other OSs
 			wantStderr: `
 				Error reading ./fixtures/does/not/exist: open ./fixtures/does/not/exist: %%
-				You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)
+				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
 			`,
 		},
 		// only the files in the given directories are checked (no recursion)
@@ -162,7 +162,7 @@ func TestRun(t *testing.T) {
 			wantExitCode: 127,
 			wantStdout:   "",
 			wantStderr: `
-				You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)
+				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
 			`,
 		},
 	}

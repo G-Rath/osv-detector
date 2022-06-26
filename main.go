@@ -565,7 +565,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 	if len(pathsToLocks) == 0 {
 		r.PrintError(
-			"You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)\n",
+			"You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)\n",
 		)
 
 		return 127
