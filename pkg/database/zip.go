@@ -16,11 +16,18 @@ import (
 )
 
 type ZipDB struct {
-	vulnerabilities []OSV
-	ArchiveURL      string
-	Offline         bool
-	UpdatedAt       string
+	memDB
+
+	name             string
+	identifier       string
+	ArchiveURL       string
+	WorkingDirectory string
+	Offline          bool
+	UpdatedAt        string
 }
+
+func (db ZipDB) Name() string       { return db.name }
+func (db ZipDB) Identifier() string { return db.identifier }
 
 // Cache stores the OSV database archive for re-use
 type Cache struct {
@@ -167,7 +174,7 @@ func (db *ZipDB) load() error {
 
 	// Read all the files from the zip archive
 	for _, zipFile := range zipReader.File {
-		if strings.HasPrefix(zipFile.Name, "advisory-database-main/advisories/unreviewed") {
+		if !strings.HasPrefix(zipFile.Name, db.WorkingDirectory) {
 			continue
 		}
 
@@ -181,8 +188,14 @@ func (db *ZipDB) load() error {
 	return nil
 }
 
-func NewZippedDB(dbArchiveURL string, offline bool) (*ZipDB, error) {
-	db := &ZipDB{Offline: offline, ArchiveURL: dbArchiveURL}
+func NewZippedDB(config Config, offline bool) (*ZipDB, error) {
+	db := &ZipDB{
+		name:             config.Name,
+		identifier:       config.Identifier(),
+		ArchiveURL:       config.URL,
+		WorkingDirectory: config.WorkingDirectory,
+		Offline:          offline,
+	}
 	if err := db.load(); err != nil {
 		return nil, fmt.Errorf("unable to fetch OSV database: %w", err)
 	}

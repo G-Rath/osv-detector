@@ -1,4 +1,5 @@
 **/fixtures/pnpm/*.yaml
+**/fixtures/**/invalid.json
 **/fixtures/configs-invalid/*.yaml
 internal/configer/fixtures/ext-yaml-invalid/*.yaml
 internal/configer/fixtures/ext-yml-invalid/*.yml

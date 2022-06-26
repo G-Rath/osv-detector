@@ -1,0 +1,8 @@
+extra-databases:
+  # api db
+  - url: https://example.com/v1
+  # dir db
+  - url: file:/fixtures/configs-extra-dbs
+  # zip db (that is not actually a zip)
+  - url: https://example.com/osvs/all
+    type: 'zip'

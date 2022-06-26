@@ -4,7 +4,13 @@ import (
 	"osv-detector/internal"
 )
 
-func (db *ZipDB) Vulnerabilities(includeWithdrawn bool) []OSV {
+// an OSV database that lives in-memory, and can be used by other structs
+// that handle loading the vulnerabilities from where ever
+type memDB struct {
+	vulnerabilities  []OSV
+}
+
+func (db *memDB) Vulnerabilities(includeWithdrawn bool) []OSV {
 	if includeWithdrawn {
 		return db.vulnerabilities
 	}
@@ -20,7 +26,7 @@ func (db *ZipDB) Vulnerabilities(includeWithdrawn bool) []OSV {
 	return vulnerabilities
 }
 
-func (db ZipDB) VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) Vulnerabilities {
+func (db memDB) VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) Vulnerabilities {
 	var vulnerabilities Vulnerabilities
 
 	for _, vulnerability := range db.Vulnerabilities(false) {
@@ -32,7 +38,7 @@ func (db ZipDB) VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) Vul
 	return vulnerabilities
 }
 
-func (db ZipDB) Check(pkgs []internal.PackageDetails) ([]Vulnerabilities, error) {
+func (db memDB) Check(pkgs []internal.PackageDetails) ([]Vulnerabilities, error) {
 	vulnerabilities := make([]Vulnerabilities, 0, len(pkgs))
 
 	for _, pkg := range pkgs {
