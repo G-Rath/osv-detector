@@ -102,7 +102,7 @@ func TestRun(t *testing.T) {
 		{
 			name:         "",
 			args:         []string{},
-			wantExitCode: 127,
+			wantExitCode: 128,
 			wantStdout:   "",
 			wantStderr: `
 				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
@@ -139,7 +139,7 @@ func TestRun(t *testing.T) {
 		{
 			name:         "",
 			args:         []string{"./fixtures/locks-none"},
-			wantExitCode: 127,
+			wantExitCode: 128,
 			wantStdout:   "",
 			wantStderr: `
 				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
@@ -148,7 +148,7 @@ func TestRun(t *testing.T) {
 		{
 			name:         "",
 			args:         []string{"./fixtures/does/not/exist"},
-			wantExitCode: 127,
+			wantExitCode: 128,
 			wantStdout:   "",
 			// "file not found" message is different on Windows vs other OSs
 			wantStderr: `
@@ -160,7 +160,7 @@ func TestRun(t *testing.T) {
 		{
 			name:         "",
 			args:         []string{"./fixtures/"},
-			wantExitCode: 127,
+			wantExitCode: 128,
 			wantStdout:   "",
 			wantStderr: `
 				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)

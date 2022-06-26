@@ -536,7 +536,9 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 			"You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)\n",
 		)
 
-		return 127
+		// use a specific exit code so that people can identify when the detector
+		// has "errored" because it can't find lockfiles to check
+		return 128
 	}
 
 	exitCode := 0
