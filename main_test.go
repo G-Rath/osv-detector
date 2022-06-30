@@ -102,7 +102,7 @@ func TestRun(t *testing.T) {
 		{
 			name:         "",
 			args:         []string{},
-			wantExitCode: 128,
+			wantExitCode: 127,
 			wantStdout:   "",
 			wantStderr: `
 				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
@@ -136,6 +136,7 @@ func TestRun(t *testing.T) {
 					csv-row
 			`,
 		},
+		// when there are no lockfiles in a directory, the exit code should be different
 		{
 			name:         "",
 			args:         []string{"./fixtures/locks-none"},
@@ -147,8 +148,31 @@ func TestRun(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{"./fixtures/does/not/exist"},
+			args:         []string{"./fixtures/locks-none/my-file.txt"},
+			wantExitCode: 127,
+			wantStdout: `
+				Loaded the following OSV databases:
+
+			`,
+			wantStderr: `
+				Error, could not determine parser for fixtures/locks-none/my-file.txt
+			`,
+		},
+		// when there are no parsable lockfiles in the directory + --json should give sensible json
+		{
+			name:         "",
+			args:         []string{"--json", "./fixtures/"},
 			wantExitCode: 128,
+			wantStdout:   `{"results":[]}`,
+			wantStderr: `
+				You must provide at least one path to either a lockfile or a directory containing a lockfile (see --help for usage and flags)
+			`,
+		},
+		// when the directory does not exist, the exit code should not be for "no lockfiles found"
+		{
+			name:         "",
+			args:         []string{"./fixtures/does/not/exist"},
+			wantExitCode: 127,
 			wantStdout:   "",
 			// "file not found" message is different on Windows vs other OSs
 			wantStderr: `

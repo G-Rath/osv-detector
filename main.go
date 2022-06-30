@@ -240,7 +240,7 @@ func loadDatabases(
 const parseAsCsvFile = "csv-file"
 const parseAsCsvRow = "csv-row"
 
-func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs string) []string {
+func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs string) ([]string, bool) {
 	lockfiles := make([]string, 0, 1)
 	file, err := os.Open(pathToLockOrDirectory)
 
@@ -280,23 +280,31 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs s
 		return lockfiles[i] < lockfiles[j]
 	})
 
-	return lockfiles
+	return lockfiles, err != nil
 }
 
-func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs string) []string {
+func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs string) ([]string, bool) {
 	var paths []string
 
 	if parseAs == parseAsCsvRow {
-		return []string{"-"}
+		return []string{"-"}, false
 	}
 
+	errored := false
+
 	for _, pathToLockOrDirectory := range pathsToCheck {
-		for _, p := range findLockfiles(r, pathToLockOrDirectory, parseAs) {
+		lps, erred := findLockfiles(r, pathToLockOrDirectory, parseAs)
+
+		if erred {
+			errored = true
+		}
+
+		for _, p := range lps {
 			paths = append(paths, path.Clean(p))
 		}
 	}
 
-	return paths
+	return paths, errored
 }
 
 func parseLockfile(pathToLock string, parseAs string, args []string) (lockfile.Lockfile, error) {
@@ -529,16 +537,22 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		}
 	}
 
-	pathsToLocks := findAllLockfiles(r, cli.Args(), *parseAs)
+	pathsToLocks, errored := findAllLockfiles(r, cli.Args(), *parseAs)
 
 	if len(pathsToLocks) == 0 {
 		r.PrintError(
 			"You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)\n",
 		)
 
-		// use a specific exit code so that people can identify when the detector
-		// has "errored" because it can't find lockfiles to check
-		return 128
+		// being provided with at least one path and not hitting an error on any of those
+		// paths means everything was valid, we just didn't find any parsable lockfiles
+		// in any of the directories
+		if len(cli.Args()) > 0 && !errored {
+			// so we want to use a specific exit code to represent this state
+			return 128
+		}
+
+		return 127
 	}
 
 	exitCode := 0
