@@ -160,7 +160,9 @@ lockfiles being checked with the `--config` flag:
 osv-detector --config ruby-ignores.yml path/to/my/first-ruby-project path/to/my/second-ruby-project
 ```
 
-Finally, you can disable loading any configs with the `--no-config` flag.
+You can have the detector ignore specific parts of the config with the
+`--no-config-ignores` and `--no-config-databases` flags, or ignore any configs
+all together with the `--no-config` flag.
 
 #### Ignoring certain vulnerabilities
 
@@ -231,6 +233,14 @@ The `url` should be either:
 For the file based database sources (`dir` and `zip`), the detector will
 recursively load all `.json` files from the `working-directory` relative to the
 root of the database as OSVs.
+
+> The detector assumes that you trust the source of the configuration file and
+> thus the databases that it points to.
+>
+> If you are using the detector in a way that allows users to provide arbitrary
+> config files that you don't trust, you can use the `--no-config-databases`
+> flag to have the detector load the rest of the config without any extra
+> databases it may define
 
 This is a very powerful feature as it enables you to create custom OSVs that can
 be easily consumed by multiple projects and that cover anything you want - for
