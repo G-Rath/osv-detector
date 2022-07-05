@@ -752,6 +752,45 @@ func TestRun_Configs(t *testing.T) {
 			`,
 			wantStderr: " failed: unable to fetch OSV database: could not read OSV database archive: zip: not a valid zip file",
 		},
+		// databases from configs are ignored if "--no-config-databases" is passed...
+		{
+			name: "",
+			args: []string{
+				"--no-config-databases",
+				"./fixtures/configs-extra-dbs/yarn.lock",
+			},
+			wantExitCode: 0,
+			wantStdout: `
+				Loaded the following OSV databases:
+
+				fixtures/configs-extra-dbs/yarn.lock: found 0 packages
+					Using config at fixtures/configs-extra-dbs/.osv-detector.yaml (0 ignores)
+
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
+		// ...but it does still use the built-in databases
+		{
+			name: "",
+			args: []string{
+				"--config", "./fixtures/configs-extra-dbs/.osv-detector.yaml",
+				"--no-config-databases",
+				"./fixtures/locks-many/yarn.lock",
+			},
+			wantExitCode: 0,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-many/yarn.lock: found 1 package
+					Using config at fixtures/configs-extra-dbs/.osv-detector.yaml (0 ignores)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
 		// when a global config is provided, any local configs should be ignored
 		{
 			name:         "",

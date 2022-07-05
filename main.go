@@ -376,7 +376,8 @@ func (files lockfileAndConfigOrErrs) getConfigs() []*configer.Config {
 	return configs
 }
 
-func (files *lockfileAndConfigOrErrs) addExtraDBConfigs(
+func (files *lockfileAndConfigOrErrs) adjustExtraDatabases(
+	removeConfigDatabases bool,
 	addDefaultAPIDatabase bool,
 	addEcosystemDatabases bool,
 ) {
@@ -385,6 +386,10 @@ func (files *lockfileAndConfigOrErrs) addExtraDBConfigs(
 			continue
 		}
 		var extraDBConfigs []database.Config
+
+		if removeConfigDatabases {
+			file.config.Databases = []database.Config{}
+		}
 
 		if addDefaultAPIDatabase {
 			extraDBConfigs = append(extraDBConfigs, makeAPIDBConfig())
@@ -491,6 +496,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 	configPath := cli.String("config", "", "Path to a config file to use for all lockfiles")
 	noConfig := cli.Bool("no-config", false, "Disable loading of any config files")
 	noConfigIgnores := cli.Bool("no-config-ignores", false, "Don't respect any OSVs listed as ignored in configs")
+	noConfigDatabases := cli.Bool("no-config-databases", false, "Don't load any extra databases listed in configs")
 	printVersion := cli.Bool("version", false, "Print version information")
 	listEcosystems := cli.Bool("list-ecosystems", false, "List all of the known ecosystems that are supported by the detector")
 	listPackages := cli.Bool("list-packages", false, "List the packages that are parsed from the input files")
@@ -581,7 +587,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 	files := readAllLockfiles(r, pathsToLocks, *parseAs, cli.Args(), loadLocalConfig, &config)
 
-	files.addExtraDBConfigs(*useAPI, *useDatabases)
+	files.adjustExtraDatabases(*noConfigDatabases, *useAPI, *useDatabases)
 
 	dbs, errored := loadDatabases(
 		r,
