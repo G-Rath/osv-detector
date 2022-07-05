@@ -33,7 +33,7 @@ The detector supports parsing the following lockfiles:
 | `composer.lock`      | `Packagist` | `composer` |
 | `Gemfile.lock`       | `RubyGems`  | `bundler`  |
 | `go.mod`             | `Go`        | `go mod`   |
-| `mix.lock`           | `Mix`       | `mix`      |
+| `mix.lock`           | `Hex`       | `mix`      |
 | `pom.xml`\*          | `Maven`     | `maven`    |
 | `requirements.txt`\* | `PyPI`      | `pip`      |
 
