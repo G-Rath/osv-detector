@@ -354,20 +354,6 @@ func (s *stringsFlag) Set(value string) error {
 	return nil
 }
 
-func allIgnores(global, local []string) []string {
-	ignores := make(
-		[]string,
-		0,
-		// len cannot return negative numbers, but the types can't reflect that
-		uint64(len(global))+uint64(len(local)),
-	)
-
-	ignores = append(ignores, global...)
-	ignores = append(ignores, local...)
-
-	return ignores
-}
-
 type lockfileAndConfigOrErr struct {
 	lockf  lockfile.Lockfile
 	config *configer.Config
@@ -390,7 +376,8 @@ func (files lockfileAndConfigOrErrs) getConfigs() []*configer.Config {
 	return configs
 }
 
-func (files *lockfileAndConfigOrErrs) addExtraDBConfigs(
+func (files *lockfileAndConfigOrErrs) adjustExtraDatabases(
+	removeConfigDatabases bool,
 	addDefaultAPIDatabase bool,
 	addEcosystemDatabases bool,
 ) {
@@ -399,6 +386,10 @@ func (files *lockfileAndConfigOrErrs) addExtraDBConfigs(
 			continue
 		}
 		var extraDBConfigs []database.Config
+
+		if removeConfigDatabases {
+			file.config.Databases = []database.Config{}
+		}
 
 		if addDefaultAPIDatabase {
 			extraDBConfigs = append(extraDBConfigs, makeAPIDBConfig())
@@ -497,13 +488,15 @@ func collectEcosystems(files []lockfileAndConfigOrErr) []internal.Ecosystem {
 }
 
 func run(args []string, stdout, stderr io.Writer) int {
-	var ignores stringsFlag
+	var globalIgnores stringsFlag
 	cli := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 
 	offline := cli.Bool("offline", false, "Perform checks using only the cached databases on disk")
 	parseAs := cli.String("parse-as", "", "Name of a supported lockfile to parse the input files as")
 	configPath := cli.String("config", "", "Path to a config file to use for all lockfiles")
 	noConfig := cli.Bool("no-config", false, "Disable loading of any config files")
+	noConfigIgnores := cli.Bool("no-config-ignores", false, "Don't respect any OSVs listed as ignored in configs")
+	noConfigDatabases := cli.Bool("no-config-databases", false, "Don't load any extra databases listed in configs")
 	printVersion := cli.Bool("version", false, "Print version information")
 	listEcosystems := cli.Bool("list-ecosystems", false, "List all of the known ecosystems that are supported by the detector")
 	listPackages := cli.Bool("list-packages", false, "List the packages that are parsed from the input files")
@@ -513,7 +506,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 	useAPI := cli.Bool("use-api", false, "Use the osv.dev API to check for known vulnerabilities")
 	batchSize := cli.Int("batch-size", 1000, "The number of packages to include in each batch when using the api database")
 
-	cli.Var(&ignores, "ignore", `ID of an OSV to ignore when determining exit codes.
+	cli.Var(&globalIgnores, "ignore", `ID of an OSV to ignore when determining exit codes.
 This flag can be passed multiple times to ignore different vulnerabilities`)
 
 	// cli is set for ExitOnError so this will never return an error
@@ -594,7 +587,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 	files := readAllLockfiles(r, pathsToLocks, *parseAs, cli.Args(), loadLocalConfig, &config)
 
-	files.addExtraDBConfigs(*useAPI, *useDatabases)
+	files.adjustExtraDatabases(*noConfigDatabases, *useAPI, *useDatabases)
 
 	dbs, errored := loadDatabases(
 		r,
@@ -623,6 +616,10 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		config := result.config
 		lockf := result.lockf
 
+		if *noConfigIgnores {
+			config.Ignore = []string{}
+		}
+
 		r.PrintText(fmt.Sprintf(
 			"%s: found %s %s\n",
 			color.MagentaString("%s", lockf.FilePath),
@@ -636,17 +633,36 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 			continue
 		}
 
+
+		ignores := make(
+			[]string,
+			0,
+			// len cannot return negative numbers, but the types can't reflect that
+			uint64(len(globalIgnores))+uint64(len(config.Ignore)),
+		)
+
 		// an empty FilePath means we didn't load a config
 		if config.FilePath != "" {
+			var ignoresStr string
+
+			if *noConfigIgnores {
+				ignoresStr = "skipping any ignores"
+			} else {
+				ignores = append(ignores, config.Ignore...)
+				ignoresStr = color.YellowString("%d %s",
+					len(config.Ignore),
+					reporter.Form(len(config.Ignore), "ignore", "ignores"),
+				)
+			}
+
 			r.PrintText(fmt.Sprintf(
 				"  Using config at %s (%s)\n",
 				color.MagentaString(config.FilePath),
-				color.YellowString("%d %s",
-					len(config.Ignore),
-					reporter.Form(len(config.Ignore), "ignore", "ignores"),
-				),
+				ignoresStr,
 			))
 		}
+
+		ignores = append(ignores, globalIgnores...)
 
 		dbs := dbs.forConfigs(config.Databases)
 		for _, db := range dbs {
@@ -664,7 +680,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		}
 		r.PrintText("\n")
 
-		report := dbs.check(r, lockf, allIgnores(config.Ignore, ignores))
+		report := dbs.check(r, lockf, ignores)
 
 		r.PrintResult(report)
 

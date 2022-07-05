@@ -752,6 +752,45 @@ func TestRun_Configs(t *testing.T) {
 			`,
 			wantStderr: " failed: unable to fetch OSV database: could not read OSV database archive: zip: not a valid zip file",
 		},
+		// databases from configs are ignored if "--no-config-databases" is passed...
+		{
+			name: "",
+			args: []string{
+				"--no-config-databases",
+				"./fixtures/configs-extra-dbs/yarn.lock",
+			},
+			wantExitCode: 0,
+			wantStdout: `
+				Loaded the following OSV databases:
+
+				fixtures/configs-extra-dbs/yarn.lock: found 0 packages
+					Using config at fixtures/configs-extra-dbs/.osv-detector.yaml (0 ignores)
+
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
+		// ...but it does still use the built-in databases
+		{
+			name: "",
+			args: []string{
+				"--config", "./fixtures/configs-extra-dbs/.osv-detector.yaml",
+				"--no-config-databases",
+				"./fixtures/locks-many/yarn.lock",
+			},
+			wantExitCode: 0,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-many/yarn.lock: found 1 package
+					Using config at fixtures/configs-extra-dbs/.osv-detector.yaml (0 ignores)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
 		// when a global config is provided, any local configs should be ignored
 		{
 			name:         "",
@@ -936,7 +975,77 @@ func TestRun_Ignores(t *testing.T) {
 			`,
 			wantStderr: "",
 		},
-		// ignores passed by flags are _merged_ with those specified in configs
+		// ignores passed by flags are _merged_ with those specified in configs by default
+		{
+			name: "",
+			args: []string{
+				"--config", "./fixtures/my-config.yml",
+				"--ignore", "GHSA-1234",
+				"--parse-as", "package-lock.json",
+				"./fixtures/locks-insecure/my-package-lock.json",
+			},
+			wantExitCode: 0,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using config at fixtures/my-config.yml (1 ignore)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					no new vulnerabilities found (1 was ignored)
+			`,
+			wantStderr: "",
+		},
+		// ignores from configs are ignored if "--no-config-ignores" is passed
+		{
+			name: "",
+			args: []string{
+				"--no-config-ignores",
+				"--config", "./fixtures/my-config.yml",
+				"--parse-as", "package-lock.json",
+				"./fixtures/locks-insecure/my-package-lock.json",
+			},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using config at fixtures/my-config.yml (skipping any ignores)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+			`,
+			wantStderr: "",
+		},
+		// ignores passed by flags are still respected with "--no-config-ignores"
+		{
+			name: "",
+			args: []string{
+				"--no-config-ignores",
+				"--config", "./fixtures/my-config.yml",
+				"--ignore", "GHSA-whgm-jr23-g3j9",
+				"--parse-as", "package-lock.json",
+				"./fixtures/locks-insecure/my-package-lock.json",
+			},
+			wantExitCode: 0,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using config at fixtures/my-config.yml (skipping any ignores)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					no new vulnerabilities found (1 was ignored)
+			`,
+			wantStderr: "",
+		},
+		// ignores passed by flags are ignored with those specified in configs
 		{
 			name: "",
 			args: []string{
