@@ -7,6 +7,7 @@ func KnownEcosystems() []Ecosystem {
 		BundlerEcosystem,
 		ComposerEcosystem,
 		GoEcosystem,
+		MixEcosystem,
 		MavenEcosystem,
 		PipEcosystem,
 	}

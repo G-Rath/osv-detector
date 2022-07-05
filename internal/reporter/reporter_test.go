@@ -269,6 +269,7 @@ func TestReporter_PrintKnownEcosystems(t *testing.T) {
 		"  RubyGems",
 		"  Packagist",
 		"  Go",
+		"  Hex",
 		"  Maven",
 		"  PyPI",
 		"",

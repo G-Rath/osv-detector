@@ -126,6 +126,7 @@ func TestRun(t *testing.T) {
 					composer.lock
 					Gemfile.lock
 					go.mod
+					mix.lock
 					package-lock.json
 					pnpm-lock.yaml
 					pom.xml
