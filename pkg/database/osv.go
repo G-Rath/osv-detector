@@ -48,8 +48,9 @@ func (p Package) NormalizedName() string {
 }
 
 type RangeEvent struct {
-	Introduced string `json:"introduced,omitempty"`
-	Fixed      string `json:"fixed,omitempty"`
+	Introduced   string `json:"introduced,omitempty"`
+	Fixed        string `json:"fixed,omitempty"`
+	LastAffected string `json:"last_affected,omitempty"`
 }
 
 type AffectsRange struct {
@@ -70,10 +71,14 @@ func (ar AffectsRange) containsVersion(v string) bool {
 
 	var affected bool
 	for _, e := range ar.Events {
-		if !affected && e.Introduced != "" {
+		if affected {
+			if e.Fixed != "" {
+				affected = vp.CompareStr(e.Fixed) < 0
+			} else if e.LastAffected != "" {
+				affected = e.LastAffected == v || vp.CompareStr(e.LastAffected) <= 0
+			}
+		} else if e.Introduced != "" {
 			affected = e.Introduced == "0" || vp.CompareStr(e.Introduced) >= 0
-		} else if affected && e.Fixed != "" {
-			affected = vp.CompareStr(e.Fixed) < 0
 		}
 	}
 
