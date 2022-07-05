@@ -237,20 +237,6 @@ func loadDatabases(
 	return dbs, errored
 }
 
-func cacheAllEcosystemDatabases(r *reporter.Reporter) bool {
-	ecosystems := lockfile.KnownEcosystems()
-
-	configs := make([]database.Config, 0, len(ecosystems))
-
-	for _, ecosystem := range ecosystems {
-		configs = append(configs, makeEcosystemDBConfig(ecosystem))
-	}
-
-	_, errored := loadDatabases(r, configs, false, false, 0)
-
-	return errored
-}
-
 const parseAsCsvFile = "csv-file"
 const parseAsCsvRow = "csv-row"
 
@@ -500,7 +486,6 @@ func run(args []string, stdout, stderr io.Writer) int {
 	printVersion := cli.Bool("version", false, "Print version information")
 	listEcosystems := cli.Bool("list-ecosystems", false, "List all of the known ecosystems that are supported by the detector")
 	listPackages := cli.Bool("list-packages", false, "List the packages that are parsed from the input files")
-	cacheAllDatabases := cli.Bool("cache-all-databases", false, "Cache all the known ecosystem databases for offline use")
 	outputAsJSON := cli.Bool("json", false, "Output the results in JSON format")
 	useDatabases := cli.Bool("use-dbs", true, "Use the databases from osv.dev to check for known vulnerabilities")
 	useAPI := cli.Bool("use-api", false, "Use the osv.dev API to check for known vulnerabilities")
@@ -519,16 +504,6 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 	if *printVersion {
 		r.PrintText(fmt.Sprintf("osv-detector %s (%s, commit %s)\n", version, date, commit))
-
-		return 0
-	}
-
-	if *cacheAllDatabases {
-		errored := cacheAllEcosystemDatabases(r)
-
-		if errored {
-			return 127
-		}
 
 		return 0
 	}

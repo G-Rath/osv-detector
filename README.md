@@ -290,15 +290,8 @@ Remotely sourced databases can only be used in offline mode if they have been
 cached by the detector as part of a previous run, and API-based databases will
 be skipped entirely.
 
-You can have the detector cache the databases for all known ecosystems supported
-by the detector for later offline use with the `--cache-all-databases`:
-
-```shell
-osv-detector --cache-all-databases
-```
-
-This can be useful if you're planning to run the detector over a number of
-lockfiles in bulk.
+The cache is based on the source `url` of the database, meaning databases that
+have the same source but different working directories will use the same cache.
 
 ### Passing arbitrary package details (advanced usage)
 
