@@ -136,15 +136,88 @@ func TestRun(t *testing.T) {
 					csv-row
 			`,
 		},
+		// only the files in the given directories are checked (no recursion)
 		{
 			name:         "",
-			args:         []string{"./fixtures/locks-none"},
+			args:         []string{"./fixtures/"},
+			wantExitCode: 128,
+			wantStdout:   "",
+			wantStderr: `
+				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
+			`,
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			testCli(t, tt)
+		})
+	}
+}
+
+func TestRun_EmptyDirExitCode(t *testing.T) {
+	t.Parallel()
+
+	tests := []cliTestCase{
+		// no paths should return standard error exit code
+		{
+			name:         "",
+			args:         []string{},
 			wantExitCode: 127,
 			wantStdout:   "",
 			wantStderr: `
 				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
 			`,
 		},
+		// one directory without any lockfiles should result in "no lockfiles in directories" exit code
+		{
+			name:         "",
+			args:         []string{"./fixtures/locks-none"},
+			wantExitCode: 128,
+			wantStdout:   "",
+			wantStderr: `
+				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
+			`,
+		},
+		// two directories without any lockfiles should return "no lockfiles in directories" exit code
+		{
+			name:         "",
+			args:         []string{"./fixtures/locks-none", "./fixtures/"},
+			wantExitCode: 128,
+			wantStdout:   "",
+			wantStderr: `
+				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
+			`,
+		},
+		// a path to an unknown lockfile should return standard error exit code
+		{
+			name:         "",
+			args:         []string{"./fixtures/locks-none/my-file.txt"},
+			wantExitCode: 127,
+			wantStdout: `
+				Loaded the following OSV databases:
+
+			`,
+			wantStderr: `
+				Error, could not determine parser for fixtures/locks-none/my-file.txt
+			`,
+		},
+		// mix and match of directory without any lockfiles and a path to an unknown lockfile should return standard exit code
+		{
+			name:         "",
+			args:         []string{"./fixtures/locks-none/my-file.txt", "./fixtures/"},
+			wantExitCode: 127,
+			wantStdout: `
+				Loaded the following OSV databases:
+
+			`,
+			wantStderr: `
+				Error, could not determine parser for fixtures/locks-none/my-file.txt
+			`,
+		},
+		// when the directory does not exist, the exit code should not be for "no lockfiles in directories"
 		{
 			name:         "",
 			args:         []string{"./fixtures/does/not/exist"},
@@ -156,12 +229,24 @@ func TestRun(t *testing.T) {
 				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
 			`,
 		},
-		// only the files in the given directories are checked (no recursion)
+		// an empty directory + a directory that does not exist should return standard exit code
 		{
 			name:         "",
-			args:         []string{"./fixtures/"},
+			args:         []string{"./fixtures/does/not/exist", "./fixtures/locks-none"},
 			wantExitCode: 127,
 			wantStdout:   "",
+			// "file not found" message is different on Windows vs other OSs
+			wantStderr: `
+				Error reading ./fixtures/does/not/exist: open ./fixtures/does/not/exist: %%
+				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
+			`,
+		},
+		// when there are no parsable lockfiles in the directory + --json should give sensible json
+		{
+			name:         "",
+			args:         []string{"--json", "./fixtures/locks-none"},
+			wantExitCode: 128,
+			wantStdout:   `{"results":[]}`,
 			wantStderr: `
 				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
 			`,
