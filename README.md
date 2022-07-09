@@ -196,7 +196,7 @@ You can use `jq` to generate a list of OSV ids if you want to ignore all current
 known vulnerabilities found by the detector:
 
 ```shell
-osv-detector-t --json . | jq -r  '.results[].packages | map("- " + .vulnerabilities[].id) | unique | sort | .[]'
+osv-detector --json . | jq -r  '.results[].packages | map("- " + .vulnerabilities[].id) | unique | sort | .[]'
 ```
 
 #### Extra Databases
