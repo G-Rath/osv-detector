@@ -6,6 +6,32 @@ that follow the [OSV specification](https://ossf.github.io/osv-schema/).
 Currently, this uses the ecosystem databases provided by
 [osv.dev](https://osv.dev/).
 
+## Installation
+
+To install locally:
+
+1. Download [a release](https://github.com/G-Rath/osv-detector/releases)
+2. Rename it to `osv-detector`
+3. Make it executable
+4. Put it somewhere that's on your PATH (optional)
+   - `/usr/local/bin` is usually a good place on Ubuntu
+
+You can use this script to install the latest version from GitHub (make sure to
+change the binary architecture if you're on macOS or Windows):
+
+```shell
+OSV_DETECTOR_VERSION=$(curl -s "https://api.github.com/repos/G-Rath/osv-detector/releases/latest" | perl -nle'print substr($&, 1) while m#"tag_name": "\K[^"]*#g')
+OSV_DETECTOR_BINARY="osv-detector_${OSV_DETECTOR_VERSION}_linux_amd64"
+
+curl -fL "https://github.com/G-Rath/osv-detector/releases/download/v$OSV_DETECTOR_VERSION/$OSV_DETECTOR_BINARY" --output /tmp/osv-detector
+chmod +x /tmp/osv-detector
+sudo mv /tmp/osv-detector /usr/local/bin/osv-detector
+```
+
+If you're using GitHub Actions, you can use the
+[check-with-osv-detector](https://github.com/marketplace/actions/check-with-osv-detector)
+action.
+
 ## Usage
 
 The detector accepts a path to a "lockfile" which contains information about the
