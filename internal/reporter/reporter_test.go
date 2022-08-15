@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"osv-detector/internal/reporter"
-	"osv-detector/pkg/database"
+	"github.com/g-rath/osv-detector/internal/reporter"
+	"github.com/g-rath/osv-detector/pkg/database"
 	"strings"
 	"testing"
 )

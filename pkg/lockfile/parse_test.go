@@ -2,8 +2,8 @@ package lockfile_test
 
 import (
 	"errors"
+	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"io/ioutil"
-	"osv-detector/pkg/lockfile"
 	"reflect"
 	"strings"
 	"testing"

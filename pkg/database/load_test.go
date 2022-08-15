@@ -2,7 +2,7 @@ package database_test
 
 import (
 	"errors"
-	"osv-detector/pkg/database"
+	"github.com/g-rath/osv-detector/pkg/database"
 	"testing"
 )
 

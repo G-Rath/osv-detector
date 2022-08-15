@@ -6,10 +6,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/g-rath/osv-detector/internal"
 	"io"
 	"math"
 	"net/http"
-	"osv-detector/internal"
 	"path"
 )
 

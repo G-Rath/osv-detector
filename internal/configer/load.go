@@ -3,11 +3,11 @@ package configer
 import (
 	"errors"
 	"fmt"
+	"github.com/g-rath/osv-detector/internal/reporter"
+	"github.com/g-rath/osv-detector/pkg/database"
 	"gopkg.in/yaml.v2"
 	"net/url"
 	"os"
-	"osv-detector/internal/reporter"
-	"osv-detector/pkg/database"
 	"path"
 	"strings"
 )

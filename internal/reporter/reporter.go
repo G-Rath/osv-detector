@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/fatih/color"
+	"github.com/g-rath/osv-detector/pkg/database"
+	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"io"
-	"osv-detector/pkg/database"
-	"osv-detector/pkg/lockfile"
 )
 
 type Reporter struct {

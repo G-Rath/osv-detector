@@ -1,6 +1,6 @@
 package lockfile
 
-import "osv-detector/internal"
+import "github.com/g-rath/osv-detector/internal"
 
 type Ecosystem = internal.Ecosystem
 type PackageDetails = internal.PackageDetails

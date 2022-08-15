@@ -1,8 +1,8 @@
 package database_test
 
 import (
+	"github.com/g-rath/osv-detector/pkg/database"
 	"net/url"
-	"osv-detector/pkg/database"
 	"reflect"
 	"testing"
 )
