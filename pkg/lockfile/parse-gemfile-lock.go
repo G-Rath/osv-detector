@@ -104,7 +104,7 @@ func (parser *gemfileLockfileParser) parseSource(line string) {
 }
 
 func isNotIndented(line string) bool {
-	re := regexp.MustCompile(`^[^\s]`)
+	re := regexp.MustCompile(`^\S`)
 
 	return re.MatchString(line)
 }
