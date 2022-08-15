@@ -26,8 +26,8 @@ type ZipDB struct {
 	UpdatedAt        string
 }
 
-func (db ZipDB) Name() string       { return db.name }
-func (db ZipDB) Identifier() string { return db.identifier }
+func (db *ZipDB) Name() string       { return db.name }
+func (db *ZipDB) Identifier() string { return db.identifier }
 
 // Cache stores the OSV database archive for re-use
 type Cache struct {

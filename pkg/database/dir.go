@@ -22,8 +22,8 @@ type DirDB struct {
 	Offline          bool
 }
 
-func (db DirDB) Name() string       { return db.name }
-func (db DirDB) Identifier() string { return db.identifier }
+func (db *DirDB) Name() string       { return db.name }
+func (db *DirDB) Identifier() string { return db.identifier }
 
 var ErrDirPathWrongProtocol = errors.New("directory path must start with \"file:\" protocol")
 

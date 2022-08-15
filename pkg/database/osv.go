@@ -213,7 +213,7 @@ func truncate(str string, limit int) string {
 	return str
 }
 
-func (osv OSV) Describe() string {
+func (osv *OSV) Describe() string {
 	description := osv.Summary
 
 	if description == "" {
