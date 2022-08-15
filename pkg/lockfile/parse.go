@@ -18,7 +18,7 @@ func FindParser(pathToLockfile string, parseAs string) (PackageDetailsParser, st
 
 // nolint:gochecknoglobals // this is an optimisation and read-only
 var parsers = map[string]PackageDetailsParser{
-	"cargo.lock":        ParseCargoLock,
+	"Cargo.lock":        ParseCargoLock,
 	"composer.lock":     ParseComposerLock,
 	"Gemfile.lock":      ParseGemfileLock,
 	"go.mod":            ParseGoLock,
