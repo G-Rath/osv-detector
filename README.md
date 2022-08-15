@@ -52,7 +52,7 @@ The detector supports parsing the following lockfiles:
 
 | Lockfile             | Ecosystem   | Tool       |
 | -------------------- | ----------- | ---------- |
-| `cargo.lock`         | `crates.io` | `cargo`    |
+| `Cargo.lock`         | `crates.io` | `cargo`    |
 | `package-lock.json`  | `npm`       | `npm`      |
 | `yarn.lock`          | `npm`       | `yarn`     |
 | `pnpm-lock.yaml`     | `npm`       | `pnpm`     |

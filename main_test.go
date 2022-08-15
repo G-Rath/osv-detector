@@ -122,7 +122,7 @@ func TestRun(t *testing.T) {
 			wantStdout:   "",
 			wantStderr: `
 				Don't know how to parse files as "my-file" - supported values are:
-					cargo.lock
+					Cargo.lock
 					composer.lock
 					Gemfile.lock
 					go.mod

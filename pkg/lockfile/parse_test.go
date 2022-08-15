@@ -40,7 +40,7 @@ func TestFindParser(t *testing.T) {
 	t.Parallel()
 
 	lockfiles := []string{
-		"cargo.lock",
+		"Cargo.lock",
 		"package-lock.json",
 		"yarn.lock",
 		"pnpm-lock.yaml",
@@ -82,7 +82,7 @@ func TestParse_FindsExpectedParsers(t *testing.T) {
 	t.Parallel()
 
 	lockfiles := []string{
-		"cargo.lock",
+		"Cargo.lock",
 		"package-lock.json",
 		"yarn.lock",
 		"pnpm-lock.yaml",
@@ -128,8 +128,8 @@ func TestListParsers(t *testing.T) {
 
 	parsers := lockfile.ListParsers()
 
-	if first := parsers[0]; first != "cargo.lock" {
-		t.Errorf("Expected first element to be cargo.lock, but got %s", first)
+	if first := parsers[0]; first != "Cargo.lock" {
+		t.Errorf("Expected first element to be Cargo.lock, but got %s", first)
 	}
 
 	if last := parsers[len(parsers)-1]; last != "yarn.lock" {
