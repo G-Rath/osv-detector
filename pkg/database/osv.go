@@ -3,10 +3,10 @@ package database
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/g-rath/osv-detector/internal"
+	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/semantic"
 	"os"
-	"osv-detector/internal"
-	"osv-detector/pkg/lockfile"
-	"osv-detector/pkg/semantic"
 	"regexp"
 	"strings"
 	"time"

@@ -2,7 +2,7 @@ package lockfile_test
 
 import (
 	"fmt"
-	"osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"strings"
 	"testing"
 )

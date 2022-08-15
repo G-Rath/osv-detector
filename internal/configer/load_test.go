@@ -3,8 +3,8 @@ package configer_test
 import (
 	"bytes"
 	"fmt"
-	"osv-detector/internal/configer"
-	"osv-detector/internal/reporter"
+	"github.com/g-rath/osv-detector/internal/configer"
+	"github.com/g-rath/osv-detector/internal/reporter"
 	"reflect"
 	"strings"
 	"testing"

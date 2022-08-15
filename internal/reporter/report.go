@@ -3,9 +3,9 @@ package reporter
 import (
 	"fmt"
 	"github.com/fatih/color"
-	"osv-detector/internal"
-	"osv-detector/pkg/database"
-	"osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/internal"
+	"github.com/g-rath/osv-detector/pkg/database"
+	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"strings"
 )
 

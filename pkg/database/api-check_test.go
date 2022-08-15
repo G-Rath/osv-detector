@@ -3,11 +3,11 @@ package database_test
 import (
 	"encoding/json"
 	"errors"
+	"github.com/g-rath/osv-detector/internal"
+	"github.com/g-rath/osv-detector/pkg/database"
+	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"net/http"
 	"net/http/httptest"
-	"osv-detector/internal"
-	"osv-detector/pkg/database"
-	"osv-detector/pkg/lockfile"
 	"reflect"
 	"testing"
 )

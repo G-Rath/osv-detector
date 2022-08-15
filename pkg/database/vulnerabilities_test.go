@@ -2,7 +2,7 @@ package database_test
 
 import (
 	"encoding/json"
-	"osv-detector/pkg/database"
+	"github.com/g-rath/osv-detector/pkg/database"
 	"testing"
 )
 

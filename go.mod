@@ -1,4 +1,4 @@
-module osv-detector
+module github.com/g-rath/osv-detector
 
 go 1.17
 

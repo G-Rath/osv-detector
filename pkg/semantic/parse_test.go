@@ -3,8 +3,8 @@ package semantic_test
 import (
 	"bufio"
 	"fmt"
+	"github.com/g-rath/osv-detector/pkg/semantic"
 	"os"
-	"osv-detector/pkg/semantic"
 	"strings"
 	"testing"
 )
