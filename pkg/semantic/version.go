@@ -21,7 +21,7 @@ func (components *Components) Fetch(n int) int {
 	return (*components)[n]
 }
 
-func (v Version) String() string {
+func (v *Version) String() string {
 	str := ""
 
 	if v.LeadingV {

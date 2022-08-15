@@ -370,12 +370,12 @@ func (files lockfileAndConfigOrErrs) getConfigs() []*configer.Config {
 	return configs
 }
 
-func (files *lockfileAndConfigOrErrs) adjustExtraDatabases(
+func (files lockfileAndConfigOrErrs) adjustExtraDatabases(
 	removeConfigDatabases bool,
 	addDefaultAPIDatabase bool,
 	addEcosystemDatabases bool,
 ) {
-	for _, file := range *files {
+	for _, file := range files {
 		if file.err != nil {
 			continue
 		}

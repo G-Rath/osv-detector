@@ -26,7 +26,7 @@ func (db *memDB) Vulnerabilities(includeWithdrawn bool) []OSV {
 	return vulnerabilities
 }
 
-func (db memDB) VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) Vulnerabilities {
+func (db *memDB) VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) Vulnerabilities {
 	var vulnerabilities Vulnerabilities
 
 	for _, vulnerability := range db.Vulnerabilities(false) {
@@ -38,7 +38,7 @@ func (db memDB) VulnerabilitiesAffectingPackage(pkg internal.PackageDetails) Vul
 	return vulnerabilities
 }
 
-func (db memDB) Check(pkgs []internal.PackageDetails) ([]Vulnerabilities, error) {
+func (db *memDB) Check(pkgs []internal.PackageDetails) ([]Vulnerabilities, error) {
 	vulnerabilities := make([]Vulnerabilities, 0, len(pkgs))
 
 	for _, pkg := range pkgs {
