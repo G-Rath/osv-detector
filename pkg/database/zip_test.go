@@ -93,13 +93,13 @@ func zipOSVs(t *testing.T, osvs map[string]database.OSV) []byte {
 	buf := new(bytes.Buffer)
 	writer := zip.NewWriter(buf)
 
-	for filepath, osv := range osvs {
+	for fp, osv := range osvs {
 		data, err := json.Marshal(osv)
 		if err != nil {
 			t.Fatalf("could not marshal %v: %v", osv, err)
 		}
 
-		f, err := writer.Create(filepath)
+		f, err := writer.Create(fp)
 		if err != nil {
 			t.Fatal(err)
 		}
