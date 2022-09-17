@@ -1,7 +1,7 @@
 package semantic
 
 import (
-	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/internal"
 	"math/big"
 	"regexp"
 )
@@ -72,21 +72,14 @@ func compareBuilds(a string, b string) int {
 	return av.Cmp(bv)
 }
 
-// Compare returns an integer comparing two versions according to the rules of
-// the left-hand versions ecosystem if set, otherwise falling back to semantic
-// version precedence and then by their build version (if present).
-// The result will be 0 if v == w, -1 if v < w, or +1 if v > w.
-//
-// Versions with a build are considered less than ones without (if both
-// have equal components)
-//
-// Builds are compared using "best effort" - generally if a build ends with
-// a number, that will be used as the main comparator.
-func (v *Version) Compare(w Version) int {
-	if v.Ecosystem == lockfile.ComposerEcosystem {
-		return compareForPackagist(v.OriginStr, w.OriginStr)
-	}
+type VersionComparator = func(v, w Version) int
 
+// nolint:gochecknoglobals // this is an optimisation and read-only
+var comparators = map[internal.Ecosystem]VersionComparator{
+	internal.Ecosystem("Packagist"): compareForPackagist,
+}
+
+func compareForFallback(v, w Version) int {
 	componentDiff := compareComponents(v.Components, w.Components)
 
 	if componentDiff != 0 {
@@ -96,16 +89,50 @@ func (v *Version) Compare(w Version) int {
 	return compareBuilds(v.Build, w.Build)
 }
 
-// CompareStr returns an integer comparing two versions according to the rules of
-// the left-hand versions ecosystem if set, otherwise falling back to semantic
-// version precedence and then by their build version (if present).
+func (v *Version) findComparator() VersionComparator {
+	if comparator, ok := comparators[v.Ecosystem]; ok {
+		return comparator
+	}
+
+	return compareForFallback
+}
+
+// Compare returns an integer representing the sort order of the given Version w
+// relative to the subject Version v.
+//
+// If the subject Version has an ecosystem, then the comparison will be done in
+// accordance to the version specification for that ecosystem (if available);
+// otherwise, the comparison will be done using semantic versioning except with
+// support for an arbitrary number of components.
+//
+// In this case, if both versions are considered semantically equal and they both
+// have a build string, then a "best effort" comparison will be done, generally by
+// attempting to identity a number with the strings and comparing that.
+//
+// Versions with a build string are considered less than ones without (if both
+// have equal components).
+//
 // The result will be 0 if v == w, -1 if v < w, or +1 if v > w.
+func (v *Version) Compare(w Version) int {
+	return v.findComparator()(*v, w)
+}
+
+// CompareStr returns an integer representing the sort order of the given Version
+// w relative to the subject Version v.
 //
-// Versions with a build are considered less than ones without (if both
-// have equal components)
+// If the subject Version has an ecosystem, then the comparison will be done in
+// accordance to the version specification for that ecosystem (if available);
+// otherwise, the comparison will be done using semantic versioning except with
+// support for an arbitrary number of components.
 //
-// Builds are compared using "best effort" - generally if a build ends with
-// a number, that will be used as the main comparator.
+// In this case, if both versions are considered semantically equal and they both
+// have a build string, then a "best effort" comparison will be done, generally by
+// attempting to identity a number with the strings and comparing that.
+//
+// Versions with a build string are considered less than ones without (if both
+// have equal components).
+//
+// The result will be 0 if v == w, -1 if v < w, or +1 if v > w.
 func (v *Version) CompareStr(str string) int {
 	w := ParseWithEcosystem(str, v.Ecosystem)
 
