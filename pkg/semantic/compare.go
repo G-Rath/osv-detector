@@ -4,6 +4,7 @@ import (
 	"github.com/g-rath/osv-detector/internal"
 	"math/big"
 	"regexp"
+	"strings"
 )
 
 func convertToBigInt(str string) (*big.Int, bool) {
@@ -58,7 +59,17 @@ func tryExtractNumber(str string) *big.Int {
 	return r
 }
 
+// Removes build metadata from the given string if present, per semver v2
+func removeBuildMetadata(str string) string {
+	parts := strings.Split(str, "+")
+
+	return parts[0]
+}
+
 func compareBuilds(a string, b string) int {
+	a = removeBuildMetadata(a)
+	b = removeBuildMetadata(b)
+
 	if a == "" && b != "" {
 		return +1
 	}
