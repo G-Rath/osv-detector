@@ -2,6 +2,7 @@ package semantic
 
 import (
 	"fmt"
+	"github.com/g-rath/osv-detector/internal"
 	"math/big"
 	"strings"
 )
@@ -12,6 +13,8 @@ type Version struct {
 	LeadingV   bool
 	Components Components
 	Build      string
+	OriginStr  string
+	Ecosystem  internal.Ecosystem
 }
 
 func (components *Components) Fetch(n int) *big.Int {

@@ -1,10 +1,18 @@
 package semantic
 
 import (
+	"github.com/g-rath/osv-detector/internal"
 	"math/big"
 	"regexp"
 	"strings"
 )
+
+func ParseWithEcosystem(line string, ecosystem internal.Ecosystem) Version {
+	v := Parse(line)
+	v.Ecosystem = ecosystem
+
+	return v
+}
 
 func Parse(line string) Version {
 	var components []*big.Int
@@ -90,5 +98,6 @@ func Parse(line string) Version {
 		LeadingV:   leadingV,
 		Components: components,
 		Build:      currentCom,
+		OriginStr:  line,
 	}
 }

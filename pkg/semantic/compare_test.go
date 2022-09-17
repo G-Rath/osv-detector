@@ -1,10 +1,31 @@
 package semantic_test
 
 import (
+	"bufio"
+	"github.com/g-rath/osv-detector/internal"
 	"github.com/g-rath/osv-detector/pkg/semantic"
 	"math/big"
+	"os"
+	"strings"
 	"testing"
 )
+
+func expectedResult(t *testing.T, comparator string) int {
+	t.Helper()
+
+	switch comparator {
+	case "<":
+		return -1
+	case "=":
+		return 0
+	case ">":
+		return +1
+	default:
+		t.Fatalf("unknown comparator %s", comparator)
+
+		return -999
+	}
+}
 
 func compareWord(t *testing.T, result int) string {
 	t.Helper()
@@ -23,6 +44,41 @@ func compareWord(t *testing.T, result int) string {
 	}
 }
 
+func runAgainstEcosystemFixture(t *testing.T, ecosystem internal.Ecosystem, filename string) {
+	t.Helper()
+
+	file, err := os.Open("fixtures/" + filename)
+	if err != nil {
+		t.Fatalf("Failed to read fixture file: %v", err)
+	}
+
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if line == "" ||
+			strings.HasPrefix(line, "# ") ||
+			strings.HasPrefix(line, "// ") {
+			continue
+		}
+
+		pieces := strings.Split(line, " ")
+
+		if len(pieces) != 3 {
+			t.Fatalf(`incorrect number of peices in fixture "%s" (got %d)`, line, len(pieces))
+		}
+
+		expectEcosystemCompareResult(t, ecosystem, pieces[0], pieces[1], pieces[2])
+	}
+
+	if err := scanner.Err(); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func expectCompareResult(
 	t *testing.T,
 	a semantic.Version,
@@ -34,12 +90,34 @@ func expectCompareResult(
 	if actualResult := a.Compare(b); actualResult != expectedResult {
 		t.Errorf(
 			"Expected %s to be %s %s, but it was %s",
-			a.String(),
+			a.OriginStr,
 			compareWord(t, expectedResult),
-			b.String(),
+			b.OriginStr,
 			compareWord(t, actualResult),
 		)
 	}
+}
+
+func expectEcosystemCompareResult(
+	t *testing.T,
+	ecosystem internal.Ecosystem,
+	a string,
+	c string,
+	b string,
+) {
+	t.Helper()
+
+	expectCompareResult(t,
+		semantic.ParseWithEcosystem(a, ecosystem),
+		semantic.ParseWithEcosystem(b, ecosystem),
+		+expectedResult(t, c),
+	)
+
+	expectCompareResult(t,
+		semantic.ParseWithEcosystem(b, ecosystem),
+		semantic.ParseWithEcosystem(a, ecosystem),
+		-expectedResult(t, c),
+	)
 }
 
 func buildlessVersion(build string, components ...int) semantic.Version {
@@ -486,4 +564,26 @@ func TestVersion_Compare_BasicWithBigComponents(t *testing.T) {
 		semantic.Version{Components: []*big.Int{big1, big1, big1, big1}},
 		-1,
 	)
+}
+
+func TestVersion_Compare_Ecosystems(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		file string
+	}{
+		{
+			name: "Packagist",
+			file: "packagist-versions.txt",
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			runAgainstEcosystemFixture(t, internal.Ecosystem(tt.name), tt.file)
+		})
+	}
 }
