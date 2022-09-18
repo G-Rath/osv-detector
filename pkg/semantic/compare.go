@@ -4,7 +4,6 @@ import (
 	"github.com/g-rath/osv-detector/internal"
 	"math/big"
 	"regexp"
-	"strings"
 )
 
 func convertToBigInt(str string) (*big.Int, bool) {
@@ -59,13 +58,6 @@ func tryExtractNumber(str string) *big.Int {
 	return r
 }
 
-// Removes build metadata from the given string if present, per semver v2
-func removeBuildMetadata(str string) string {
-	parts := strings.Split(str, "+")
-
-	return parts[0]
-}
-
 func compareBuilds(a string, b string) int {
 	a = removeBuildMetadata(a)
 	b = removeBuildMetadata(b)
@@ -87,7 +79,11 @@ type VersionComparator = func(v, w Version) int
 
 // nolint:gochecknoglobals // this is an optimisation and read-only
 var comparators = map[internal.Ecosystem]VersionComparator{
+	internal.Ecosystem("npm"):       compareForSemver,
+	internal.Ecosystem("crates.io"): compareForSemver,
 	internal.Ecosystem("Packagist"): compareForPackagist,
+	internal.Ecosystem("Go"):        compareForSemver,
+	internal.Ecosystem("Hex"):       compareForSemver,
 }
 
 func compareForFallback(v, w Version) int {

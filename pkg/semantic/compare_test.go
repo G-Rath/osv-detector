@@ -574,8 +574,24 @@ func TestVersion_Compare_Ecosystems(t *testing.T) {
 		file string
 	}{
 		{
+			name: "npm",
+			file: "semver-versions.txt",
+		},
+		{
+			name: "crates.io",
+			file: "semver-versions.txt",
+		},
+		{
 			name: "Packagist",
 			file: "packagist-versions.txt",
+		},
+		{
+			name: "Go",
+			file: "semver-versions.txt",
+		},
+		{
+			name: "Hex",
+			file: "semver-versions.txt",
 		},
 	}
 	for _, tt := range tests {
