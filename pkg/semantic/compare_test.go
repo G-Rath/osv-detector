@@ -582,6 +582,10 @@ func TestVersion_Compare_Ecosystems(t *testing.T) {
 			file: "semver-versions.txt",
 		},
 		{
+			name: "NuGet",
+			file: "nuget-versions.txt",
+		},
+		{
 			name: "Packagist",
 			file: "packagist-versions.txt",
 		},

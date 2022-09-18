@@ -81,6 +81,7 @@ type VersionComparator = func(v, w Version) int
 var comparators = map[internal.Ecosystem]VersionComparator{
 	internal.Ecosystem("npm"):       compareForSemver,
 	internal.Ecosystem("crates.io"): compareForSemver,
+	internal.Ecosystem("NuGet"):     compareForNuGet,
 	internal.Ecosystem("Packagist"): compareForPackagist,
 	internal.Ecosystem("Go"):        compareForSemver,
 	internal.Ecosystem("Hex"):       compareForSemver,
