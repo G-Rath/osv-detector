@@ -582,6 +582,10 @@ func TestVersion_Compare_Ecosystems(t *testing.T) {
 			file: "semver-versions.txt",
 		},
 		{
+			name: "RubyGems",
+			file: "rubygems-versions.txt",
+		},
+		{
 			name: "NuGet",
 			file: "nuget-versions.txt",
 		},
