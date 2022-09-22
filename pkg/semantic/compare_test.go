@@ -601,6 +601,10 @@ func TestVersion_Compare_Ecosystems(t *testing.T) {
 			name: "Hex",
 			file: "semver-versions.txt",
 		},
+		{
+			name: "Maven",
+			file: "maven-versions.txt",
+		},
 	}
 	for _, tt := range tests {
 		tt := tt

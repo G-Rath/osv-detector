@@ -86,6 +86,7 @@ var comparators = map[internal.Ecosystem]VersionComparator{
 	internal.Ecosystem("Packagist"): compareForPackagist,
 	internal.Ecosystem("Go"):        compareForSemver,
 	internal.Ecosystem("Hex"):       compareForSemver,
+	internal.Ecosystem("Maven"):     compareForMaven,
 }
 
 func compareForFallback(v, w Version) int {
