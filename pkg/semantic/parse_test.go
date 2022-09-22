@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/g-rath/osv-detector/pkg/semantic"
+	"math/big"
 	"os"
 	"strings"
 	"testing"
@@ -19,12 +20,24 @@ func versionsEqual(expectedVersion semantic.Version, actualVersion semantic.Vers
 	}
 
 	for i := range expectedVersion.Components {
-		if expectedVersion.Components[i] != actualVersion.Components[i] {
+		if expectedVersion.Components[i].Cmp(actualVersion.Components[i]) != 0 {
 			return false
 		}
 	}
 
 	return true
+}
+
+func asBigInts(t *testing.T, components ...int) []*big.Int {
+	t.Helper()
+
+	comps := make([]*big.Int, 0, len(components))
+
+	for _, i := range components {
+		comps = append(comps, big.NewInt(int64(i)))
+	}
+
+	return comps
 }
 
 func explainVersion(version semantic.Version) string {
@@ -103,43 +116,43 @@ func TestParse_Standard(t *testing.T) {
 
 	expectParsedAsVersion(t, "0.0.0.0", semantic.Version{
 		LeadingV:   false,
-		Components: []int{0, 0, 0, 0},
+		Components: asBigInts(t, 0, 0, 0, 0),
 		Build:      "",
 	})
 
 	expectParsedAsVersion(t, "1.0.0.0", semantic.Version{
 		LeadingV:   false,
-		Components: []int{1, 0, 0, 0},
+		Components: asBigInts(t, 1, 0, 0, 0),
 		Build:      "",
 	})
 
 	expectParsedAsVersion(t, "1.2.0.0", semantic.Version{
 		LeadingV:   false,
-		Components: []int{1, 2, 0, 0},
+		Components: asBigInts(t, 1, 2, 0, 0),
 		Build:      "",
 	})
 
 	expectParsedAsVersion(t, "1.2.3.0", semantic.Version{
 		LeadingV:   false,
-		Components: []int{1, 2, 3, 0},
+		Components: asBigInts(t, 1, 2, 3, 0),
 		Build:      "",
 	})
 
 	expectParsedAsVersion(t, "1.2.3.4", semantic.Version{
 		LeadingV:   false,
-		Components: []int{1, 2, 3, 4},
+		Components: asBigInts(t, 1, 2, 3, 4),
 		Build:      "",
 	})
 
 	expectParsedAsVersion(t, "9.2.55826.0", semantic.Version{
 		LeadingV:   false,
-		Components: []int{9, 2, 55826, 0},
+		Components: asBigInts(t, 9, 2, 55826, 0),
 		Build:      "",
 	})
 
 	expectParsedAsVersion(t, "3.2.22.3", semantic.Version{
 		LeadingV:   false,
-		Components: []int{3, 2, 22, 3},
+		Components: asBigInts(t, 3, 2, 22, 3),
 		Build:      "",
 	})
 }
@@ -149,25 +162,25 @@ func TestParse_Omitted(t *testing.T) {
 
 	expectParsedAsVersion(t, "1", semantic.Version{
 		LeadingV:   false,
-		Components: []int{1},
+		Components: asBigInts(t, 1),
 		Build:      "",
 	})
 
 	expectParsedAsVersion(t, "1.2", semantic.Version{
 		LeadingV:   false,
-		Components: []int{1, 2},
+		Components: asBigInts(t, 1, 2),
 		Build:      "",
 	})
 
 	expectParsedAsVersion(t, "1.2.3", semantic.Version{
 		LeadingV:   false,
-		Components: []int{1, 2, 3},
+		Components: asBigInts(t, 1, 2, 3),
 		Build:      "",
 	})
 
 	expectParsedAsVersion(t, "1.2.3.", semantic.Version{
 		LeadingV:   false,
-		Components: []int{1, 2, 3},
+		Components: asBigInts(t, 1, 2, 3),
 		Build:      ".",
 	})
 }
@@ -177,49 +190,49 @@ func TestParse_WithBuildString(t *testing.T) {
 
 	expectParsedAsVersion(t, "10.0.0.beta1", semantic.Version{
 		LeadingV:   false,
-		Components: []int{10, 0, 0},
+		Components: asBigInts(t, 10, 0, 0),
 		Build:      ".beta1",
 	})
 
 	expectParsedAsVersion(t, "1.0.0a20", semantic.Version{
 		LeadingV:   false,
-		Components: []int{1, 0, 0},
+		Components: asBigInts(t, 1, 0, 0),
 		Build:      "a20",
 	})
 
 	expectParsedAsVersion(t, "9.0.0.pre1", semantic.Version{
 		LeadingV:   false,
-		Components: []int{9, 0, 0},
+		Components: asBigInts(t, 9, 0, 0),
 		Build:      ".pre1",
 	})
 
 	expectParsedAsVersion(t, "9.4.16.v20190411", semantic.Version{
 		LeadingV:   false,
-		Components: []int{9, 4, 16},
+		Components: asBigInts(t, 9, 4, 16),
 		Build:      ".v20190411",
 	})
 
 	expectParsedAsVersion(t, "0.3.0-beta.83", semantic.Version{
 		LeadingV:   false,
-		Components: []int{0, 3, 0},
+		Components: asBigInts(t, 0, 3, 0),
 		Build:      "-beta.83",
 	})
 
 	expectParsedAsVersion(t, "3.0.0-beta.17.5", semantic.Version{
 		LeadingV:   false,
-		Components: []int{3, 0, 0},
+		Components: asBigInts(t, 3, 0, 0),
 		Build:      "-beta.17.5",
 	})
 
 	expectParsedAsVersion(t, "4.0.0-milestone3", semantic.Version{
 		LeadingV:   false,
-		Components: []int{4, 0, 0},
+		Components: asBigInts(t, 4, 0, 0),
 		Build:      "-milestone3",
 	})
 
 	expectParsedAsVersion(t, "13.6RC1", semantic.Version{
 		LeadingV:   false,
-		Components: []int{13, 6},
+		Components: asBigInts(t, 13, 6),
 		Build:      "RC1",
 	})
 }
@@ -263,19 +276,19 @@ func TestParse_LeadingV(t *testing.T) {
 
 	expectParsedVersionToMatchString(t, "v1.0.0", "v1.0.0", semantic.Version{
 		LeadingV:   true,
-		Components: []int{1, 0, 0},
+		Components: asBigInts(t, 1, 0, 0),
 		Build:      "",
 	})
 
 	expectParsedVersionToMatchString(t, "v1.2.3-beta1", "v1.2.3-beta1", semantic.Version{
 		LeadingV:   true,
-		Components: []int{1, 2, 3},
+		Components: asBigInts(t, 1, 2, 3),
 		Build:      "-beta1",
 	})
 
 	expectParsedVersionToMatchString(t, "version210", "version210", semantic.Version{
 		LeadingV:   false,
-		Components: []int{},
+		Components: asBigInts(t, ),
 		Build:      "version210",
 	})
 }
@@ -285,13 +298,13 @@ func TestParse_LeadingZerosAndDateLike(t *testing.T) {
 
 	expectParsedVersionToMatchString(t, "20.04.0", "20.4.0", semantic.Version{
 		LeadingV:   false,
-		Components: []int{20, 4, 0},
+		Components: asBigInts(t, 20, 4, 0),
 		Build:      "",
 	})
 
 	expectParsedVersionToMatchString(t, "4.3.04", "4.3.4", semantic.Version{
 		LeadingV:   false,
-		Components: []int{4, 3, 4},
+		Components: asBigInts(t, 4, 3, 4),
 		Build:      "",
 	})
 }
@@ -308,37 +321,37 @@ func TestParse_DateLike(t *testing.T) {
 
 	expectParsedVersionToMatchString(t, "20.04.0", "20.4.0", semantic.Version{
 		LeadingV:   false,
-		Components: []int{20, 4, 0},
+		Components: asBigInts(t, 20, 4, 0),
 		Build:      "",
 	})
 
 	expectParsedVersionToMatchString(t, "4.3.04alpha01", "4.3.4alpha01", semantic.Version{
 		LeadingV:   false,
-		Components: []int{4, 3, 4},
+		Components: asBigInts(t, 4, 3, 4),
 		Build:      "alpha01",
 	})
 
 	expectParsedVersionToMatchString(t, "2019.03.6.1", "2019.3.6.1", semantic.Version{
 		LeadingV:   false,
-		Components: []int{2019, 3, 6, 1},
+		Components: asBigInts(t, 2019, 3, 6, 1),
 		Build:      "",
 	})
 
 	expectParsedVersionToMatchString(t, "19.04.15", "19.4.15", semantic.Version{
 		LeadingV:   false,
-		Components: []int{19, 4, 15},
+		Components: asBigInts(t, 19, 4, 15),
 		Build:      "",
 	})
 
 	expectParsedVersionToMatchString(t, "20.04.13", "20.4.13", semantic.Version{
 		LeadingV:   false,
-		Components: []int{20, 4, 13},
+		Components: asBigInts(t, 20, 4, 13),
 		Build:      "",
 	})
 
 	expectParsedVersionToMatchString(t, "2019.11.09", "2019.11.9", semantic.Version{
 		LeadingV:   false,
-		Components: []int{2019, 11, 9},
+		Components: asBigInts(t, 2019, 11, 9),
 		Build:      "",
 	})
 }

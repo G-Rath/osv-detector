@@ -1,13 +1,13 @@
 package semantic
 
 import (
+	"math/big"
 	"regexp"
-	"strconv"
 	"strings"
 )
 
 func Parse(line string) Version {
-	var components []int
+	var components []*big.Int
 
 	numberReg := regexp.MustCompile(`\d`)
 
@@ -43,7 +43,7 @@ func Parse(line string) Version {
 		// either way, we will be terminating the current component being
 		// parsed (if any), so let's do that first
 		if currentCom != "" {
-			v, _ := strconv.Atoi(currentCom)
+			v, _ := new(big.Int).SetString(currentCom, 10)
 
 			components = append(components, v)
 			currentCom = ""
@@ -67,7 +67,7 @@ func Parse(line string) Version {
 	// if we looped over everything without finding a build string,
 	// then what we were currently parsing is actually a component
 	if !foundBuild && currentCom != "" {
-		v, _ := strconv.Atoi(currentCom)
+		v, _ := new(big.Int).SetString(currentCom, 10)
 
 		components = append(components, v)
 		currentCom = ""

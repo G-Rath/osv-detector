@@ -1,8 +1,8 @@
 package semantic
 
 import (
+	"math/big"
 	"regexp"
-	"strconv"
 )
 
 func maxInt(x, y int) int {
@@ -13,23 +13,11 @@ func maxInt(x, y int) int {
 	return x
 }
 
-func compareInt(a int, b int) int {
-	if a == b {
-		return 0
-	}
-
-	if a < b {
-		return -1
-	}
-
-	return +1
-}
-
 func compareComponents(a Components, b Components) int {
 	numberOfComponents := maxInt(len(a), len(b))
 
 	for i := 0; i < numberOfComponents; i++ {
-		diff := compareInt(a.Fetch(i), b.Fetch(i))
+		diff := a.Fetch(i).Cmp(b.Fetch(i))
 
 		if diff != 0 {
 			return diff
@@ -39,16 +27,18 @@ func compareComponents(a Components, b Components) int {
 	return 0
 }
 
-func tryExtractNumber(str string) int {
+func tryExtractNumber(str string) *big.Int {
 	matcher := regexp.MustCompile(`[a-zA-Z.-]+(\d+)`)
 
 	results := matcher.FindStringSubmatch(str)
 
 	if results == nil {
-		return 0
+		return big.NewInt(0)
 	}
 
-	r, _ := strconv.Atoi(results[1])
+	// it should not be possible for this to not be a number,
+	// because we select only numbers above in our regexp
+	r, _ := new(big.Int).SetString(results[1], 10)
 
 	return r
 }
@@ -64,7 +54,7 @@ func compareBuilds(a string, b string) int {
 	av := tryExtractNumber(a)
 	bv := tryExtractNumber(b)
 
-	return compareInt(av, bv)
+	return av.Cmp(bv)
 }
 
 // Compare returns an integer comparing two versions according to

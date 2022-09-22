@@ -2,10 +2,11 @@ package semantic
 
 import (
 	"fmt"
+	"math/big"
 	"strings"
 )
 
-type Components []int
+type Components []*big.Int
 
 type Version struct {
 	LeadingV   bool
@@ -13,9 +14,9 @@ type Version struct {
 	Build      string
 }
 
-func (components *Components) Fetch(n int) int {
+func (components *Components) Fetch(n int) *big.Int {
 	if len(*components) <= n {
-		return 0
+		return big.NewInt(0)
 	}
 
 	return (*components)[n]
