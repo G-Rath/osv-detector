@@ -605,6 +605,10 @@ func TestVersion_Compare_Ecosystems(t *testing.T) {
 			name: "Maven",
 			file: "maven-versions.txt",
 		},
+		{
+			name: "PyPI",
+			file: "pypi-versions.txt",
+		},
 	}
 	for _, tt := range tests {
 		tt := tt
