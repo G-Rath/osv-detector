@@ -56,6 +56,9 @@ func runAgainstEcosystemFixture(t *testing.T, ecosystem internal.Ecosystem, file
 
 	scanner := bufio.NewScanner(file)
 
+	total := 0
+	failed := 0
+
 	for scanner.Scan() {
 		line := scanner.Text()
 
@@ -65,13 +68,22 @@ func runAgainstEcosystemFixture(t *testing.T, ecosystem internal.Ecosystem, file
 			continue
 		}
 
+		total++
 		pieces := strings.Split(line, " ")
 
 		if len(pieces) != 3 {
 			t.Fatalf(`incorrect number of peices in fixture "%s" (got %d)`, line, len(pieces))
 		}
 
-		expectEcosystemCompareResult(t, ecosystem, pieces[0], pieces[1], pieces[2])
+		result := expectEcosystemCompareResult(t, ecosystem, pieces[0], pieces[1], pieces[2])
+
+		if !result {
+			failed++
+		}
+	}
+
+	if failed > 0 {
+		t.Errorf("%d of %d failed", failed, total)
 	}
 
 	if err := scanner.Err(); err != nil {
@@ -84,7 +96,7 @@ func expectCompareResult(
 	a semantic.Version,
 	b semantic.Version,
 	expectedResult int,
-) {
+) bool {
 	t.Helper()
 
 	if actualResult := a.Compare(b); actualResult != expectedResult {
@@ -95,7 +107,11 @@ func expectCompareResult(
 			b.OriginStr,
 			compareWord(t, actualResult),
 		)
+
+		return false
 	}
+
+	return true
 }
 
 func expectEcosystemCompareResult(
@@ -104,20 +120,22 @@ func expectEcosystemCompareResult(
 	a string,
 	c string,
 	b string,
-) {
+) (success bool) {
 	t.Helper()
 
-	expectCompareResult(t,
+	success = success || expectCompareResult(t,
 		semantic.ParseWithEcosystem(a, ecosystem),
 		semantic.ParseWithEcosystem(b, ecosystem),
 		+expectedResult(t, c),
 	)
 
-	expectCompareResult(t,
+	success = success && expectCompareResult(t,
 		semantic.ParseWithEcosystem(b, ecosystem),
 		semantic.ParseWithEcosystem(a, ecosystem),
 		-expectedResult(t, c),
 	)
+
+	return success
 }
 
 func buildlessVersion(build string, components ...int) semantic.Version {
