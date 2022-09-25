@@ -6,25 +6,18 @@ import (
 	"strings"
 )
 
-func replaceOnce(pat *regexp.Regexp, src, repl string) string {
-	flag := false
-
-	return pat.ReplaceAllStringFunc(src, func(a string) string {
-		if flag {
-			return a
-		}
-		flag = true
-
-		return pat.ReplaceAllString(a, repl)
-	})
-}
-
 func canonicalizePackagistVersion(v string) string {
-	v = strings.TrimPrefix(v, "v")
+	// todo: decide how to handle this - without it, we're 1:1 with the native
+	//   PHP version_compare function, but composer removes it; arguably this
+	//   should be done before the version is passed in (by the dev), except
+	//   the ecosystem is named "Packagist" not "php version_compare", though
+	//   packagist itself doesn't seem to enforce this (its composer that does
+	//   the trimming...)
+	v = strings.TrimPrefix(strings.TrimPrefix(v, "v"), "V")
 
-	v = replaceOnce(regexp.MustCompile(`[-_+]`), v, ".")
-	v = replaceOnce(regexp.MustCompile(`([^\d.])(\d)`), v, "$1.$2")
-	v = replaceOnce(regexp.MustCompile(`(\d)([^\d.])`), v, "$1.$2")
+	v = regexp.MustCompile(`[-_+]`).ReplaceAllString(v, ".")
+	v = regexp.MustCompile(`([^\d.])(\d)`).ReplaceAllString(v, "$1.$2")
+	v = regexp.MustCompile(`(\d)([^\d.])`).ReplaceAllString(v, "$1.$2")
 
 	return v
 }
