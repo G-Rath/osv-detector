@@ -34,24 +34,68 @@ func canonicalizeRubyGemVersion(str string) string {
 	return res
 }
 
+func groupSegments(segs []string) (numbers []string, build []string) {
+	for _, seg := range segs {
+		_, isNumber := convertToBigInt(seg)
+
+		if len(build) > 0 || !isNumber {
+			build = append(build, seg)
+
+			continue
+		}
+
+		numbers = append(numbers, seg)
+	}
+
+	return numbers, build
+}
+
+func removeZeros(segs []string) []string {
+	i := len(segs) - 1
+
+	for i >= 0 {
+		if segs[i] != "0" {
+			i++
+
+			break
+		}
+
+		i--
+	}
+
+	return segs[:maxInt(i, 0)]
+}
+
+func canonicalSegments(segs []string) (canSegs []string) {
+	numbers, build := groupSegments(segs)
+
+	return append(removeZeros(numbers), removeZeros(build)...)
+}
+
 func compareRubyGemsComponents(a, b []string) int {
-	min := minInt(len(a), len(b))
+	a = canonicalSegments(a)
+	b = canonicalSegments(b)
+
+	max := maxInt(len(a), len(b))
 
 	var compare int
 
-	for i := 0; i < min; i++ {
-		ai, aIsNumber := convertToBigInt(a[i])
-		bi, bIsNumber := convertToBigInt(b[i])
+	for i := 0; i < max; i++ {
+		as := fetch(a, i, "0")
+		bs := fetch(b, i, "0")
+
+		ai, aIsNumber := convertToBigInt(as)
+		bi, bIsNumber := convertToBigInt(bs)
 
 		switch {
 		case aIsNumber && bIsNumber:
 			compare = ai.Cmp(bi)
 		case !aIsNumber && !bIsNumber:
-			compare = strings.Compare(a[i], b[i])
+			compare = strings.Compare(as, bs)
 		case aIsNumber:
-			compare = -1
-		default:
 			compare = +1
+		default:
+			compare = -1
 		}
 
 		if compare != 0 {
