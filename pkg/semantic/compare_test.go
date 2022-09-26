@@ -604,12 +604,20 @@ func TestVersion_Compare_Ecosystems(t *testing.T) {
 			file: "rubygems-versions.txt",
 		},
 		{
+			name: "RubyGems",
+			file: "rubygems-versions-generated.txt",
+		},
+		{
 			name: "NuGet",
 			file: "nuget-versions.txt",
 		},
 		{
 			name: "Packagist",
 			file: "packagist-versions.txt",
+		},
+		{
+			name: "Packagist",
+			file: "packagist-versions-generated.txt",
 		},
 		{
 			name: "Go",
@@ -624,12 +632,24 @@ func TestVersion_Compare_Ecosystems(t *testing.T) {
 			file: "maven-versions.txt",
 		},
 		{
+			name: "Maven",
+			file: "maven-versions-generated.txt",
+		},
+		{
 			name: "PyPI",
 			file: "pypi-versions.txt",
 		},
 		{
+			name: "PyPI",
+			file: "pypi-versions-generated.txt",
+		},
+		{
 			name: "Debian",
 			file: "debian-versions.txt",
+		},
+		{
+			name: "Debian",
+			file: "debian-versions-generated.txt",
 		},
 	}
 	for _, tt := range tests {
