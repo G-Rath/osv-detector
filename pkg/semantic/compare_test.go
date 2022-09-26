@@ -2,6 +2,7 @@ package semantic_test
 
 import (
 	"github.com/g-rath/osv-detector/pkg/semantic"
+	"math/big"
 	"testing"
 )
 
@@ -42,7 +43,13 @@ func expectCompareResult(
 }
 
 func buildlessVersion(build string, components ...int) semantic.Version {
-	return semantic.Version{Components: components, Build: build}
+	comps := make([]*big.Int, 0, len(components))
+
+	for _, i := range components {
+		comps = append(comps, big.NewInt(int64(i)))
+	}
+
+	return semantic.Version{Components: comps, Build: build}
 }
 
 func TestVersion_Compare_BasicEqual(t *testing.T) {
@@ -426,32 +433,57 @@ func TestVersion_Compare_BasicWithLeadingV(t *testing.T) {
 	t.Parallel()
 
 	expectCompareResult(t,
-		semantic.Version{LeadingV: false, Components: []int{1}, Build: ""},
-		semantic.Version{LeadingV: false, Components: []int{1}, Build: ""},
+		semantic.Version{LeadingV: false, Components: []*big.Int{big.NewInt(1)}, Build: ""},
+		semantic.Version{LeadingV: false, Components: []*big.Int{big.NewInt(1)}, Build: ""},
 		0,
 	)
 
 	expectCompareResult(t,
-		semantic.Version{LeadingV: true, Components: []int{1}, Build: ""},
-		semantic.Version{LeadingV: false, Components: []int{1}, Build: ""},
+		semantic.Version{LeadingV: true, Components: []*big.Int{big.NewInt(1)}, Build: ""},
+		semantic.Version{LeadingV: false, Components: []*big.Int{big.NewInt(1)}, Build: ""},
 		0,
 	)
 
 	expectCompareResult(t,
-		semantic.Version{LeadingV: false, Components: []int{1}, Build: ""},
-		semantic.Version{LeadingV: true, Components: []int{1}, Build: ""},
+		semantic.Version{LeadingV: false, Components: []*big.Int{big.NewInt(1)}, Build: ""},
+		semantic.Version{LeadingV: true, Components: []*big.Int{big.NewInt(1)}, Build: ""},
 		0,
 	)
 
 	expectCompareResult(t,
-		semantic.Version{LeadingV: true, Components: []int{1}, Build: ""},
-		semantic.Version{LeadingV: true, Components: []int{1}, Build: ""},
+		semantic.Version{LeadingV: true, Components: []*big.Int{big.NewInt(1)}, Build: ""},
+		semantic.Version{LeadingV: true, Components: []*big.Int{big.NewInt(1)}, Build: ""},
 		0,
 	)
 
 	expectCompareResult(t,
-		semantic.Version{LeadingV: true, Components: []int{2}, Build: ""},
-		semantic.Version{LeadingV: true, Components: []int{1}, Build: ""},
+		semantic.Version{LeadingV: true, Components: []*big.Int{big.NewInt(2)}, Build: ""},
+		semantic.Version{LeadingV: true, Components: []*big.Int{big.NewInt(1)}, Build: ""},
 		1,
+	)
+}
+
+func TestVersion_Compare_BasicWithBigComponents(t *testing.T) {
+	t.Parallel()
+
+	big1, _ := new(big.Int).SetString("9999999999999999999999999999999999999999999999999999999999999999", 10)
+	big2, _ := new(big.Int).SetString("9999999999999999999999999999999999999999999999999999999999999998", 10)
+
+	expectCompareResult(t,
+		semantic.Version{Components: []*big.Int{big1}},
+		semantic.Version{Components: []*big.Int{big1}},
+		0,
+	)
+
+	expectCompareResult(t,
+		semantic.Version{Components: []*big.Int{big1}},
+		semantic.Version{Components: []*big.Int{big2}},
+		1,
+	)
+
+	expectCompareResult(t,
+		semantic.Version{Components: []*big.Int{big1, big1, big1, big2}},
+		semantic.Version{Components: []*big.Int{big1, big1, big1, big1}},
+		-1,
 	)
 }
