@@ -16,6 +16,7 @@ func ParseWithEcosystem(line string, ecosystem internal.Ecosystem) Version {
 
 func Parse(line string) Version {
 	var components []*big.Int
+	originStr := line
 
 	numberReg := regexp.MustCompile(`\d`)
 
@@ -98,6 +99,6 @@ func Parse(line string) Version {
 		LeadingV:   leadingV,
 		Components: components,
 		Build:      currentCom,
-		OriginStr:  line,
+		OriginStr:  originStr,
 	}
 }
