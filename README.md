@@ -81,9 +81,9 @@ osv-detector --parse-as 'package-lock.json' path/to/my/file.lock
 ```
 
 By default, the detector attempts to detect known vulnerabilities by checking
-the versions of packages specified by the parsed lockfile against the versions
-specified by the OSVs in the loaded OSV databases, using an internal
-semver-based package that aims to minimize false negatives (see
+the versions of packages specified by the OVSs in the loaded OSV databases,
+comparing based on the version ordering rules for the specific ecosystem being
+checked as closely as possible (see
 [this section](#version-parsing-and-comparing) for more details about version
 handling).
 
@@ -417,8 +417,10 @@ The following packages were found in /path/to/my/Gemfile.lock:
 
 ## Version parsing and comparing
 
-Versions are compared using an internal `semver` package which aims to support
-any number of components followed by a build string.
+Versions are compared using an internal `semantic` package which aims to support
+compare versions accurately per the version semantics of each ecosystem, falling
+back to a relaxed version of SemVer that supports unlimited number components
+followed by a build string.
 
 Components are numbers broken up by dots, e.g. `1.2.3` has the components
 `1, 2, 3`. Anything that is not a number or a dot is considered to be the start
