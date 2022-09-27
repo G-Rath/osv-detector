@@ -60,6 +60,7 @@ The detector supports parsing the following lockfiles:
 | `Gemfile.lock`       | `RubyGems`  | `bundler`  |
 | `go.mod`             | `Go`        | `go mod`   |
 | `mix.lock`           | `Hex`       | `mix`      |
+| `poetry.lock`        | `PyPI`      | `poetry`   |
 | `pom.xml`\*          | `Maven`     | `maven`    |
 | `requirements.txt`\* | `PyPI`      | `pip`      |
 

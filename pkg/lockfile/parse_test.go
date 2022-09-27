@@ -91,6 +91,7 @@ func TestParse_FindsExpectedParsers(t *testing.T) {
 		"go.mod",
 		"mix.lock",
 		"pom.xml",
+		"poetry.lock",
 		"requirements.txt",
 	}
 
