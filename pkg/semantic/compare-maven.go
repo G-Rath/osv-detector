@@ -116,15 +116,23 @@ func (mv *mavenVersion) equal(mw mavenVersion) bool {
 	return true
 }
 
-func newMavenNullVersionToken(prefix string) mavenVersionToken {
-	if prefix == "." {
-		return mavenVersionToken{".", "0", true}
+func newMavenNullVersionToken(token mavenVersionToken) mavenVersionToken {
+	if token.prefix == "." {
+		value := "0"
+
+		// "sp" is the only qualifier that comes after an empty value, and because
+		// of the way the comparator is implemented, we have to express that here
+		if token.value == "sp" {
+			value = ""
+		}
+
+		return mavenVersionToken{".", value, true}
 	}
-	if prefix == "-" {
+	if token.prefix == "-" {
 		return mavenVersionToken{"-", "", true}
 	}
 
-	panic(fmt.Sprintf("unknown prefix '%s'", prefix))
+	panic(fmt.Sprintf("unknown prefix '%s' (value: '%s')", token.prefix, token.value))
 }
 
 func (mv *mavenVersion) lessThan(mw mavenVersion) bool {
@@ -138,13 +146,13 @@ func (mv *mavenVersion) lessThan(mw mavenVersion) bool {
 		// have the same length as the longer one. Padded "null" values depend on
 		// the prefix of the other version: 0 for '.', "" for '-'
 		if i >= len(mv.tokens) {
-			left = newMavenNullVersionToken(mw.tokens[i].prefix)
+			left = newMavenNullVersionToken(mw.tokens[i])
 		} else {
 			left = mv.tokens[i]
 		}
 
 		if i >= len(mw.tokens) {
-			right = newMavenNullVersionToken(mv.tokens[i].prefix)
+			right = newMavenNullVersionToken(mv.tokens[i])
 		} else {
 			right = mw.tokens[i]
 		}
