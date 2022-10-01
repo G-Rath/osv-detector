@@ -114,6 +114,7 @@ func ParseMavenLock(pathToLockfile string) ([]PackageDetails, error) {
 			Name:      lockPackage.GroupID + ":" + lockPackage.ArtifactID,
 			Version:   lockPackage.ResolveVersion(*parsedLockfile),
 			Ecosystem: MavenEcosystem,
+			CompareAs: MavenEcosystem,
 		})
 	}
 

@@ -49,6 +49,7 @@ func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 			Version:   composerPackage.Version,
 			Commit:    composerPackage.Dist.Reference,
 			Ecosystem: ComposerEcosystem,
+			CompareAs: ComposerEcosystem,
 		})
 	}
 
@@ -58,6 +59,7 @@ func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 			Version:   composerPackage.Version,
 			Commit:    composerPackage.Dist.Reference,
 			Ecosystem: ComposerEcosystem,
+			CompareAs: ComposerEcosystem,
 		})
 	}
 

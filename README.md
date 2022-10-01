@@ -335,7 +335,7 @@ the detector doesn't know about, such as `NuGet`.
 You can either pass in CSV rows:
 
 ```
-osv-detector --parse-as csv-row 'npm,@typescript-eslint/types,5.13.0' 'Packagist,sentry/sdk,2.0.4'
+osv-detector --parse-as csv-row 'npm,,@typescript-eslint/types,5.13.0' 'Packagist,sentry/sdk,2.0.4'
 ```
 
 or you can specify paths to csv files:
@@ -344,16 +344,34 @@ or you can specify paths to csv files:
 osv-detector --parse-as csv-file path/to/my/first-csv path/to/my/second-csv
 ```
 
-Each CSV row must have at least three fields which hold the ecosystem, package
-name, and version (or commit) respectively, and CSV files cannot contain a
-header.
+Each CSV row represents a package and is made up of at least four fields:
+
+1. The ecosystem that the package is from, which is used as part of identifying
+   if an OSV is about the given package
+   - This does not have to be one of the ecosystems referenced in the detector,
+     or in the OSV specification
+   - This should be omitted if you are wanting to compare a commit using an API
+     database
+2. The ecosystem whose version comparison semantics to use when determining if
+   an OSV applies to the given package
+   - This has to be an ecosystem for which the detector supports comparing
+     versions of; this field can be blank if the first field refers to an
+     ecosystem the detector supports comparing, otherwise it should be the
+     ecosystem whose version semantics most closely match that of your arbitrary
+     ecosystem
+   - This should be omitted if you are wanting to compare a commit using an API
+     database
+3. The name of the package
+4. The version of the package, or the SHA of a `git` commit
+   - If you are providing a commit, then you must leave the first two fields
+     empty and ensure an API-based database is loaded i.e. via `--use-api`
+
+> **Warning**
+>
+> Do not include a header if you are using a CSV file
 
 The `ecosystem` does _not_ have to be one listed by the detector as known,
 meaning you can use any ecosystem that [osv.dev](https://osv.dev/) provides.
-
-If the ecosystem field is empty, then the `version` field is expected to be a
-commit. In this case, the `package` column is decorative as only the commit is
-passed to the API.
 
 > Remember to tell the detector to use the `osv.dev` API via the `--use-api`
 > flag if you're wanting to check commits!
@@ -362,7 +380,7 @@ You can also omit the version to have the detector list all known
 vulnerabilities in the loaded database that apply to the given package:
 
 ```
-osv-detector --parse-as csv-row 'NuGet,Yarp.ReverseProxy,'
+osv-detector --parse-as csv-row 'NuGet,,Yarp.ReverseProxy,'
 ```
 
 While this uses the `--parse-as` flag, these are _not_ considered standard

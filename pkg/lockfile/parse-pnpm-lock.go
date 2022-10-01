@@ -106,6 +106,7 @@ func parsePnpmLock(lockfile PnpmLockfile) []PackageDetails {
 			Name:      name,
 			Version:   version,
 			Ecosystem: PnpmEcosystem,
+			CompareAs: PnpmEcosystem,
 			Commit:    commit,
 		})
 	}

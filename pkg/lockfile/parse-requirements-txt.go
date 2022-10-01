@@ -48,6 +48,7 @@ func parseLine(line string) PackageDetails {
 		Name:      normalizedRequirementName(name),
 		Version:   version,
 		Ecosystem: PipEcosystem,
+		CompareAs: PipEcosystem,
 	}
 }
 

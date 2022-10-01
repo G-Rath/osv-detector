@@ -49,6 +49,7 @@ func TestParseCargoLock_OnePackage(t *testing.T) {
 			Name:      "addr2line",
 			Version:   "0.15.2",
 			Ecosystem: lockfile.CargoEcosystem,
+			CompareAs: lockfile.CargoEcosystem,
 		},
 	})
 }
@@ -67,11 +68,13 @@ func TestParseCargoLock_TwoPackages(t *testing.T) {
 			Name:      "addr2line",
 			Version:   "0.15.2",
 			Ecosystem: lockfile.CargoEcosystem,
+			CompareAs: lockfile.CargoEcosystem,
 		},
 		{
 			Name:      "syn",
 			Version:   "1.0.73",
 			Ecosystem: lockfile.CargoEcosystem,
+			CompareAs: lockfile.CargoEcosystem,
 		},
 	})
 }
@@ -90,6 +93,7 @@ func TestParseCargoLock_PackageWithBuildString(t *testing.T) {
 			Name:      "wasi",
 			Version:   "0.10.2+wasi-snapshot-preview1",
 			Ecosystem: lockfile.CargoEcosystem,
+			CompareAs: lockfile.CargoEcosystem,
 		},
 	})
 }

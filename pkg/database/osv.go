@@ -67,7 +67,7 @@ func (ar AffectsRange) containsVersion(pkg internal.PackageDetails) bool {
 		return false
 	}
 
-	vp := semantic.MustParse(pkg.Version, pkg.Ecosystem)
+	vp := semantic.MustParse(pkg.Version, pkg.CompareAs)
 
 	var affected bool
 	for _, e := range ar.Events {

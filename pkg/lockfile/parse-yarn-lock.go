@@ -165,6 +165,7 @@ func parsePackageGroup(group []string) PackageDetails {
 		Name:      name,
 		Version:   version,
 		Ecosystem: YarnEcosystem,
+		CompareAs: YarnEcosystem,
 		Commit:    tryExtractCommit(resolution),
 	}
 }

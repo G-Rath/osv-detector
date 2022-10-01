@@ -40,6 +40,7 @@ func ParseCargoLock(pathToLockfile string) ([]PackageDetails, error) {
 			Name:      lockPackage.Name,
 			Version:   lockPackage.Version,
 			Ecosystem: CargoEcosystem,
+			CompareAs: CargoEcosystem,
 		})
 	}
 

@@ -49,6 +49,7 @@ func TestParseGoLock_OnePackage(t *testing.T) {
 			Name:      "github.com/BurntSushi/toml",
 			Version:   "1.0.0",
 			Ecosystem: lockfile.GoEcosystem,
+			CompareAs: lockfile.GoEcosystem,
 		},
 	})
 }
@@ -67,11 +68,13 @@ func TestParseGoLock_TwoPackages(t *testing.T) {
 			Name:      "github.com/BurntSushi/toml",
 			Version:   "1.0.0",
 			Ecosystem: lockfile.GoEcosystem,
+			CompareAs: lockfile.GoEcosystem,
 		},
 		{
 			Name:      "gopkg.in/yaml.v2",
 			Version:   "2.4.0",
 			Ecosystem: lockfile.GoEcosystem,
+			CompareAs: lockfile.GoEcosystem,
 		},
 	})
 }
@@ -90,26 +93,31 @@ func TestParseGoLock_IndirectPackages(t *testing.T) {
 			Name:      "github.com/BurntSushi/toml",
 			Version:   "1.0.0",
 			Ecosystem: lockfile.GoEcosystem,
+			CompareAs: lockfile.GoEcosystem,
 		},
 		{
 			Name:      "gopkg.in/yaml.v2",
 			Version:   "2.4.0",
 			Ecosystem: lockfile.GoEcosystem,
+			CompareAs: lockfile.GoEcosystem,
 		},
 		{
 			Name:      "github.com/mattn/go-colorable",
 			Version:   "0.1.9",
 			Ecosystem: lockfile.GoEcosystem,
+			CompareAs: lockfile.GoEcosystem,
 		},
 		{
 			Name:      "github.com/mattn/go-isatty",
 			Version:   "0.0.14",
 			Ecosystem: lockfile.GoEcosystem,
+			CompareAs: lockfile.GoEcosystem,
 		},
 		{
 			Name:      "golang.org/x/sys",
 			Version:   "0.0.0-20210630005230-0f9fa26af87c",
 			Ecosystem: lockfile.GoEcosystem,
+			CompareAs: lockfile.GoEcosystem,
 		},
 	})
 }

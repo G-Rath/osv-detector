@@ -64,6 +64,7 @@ func ParseMixLock(pathToLockfile string) ([]PackageDetails, error) {
 			Name:      name,
 			Version:   version,
 			Ecosystem: MixEcosystem,
+			CompareAs: MixEcosystem,
 			Commit:    commit,
 		})
 	}

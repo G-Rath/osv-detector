@@ -47,6 +47,7 @@ func ParsePoetryLock(pathToLockfile string) ([]PackageDetails, error) {
 			Version:   lockPackage.Version,
 			Commit:    lockPackage.Source.Commit,
 			Ecosystem: PoetryEcosystem,
+			CompareAs: PoetryEcosystem,
 		})
 	}
 

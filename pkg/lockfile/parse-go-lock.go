@@ -29,6 +29,7 @@ func ParseGoLock(pathToLockfile string) ([]PackageDetails, error) {
 			Name:      require.Mod.Path,
 			Version:   strings.TrimPrefix(require.Mod.Version, "v"),
 			Ecosystem: GoEcosystem,
+			CompareAs: GoEcosystem,
 		})
 	}
 

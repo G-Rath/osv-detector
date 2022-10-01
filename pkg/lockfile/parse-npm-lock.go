@@ -85,6 +85,7 @@ func parseNpmLockDependencies(dependencies map[string]NpmLockDependency) map[str
 			Name:      name,
 			Version:   finalVersion,
 			Ecosystem: NpmEcosystem,
+			CompareAs: NpmEcosystem,
 			Commit:    commit,
 		}
 	}
@@ -125,6 +126,7 @@ func parseNpmLockPackages(packages map[string]NpmLockPackage) map[string]Package
 			Name:      finalName,
 			Version:   detail.Version,
 			Ecosystem: NpmEcosystem,
+			CompareAs: NpmEcosystem,
 			Commit:    commit,
 		}
 	}

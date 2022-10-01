@@ -16,6 +16,7 @@ func TestReport_HasKnownVulnerabilities(t *testing.T) {
 		Name:      "addr2line",
 		Version:   "0.15.2",
 		Ecosystem: lockfile.CargoEcosystem,
+		CompareAs: lockfile.CargoEcosystem,
 	}
 	type fields struct {
 		Lockfile lockfile.Lockfile
@@ -104,6 +105,7 @@ func TestReport_HasIgnoredVulnerabilities(t *testing.T) {
 		Name:      "addr2line",
 		Version:   "0.15.2",
 		Ecosystem: lockfile.CargoEcosystem,
+		CompareAs: lockfile.CargoEcosystem,
 	}
 	type fields struct {
 		Lockfile lockfile.Lockfile
@@ -265,6 +267,7 @@ func TestReport_String_OneVulnerability(t *testing.T) {
 					Name:      "my-package",
 					Version:   "1.2.3",
 					Ecosystem: lockfile.BundlerEcosystem,
+					CompareAs: lockfile.BundlerEcosystem,
 				},
 				Vulnerabilities: []database.OSV{
 					{
@@ -302,6 +305,7 @@ func TestReport_String_MultipleVulnerabilities(t *testing.T) {
 					Name:      "my-package",
 					Version:   "1.2.3",
 					Ecosystem: lockfile.BundlerEcosystem,
+					CompareAs: lockfile.BundlerEcosystem,
 				},
 				Vulnerabilities: []database.OSV{
 					{
@@ -315,6 +319,7 @@ func TestReport_String_MultipleVulnerabilities(t *testing.T) {
 					Name:      "middle-package",
 					Version:   "1.2.0",
 					Ecosystem: lockfile.BundlerEcosystem,
+					CompareAs: lockfile.BundlerEcosystem,
 				},
 				Vulnerabilities: []database.OSV{},
 			},
@@ -323,6 +328,7 @@ func TestReport_String_MultipleVulnerabilities(t *testing.T) {
 					Name:      "their-package",
 					Version:   "4.5.6",
 					Ecosystem: lockfile.BundlerEcosystem,
+					CompareAs: lockfile.BundlerEcosystem,
 				},
 				Vulnerabilities: []database.OSV{
 					{
@@ -352,6 +358,7 @@ func TestReport_String_AllIgnoredVulnerabilities(t *testing.T) {
 					Name:      "my-package",
 					Version:   "1.2.3",
 					Ecosystem: lockfile.BundlerEcosystem,
+					CompareAs: lockfile.BundlerEcosystem,
 				},
 				Ignored: []database.OSV{
 					{
@@ -365,6 +372,7 @@ func TestReport_String_AllIgnoredVulnerabilities(t *testing.T) {
 					Name:      "their-package",
 					Version:   "4.5.6",
 					Ecosystem: lockfile.BundlerEcosystem,
+					CompareAs: lockfile.BundlerEcosystem,
 				},
 				Ignored: []database.OSV{
 					{
@@ -400,6 +408,7 @@ func TestReport_String_SomeIgnoredVulnerability(t *testing.T) {
 					Name:      "my-package",
 					Version:   "1.2.3",
 					Ecosystem: lockfile.BundlerEcosystem,
+					CompareAs: lockfile.BundlerEcosystem,
 				},
 				Vulnerabilities: []database.OSV{
 					{
@@ -413,6 +422,7 @@ func TestReport_String_SomeIgnoredVulnerability(t *testing.T) {
 					Name:      "their-package",
 					Version:   "4.5.6",
 					Ecosystem: lockfile.BundlerEcosystem,
+					CompareAs: lockfile.BundlerEcosystem,
 				},
 				Ignored: []database.OSV{
 					{
