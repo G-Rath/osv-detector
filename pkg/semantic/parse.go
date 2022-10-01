@@ -1,20 +1,81 @@
 package semantic
 
 import (
+	"errors"
+	"fmt"
 	"github.com/g-rath/osv-detector/internal"
 	"math/big"
 	"regexp"
 	"strings"
 )
 
-func ParseWithEcosystem(line string, ecosystem internal.Ecosystem) Version {
-	v := Parse(line)
-	v.Ecosystem = ecosystem
+var ErrUnsupportedEcosystem = errors.New("unsupported ecosystem")
+
+func MustParse(str string, ecosystem internal.Ecosystem) Version {
+	v, err := Parse(str, ecosystem)
+
+	if err != nil {
+		panic(err)
+	}
 
 	return v
 }
 
-func Parse(line string) Version {
+func Parse(str string, ecosystem internal.Ecosystem) (Version, error) {
+	switch {
+	case ecosystem == "npm":
+		return parseSemverVersion(str), nil
+	case ecosystem == "crates.io":
+		return parseSemverVersion(str), nil
+	case ecosystem == "Debian":
+		return parseDebianVersion(str), nil
+	case ecosystem == "RubyGems":
+		return parseRubyGemsVersion(str), nil
+	case ecosystem == "NuGet":
+		return parseNuGetVersion(str), nil
+	case ecosystem == "Packagist":
+		return parsePackagistVersion(str), nil
+	case ecosystem == "Go":
+		return parseSemverVersion(str), nil
+	case ecosystem == "Hex":
+		return parseSemverVersion(str), nil
+	case ecosystem == "Maven":
+		return parseMavenVersion(str), nil
+	case ecosystem == "PyPI":
+		return parsePyPIVersion(str), nil
+	}
+
+	return nil, fmt.Errorf("%w %s", ErrUnsupportedEcosystem, ecosystem)
+}
+
+// SemverLikeVersion is a version that is _like_ a version as defined by the
+// Semantic Version specification, except with potentially unlimited numeric
+// components and a leading "v"
+type SemverLikeVersion struct {
+	LeadingV   bool
+	Components Components
+	Build      string
+	Original   string
+}
+
+func ParseSemverLikeVersion(line string, maxComponents int) SemverLikeVersion {
+	v := parseSemverLike(line)
+
+	if maxComponents == -1 {
+		return v
+	}
+
+	components, build := v.fetchComponentsAndBuild(maxComponents)
+
+	return SemverLikeVersion{
+		LeadingV:   v.LeadingV,
+		Components: components,
+		Build:      build,
+		Original:   v.Original,
+	}
+}
+
+func parseSemverLike(line string) SemverLikeVersion {
 	var components []*big.Int
 	originStr := line
 
@@ -95,10 +156,10 @@ func Parse(line string) Version {
 		currentCom = "v" + currentCom
 	}
 
-	return Version{
+	return SemverLikeVersion{
 		LeadingV:   leadingV,
 		Components: components,
 		Build:      currentCom,
-		OriginStr:  originStr,
+		Original:   originStr,
 	}
 }

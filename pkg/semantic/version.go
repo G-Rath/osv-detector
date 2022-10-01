@@ -1,21 +1,18 @@
 package semantic
 
 import (
-	"fmt"
-	"github.com/g-rath/osv-detector/internal"
 	"math/big"
-	"strings"
 )
 
-type Components []*big.Int
-
-type Version struct {
-	LeadingV   bool
-	Components Components
-	Build      string
-	OriginStr  string
-	Ecosystem  internal.Ecosystem
+type Version interface {
+	// CompareStr returns an integer representing the sort order of the given string
+	// when parsed as the concrete Version relative to the subject Version.
+	//
+	// The result will be 0 if v == w, -1 if v < w, or +1 if v > w.
+	CompareStr(str string) int
 }
+
+type Components []*big.Int
 
 func (components *Components) Fetch(n int) *big.Int {
 	if len(*components) <= n {
@@ -23,21 +20,4 @@ func (components *Components) Fetch(n int) *big.Int {
 	}
 
 	return (*components)[n]
-}
-
-func (v *Version) String() string {
-	str := ""
-
-	if v.LeadingV {
-		str += "v"
-	}
-
-	for _, component := range v.Components {
-		str += fmt.Sprintf("%d.", component)
-	}
-
-	str = strings.TrimSuffix(str, ".")
-	str += v.Build
-
-	return str
 }

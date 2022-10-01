@@ -98,11 +98,11 @@ func (vt *mavenVersionToken) lessThan(wt mavenVersionToken) bool {
 	return vt.qualifierOrder() < wt.qualifierOrder()
 }
 
-type mavenVersion struct {
+type MavenVersion struct {
 	tokens []mavenVersionToken
 }
 
-func (mv *mavenVersion) equal(mw mavenVersion) bool {
+func (mv MavenVersion) equal(mw MavenVersion) bool {
 	if len(mv.tokens) != len(mw.tokens) {
 		return false
 	}
@@ -135,7 +135,7 @@ func newMavenNullVersionToken(token mavenVersionToken) mavenVersionToken {
 	panic(fmt.Sprintf("unknown prefix '%s' (value: '%s')", token.prefix, token.value))
 }
 
-func (mv *mavenVersion) lessThan(mw mavenVersion) bool {
+func (mv MavenVersion) lessThan(mw MavenVersion) bool {
 	max := maxInt(len(mv.tokens), len(mw.tokens))
 
 	var left mavenVersionToken
@@ -202,7 +202,7 @@ func splitCharsInclusive(s, chars string) (out []string) {
 	return
 }
 
-func newMavenVersion(str string) mavenVersion {
+func newMavenVersion(str string) MavenVersion {
 	var tokens []mavenVersionToken
 
 	// The Maven coordinate is split in tokens between dots ('.'), hyphens ('-')
@@ -299,19 +299,23 @@ func newMavenVersion(str string) mavenVersion {
 		i--
 	}
 
-	return mavenVersion{tokens}
+	return MavenVersion{tokens}
 }
-
-func compareForMaven(v, w Version) int {
-	mv := newMavenVersion(v.OriginStr)
-	mw := newMavenVersion(w.OriginStr)
-
-	if mv.equal(mw) {
+func (mv MavenVersion) Compare(w MavenVersion) int {
+	if mv.equal(w) {
 		return 0
 	}
-	if mv.lessThan(mw) {
+	if mv.lessThan(w) {
 		return -1
 	}
 
 	return +1
+}
+
+func (mv MavenVersion) CompareStr(str string) int {
+	return mv.Compare(parseMavenVersion(str))
+}
+
+func parseMavenVersion(str string) MavenVersion {
+	return newMavenVersion(str)
 }

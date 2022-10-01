@@ -2,15 +2,24 @@ package semantic
 
 import "strings"
 
-func compareForNuGet(v, w Version) int {
-	vComponents, vBuild := v.fetchComponentsAndBuild(4)
-	wComponents, wBuild := w.fetchComponentsAndBuild(4)
+type NuGetVersion struct {
+	SemverLikeVersion
+}
 
-	componentDiff := compareNumericComponents(vComponents, wComponents)
+func (v NuGetVersion) Compare(w NuGetVersion) int {
+	componentDiff := compareNumericComponents(v.Components, w.Components)
 
 	if componentDiff != 0 {
 		return componentDiff
 	}
 
-	return compareBuildComponents(strings.ToLower(vBuild), strings.ToLower(wBuild))
+	return compareBuildComponents(strings.ToLower(v.Build), strings.ToLower(w.Build))
+}
+
+func (v NuGetVersion) CompareStr(str string) int {
+	return v.Compare(parseNuGetVersion(str))
+}
+
+func parseNuGetVersion(str string) NuGetVersion {
+	return NuGetVersion{ParseSemverLikeVersion(str, 4)}
 }

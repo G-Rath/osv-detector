@@ -131,7 +131,7 @@ type DebianVersion struct {
 	revision string
 }
 
-func (v *DebianVersion) Compare(w DebianVersion) int {
+func (v DebianVersion) Compare(w DebianVersion) int {
 	if diff := v.epoch.Cmp(w.epoch); diff != 0 {
 		return diff
 	}
@@ -143,6 +143,10 @@ func (v *DebianVersion) Compare(w DebianVersion) int {
 	}
 
 	return 0
+}
+
+func (v DebianVersion) CompareStr(str string) int {
+	return v.Compare(parseDebianVersion(str))
 }
 
 func parseDebianVersion(str string) DebianVersion {
@@ -165,11 +169,4 @@ func parseDebianVersion(str string) DebianVersion {
 	}
 
 	return DebianVersion{epoch, upstream, revision}
-}
-
-func compareForDebian(v, w Version) int {
-	dv := parseDebianVersion(v.OriginStr)
-	dw := parseDebianVersion(w.OriginStr)
-
-	return dv.Compare(dw)
 }

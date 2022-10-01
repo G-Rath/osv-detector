@@ -97,7 +97,7 @@ func compareSemverBuildComponents(a, b []string) int {
 	return 0
 }
 
-func (v *Version) fetchComponentsAndBuild(maxComponents int) (Components, string) {
+func (v *SemverLikeVersion) fetchComponentsAndBuild(maxComponents int) (Components, string) {
 	if len(v.Components) <= maxComponents {
 		return v.Components, v.Build
 	}
@@ -114,15 +114,24 @@ func (v *Version) fetchComponentsAndBuild(maxComponents int) (Components, string
 	return comps, build
 }
 
-func compareForSemver(v, w Version) int {
-	vComponents, vBuild := v.fetchComponentsAndBuild(3)
-	wComponents, wBuild := w.fetchComponentsAndBuild(3)
+type SemverVersion struct {
+	SemverLikeVersion
+}
 
-	componentDiff := compareNumericComponents(vComponents, wComponents)
+func parseSemverVersion(str string) SemverVersion {
+	return SemverVersion{ParseSemverLikeVersion(str, 3)}
+}
+
+func (v SemverVersion) Compare(w SemverVersion) int {
+	componentDiff := compareNumericComponents(v.Components, w.Components)
 
 	if componentDiff != 0 {
 		return componentDiff
 	}
 
-	return compareBuildComponents(vBuild, wBuild)
+	return compareBuildComponents(v.Build, w.Build)
+}
+
+func (v SemverVersion) CompareStr(str string) int {
+	return v.Compare(parseSemverVersion(str))
 }

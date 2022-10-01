@@ -73,9 +73,6 @@ func canonicalSegments(segs []string) (canSegs []string) {
 }
 
 func compareRubyGemsComponents(a, b []string) int {
-	a = canonicalSegments(a)
-	b = canonicalSegments(b)
-
 	max := maxInt(len(a), len(b))
 
 	var compare int
@@ -130,9 +127,22 @@ func compareRubyGemsComponents(a, b []string) int {
 	return 0
 }
 
-func compareForRubyGems(v, w Version) int {
-	return compareRubyGemsComponents(
-		strings.Split(canonicalizeRubyGemVersion(v.OriginStr), "."),
-		strings.Split(canonicalizeRubyGemVersion(w.OriginStr), "."),
-	)
+type RubyGemsVersion struct {
+	Original string
+	Segments []string
+}
+
+func parseRubyGemsVersion(str string) RubyGemsVersion {
+	return RubyGemsVersion{
+		str,
+		canonicalSegments(strings.Split(canonicalizeRubyGemVersion(str), ".")),
+	}
+}
+
+func (v RubyGemsVersion) Compare(w RubyGemsVersion) int {
+	return compareRubyGemsComponents(v.Segments, w.Segments)
+}
+
+func (v RubyGemsVersion) CompareStr(str string) int {
+	return v.Compare(parseRubyGemsVersion(str))
 }
