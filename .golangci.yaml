@@ -1,6 +1,8 @@
 output:
   sort-results: true
 linters:
+  enable:
+    - gofmt
   # prettier-ignore
   disable:
     - tagliatelle      # we're parsing data from external sources
