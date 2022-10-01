@@ -624,7 +624,6 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 			continue
 		}
 
-
 		ignores := make(
 			[]string,
 			0,

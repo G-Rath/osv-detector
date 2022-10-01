@@ -288,7 +288,7 @@ func TestParse_LeadingV(t *testing.T) {
 
 	expectParsedVersionToMatchString(t, "version210", "version210", semantic.Version{
 		LeadingV:   false,
-		Components: asBigInts(t, ),
+		Components: asBigInts(t),
 		Build:      "version210",
 	})
 }
