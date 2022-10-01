@@ -609,6 +609,10 @@ func TestVersion_Compare_Ecosystems(t *testing.T) {
 			name: "PyPI",
 			file: "pypi-versions.txt",
 		},
+		{
+			name: "Debian",
+			file: "debian-versions.txt",
+		},
 	}
 	for _, tt := range tests {
 		tt := tt
