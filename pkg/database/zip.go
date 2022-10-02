@@ -112,7 +112,7 @@ func (db *ZipDB) fetchZip() ([]byte, error) {
 	cacheContents, err := json.Marshal(cache)
 
 	if err == nil {
-		// nolint:gosec // being world readable is fine
+		//nolint:gosec // being world readable is fine
 		err = os.WriteFile(cachePath, cacheContents, 0644)
 
 		if err != nil {
