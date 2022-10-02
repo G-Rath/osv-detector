@@ -51,7 +51,7 @@ func jsonMarshalQueryBatchResponse(t *testing.T, vulns []objectsWithIDs) []byte 
 func expectRequestPayload(t *testing.T, r *http.Request, queries []apiQuery) {
 	t.Helper()
 
-	if r.Method != "POST" {
+	if r.Method != http.MethodPost {
 		t.Fatalf("api query was not a POST request")
 	}
 

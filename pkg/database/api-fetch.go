@@ -23,7 +23,7 @@ func (db APIDB) Fetch(id string) (OSV, error) {
 
 	req, err := http.NewRequestWithContext(
 		context.Background(),
-		"GET",
+		http.MethodGet,
 		db.osvEndpoint(id),
 		http.NoBody,
 	)

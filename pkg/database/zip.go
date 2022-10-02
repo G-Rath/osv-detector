@@ -68,7 +68,7 @@ func (db *ZipDB) fetchZip() ([]byte, error) {
 		return cache.Body, nil
 	}
 
-	req, err := http.NewRequestWithContext(context.Background(), "GET", db.ArchiveURL, nil)
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, db.ArchiveURL, nil)
 
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve OSV database archive: %w", err)
