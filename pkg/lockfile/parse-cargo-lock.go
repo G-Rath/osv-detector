@@ -3,7 +3,7 @@ package lockfile
 import (
 	"fmt"
 	"github.com/BurntSushi/toml"
-	"io/ioutil"
+	"os"
 )
 
 type CargoLockPackage struct {
@@ -21,7 +21,7 @@ const CargoEcosystem Ecosystem = "crates.io"
 func ParseCargoLock(pathToLockfile string) ([]PackageDetails, error) {
 	var parsedLockfile *CargoLockFile
 
-	lockfileContents, err := ioutil.ReadFile(pathToLockfile)
+	lockfileContents, err := os.ReadFile(pathToLockfile)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)

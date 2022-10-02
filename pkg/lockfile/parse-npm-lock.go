@@ -3,7 +3,7 @@ package lockfile
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path"
 	"strings"
 )
@@ -143,7 +143,7 @@ func parseNpmLock(lockfile NpmLockfile) map[string]PackageDetails {
 func ParseNpmLock(pathToLockfile string) ([]PackageDetails, error) {
 	var parsedLockfile *NpmLockfile
 
-	lockfileContents, err := ioutil.ReadFile(pathToLockfile)
+	lockfileContents, err := os.ReadFile(pathToLockfile)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)

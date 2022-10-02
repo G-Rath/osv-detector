@@ -3,14 +3,14 @@ package lockfile
 import (
 	"fmt"
 	"golang.org/x/mod/modfile"
-	"io/ioutil"
+	"os"
 	"strings"
 )
 
 const GoEcosystem Ecosystem = "Go"
 
 func ParseGoLock(pathToLockfile string) ([]PackageDetails, error) {
-	lockfileContents, err := ioutil.ReadFile(pathToLockfile)
+	lockfileContents, err := os.ReadFile(pathToLockfile)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
