@@ -272,6 +272,7 @@ func TestReporter_PrintKnownEcosystems(t *testing.T) {
 		"  Hex",
 		"  Maven",
 		"  PyPI",
+		"  Pub",
 		"",
 	}, "\n")
 

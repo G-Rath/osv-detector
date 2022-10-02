@@ -44,6 +44,7 @@ func TestFindParser(t *testing.T) {
 		"package-lock.json",
 		"yarn.lock",
 		"pnpm-lock.yaml",
+		"pubspec.lock",
 		"composer.lock",
 		"Gemfile.lock",
 		"go.mod",
@@ -92,6 +93,7 @@ func TestParse_FindsExpectedParsers(t *testing.T) {
 		"mix.lock",
 		"pom.xml",
 		"poetry.lock",
+		"pubspec.lock",
 		"requirements.txt",
 	}
 
