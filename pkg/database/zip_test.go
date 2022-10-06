@@ -55,7 +55,7 @@ func cacheWrite(t *testing.T, cache database.Cache) {
 	cacheContents, err := json.Marshal(cache)
 
 	if err == nil {
-		// nolint:gosec // being world readable is fine
+		//nolint:gosec // being world readable is fine
 		err = os.WriteFile(cachePath(cache.URL), cacheContents, 0644)
 	}
 
@@ -67,7 +67,7 @@ func cacheWrite(t *testing.T, cache database.Cache) {
 func cacheWriteBad(t *testing.T, url string, contents string) {
 	t.Helper()
 
-	// nolint:gosec // being world readable is fine
+	//nolint:gosec // being world readable is fine
 	err := os.WriteFile(cachePath(url), []byte(contents), 0644)
 
 	if err != nil {

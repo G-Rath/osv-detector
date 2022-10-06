@@ -64,7 +64,7 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([][]ObjectWithID, er
 
 	req, err := http.NewRequestWithContext(
 		context.Background(),
-		"POST",
+		http.MethodPost,
 		db.bulkEndpoint(),
 		bytes.NewBuffer(jsonData),
 	)

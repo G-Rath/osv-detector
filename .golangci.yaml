@@ -18,6 +18,7 @@ linters:
     - godot            # comments are fine without full stops
     - gomnd            # not every number is magic
     - wsl              # disagree with, for now
+    - ireturn          # disagree with, sort of
   presets:
     - bugs
     - comment

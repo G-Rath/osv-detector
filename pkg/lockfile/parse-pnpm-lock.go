@@ -3,7 +3,7 @@ package lockfile
 import (
 	"fmt"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -116,7 +116,7 @@ func parsePnpmLock(lockfile PnpmLockfile) []PackageDetails {
 func ParsePnpmLock(pathToLockfile string) ([]PackageDetails, error) {
 	var parsedLockfile *PnpmLockfile
 
-	lockfileContents, err := ioutil.ReadFile(pathToLockfile)
+	lockfileContents, err := os.ReadFile(pathToLockfile)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)

@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-// nolint:unparam
+//nolint:unparam
 func newReporter(t *testing.T) (*reporter.Reporter, *bytes.Buffer, *bytes.Buffer) {
 	t.Helper()
 
@@ -164,7 +164,7 @@ func TestLoad(t *testing.T) {
 	}
 
 	if isMissingStderrMessage {
-		// nolint:forbidigo
+		//nolint:forbidigo
 		fmt.Println(gotStderr)
 	}
 

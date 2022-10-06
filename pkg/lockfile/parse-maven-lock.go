@@ -3,7 +3,6 @@ package lockfile
 import (
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"regexp"
 )
@@ -96,7 +95,7 @@ func (p *MavenLockProperties) UnmarshalXML(d *xml.Decoder, start xml.StartElemen
 func ParseMavenLock(pathToLockfile string) ([]PackageDetails, error) {
 	var parsedLockfile *MavenLockFile
 
-	lockfileContents, err := ioutil.ReadFile(pathToLockfile)
+	lockfileContents, err := os.ReadFile(pathToLockfile)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)

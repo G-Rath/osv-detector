@@ -2,8 +2,8 @@ package lockfile
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -165,7 +165,7 @@ func (parser *gemfileLockfileParser) parse(contents string) {
 func ParseGemfileLock(pathToLockfile string) ([]PackageDetails, error) {
 	var parser gemfileLockfileParser
 
-	bytes, err := ioutil.ReadFile(pathToLockfile)
+	bytes, err := os.ReadFile(pathToLockfile)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)

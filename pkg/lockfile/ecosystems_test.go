@@ -2,7 +2,7 @@ package lockfile_test
 
 import (
 	"github.com/g-rath/osv-detector/pkg/lockfile"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 )
@@ -10,7 +10,7 @@ import (
 func numberOfLockfileParsers(t *testing.T) int {
 	t.Helper()
 
-	directories, err := ioutil.ReadDir(".")
+	directories, err := os.ReadDir(".")
 
 	if err != nil {
 		t.Fatalf("unable to read current directory: ")

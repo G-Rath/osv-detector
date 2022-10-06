@@ -68,7 +68,7 @@ func (db *ZipDB) fetchZip() ([]byte, error) {
 		return cache.Body, nil
 	}
 
-	req, err := http.NewRequestWithContext(context.Background(), "GET", db.ArchiveURL, nil)
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, db.ArchiveURL, nil)
 
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve OSV database archive: %w", err)
@@ -112,7 +112,7 @@ func (db *ZipDB) fetchZip() ([]byte, error) {
 	cacheContents, err := json.Marshal(cache)
 
 	if err == nil {
-		// nolint:gosec // being world readable is fine
+		//nolint:gosec // being world readable is fine
 		err = os.WriteFile(cachePath, cacheContents, 0644)
 
 		if err != nil {

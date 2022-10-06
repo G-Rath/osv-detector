@@ -3,7 +3,7 @@ package lockfile
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 )
 
 type ComposerPackage struct {
@@ -24,7 +24,7 @@ const ComposerEcosystem Ecosystem = "Packagist"
 func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 	var parsedLockfile *ComposerLock
 
-	lockfileContents, err := ioutil.ReadFile(pathToLockfile)
+	lockfileContents, err := os.ReadFile(pathToLockfile)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
