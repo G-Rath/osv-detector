@@ -7,10 +7,8 @@ type NuGetVersion struct {
 }
 
 func (v NuGetVersion) Compare(w NuGetVersion) int {
-	componentDiff := compareNumericComponents(v.Components, w.Components)
-
-	if componentDiff != 0 {
-		return componentDiff
+	if diff := v.Components.Cmp(w.Components); diff != 0 {
+		return diff
 	}
 
 	return compareBuildComponents(strings.ToLower(v.Build), strings.ToLower(w.Build))

@@ -188,7 +188,7 @@ func (pv PyPIVersion) compareEpoch(pw PyPIVersion) int {
 // of each component in turn; when comparing release segments with different numbers
 // of components, the shorter segment is padded out with additional zeros as necessary.
 func (pv PyPIVersion) compareRelease(pw PyPIVersion) int {
-	return compareComponents(pv.release, pw.release)
+	return pv.release.Cmp(pw.release)
 }
 
 func (pv PyPIVersion) preIndex() int {

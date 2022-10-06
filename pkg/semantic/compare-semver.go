@@ -5,20 +5,6 @@ import (
 	"strings"
 )
 
-func compareNumericComponents(a Components, b Components) int {
-	numberOfComponents := maxInt(len(a), len(b))
-
-	for i := 0; i < numberOfComponents; i++ {
-		diff := a.Fetch(i).Cmp(b.Fetch(i))
-
-		if diff != 0 {
-			return diff
-		}
-	}
-
-	return 0
-}
-
 // Removes build metadata from the given string if present, per semver v2
 //
 // See https://semver.org/spec/v2.0.0.html#spec-item-10
@@ -123,10 +109,8 @@ func parseSemverVersion(str string) SemverVersion {
 }
 
 func (v SemverVersion) Compare(w SemverVersion) int {
-	componentDiff := compareNumericComponents(v.Components, w.Components)
-
-	if componentDiff != 0 {
-		return componentDiff
+	if diff := v.Components.Cmp(w.Components); diff != 0 {
+		return diff
 	}
 
 	return compareBuildComponents(v.Build, w.Build)
