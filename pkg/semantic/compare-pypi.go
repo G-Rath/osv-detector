@@ -22,14 +22,6 @@ type letterAndNumber struct {
 	number *big.Int
 }
 
-func convertToBigIntOrPanic(str string) *big.Int {
-	if num, isNumber := convertToBigInt(str); isNumber {
-		return num
-	}
-
-	panic(fmt.Sprintf("failed to convert %s to a number", str))
-}
-
 func parseLetterVersion(letter, number string) letterAndNumber {
 	if letter != "" {
 		// we consider there to be an implicit 0 in a pre-release

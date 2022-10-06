@@ -72,14 +72,6 @@ func weighDebianChar(char string) int {
 	return c
 }
 
-func fetch(slice []string, i int, def string) string {
-	if len(slice) <= i {
-		return def
-	}
-
-	return slice[i]
-}
-
 func compareDebianVersions(a, b string) int {
 	var ap, bp string
 	var adp, bdp *big.Int
