@@ -1,7 +1,6 @@
 package semantic
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -81,23 +80,6 @@ func compareSemverBuildComponents(a, b []string) int {
 	}
 
 	return 0
-}
-
-func (v *SemverLikeVersion) fetchComponentsAndBuild(maxComponents int) (Components, string) {
-	if len(v.Components) <= maxComponents {
-		return v.Components, v.Build
-	}
-
-	comps := v.Components[:maxComponents]
-	extra := v.Components[maxComponents:]
-
-	build := v.Build
-
-	for _, c := range extra {
-		build += fmt.Sprintf(".%d", c)
-	}
-
-	return comps, build
 }
 
 type SemverVersion struct {
