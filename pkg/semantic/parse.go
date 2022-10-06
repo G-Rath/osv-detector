@@ -43,6 +43,8 @@ func Parse(str string, ecosystem internal.Ecosystem) (Version, error) {
 		return parseMavenVersion(str), nil
 	case ecosystem == "PyPI":
 		return parsePyPIVersion(str), nil
+	case ecosystem == "Pub":
+		return parseSemverVersion(str), nil
 	}
 
 	return nil, fmt.Errorf("%w %s", ErrUnsupportedEcosystem, ecosystem)
