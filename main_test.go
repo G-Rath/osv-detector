@@ -131,6 +131,7 @@ func TestRun(t *testing.T) {
 					pnpm-lock.yaml
 					poetry.lock
 					pom.xml
+					pubspec.lock
 					requirements.txt
 					yarn.lock
 					csv-file
