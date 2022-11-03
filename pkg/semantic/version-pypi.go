@@ -35,20 +35,20 @@ func parseLetterVersion(letter, number string) letterAndNumber {
 
 		// we consider some words to be alternative spellings of other words and in
 		// those cases we want to normalize the spellings to our preferred spelling
-		switch {
-		case letter == "alpha":
+		switch letter {
+		case "alpha":
 			letter = "a"
-		case letter == "beta":
+		case "beta":
 			letter = "b"
-		case letter == "c":
+		case "c":
 			fallthrough
-		case letter == "pre":
+		case "pre":
 			fallthrough
-		case letter == "preview":
+		case "preview":
 			letter = "rc"
-		case letter == "rev":
+		case "rev":
 			fallthrough
-		case letter == "r":
+		case "r":
 			letter = "post"
 		}
 
@@ -75,16 +75,16 @@ func parseLocalVersion(local string) (parts []string) {
 }
 
 func normalizePyPILegacyPart(part string) string {
-	switch {
-	case part == "pre":
+	switch part {
+	case "pre":
 		part = "c"
-	case part == "preview":
+	case "preview":
 		part = "c"
-	case part == "-":
+	case "-":
 		part = "final-"
-	case part == "rc":
+	case "rc":
 		part = "c"
-	case part == "dev":
+	case "dev":
 		part = "@"
 	}
 

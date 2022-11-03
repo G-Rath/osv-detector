@@ -19,28 +19,28 @@ func MustParse(str string, ecosystem internal.Ecosystem) Version {
 }
 
 func Parse(str string, ecosystem internal.Ecosystem) (Version, error) {
-	switch {
-	case ecosystem == "npm":
+	switch ecosystem {
+	case "npm":
 		return parseSemverVersion(str), nil
-	case ecosystem == "crates.io":
+	case "crates.io":
 		return parseSemverVersion(str), nil
-	case ecosystem == "Debian":
+	case "Debian":
 		return parseDebianVersion(str), nil
-	case ecosystem == "RubyGems":
+	case "RubyGems":
 		return parseRubyGemsVersion(str), nil
-	case ecosystem == "NuGet":
+	case "NuGet":
 		return parseNuGetVersion(str), nil
-	case ecosystem == "Packagist":
+	case "Packagist":
 		return parsePackagistVersion(str), nil
-	case ecosystem == "Go":
+	case "Go":
 		return parseSemverVersion(str), nil
-	case ecosystem == "Hex":
+	case "Hex":
 		return parseSemverVersion(str), nil
-	case ecosystem == "Maven":
+	case "Maven":
 		return parseMavenVersion(str), nil
-	case ecosystem == "PyPI":
+	case "PyPI":
 		return parsePyPIVersion(str), nil
-	case ecosystem == "Pub":
+	case "Pub":
 		return parseSemverVersion(str), nil
 	}
 
