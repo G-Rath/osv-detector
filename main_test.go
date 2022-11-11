@@ -311,7 +311,7 @@ func TestRun_ListPackages(t *testing.T) {
 			args:         []string{"--list-packages", "--json", "./fixtures/locks-one"},
 			wantExitCode: 0,
 			wantStdout: `
-				{"results":[{"filePath":"fixtures/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm"}]}]}
+				{"results":[{"filePath":"fixtures/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm","compareAs":"npm"}]}]}
 			`,
 			wantStderr: `
 				fixtures/locks-one/yarn.lock: found 1 package
@@ -420,7 +420,7 @@ func TestRun_Lockfile(t *testing.T) {
 			args:         []string{"--json", "./fixtures/locks-one"},
 			wantExitCode: 0,
 			wantStdout: `
-				{"results":[{"filePath":"fixtures/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm","vulnerabilities":[],"ignored":[]}]}]}
+				{"results":[{"filePath":"fixtures/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm","compareAs":"npm","vulnerabilities":[],"ignored":[]}]}]}
 			`,
 			wantStderr: `
 				Loaded the following OSV databases:
@@ -606,7 +606,7 @@ func TestRun_ParseAs_CsvRow(t *testing.T) {
 			args: []string{
 				"--no-config",
 				"--parse-as", "csv-row",
-				"NuGet,Yarp.ReverseProxy,",
+				"NuGet,,Yarp.ReverseProxy,",
 			},
 			wantExitCode: 1,
 			wantStdout: `
@@ -628,8 +628,8 @@ func TestRun_ParseAs_CsvRow(t *testing.T) {
 			args: []string{
 				"--no-config",
 				"--parse-as", "csv-row",
-				"NuGet,Yarp.ReverseProxy,",
-				"npm,@typescript-eslint/types,5.13.0",
+				"NuGet,,Yarp.ReverseProxy,",
+				"npm,,@typescript-eslint/types,5.13.0",
 			},
 			wantExitCode: 1,
 			wantStdout: `
@@ -653,15 +653,15 @@ func TestRun_ParseAs_CsvRow(t *testing.T) {
 			args: []string{
 				"--no-config",
 				"--parse-as", "csv-row",
-				"NuGet,",
-				"npm,@typescript-eslint/types,5.13.0",
+				"NuGet,,",
+				"npm,,@typescript-eslint/types,5.13.0",
 			},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
 
 			`,
-			wantStderr: "Error, row 1: not enough fields (expected at least three)",
+			wantStderr: "Error, row 1: not enough fields (expected at least four)",
 		},
 	}
 	for _, tt := range tests {
@@ -706,7 +706,7 @@ func TestRun_ParseAs_CsvFile(t *testing.T) {
 				Loaded the following OSV databases:
 
 			`,
-			wantStderr: "Error, fixtures/csvs-files/not-a-csv.xml: row 1: not enough fields (expected at least three)",
+			wantStderr: "Error, fixtures/csvs-files/not-a-csv.xml: row 1: not enough fields (expected at least four)",
 		},
 	}
 	for _, tt := range tests {

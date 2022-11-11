@@ -58,7 +58,7 @@ type AffectsRange struct {
 	Events []RangeEvent     `json:"events"`
 }
 
-func (ar AffectsRange) containsVersion(v string) bool {
+func (ar AffectsRange) containsVersion(pkg internal.PackageDetails) bool {
 	if ar.Type != TypeEcosystem && ar.Type != TypeSemver {
 		return false
 	}
@@ -67,7 +67,7 @@ func (ar AffectsRange) containsVersion(v string) bool {
 		return false
 	}
 
-	vp := semantic.Parse(v)
+	vp := semantic.MustParse(pkg.Version, pkg.CompareAs)
 
 	var affected bool
 	for _, e := range ar.Events {
@@ -75,7 +75,7 @@ func (ar AffectsRange) containsVersion(v string) bool {
 			if e.Fixed != "" {
 				affected = vp.CompareStr(e.Fixed) < 0
 			} else if e.LastAffected != "" {
-				affected = e.LastAffected == v || vp.CompareStr(e.LastAffected) <= 0
+				affected = e.LastAffected == pkg.Version || vp.CompareStr(e.LastAffected) <= 0
 			}
 		} else if e.Introduced != "" {
 			affected = e.Introduced == "0" || vp.CompareStr(e.Introduced) >= 0
@@ -89,12 +89,12 @@ type Affects []AffectsRange
 
 // affectsVersion checks if the given version is within the range
 // specified by the events of any "Ecosystem" or "Semver" type ranges
-func (a Affects) affectsVersion(v string) bool {
+func (a Affects) affectsVersion(pkg internal.PackageDetails) bool {
 	for _, r := range a {
 		if r.Type != TypeEcosystem && r.Type != TypeSemver {
 			return false
 		}
-		if r.containsVersion(v) {
+		if r.containsVersion(pkg) {
 			return true
 		}
 	}
@@ -259,7 +259,7 @@ func (osv *OSV) IsAffected(pkg internal.PackageDetails) bool {
 				return true
 			}
 
-			if affected.Ranges.affectsVersion(pkg.Version) {
+			if affected.Ranges.affectsVersion(pkg) {
 				return true
 			}
 

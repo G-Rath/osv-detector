@@ -49,6 +49,7 @@ func (parser *gemfileLockfileParser) addDependency(name string, version string) 
 		Name:      name,
 		Version:   version,
 		Ecosystem: BundlerEcosystem,
+		CompareAs: BundlerEcosystem,
 		Commit:    parser.currentGemCommit,
 	})
 }

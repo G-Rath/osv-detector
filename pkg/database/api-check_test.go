@@ -121,7 +121,7 @@ func TestAPIDB_Check_UnsupportedProtocol(t *testing.T) {
 	}
 
 	vulns, err := db.Check([]internal.PackageDetails{
-		{Name: "my-package", Version: "1.0.0", Commit: "abc123", Ecosystem: "npm"},
+		{Name: "my-package", Version: "1.0.0", Commit: "abc123", Ecosystem: "npm", CompareAs: "npm"},
 	})
 
 	if err == nil {
@@ -159,7 +159,7 @@ func TestAPIDB_Check_NotOK(t *testing.T) {
 	}
 
 	vulns, err := db.Check([]internal.PackageDetails{
-		{Name: "my-package", Version: "1.0.0", Commit: "", Ecosystem: "npm"},
+		{Name: "my-package", Version: "1.0.0", Commit: "", Ecosystem: "npm", CompareAs: "npm"},
 	})
 
 	if err == nil {
@@ -197,7 +197,7 @@ func TestAPIDB_Check_InvalidBody(t *testing.T) {
 	}
 
 	vulns, err := db.Check([]internal.PackageDetails{
-		{Name: "my-package", Version: "1.0.0", Commit: "", Ecosystem: "npm"},
+		{Name: "my-package", Version: "1.0.0", Commit: "", Ecosystem: "npm", CompareAs: "npm"},
 	})
 
 	if err == nil {
@@ -292,7 +292,7 @@ func TestAPIDB_Check_FetchSuccessful(t *testing.T) {
 	}
 
 	vulns, err := db.Check([]internal.PackageDetails{
-		{Name: "my-package", Version: "1.0.0", Commit: "", Ecosystem: "npm"},
+		{Name: "my-package", Version: "1.0.0", Commit: "", Ecosystem: "npm", CompareAs: "npm"},
 	})
 
 	if err != nil {
@@ -348,7 +348,7 @@ func TestAPIDB_Check_FetchFails(t *testing.T) {
 	}
 
 	vulns, err := db.Check([]internal.PackageDetails{
-		{Name: "my-package", Version: "1.0.0", Commit: "", Ecosystem: "npm"},
+		{Name: "my-package", Version: "1.0.0", Commit: "", Ecosystem: "npm", CompareAs: "npm"},
 	})
 
 	if err != nil {
