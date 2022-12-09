@@ -7,7 +7,6 @@ import (
 	"io/fs"
 	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 )
@@ -44,7 +43,7 @@ func (db *DirDB) load() error {
 
 	// since this will always be an absolute _url_ we need to remove the
 	// absolute slash that will always be present
-	p := path.Join(strings.TrimPrefix(u.Path, "/"), db.WorkingDirectory)
+	p := filepath.Join(strings.TrimPrefix(u.Path, "/"), db.WorkingDirectory)
 	errored := false
 
 	err = filepath.Walk(p, func(path string, info fs.FileInfo, err error) error {

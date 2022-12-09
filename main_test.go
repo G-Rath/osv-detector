@@ -4,6 +4,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
@@ -71,6 +72,14 @@ type cliTestCase struct {
 	wantStderr   string
 }
 
+// Attempts to normalize any file paths in the given `output` so that they can
+// be compared reliably regardless of the file path separator being used.
+//
+// Namely, escaped forward slashes are replaced with backslashes.
+func normalizeFilePaths(output string) string {
+	return strings.ReplaceAll(strings.ReplaceAll(output, "\\\\", "/"), "\\", "/")
+}
+
 func testCli(t *testing.T, tc cliTestCase) {
 	t.Helper()
 
@@ -79,8 +88,8 @@ func testCli(t *testing.T, tc cliTestCase) {
 
 	ec := run(tc.args, stdoutBuffer, stderrBuffer)
 
-	stdout := stdoutBuffer.String()
-	stderr := stderrBuffer.String()
+	stdout := normalizeFilePaths(stdoutBuffer.String())
+	stderr := normalizeFilePaths(stderrBuffer.String())
 
 	if ec != tc.wantExitCode {
 		t.Errorf("cli exited with code %d, not %d", ec, tc.wantExitCode)
@@ -141,7 +150,7 @@ func TestRun(t *testing.T) {
 		// only the files in the given directories are checked (no recursion)
 		{
 			name:         "",
-			args:         []string{"./fixtures/"},
+			args:         []string{filepath.FromSlash("./fixtures/")},
 			wantExitCode: 128,
 			wantStdout:   "",
 			wantStderr: `
@@ -176,7 +185,7 @@ func TestRun_EmptyDirExitCode(t *testing.T) {
 		// one directory without any lockfiles should result in "no lockfiles in directories" exit code
 		{
 			name:         "",
-			args:         []string{"./fixtures/locks-none"},
+			args:         []string{filepath.FromSlash("./fixtures/locks-none")},
 			wantExitCode: 128,
 			wantStdout:   "",
 			wantStderr: `
@@ -186,7 +195,7 @@ func TestRun_EmptyDirExitCode(t *testing.T) {
 		// two directories without any lockfiles should return "no lockfiles in directories" exit code
 		{
 			name:         "",
-			args:         []string{"./fixtures/locks-none", "./fixtures/"},
+			args:         []string{filepath.FromSlash("./fixtures/locks-none"), filepath.FromSlash("./fixtures/")},
 			wantExitCode: 128,
 			wantStdout:   "",
 			wantStderr: `
@@ -196,7 +205,7 @@ func TestRun_EmptyDirExitCode(t *testing.T) {
 		// a path to an unknown lockfile should return standard error exit code
 		{
 			name:         "",
-			args:         []string{"./fixtures/locks-none/my-file.txt"},
+			args:         []string{filepath.FromSlash("./fixtures/locks-none/my-file.txt")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -209,7 +218,7 @@ func TestRun_EmptyDirExitCode(t *testing.T) {
 		// mix and match of directory without any lockfiles and a path to an unknown lockfile should return standard exit code
 		{
 			name:         "",
-			args:         []string{"./fixtures/locks-none/my-file.txt", "./fixtures/"},
+			args:         []string{filepath.FromSlash("./fixtures/locks-none/my-file.txt"), filepath.FromSlash("./fixtures/")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -222,7 +231,7 @@ func TestRun_EmptyDirExitCode(t *testing.T) {
 		// when the directory does not exist, the exit code should not be for "no lockfiles in directories"
 		{
 			name:         "",
-			args:         []string{"./fixtures/does/not/exist"},
+			args:         []string{filepath.FromSlash("./fixtures/does/not/exist")},
 			wantExitCode: 127,
 			wantStdout:   "",
 			// "file not found" message is different on Windows vs other OSs
@@ -234,7 +243,7 @@ func TestRun_EmptyDirExitCode(t *testing.T) {
 		// an empty directory + a directory that does not exist should return standard exit code
 		{
 			name:         "",
-			args:         []string{"./fixtures/does/not/exist", "./fixtures/locks-none"},
+			args:         []string{filepath.FromSlash("./fixtures/does/not/exist"), filepath.FromSlash("./fixtures/locks-none")},
 			wantExitCode: 127,
 			wantStdout:   "",
 			// "file not found" message is different on Windows vs other OSs
@@ -246,7 +255,7 @@ func TestRun_EmptyDirExitCode(t *testing.T) {
 		// when there are no parsable lockfiles in the directory + --json should give sensible json
 		{
 			name:         "",
-			args:         []string{"--json", "./fixtures/locks-none"},
+			args:         []string{"--json", filepath.FromSlash("./fixtures/locks-none")},
 			wantExitCode: 128,
 			wantStdout:   `{"results":[]}`,
 			wantStderr: `
@@ -270,7 +279,7 @@ func TestRun_ListPackages(t *testing.T) {
 	tests := []cliTestCase{
 		{
 			name:         "",
-			args:         []string{"--list-packages", "./fixtures/locks-one"},
+			args:         []string{"--list-packages", filepath.FromSlash("./fixtures/locks-one")},
 			wantExitCode: 0,
 			wantStdout: `
 				fixtures/locks-one/yarn.lock: found 1 package
@@ -280,7 +289,7 @@ func TestRun_ListPackages(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{"--list-packages", "./fixtures/locks-many"},
+			args:         []string{"--list-packages", filepath.FromSlash("./fixtures/locks-many")},
 			wantExitCode: 0,
 			wantStdout: `
 				fixtures/locks-many/Gemfile.lock: found 1 package
@@ -294,7 +303,7 @@ func TestRun_ListPackages(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{"--list-packages", "./fixtures/locks-empty"},
+			args:         []string{"--list-packages", filepath.FromSlash("./fixtures/locks-empty")},
 			wantExitCode: 0,
 			wantStdout: `
 				fixtures/locks-empty/Gemfile.lock: found 0 packages
@@ -308,7 +317,7 @@ func TestRun_ListPackages(t *testing.T) {
 		// json results in non-json output going to stderr
 		{
 			name:         "",
-			args:         []string{"--list-packages", "--json", "./fixtures/locks-one"},
+			args:         []string{"--list-packages", "--json", filepath.FromSlash("./fixtures/locks-one")},
 			wantExitCode: 0,
 			wantStdout: `
 				{"results":[{"filePath":"fixtures/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm","compareAs":"npm"}]}]}
@@ -334,7 +343,7 @@ func TestRun_Lockfile(t *testing.T) {
 	tests := []cliTestCase{
 		{
 			name:         "",
-			args:         []string{"./fixtures/locks-one"},
+			args:         []string{filepath.FromSlash("./fixtures/locks-one")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -349,7 +358,7 @@ func TestRun_Lockfile(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{"./fixtures/locks-many"},
+			args:         []string{filepath.FromSlash("./fixtures/locks-many")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -376,7 +385,7 @@ func TestRun_Lockfile(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{"./fixtures/locks-empty"},
+			args:         []string{filepath.FromSlash("./fixtures/locks-empty")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -398,7 +407,7 @@ func TestRun_Lockfile(t *testing.T) {
 		// parse-as + known vulnerability exits with error code 1
 		{
 			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", "./fixtures/locks-insecure/my-package-lock.json"},
+			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json")},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -417,7 +426,7 @@ func TestRun_Lockfile(t *testing.T) {
 		// json results in non-json output going to stderr
 		{
 			name:         "",
-			args:         []string{"--json", "./fixtures/locks-one"},
+			args:         []string{"--json", filepath.FromSlash("./fixtures/locks-one")},
 			wantExitCode: 0,
 			wantStdout: `
 				{"results":[{"filePath":"fixtures/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm","compareAs":"npm","vulnerabilities":[],"ignored":[]}]}]}
@@ -448,7 +457,7 @@ func TestRun_DBs(t *testing.T) {
 	tests := []cliTestCase{
 		{
 			name:         "",
-			args:         []string{"--use-dbs=false", "./fixtures/locks-one"},
+			args:         []string{"--use-dbs=false", filepath.FromSlash("./fixtures/locks-one")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -461,7 +470,7 @@ func TestRun_DBs(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{"--use-api", "./fixtures/locks-one"},
+			args:         []string{"--use-api", filepath.FromSlash("./fixtures/locks-one")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -494,7 +503,7 @@ func TestRun_ParseAs(t *testing.T) {
 		// when a path to a file is given, parse-as is applied to that file
 		{
 			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", "./fixtures/locks-insecure/my-package-lock.json"},
+			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json")},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -513,7 +522,7 @@ func TestRun_ParseAs(t *testing.T) {
 		// when a path to a directory is given, parse-as is applied to all files in the directory
 		{
 			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", "./fixtures/locks-insecure"},
+			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./fixtures/locks-insecure")},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -536,7 +545,7 @@ func TestRun_ParseAs(t *testing.T) {
 		// files that error on parsing don't stop parsable files from being checked
 		{
 			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", "./fixtures/locks-empty"},
+			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./fixtures/locks-empty")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -555,7 +564,7 @@ func TestRun_ParseAs(t *testing.T) {
 		// files that error on parsing don't stop parsable files from being checked
 		{
 			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", "./fixtures/locks-empty", "./fixtures/locks-insecure"},
+			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./fixtures/locks-empty"), filepath.FromSlash("./fixtures/locks-insecure")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -680,7 +689,7 @@ func TestRun_ParseAs_CsvFile(t *testing.T) {
 	tests := []cliTestCase{
 		{
 			name:         "",
-			args:         []string{"--parse-as", "csv-file", "./fixtures/csvs-files/two-rows.csv"},
+			args:         []string{"--parse-as", "csv-file", filepath.FromSlash("./fixtures/csvs-files/two-rows.csv")},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -700,7 +709,7 @@ func TestRun_ParseAs_CsvFile(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{"--parse-as", "csv-file", "./fixtures/csvs-files/not-a-csv.xml"},
+			args:         []string{"--parse-as", "csv-file", filepath.FromSlash("./fixtures/csvs-files/not-a-csv.xml")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -726,7 +735,7 @@ func TestRun_Configs(t *testing.T) {
 		// when given a path to a single lockfile, the local config should be used
 		{
 			name:         "",
-			args:         []string{"./fixtures/configs-one/yarn.lock"},
+			args:         []string{filepath.FromSlash("./fixtures/configs-one/yarn.lock")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -740,7 +749,7 @@ func TestRun_Configs(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{"./fixtures/configs-two/yarn.lock"},
+			args:         []string{filepath.FromSlash("./fixtures/configs-two/yarn.lock")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -755,7 +764,7 @@ func TestRun_Configs(t *testing.T) {
 		// when given a path to a directory, the local config should be used for all lockfiles
 		{
 			name:         "",
-			args:         []string{"./fixtures/configs-one"},
+			args:         []string{filepath.FromSlash("./fixtures/configs-one")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -769,7 +778,7 @@ func TestRun_Configs(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{"./fixtures/configs-two"},
+			args:         []string{filepath.FromSlash("./fixtures/configs-two")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -791,7 +800,7 @@ func TestRun_Configs(t *testing.T) {
 		// local configs should be applied based on directory of each lockfile
 		{
 			name:         "",
-			args:         []string{"./fixtures/configs-one/yarn.lock", "./fixtures/locks-many"},
+			args:         []string{filepath.FromSlash("./fixtures/configs-one/yarn.lock"), filepath.FromSlash("./fixtures/locks-many")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -824,7 +833,7 @@ func TestRun_Configs(t *testing.T) {
 		// invalid databases should be skipped
 		{
 			name:         "",
-			args:         []string{"./fixtures/configs-extra-dbs/yarn.lock"},
+			args:         []string{filepath.FromSlash("./fixtures/configs-extra-dbs/yarn.lock")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -845,7 +854,7 @@ func TestRun_Configs(t *testing.T) {
 			name: "",
 			args: []string{
 				"--no-config-databases",
-				"./fixtures/configs-extra-dbs/yarn.lock",
+				filepath.FromSlash("./fixtures/configs-extra-dbs/yarn.lock"),
 			},
 			wantExitCode: 0,
 			wantStdout: `
@@ -862,9 +871,9 @@ func TestRun_Configs(t *testing.T) {
 		{
 			name: "",
 			args: []string{
-				"--config", "./fixtures/configs-extra-dbs/.osv-detector.yaml",
+				"--config", filepath.FromSlash("./fixtures/configs-extra-dbs/.osv-detector.yaml"),
 				"--no-config-databases",
-				"./fixtures/locks-many/yarn.lock",
+				filepath.FromSlash("./fixtures/locks-many/yarn.lock"),
 			},
 			wantExitCode: 0,
 			wantStdout: `
@@ -882,7 +891,7 @@ func TestRun_Configs(t *testing.T) {
 		// when a global config is provided, any local configs should be ignored
 		{
 			name:         "",
-			args:         []string{"--config", "fixtures/my-config.yml", "./fixtures/configs-one/yarn.lock"},
+			args:         []string{"--config", filepath.FromSlash("fixtures/my-config.yml"), filepath.FromSlash("./fixtures/configs-one/yarn.lock")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -896,7 +905,7 @@ func TestRun_Configs(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{"--config", "fixtures/my-config.yml", "./fixtures/configs-two"},
+			args:         []string{"--config", filepath.FromSlash("fixtures/my-config.yml"), filepath.FromSlash("./fixtures/configs-two")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -917,7 +926,7 @@ func TestRun_Configs(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{"--config", "fixtures/my-config.yml", "./fixtures/configs-one/yarn.lock", "./fixtures/locks-many"},
+			args:         []string{"--config", filepath.FromSlash("fixtures/my-config.yml"), filepath.FromSlash("./fixtures/configs-one/yarn.lock"), filepath.FromSlash("./fixtures/locks-many")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -954,7 +963,7 @@ func TestRun_Configs(t *testing.T) {
 		// be checked (as the results could be different due to e.g. missing ignores)
 		{
 			name:         "",
-			args:         []string{"./fixtures/configs-invalid", "./fixtures/locks-one"},
+			args:         []string{filepath.FromSlash("./fixtures/configs-invalid"), filepath.FromSlash("./fixtures/locks-one")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -979,10 +988,10 @@ func TestRun_Configs(t *testing.T) {
 		{
 			name: "",
 			args: []string{
-				"--config", "./fixtures/configs-invalid/.osv-detector.yaml",
-				"./fixtures/configs-invalid",
-				"./fixtures/locks-one",
-				"./fixtures/locks-many",
+				"--config", filepath.FromSlash("./fixtures/configs-invalid/.osv-detector.yaml"),
+				filepath.FromSlash("./fixtures/configs-invalid"),
+				filepath.FromSlash("./fixtures/locks-one"),
+				filepath.FromSlash("./fixtures/locks-many"),
 			},
 			wantExitCode: 127,
 			wantStdout:   "",
@@ -1009,7 +1018,7 @@ func TestRun_Ignores(t *testing.T) {
 		// no ignore count is printed if there is nothing ignored
 		{
 			name:         "",
-			args:         []string{"--ignore", "GHSA-1234", "--ignore", "GHSA-5678", "./fixtures/locks-one"},
+			args:         []string{"--ignore", "GHSA-1234", "--ignore", "GHSA-5678", filepath.FromSlash("./fixtures/locks-one")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -1027,7 +1036,7 @@ func TestRun_Ignores(t *testing.T) {
 			args: []string{
 				"--ignore", "GHSA-whgm-jr23-g3j9",
 				"--parse-as", "package-lock.json",
-				"./fixtures/locks-insecure/my-package-lock.json",
+				filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json"),
 			},
 			wantExitCode: 0,
 			wantStdout: `
@@ -1049,7 +1058,7 @@ func TestRun_Ignores(t *testing.T) {
 				"--ignore", "GHSA-whgm-jr23-g3j9",
 				"--ignore", "GHSA-whgm-jr23-1234",
 				"--parse-as", "package-lock.json",
-				"./fixtures/locks-insecure/my-package-lock.json",
+				filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json"),
 			},
 			wantExitCode: 0,
 			wantStdout: `
@@ -1067,10 +1076,10 @@ func TestRun_Ignores(t *testing.T) {
 		{
 			name: "",
 			args: []string{
-				"--config", "./fixtures/my-config.yml",
+				"--config", filepath.FromSlash("./fixtures/my-config.yml"),
 				"--ignore", "GHSA-1234",
 				"--parse-as", "package-lock.json",
-				"./fixtures/locks-insecure/my-package-lock.json",
+				filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json"),
 			},
 			wantExitCode: 0,
 			wantStdout: `
@@ -1090,9 +1099,9 @@ func TestRun_Ignores(t *testing.T) {
 			name: "",
 			args: []string{
 				"--no-config-ignores",
-				"--config", "./fixtures/my-config.yml",
+				"--config", filepath.FromSlash("./fixtures/my-config.yml"),
 				"--parse-as", "package-lock.json",
-				"./fixtures/locks-insecure/my-package-lock.json",
+				filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json"),
 			},
 			wantExitCode: 1,
 			wantStdout: `
@@ -1115,10 +1124,10 @@ func TestRun_Ignores(t *testing.T) {
 			name: "",
 			args: []string{
 				"--no-config-ignores",
-				"--config", "./fixtures/my-config.yml",
+				"--config", filepath.FromSlash("./fixtures/my-config.yml"),
 				"--ignore", "GHSA-whgm-jr23-g3j9",
 				"--parse-as", "package-lock.json",
-				"./fixtures/locks-insecure/my-package-lock.json",
+				filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json"),
 			},
 			wantExitCode: 0,
 			wantStdout: `
@@ -1137,10 +1146,10 @@ func TestRun_Ignores(t *testing.T) {
 		{
 			name: "",
 			args: []string{
-				"--config", "./fixtures/my-config.yml",
+				"--config", filepath.FromSlash("./fixtures/my-config.yml"),
 				"--ignore", "GHSA-1234",
 				"--parse-as", "package-lock.json",
-				"./fixtures/locks-insecure/my-package-lock.json",
+				filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json"),
 			},
 			wantExitCode: 0,
 			wantStdout: `

@@ -11,7 +11,7 @@ import (
 	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"io"
 	"os"
-	"path"
+	"path/filepath"
 	"sort"
 )
 
@@ -263,7 +263,7 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs s
 							}
 						}
 
-						lockfiles = append(lockfiles, path.Join(pathToLockOrDirectory, dir.Name()))
+						lockfiles = append(lockfiles, filepath.Join(pathToLockOrDirectory, dir.Name()))
 					}
 				}
 			} else {
@@ -300,7 +300,7 @@ func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs strin
 		}
 
 		for _, p := range lps {
-			paths = append(paths, path.Clean(p))
+			paths = append(paths, filepath.Clean(p))
 		}
 	}
 
@@ -417,7 +417,7 @@ func readAllLockfiles(
 
 	for _, pathToLock := range pathsToLocks {
 		if checkForLocalConfig {
-			base := path.Dir(pathToLock)
+			base := filepath.Dir(pathToLock)
 			con, err := configer.Find(r, base)
 
 			if err != nil {
