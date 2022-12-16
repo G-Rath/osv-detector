@@ -2,6 +2,7 @@ package lockfile_test
 
 import (
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -484,6 +485,9 @@ func TestFromCSVFile(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
+			tt.args.pathToCSV = filepath.FromSlash(tt.args.pathToCSV)
+			tt.want.FilePath = filepath.FromSlash(tt.want.FilePath)
+
 			got, err := lockfile.FromCSVFile(tt.args.pathToCSV, tt.args.parseAs)
 			if err != nil {
 				t.Errorf("FromCSVFile() error = %v, was not expected", err)
@@ -515,7 +519,7 @@ func TestFromCSVFile_Errors(t *testing.T) {
 				pathToCSV: "fixtures/csv/does-not-exist",
 				parseAs:   "csv-file",
 			},
-			wantErrMsg: "could not read fixtures/csv/does-not-exist",
+			wantErrMsg: "could not read",
 		},
 		{
 			name: "",
@@ -523,7 +527,7 @@ func TestFromCSVFile_Errors(t *testing.T) {
 				pathToCSV: "fixtures/csv/not-a-csv.xml",
 				parseAs:   "csv-file",
 			},
-			wantErrMsg: "fixtures/csv/not-a-csv.xml: row 1: not enough fields (expected at least four)",
+			wantErrMsg: "row 1: not enough fields (expected at least four)",
 		},
 	}
 
@@ -532,7 +536,9 @@ func TestFromCSVFile_Errors(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			_, err := lockfile.FromCSVFile(tt.args.pathToCSV, tt.args.parseAs)
+			tt.args.pathToCSV = filepath.FromSlash(tt.args.pathToCSV)
+
+			_, err := lockfile.FromCSVFile(filepath.FromSlash(tt.args.pathToCSV), tt.args.parseAs)
 
 			if err == nil {
 				t.Errorf("FromCSVFile() did not error")
@@ -542,6 +548,10 @@ func TestFromCSVFile_Errors(t *testing.T) {
 
 			if !strings.Contains(err.Error(), tt.wantErrMsg) {
 				t.Errorf("FromCSVFile() error = \"%v\", wanted \"%s\"", err, tt.wantErrMsg)
+			}
+
+			if !strings.Contains(err.Error(), tt.args.pathToCSV) {
+				t.Errorf("FromCSVFile() error = \"%v\", does not contain filepath \"%s\"", err, tt.args.pathToCSV)
 			}
 		})
 	}

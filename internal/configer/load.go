@@ -8,7 +8,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"net/url"
 	"os"
-	"path"
+	"path/filepath"
 	"strings"
 )
 
@@ -132,7 +132,7 @@ func Find(r *reporter.Reporter, pathToDirectory string) (Config, error) {
 func Load(r *reporter.Reporter, pathToConfig string) (Config, error) {
 	var raw rawConfig
 
-	pathToConfig = path.Clean(pathToConfig)
+	pathToConfig = filepath.Clean(pathToConfig)
 
 	raw.FilePath = pathToConfig
 

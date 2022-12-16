@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -53,7 +54,7 @@ func TestFindParser(t *testing.T) {
 	}
 
 	for _, file := range lockfiles {
-		parser, parsedAs := lockfile.FindParser("/path/to/my/"+file, "")
+		parser, parsedAs := lockfile.FindParser(filepath.FromSlash("path/to/my/"+file), "")
 
 		if parser == nil {
 			t.Errorf("Expected a parser to be found for %s but did not", file)
@@ -68,7 +69,7 @@ func TestFindParser(t *testing.T) {
 func TestFindParser_ExplicitParseAs(t *testing.T) {
 	t.Parallel()
 
-	parser, parsedAs := lockfile.FindParser("/path/to/my/package-lock.json", "composer.lock")
+	parser, parsedAs := lockfile.FindParser(filepath.FromSlash("path/to/my/package-lock.json"), "composer.lock")
 
 	if parser == nil {
 		t.Errorf("Expected a parser to be found for package-lock.json (overridden as composer.json) but did not")
@@ -100,7 +101,7 @@ func TestParse_FindsExpectedParsers(t *testing.T) {
 	count := 0
 
 	for _, file := range lockfiles {
-		_, err := lockfile.Parse("/path/to/my/"+file, "")
+		_, err := lockfile.Parse(filepath.FromSlash("/path/to/my/"+file), "")
 
 		if errors.Is(err, lockfile.ErrParserNotFound) {
 			t.Errorf("No parser was found for %s", file)
@@ -115,7 +116,7 @@ func TestParse_FindsExpectedParsers(t *testing.T) {
 func TestParse_ParserNotFound(t *testing.T) {
 	t.Parallel()
 
-	_, err := lockfile.Parse("/path/to/my/", "")
+	_, err := lockfile.Parse(filepath.FromSlash("/path/to/my/"), "")
 
 	if err == nil {
 		t.Errorf("Expected to get an error but did not")
