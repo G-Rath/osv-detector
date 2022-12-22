@@ -50,20 +50,22 @@ osv-detector path/to/my/
 
 The detector supports parsing the following lockfiles:
 
-| Lockfile             | Ecosystem   | Tool       |
-| -------------------- | ----------- | ---------- |
-| `Cargo.lock`         | `crates.io` | `cargo`    |
-| `package-lock.json`  | `npm`       | `npm`      |
-| `yarn.lock`          | `npm`       | `yarn`     |
-| `pnpm-lock.yaml`     | `npm`       | `pnpm`     |
-| `composer.lock`      | `Packagist` | `composer` |
-| `Gemfile.lock`       | `RubyGems`  | `bundler`  |
-| `go.mod`             | `Go`        | `go mod`   |
-| `mix.lock`           | `Hex`       | `mix`      |
-| `poetry.lock`        | `PyPI`      | `poetry`   |
-| `pubspec.lock`       | `Pub`       | `pub`      |
-| `pom.xml`\*          | `Maven`     | `maven`    |
-| `requirements.txt`\* | `PyPI`      | `pip`      |
+| Lockfile                      | Ecosystem   | Tool       |
+| ----------------------------- | ----------- | ---------- |
+| `buildscript-gradle.lockfile` | `Maven`     | `gradle`   |
+| `Cargo.lock`                  | `crates.io` | `cargo`    |
+| `package-lock.json`           | `npm`       | `npm`      |
+| `yarn.lock`                   | `npm`       | `yarn`     |
+| `pnpm-lock.yaml`              | `npm`       | `pnpm`     |
+| `composer.lock`               | `Packagist` | `composer` |
+| `Gemfile.lock`                | `RubyGems`  | `bundler`  |
+| `go.mod`                      | `Go`        | `go mod`   |
+| `gradle.lockfile`             | `Maven`     | `gradle`   |
+| `mix.lock`                    | `Hex`       | `mix`      |
+| `poetry.lock`                 | `PyPI`      | `poetry`   |
+| `pubspec.lock`                | `Pub`       | `pub`      |
+| `pom.xml`\*                   | `Maven`     | `maven`    |
+| `requirements.txt`\*          | `PyPI`      | `pip`      |
 
 \*: `pom.xml` and `requirements.txt` are technically not lockfiles, as they
 don't have to specify the complete dependency tree and can have version

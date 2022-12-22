@@ -131,10 +131,12 @@ func TestRun(t *testing.T) {
 			wantStdout:   "",
 			wantStderr: `
 				Don't know how to parse files as "my-file" - supported values are:
+					buildscript-gradle.lockfile
 					Cargo.lock
 					composer.lock
 					Gemfile.lock
 					go.mod
+					gradle.lockfile
 					mix.lock
 					package-lock.json
 					pnpm-lock.yaml
