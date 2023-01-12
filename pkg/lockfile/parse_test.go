@@ -41,15 +41,19 @@ func TestFindParser(t *testing.T) {
 	t.Parallel()
 
 	lockfiles := []string{
+		"buildscript-gradle.lockfile",
 		"Cargo.lock",
 		"package-lock.json",
 		"yarn.lock",
 		"pnpm-lock.yaml",
-		"pubspec.lock",
 		"composer.lock",
 		"Gemfile.lock",
 		"go.mod",
+		"gradle.lockfile",
+		"mix.lock",
 		"pom.xml",
+		"poetry.lock",
+		"pubspec.lock",
 		"requirements.txt",
 	}
 
@@ -69,7 +73,7 @@ func TestFindParser(t *testing.T) {
 func TestFindParser_ExplicitParseAs(t *testing.T) {
 	t.Parallel()
 
-	parser, parsedAs := lockfile.FindParser(filepath.FromSlash("path/to/my/package-lock.json"), "composer.lock")
+	parser, parsedAs := lockfile.FindParser("/path/to/my/package-lock.json", "composer.lock")
 
 	if parser == nil {
 		t.Errorf("Expected a parser to be found for package-lock.json (overridden as composer.json) but did not")
@@ -84,6 +88,7 @@ func TestParse_FindsExpectedParsers(t *testing.T) {
 	t.Parallel()
 
 	lockfiles := []string{
+		"buildscript-gradle.lockfile",
 		"Cargo.lock",
 		"package-lock.json",
 		"yarn.lock",
@@ -91,6 +96,7 @@ func TestParse_FindsExpectedParsers(t *testing.T) {
 		"composer.lock",
 		"Gemfile.lock",
 		"go.mod",
+		"gradle.lockfile",
 		"mix.lock",
 		"pom.xml",
 		"poetry.lock",
@@ -101,7 +107,7 @@ func TestParse_FindsExpectedParsers(t *testing.T) {
 	count := 0
 
 	for _, file := range lockfiles {
-		_, err := lockfile.Parse(filepath.FromSlash("/path/to/my/"+file), "")
+		_, err := lockfile.Parse("/path/to/my/"+file, "")
 
 		if errors.Is(err, lockfile.ErrParserNotFound) {
 			t.Errorf("No parser was found for %s", file)
@@ -109,6 +115,9 @@ func TestParse_FindsExpectedParsers(t *testing.T) {
 
 		count++
 	}
+
+	// gradle.lockfile and buildscript-gradle.lockfile use the same parser
+	count--
 
 	expectNumberOfParsersCalled(t, count)
 }
@@ -132,12 +141,12 @@ func TestListParsers(t *testing.T) {
 
 	parsers := lockfile.ListParsers()
 
-	if first := parsers[0]; first != "Cargo.lock" {
-		t.Errorf("Expected first element to be Cargo.lock, but got %s", first)
+	if first := parsers[0]; first != "buildscript-gradle.lockfile" {
+		t.Errorf("Expected first element to be buildscript-gradle.lockfile, but got %s", first)
 	}
 
 	if last := parsers[len(parsers)-1]; last != "yarn.lock" {
-		t.Errorf("Expected last element to be requirements.txt, but got %s", last)
+		t.Errorf("Expected last element to be yarn.lock, but got %s", last)
 	}
 }
 
