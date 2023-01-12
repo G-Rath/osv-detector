@@ -54,6 +54,7 @@ func TestFindParser(t *testing.T) {
 		"pom.xml",
 		"poetry.lock",
 		"pubspec.lock",
+		"Pipfile.lock",
 		"requirements.txt",
 	}
 
@@ -101,6 +102,7 @@ func TestParse_FindsExpectedParsers(t *testing.T) {
 		"mix.lock",
 		"pom.xml",
 		"poetry.lock",
+		"Pipfile.lock",
 		"pubspec.lock",
 		"requirements.txt",
 	}

@@ -64,6 +64,7 @@ The detector supports parsing the following lockfiles:
 | `gradle.lockfile`             | `Maven`     | `gradle`   |
 | `mix.lock`                    | `Hex`       | `mix`      |
 | `poetry.lock`                 | `PyPI`      | `poetry`   |
+| `Pipfile.lock`                | `PyPI`      | `pipenv`   |
 | `pubspec.lock`                | `Pub`       | `pub`      |
 | `pom.xml`\*                   | `Maven`     | `maven`    |
 | `requirements.txt`\*          | `PyPI`      | `pip`      |
