@@ -139,6 +139,7 @@ func TestRun(t *testing.T) {
 					gradle.lockfile
 					mix.lock
 					package-lock.json
+					packages.lock.json
 					pnpm-lock.yaml
 					poetry.lock
 					pom.xml

@@ -54,6 +54,7 @@ The detector supports parsing the following lockfiles:
 | ----------------------------- | ----------- | ---------- |
 | `buildscript-gradle.lockfile` | `Maven`     | `gradle`   |
 | `Cargo.lock`                  | `crates.io` | `cargo`    |
+| `packages.lock.json`          | `NuGet`     | `dotnet`   |
 | `package-lock.json`           | `npm`       | `npm`      |
 | `yarn.lock`                   | `npm`       | `yarn`     |
 | `pnpm-lock.yaml`              | `npm`       | `pnpm`     |
