@@ -91,6 +91,7 @@ func TestParse_FindsExpectedParsers(t *testing.T) {
 		"buildscript-gradle.lockfile",
 		"Cargo.lock",
 		"package-lock.json",
+		"packages.lock.json",
 		"yarn.lock",
 		"pnpm-lock.yaml",
 		"composer.lock",
