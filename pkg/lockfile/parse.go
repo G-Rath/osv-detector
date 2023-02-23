@@ -3,6 +3,7 @@ package lockfile
 import (
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -22,22 +23,22 @@ func FindParser(pathToLockfile string, parseAs string) (PackageDetailsParser, st
 
 //nolint:gochecknoglobals // this is an optimisation and read-only
 var parsers = map[string]PackageDetailsParser{
-	"Cargo.lock":                  ParseCargoLock,
-	"composer.lock":               ParseComposerLock,
-	"Gemfile.lock":                ParseGemfileLock,
-	"go.mod":                      ParseGoLock,
-	"mix.lock":                    ParseMixLock,
-	"package-lock.json":           ParseNpmLock,
-	"packages.lock.json":          ParseNuGetLock,
-	"pnpm-lock.yaml":              ParsePnpmLock,
-	"poetry.lock":                 ParsePoetryLock,
-	"Pipfile.lock":                ParsePipenvLock,
-	"pom.xml":                     ParseMavenLock,
-	"pubspec.lock":                ParsePubspecLock,
-	"requirements.txt":            ParseRequirementsTxt,
-	"yarn.lock":                   ParseYarnLock,
-	"gradle.lockfile":             ParseGradleLock,
-	"buildscript-gradle.lockfile": ParseGradleLock,
+	"buildscript-gradle.lockfile": ParseGradleLockFile,
+	"Cargo.lock":                  ParseCargoLockFile,
+	"composer.lock":               ParseComposerLockFile,
+	"Gemfile.lock":                ParseGemfileLockFile,
+	"go.mod":                      ParseGoLockFile,
+	"gradle.lockfile":             ParseGradleLockFile,
+	"mix.lock":                    ParseMixLockFile,
+	"Pipfile.lock":                ParsePipenvLockFile,
+	"package-lock.json":           ParseNpmLockFile,
+	"packages.lock.json":          ParseNuGetLockFile,
+	"pnpm-lock.yaml":              ParsePnpmLockFile,
+	"poetry.lock":                 ParsePoetryLockFile,
+	"pom.xml":                     ParseMavenLockFile,
+	"pubspec.lock":                ParsePubspecLockFile,
+	"requirements.txt":            ParseRequirementsTxtFile,
+	"yarn.lock":                   ParseYarnLockFile,
 }
 
 func ListParsers() []string {
@@ -129,10 +130,18 @@ func Parse(pathToLockfile string, parseAs string) (Lockfile, error) {
 	parser, parsedAs := FindParser(pathToLockfile, parseAs)
 
 	if parser == nil {
+		if parseAs != "" {
+			return Lockfile{}, fmt.Errorf("%w, requested %s", ErrParserNotFound, parseAs)
+		}
+
 		return Lockfile{}, fmt.Errorf("%w for %s", ErrParserNotFound, pathToLockfile)
 	}
 
 	packages, err := parser(pathToLockfile)
+
+	if err != nil && parseAs != "" {
+		err = fmt.Errorf("(parsing as %s) %w", parsedAs, err)
+	}
 
 	sort.Slice(packages, func(i, j int) bool {
 		if packages[i].Name == packages[j].Name {
@@ -147,4 +156,20 @@ func Parse(pathToLockfile string, parseAs string) (Lockfile, error) {
 		ParsedAs: parsedAs,
 		Packages: packages,
 	}, err
+}
+
+func parseFile(pathToLockfile string, parserWithReader PackageDetailsParserWithReader) ([]PackageDetails, error) {
+	r, err := os.Open(pathToLockfile)
+
+	if err != nil {
+		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
+	}
+
+	details, err := parserWithReader(r)
+
+	if err != nil {
+		err = fmt.Errorf("error while parsing %s: %w", pathToLockfile, err)
+	}
+
+	return details, err
 }

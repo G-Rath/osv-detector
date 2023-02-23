@@ -5,19 +5,19 @@ import (
 	"testing"
 )
 
-func TestParseDpkgStatus_FileDoesNotExist(t *testing.T) {
+func TestParseDpkgStatusFile_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseDpkgStatus("fixtures/dpkg/does-not-exist")
+	packages, err := lockfile.ParseDpkgStatusFile("fixtures/dpkg/does-not-exist")
 
-	expectErrContaining(t, err, "could not open")
+	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseDpkgStatus_Empty(t *testing.T) {
+func TestParseDpkgStatusFile_Empty(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseDpkgStatus("fixtures/dpkg/empty_status")
+	packages, err := lockfile.ParseDpkgStatusFile("fixtures/dpkg/empty_status")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -26,10 +26,10 @@ func TestParseDpkgStatus_Empty(t *testing.T) {
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseDpkgStatus_NotAStatus(t *testing.T) {
+func TestParseDpkgStatusFile_NotAStatus(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseDpkgStatus("fixtures/dpkg/not_status")
+	packages, err := lockfile.ParseDpkgStatusFile("fixtures/dpkg/not_status")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -38,10 +38,10 @@ func TestParseDpkgStatus_NotAStatus(t *testing.T) {
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseDpkgStatus_Malformed(t *testing.T) {
+func TestParseDpkgStatusFile_Malformed(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseDpkgStatus("fixtures/dpkg/malformed_status")
+	packages, err := lockfile.ParseDpkgStatusFile("fixtures/dpkg/malformed_status")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -63,10 +63,10 @@ func TestParseDpkgStatus_Malformed(t *testing.T) {
 	})
 }
 
-func TestParseDpkgStatus_Single(t *testing.T) {
+func TestParseDpkgStatusFile_Single(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseDpkgStatus("fixtures/dpkg/single_status")
+	packages, err := lockfile.ParseDpkgStatusFile("fixtures/dpkg/single_status")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -82,10 +82,10 @@ func TestParseDpkgStatus_Single(t *testing.T) {
 	})
 }
 
-func TestParseDpkgStatus_Shuffled(t *testing.T) {
+func TestParseDpkgStatusFile_Shuffled(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseDpkgStatus("fixtures/dpkg/shuffled_status")
+	packages, err := lockfile.ParseDpkgStatusFile("fixtures/dpkg/shuffled_status")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -101,10 +101,10 @@ func TestParseDpkgStatus_Shuffled(t *testing.T) {
 	})
 }
 
-func TestParseDpkgStatus_Multiple(t *testing.T) {
+func TestParseDpkgStatusFile_Multiple(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseDpkgStatus("fixtures/dpkg/multiple_status")
+	packages, err := lockfile.ParseDpkgStatusFile("fixtures/dpkg/multiple_status")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -132,10 +132,10 @@ func TestParseDpkgStatus_Multiple(t *testing.T) {
 	})
 }
 
-func TestParseDpkgStatus_Source_Ver_Override(t *testing.T) {
+func TestParseDpkgStatusFile_Source_Ver_Override(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseDpkgStatus("fixtures/dpkg/source_ver_override_status")
+	packages, err := lockfile.ParseDpkgStatusFile("fixtures/dpkg/source_ver_override_status")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

@@ -610,8 +610,8 @@ func TestRun_ParseAsSpecific(t *testing.T) {
 
 			`,
 			wantStderr: `
-				Error, could not parse fixtures/locks-empty/Gemfile.lock: unexpected end of JSON input
-				Error, could not parse fixtures/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+				Error, (parsing as package-lock.json) error while parsing fixtures/locks-empty/Gemfile.lock: could not parse: EOF
+				Error, (parsing as package-lock.json) error while parsing fixtures/locks-empty/yarn.lock: could not parse: invalid character '#' looking for beginning of value
 			`,
 		},
 		// files that error on parsing don't stop parsable files from being checked
@@ -642,8 +642,8 @@ func TestRun_ParseAsSpecific(t *testing.T) {
 					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
 			`,
 			wantStderr: `
-				Error, could not parse fixtures/locks-empty/Gemfile.lock: unexpected end of JSON input
-				Error, could not parse fixtures/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+				Error, (parsing as package-lock.json) error while parsing fixtures/locks-empty/Gemfile.lock: could not parse: EOF
+				Error, (parsing as package-lock.json) error while parsing fixtures/locks-empty/yarn.lock: could not parse: invalid character '#' looking for beginning of value
 			`,
 		},
 	}
@@ -718,8 +718,8 @@ func TestRun_ParseAsGlobal(t *testing.T) {
 
 			`,
 			wantStderr: `
-				Error, could not parse fixtures/locks-empty/Gemfile.lock: unexpected end of JSON input
-				Error, could not parse fixtures/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+				Error, (parsing as package-lock.json) error while parsing fixtures/locks-empty/Gemfile.lock: could not parse: EOF
+				Error, (parsing as package-lock.json) error while parsing fixtures/locks-empty/yarn.lock: could not parse: invalid character '#' looking for beginning of value
 			`,
 		},
 		// files that error on parsing don't stop parsable files from being checked
@@ -750,8 +750,8 @@ func TestRun_ParseAsGlobal(t *testing.T) {
 					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
 			`,
 			wantStderr: `
-				Error, could not parse fixtures/locks-empty/Gemfile.lock: unexpected end of JSON input
-				Error, could not parse fixtures/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+				Error, (parsing as package-lock.json) error while parsing fixtures/locks-empty/Gemfile.lock: could not parse: EOF
+				Error, (parsing as package-lock.json) error while parsing fixtures/locks-empty/yarn.lock: could not parse: invalid character '#' looking for beginning of value
 			`,
 		},
 		// specific parse-as takes precedence over global parse-as

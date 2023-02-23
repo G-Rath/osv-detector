@@ -2,7 +2,7 @@ package lockfile
 
 import (
 	"fmt"
-	"os"
+	"io"
 
 	"github.com/BurntSushi/toml"
 )
@@ -25,19 +25,17 @@ type PoetryLockFile struct {
 
 const PoetryEcosystem = PipEcosystem
 
-func ParsePoetryLock(pathToLockfile string) ([]PackageDetails, error) {
+func ParsePoetryLockFile(pathToLockfile string) ([]PackageDetails, error) {
+	return parseFile(pathToLockfile, ParsePoetryLock)
+}
+
+func ParsePoetryLock(r io.Reader) ([]PackageDetails, error) {
 	var parsedLockfile *PoetryLockFile
 
-	lockfileContents, err := os.ReadFile(pathToLockfile)
+	_, err := toml.NewDecoder(r).Decode(&parsedLockfile)
 
 	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
-	}
-
-	err = toml.Unmarshal(lockfileContents, &parsedLockfile)
-
-	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not parse %s: %w", pathToLockfile, err)
+		return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)
 	}
 
 	packages := make([]PackageDetails, 0, len(parsedLockfile.Packages))

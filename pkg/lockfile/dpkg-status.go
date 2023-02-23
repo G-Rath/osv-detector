@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
+	"io"
 	"os"
 	"sort"
 	"strings"
@@ -48,7 +49,7 @@ func parseSourceField(source string) (string, string) {
 	return strings.TrimSpace(source), ""
 }
 
-func parseDpkgPackageGroup(group []string, pathToLockfile string) PackageDetails {
+func parseDpkgPackageGroup(group []string) PackageDetails {
 	var pkg = PackageDetails{
 		Ecosystem: DebianEcosystem,
 		CompareAs: DebianEcosystem,
@@ -66,8 +67,7 @@ func parseDpkgPackageGroup(group []string, pathToLockfile string) PackageDetails
 			if len(tokens) != 3 {
 				_, _ = fmt.Fprintf(
 					os.Stderr,
-					"warning: malformed DPKG status file. Found no valid \"Source\" field. File: %s\n",
-					pathToLockfile,
+					"warning: malformed DPKG status file. Found no valid \"Source\" field.\n",
 				)
 
 				return PackageDetails{}
@@ -113,29 +113,26 @@ func parseDpkgPackageGroup(group []string, pathToLockfile string) PackageDetails
 
 		_, _ = fmt.Fprintf(
 			os.Stderr,
-			"warning: malformed DPKG status file. Found no version number in record. Package %s. File: %s\n",
+			"warning: malformed DPKG status file. Found no version number in record. Package %s.\n",
 			pkgPrintName,
-			pathToLockfile,
 		)
 	}
 
 	return pkg
 }
 
-func ParseDpkgStatus(pathToLockfile string) ([]PackageDetails, error) {
-	file, err := os.Open(pathToLockfile)
-	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not open %s: %w", pathToLockfile, err)
-	}
-	defer file.Close()
+func ParseDpkgStatusFile(pathToLockfile string) ([]PackageDetails, error) {
+	return parseFile(pathToLockfile, ParseDpkgStatus)
+}
 
-	scanner := bufio.NewScanner(file)
+func ParseDpkgStatus(r io.Reader) ([]PackageDetails, error) {
+	scanner := bufio.NewScanner(r)
 	packageGroups := groupDpkgPackageLines(scanner)
 
 	packages := make([]PackageDetails, 0, len(packageGroups))
 
 	for _, group := range packageGroups {
-		pkg := parseDpkgPackageGroup(group, pathToLockfile)
+		pkg := parseDpkgPackageGroup(group)
 
 		// PackageDetails does not contain any field that represent a "not installed" state
 		// To manage this state and avoid false positives, empty struct means "not installed" so skip it
@@ -146,8 +143,7 @@ func ParseDpkgStatus(pathToLockfile string) ([]PackageDetails, error) {
 		if pkg.Name == "" {
 			_, _ = fmt.Fprintf(
 				os.Stderr,
-				"warning: malformed DPKG status file. Found no package name in record. File: %s\n",
-				pathToLockfile,
+				"warning: malformed DPKG status file. Found no package name in record.\n",
 			)
 
 			continue
@@ -157,7 +153,7 @@ func ParseDpkgStatus(pathToLockfile string) ([]PackageDetails, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		return packages, fmt.Errorf("error while scanning %s: %w", pathToLockfile, err)
+		return packages, fmt.Errorf("error while scanning: %w", err)
 	}
 
 	return packages, nil
@@ -166,7 +162,7 @@ func ParseDpkgStatus(pathToLockfile string) ([]PackageDetails, error) {
 // FromDpkgStatus attempts to parse the given file as an "dpkg-status" lockfile
 // used by the Debian Package (dpkg) to record installed packages.
 func FromDpkgStatus(pathToStatus string) (Lockfile, error) {
-	packages, err := ParseDpkgStatus(pathToStatus)
+	packages, err := ParseDpkgStatusFile(pathToStatus)
 
 	sort.Slice(packages, func(i, j int) bool {
 		if packages[i].Name == packages[j].Name {

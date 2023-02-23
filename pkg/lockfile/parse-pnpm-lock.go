@@ -1,8 +1,9 @@
 package lockfile
 
 import (
+	"errors"
 	"fmt"
-	"os"
+	"io"
 	"strconv"
 	"strings"
 
@@ -160,23 +161,21 @@ func parsePnpmLock(lockfile PnpmLockfile) []PackageDetails {
 	return packages
 }
 
-func ParsePnpmLock(pathToLockfile string) ([]PackageDetails, error) {
+func ParsePnpmLockFile(pathToLockfile string) ([]PackageDetails, error) {
+	return parseFile(pathToLockfile, ParsePnpmLock)
+}
+
+func ParsePnpmLock(r io.Reader) ([]PackageDetails, error) {
 	var parsedLockfile *PnpmLockfile
 
-	lockfileContents, err := os.ReadFile(pathToLockfile)
+	err := yaml.NewDecoder(r).Decode(&parsedLockfile)
 
 	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
-	}
+		if !errors.Is(err, io.EOF) {
+			return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)
+		}
 
-	err = yaml.Unmarshal(lockfileContents, &parsedLockfile)
-
-	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not parse %s: %w", pathToLockfile, err)
-	}
-
-	// this will happen if the file is empty
-	if parsedLockfile == nil {
+		// this means that the file was empty (or only had comments)
 		parsedLockfile = &PnpmLockfile{}
 	}
 

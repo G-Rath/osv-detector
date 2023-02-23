@@ -1,8 +1,9 @@
 package lockfile
 
 import (
+	"errors"
 	"fmt"
-	"os"
+	"io"
 
 	"gopkg.in/yaml.v2"
 )
@@ -61,19 +62,17 @@ type PubspecLockfile struct {
 
 const PubEcosystem Ecosystem = "Pub"
 
-func ParsePubspecLock(pathToLockfile string) ([]PackageDetails, error) {
+func ParsePubspecLockFile(pathToLockfile string) ([]PackageDetails, error) {
+	return parseFile(pathToLockfile, ParsePubspecLock)
+}
+
+func ParsePubspecLock(r io.Reader) ([]PackageDetails, error) {
 	var parsedLockfile *PubspecLockfile
 
-	lockfileContents, err := os.ReadFile(pathToLockfile)
+	err := yaml.NewDecoder(r).Decode(&parsedLockfile)
 
-	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
-	}
-
-	err = yaml.Unmarshal(lockfileContents, &parsedLockfile)
-
-	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not parse %s: %w", pathToLockfile, err)
+	if err != nil && !errors.Is(err, io.EOF) {
+		return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)
 	}
 	if parsedLockfile == nil {
 		return []PackageDetails{}, nil

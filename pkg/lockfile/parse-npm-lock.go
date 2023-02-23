@@ -3,7 +3,7 @@ package lockfile
 import (
 	"encoding/json"
 	"fmt"
-	"os"
+	"io"
 	"path"
 	"strings"
 )
@@ -142,19 +142,17 @@ func parseNpmLock(lockfile NpmLockfile) map[string]PackageDetails {
 	return parseNpmLockDependencies(lockfile.Dependencies)
 }
 
-func ParseNpmLock(pathToLockfile string) ([]PackageDetails, error) {
+func ParseNpmLockFile(pathToLockfile string) ([]PackageDetails, error) {
+	return parseFile(pathToLockfile, ParseNpmLock)
+}
+
+func ParseNpmLock(r io.Reader) ([]PackageDetails, error) {
 	var parsedLockfile *NpmLockfile
 
-	lockfileContents, err := os.ReadFile(pathToLockfile)
+	err := json.NewDecoder(r).Decode(&parsedLockfile)
 
 	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
-	}
-
-	err = json.Unmarshal(lockfileContents, &parsedLockfile)
-
-	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not parse %s: %w", pathToLockfile, err)
+		return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)
 	}
 
 	return pkgDetailsMapToSlice(parseNpmLock(*parsedLockfile)), nil

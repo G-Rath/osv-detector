@@ -3,6 +3,7 @@ package lockfile
 import (
 	"encoding/xml"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
@@ -98,19 +99,17 @@ func (p *MavenLockProperties) UnmarshalXML(d *xml.Decoder, start xml.StartElemen
 	}
 }
 
-func ParseMavenLock(pathToLockfile string) ([]PackageDetails, error) {
+func ParseMavenLockFile(pathToLockfile string) ([]PackageDetails, error) {
+	return parseFile(pathToLockfile, ParseMavenLock)
+}
+
+func ParseMavenLock(r io.Reader) ([]PackageDetails, error) {
 	var parsedLockfile *MavenLockFile
 
-	lockfileContents, err := os.ReadFile(pathToLockfile)
+	err := xml.NewDecoder(r).Decode(&parsedLockfile)
 
 	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
-	}
-
-	err = xml.Unmarshal(lockfileContents, &parsedLockfile)
-
-	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not parse %s: %w", pathToLockfile, err)
+		return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)
 	}
 
 	details := map[string]PackageDetails{}

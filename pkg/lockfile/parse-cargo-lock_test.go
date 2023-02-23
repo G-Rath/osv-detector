@@ -6,28 +6,28 @@ import (
 	"github.com/g-rath/osv-detector/pkg/lockfile"
 )
 
-func TestParseCargoLock_FileDoesNotExist(t *testing.T) {
+func TestParseCargoLockFile_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseCargoLock("fixtures/cargo/does-not-exist")
+	packages, err := lockfile.ParseCargoLockFile("fixtures/cargo/does-not-exist")
 
 	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseCargoLock_InvalidToml(t *testing.T) {
+func TestParseCargoLockFile_InvalidToml(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseCargoLock("fixtures/cargo/not-toml.txt")
+	packages, err := lockfile.ParseCargoLockFile("fixtures/cargo/not-toml.txt")
 
 	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseCargoLock_NoPackages(t *testing.T) {
+func TestParseCargoLockFile_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseCargoLock("fixtures/cargo/empty.lock")
+	packages, err := lockfile.ParseCargoLockFile("fixtures/cargo/empty.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -36,10 +36,10 @@ func TestParseCargoLock_NoPackages(t *testing.T) {
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseCargoLock_OnePackage(t *testing.T) {
+func TestParseCargoLockFile_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseCargoLock("fixtures/cargo/one-package.lock")
+	packages, err := lockfile.ParseCargoLockFile("fixtures/cargo/one-package.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -55,10 +55,10 @@ func TestParseCargoLock_OnePackage(t *testing.T) {
 	})
 }
 
-func TestParseCargoLock_TwoPackages(t *testing.T) {
+func TestParseCargoLockFile_TwoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseCargoLock("fixtures/cargo/two-packages.lock")
+	packages, err := lockfile.ParseCargoLockFile("fixtures/cargo/two-packages.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -80,10 +80,10 @@ func TestParseCargoLock_TwoPackages(t *testing.T) {
 	})
 }
 
-func TestParseCargoLock_PackageWithBuildString(t *testing.T) {
+func TestParseCargoLockFile_PackageWithBuildString(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseCargoLock("fixtures/cargo/package-with-build-string.lock")
+	packages, err := lockfile.ParseCargoLockFile("fixtures/cargo/package-with-build-string.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

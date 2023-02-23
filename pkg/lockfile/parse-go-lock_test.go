@@ -6,28 +6,28 @@ import (
 	"github.com/g-rath/osv-detector/pkg/lockfile"
 )
 
-func TestParseGoLock_FileDoesNotExist(t *testing.T) {
+func TestParseGoLockFile_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGoLock("fixtures/go/does-not-exist")
+	packages, err := lockfile.ParseGoLockFile("fixtures/go/does-not-exist")
 
 	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseGoLock_Invalid(t *testing.T) {
+func TestParseGoLockFile_Invalid(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGoLock("fixtures/go/not-go-mod.txt")
+	packages, err := lockfile.ParseGoLockFile("fixtures/go/not-go-mod.txt")
 
 	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseGoLock_NoPackages(t *testing.T) {
+func TestParseGoLockFile_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGoLock("fixtures/go/empty.mod")
+	packages, err := lockfile.ParseGoLockFile("fixtures/go/empty.mod")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -36,10 +36,10 @@ func TestParseGoLock_NoPackages(t *testing.T) {
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseGoLock_OnePackage(t *testing.T) {
+func TestParseGoLockFile_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGoLock("fixtures/go/one-package.mod")
+	packages, err := lockfile.ParseGoLockFile("fixtures/go/one-package.mod")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -55,10 +55,10 @@ func TestParseGoLock_OnePackage(t *testing.T) {
 	})
 }
 
-func TestParseGoLock_TwoPackages(t *testing.T) {
+func TestParseGoLockFile_TwoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGoLock("fixtures/go/two-packages.mod")
+	packages, err := lockfile.ParseGoLockFile("fixtures/go/two-packages.mod")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -80,10 +80,10 @@ func TestParseGoLock_TwoPackages(t *testing.T) {
 	})
 }
 
-func TestParseGoLock_IndirectPackages(t *testing.T) {
+func TestParseGoLockFile_IndirectPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGoLock("fixtures/go/indirect-packages.mod")
+	packages, err := lockfile.ParseGoLockFile("fixtures/go/indirect-packages.mod")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -123,10 +123,10 @@ func TestParseGoLock_IndirectPackages(t *testing.T) {
 	})
 }
 
-func TestParseGoLock_Replacements_One(t *testing.T) {
+func TestParseGoLockFile_Replacements_One(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGoLock("fixtures/go/replace-one.mod")
+	packages, err := lockfile.ParseGoLockFile("fixtures/go/replace-one.mod")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -142,10 +142,10 @@ func TestParseGoLock_Replacements_One(t *testing.T) {
 	})
 }
 
-func TestParseGoLock_Replacements_Mixed(t *testing.T) {
+func TestParseGoLockFile_Replacements_Mixed(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGoLock("fixtures/go/replace-mixed.mod")
+	packages, err := lockfile.ParseGoLockFile("fixtures/go/replace-mixed.mod")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -167,10 +167,10 @@ func TestParseGoLock_Replacements_Mixed(t *testing.T) {
 	})
 }
 
-func TestParseGoLock_Replacements_Local(t *testing.T) {
+func TestParseGoLockFile_Replacements_Local(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGoLock("fixtures/go/replace-local.mod")
+	packages, err := lockfile.ParseGoLockFile("fixtures/go/replace-local.mod")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -192,10 +192,10 @@ func TestParseGoLock_Replacements_Local(t *testing.T) {
 	})
 }
 
-func TestParseGoLock_Replacements_Different(t *testing.T) {
+func TestParseGoLockFile_Replacements_Different(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGoLock("fixtures/go/replace-different.mod")
+	packages, err := lockfile.ParseGoLockFile("fixtures/go/replace-different.mod")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -217,10 +217,10 @@ func TestParseGoLock_Replacements_Different(t *testing.T) {
 	})
 }
 
-func TestParseGoLock_Replacements_NotRequired(t *testing.T) {
+func TestParseGoLockFile_Replacements_NotRequired(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGoLock("fixtures/go/replace-not-required.mod")
+	packages, err := lockfile.ParseGoLockFile("fixtures/go/replace-not-required.mod")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -242,10 +242,10 @@ func TestParseGoLock_Replacements_NotRequired(t *testing.T) {
 	})
 }
 
-func TestParseGoLock_Replacements_NoVersion(t *testing.T) {
+func TestParseGoLockFile_Replacements_NoVersion(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGoLock("fixtures/go/replace-no-version.mod")
+	packages, err := lockfile.ParseGoLockFile("fixtures/go/replace-no-version.mod")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

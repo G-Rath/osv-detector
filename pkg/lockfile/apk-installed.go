@@ -3,6 +3,7 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"sort"
 	"strings"
@@ -35,7 +36,7 @@ func groupApkPackageLines(scanner *bufio.Scanner) [][]string {
 	return groups
 }
 
-func parseApkPackageGroup(group []string, pathToLockfile string) PackageDetails {
+func parseApkPackageGroup(group []string) PackageDetails {
 	var pkg = PackageDetails{
 		Ecosystem: AlpineEcosystem,
 		CompareAs: AlpineEcosystem,
@@ -61,36 +62,31 @@ func parseApkPackageGroup(group []string, pathToLockfile string) PackageDetails 
 
 		_, _ = fmt.Fprintf(
 			os.Stderr,
-			"warning: malformed APK installed file. Found no version number in record. Package %s. File: %s\n",
+			"warning: malformed APK installed file. Found no version number in record. Package %s.\n",
 			pkgPrintName,
-			pathToLockfile,
 		)
 	}
 
 	return pkg
 }
 
-func ParseApkInstalled(pathToLockfile string) ([]PackageDetails, error) {
-	file, err := os.Open(pathToLockfile)
-	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not open %s: %w", pathToLockfile, err)
-	}
-	defer file.Close()
+func ParseApkInstalledFile(pathToLockfile string) ([]PackageDetails, error) {
+	return parseFile(pathToLockfile, ParseApkInstalled)
+}
 
-	scanner := bufio.NewScanner(file)
-
+func ParseApkInstalled(r io.Reader) ([]PackageDetails, error) {
+	scanner := bufio.NewScanner(r)
 	packageGroups := groupApkPackageLines(scanner)
 
 	packages := make([]PackageDetails, 0, len(packageGroups))
 
 	for _, group := range packageGroups {
-		pkg := parseApkPackageGroup(group, pathToLockfile)
+		pkg := parseApkPackageGroup(group)
 
 		if pkg.Name == "" {
 			_, _ = fmt.Fprintf(
 				os.Stderr,
-				"warning: malformed APK installed file. Found no package name in record. File: %s\n",
-				pathToLockfile,
+				"warning: malformed APK installed file. Found no package name in record.\n",
 			)
 
 			continue
@@ -100,7 +96,7 @@ func ParseApkInstalled(pathToLockfile string) ([]PackageDetails, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		return packages, fmt.Errorf("error while scanning %s: %w", pathToLockfile, err)
+		return packages, fmt.Errorf("error while scanning: %w", err)
 	}
 
 	return packages, nil
@@ -109,7 +105,7 @@ func ParseApkInstalled(pathToLockfile string) ([]PackageDetails, error) {
 // FromApkInstalled attempts to parse the given file as an "apk-installed" lockfile
 // used by the Alpine Package Keeper (apk) to record installed packages.
 func FromApkInstalled(pathToInstalled string) (Lockfile, error) {
-	packages, err := ParseApkInstalled(pathToInstalled)
+	packages, err := ParseApkInstalledFile(pathToInstalled)
 
 	sort.Slice(packages, func(i, j int) bool {
 		if packages[i].Name == packages[j].Name {

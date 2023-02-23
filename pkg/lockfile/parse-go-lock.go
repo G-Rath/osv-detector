@@ -2,7 +2,7 @@ package lockfile
 
 import (
 	"fmt"
-	"os"
+	"io"
 	"strings"
 
 	"golang.org/x/mod/modfile"
@@ -20,17 +20,21 @@ func deduplicatePackages(packages map[string]PackageDetails) map[string]PackageD
 	return details
 }
 
-func ParseGoLock(pathToLockfile string) ([]PackageDetails, error) {
-	lockfileContents, err := os.ReadFile(pathToLockfile)
+func ParseGoLockFile(pathToLockfile string) ([]PackageDetails, error) {
+	return parseFile(pathToLockfile, ParseGoLock)
+}
+
+func ParseGoLock(r io.Reader) ([]PackageDetails, error) {
+	b, err := io.ReadAll(r)
 
 	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
+		return []PackageDetails{}, fmt.Errorf("could not read all: %w", err)
 	}
 
-	parsedLockfile, err := modfile.Parse(pathToLockfile, lockfileContents, nil)
+	parsedLockfile, err := modfile.Parse("", b, nil)
 
 	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not parse %s: %w", pathToLockfile, err)
+		return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)
 	}
 
 	packages := map[string]PackageDetails{}

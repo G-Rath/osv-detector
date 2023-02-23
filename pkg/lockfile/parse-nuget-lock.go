@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
+	"io"
 )
 
 type NuGetLockPackage struct {
@@ -50,23 +50,21 @@ func parseNuGetLock(lockfile NuGetLockfile) ([]PackageDetails, error) {
 
 var ErrNuGetUnsupportedLockfileVersion = errors.New("unsupported lockfile version")
 
-func ParseNuGetLock(pathToLockfile string) ([]PackageDetails, error) {
+func ParseNuGetLockFile(pathToLockfile string) ([]PackageDetails, error) {
+	return parseFile(pathToLockfile, ParseNuGetLock)
+}
+
+func ParseNuGetLock(r io.Reader) ([]PackageDetails, error) {
 	var parsedLockfile *NuGetLockfile
 
-	lockfileContents, err := os.ReadFile(pathToLockfile)
+	err := json.NewDecoder(r).Decode(&parsedLockfile)
 
 	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
-	}
-
-	err = json.Unmarshal(lockfileContents, &parsedLockfile)
-
-	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not parse %s: %w", pathToLockfile, err)
+		return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)
 	}
 
 	if parsedLockfile.Version != 1 {
-		return []PackageDetails{}, fmt.Errorf("could not parse %s: %w", pathToLockfile, ErrNuGetUnsupportedLockfileVersion)
+		return []PackageDetails{}, fmt.Errorf("could not parse: %w", ErrNuGetUnsupportedLockfileVersion)
 	}
 
 	return parseNuGetLock(*parsedLockfile)

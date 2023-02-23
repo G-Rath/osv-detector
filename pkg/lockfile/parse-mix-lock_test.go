@@ -6,19 +6,19 @@ import (
 	"github.com/g-rath/osv-detector/pkg/lockfile"
 )
 
-func TestParseMixLock_FileDoesNotExist(t *testing.T) {
+func TestParseMixLockFile_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMixLock("fixtures/mix/does-not-exist")
+	packages, err := lockfile.ParseMixLockFile("fixtures/mix/does-not-exist")
 
-	expectErrContaining(t, err, "could not open")
+	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseMixLock_NoPackages(t *testing.T) {
+func TestParseMixLockFile_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMixLock("fixtures/mix/empty.lock")
+	packages, err := lockfile.ParseMixLockFile("fixtures/mix/empty.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -27,10 +27,10 @@ func TestParseMixLock_NoPackages(t *testing.T) {
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseMixLock_OnePackage(t *testing.T) {
+func TestParseMixLockFile_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMixLock("fixtures/mix/one-package.lock")
+	packages, err := lockfile.ParseMixLockFile("fixtures/mix/one-package.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -47,10 +47,10 @@ func TestParseMixLock_OnePackage(t *testing.T) {
 	})
 }
 
-func TestParseMixLock_TwoPackages(t *testing.T) {
+func TestParseMixLockFile_TwoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMixLock("fixtures/mix/two-packages.lock")
+	packages, err := lockfile.ParseMixLockFile("fixtures/mix/two-packages.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -74,10 +74,10 @@ func TestParseMixLock_TwoPackages(t *testing.T) {
 	})
 }
 
-func TestParseMixLock_Many(t *testing.T) {
+func TestParseMixLockFile_Many(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMixLock("fixtures/mix/many.lock")
+	packages, err := lockfile.ParseMixLockFile("fixtures/mix/many.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -234,10 +234,10 @@ func TestParseMixLock_Many(t *testing.T) {
 	})
 }
 
-func TestParseMixLock_GitPackages(t *testing.T) {
+func TestParseMixLockFile_GitPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMixLock("fixtures/mix/git.lock")
+	packages, err := lockfile.ParseMixLockFile("fixtures/mix/git.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

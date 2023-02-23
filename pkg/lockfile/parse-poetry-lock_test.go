@@ -6,28 +6,28 @@ import (
 	"github.com/g-rath/osv-detector/pkg/lockfile"
 )
 
-func TestParsePoetryLock_FileDoesNotExist(t *testing.T) {
+func TestParsePoetryLockFile_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePoetryLock("fixtures/poetry/does-not-exist")
+	packages, err := lockfile.ParsePoetryLockFile("fixtures/poetry/does-not-exist")
 
 	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParsePoetryLock_InvalidToml(t *testing.T) {
+func TestParsePoetryLockFile_InvalidToml(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePoetryLock("fixtures/poetry/not-toml.txt")
+	packages, err := lockfile.ParsePoetryLockFile("fixtures/poetry/not-toml.txt")
 
 	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParsePoetryLock_NoPackages(t *testing.T) {
+func TestParsePoetryLockFile_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePoetryLock("fixtures/poetry/empty.lock")
+	packages, err := lockfile.ParsePoetryLockFile("fixtures/poetry/empty.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -36,10 +36,10 @@ func TestParsePoetryLock_NoPackages(t *testing.T) {
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParsePoetryLock_OnePackage(t *testing.T) {
+func TestParsePoetryLockFile_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePoetryLock("fixtures/poetry/one-package.lock")
+	packages, err := lockfile.ParsePoetryLockFile("fixtures/poetry/one-package.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -55,10 +55,10 @@ func TestParsePoetryLock_OnePackage(t *testing.T) {
 	})
 }
 
-func TestParsePoetryLock_TwoPackages(t *testing.T) {
+func TestParsePoetryLockFile_TwoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePoetryLock("fixtures/poetry/two-packages.lock")
+	packages, err := lockfile.ParsePoetryLockFile("fixtures/poetry/two-packages.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -80,10 +80,10 @@ func TestParsePoetryLock_TwoPackages(t *testing.T) {
 	})
 }
 
-func TestParsePoetryLock_PackageWithMetadata(t *testing.T) {
+func TestParsePoetryLockFile_PackageWithMetadata(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePoetryLock("fixtures/poetry/one-package-with-metadata.lock")
+	packages, err := lockfile.ParsePoetryLockFile("fixtures/poetry/one-package-with-metadata.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -99,10 +99,10 @@ func TestParsePoetryLock_PackageWithMetadata(t *testing.T) {
 	})
 }
 
-func TestParsePoetryLock_PackageWithGitSource(t *testing.T) {
+func TestParsePoetryLockFile_PackageWithGitSource(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePoetryLock("fixtures/poetry/source-git.lock")
+	packages, err := lockfile.ParsePoetryLockFile("fixtures/poetry/source-git.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -119,10 +119,10 @@ func TestParsePoetryLock_PackageWithGitSource(t *testing.T) {
 	})
 }
 
-func TestParsePoetryLock_PackageWithLegacySource(t *testing.T) {
+func TestParsePoetryLockFile_PackageWithLegacySource(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePoetryLock("fixtures/poetry/source-legacy.lock")
+	packages, err := lockfile.ParsePoetryLockFile("fixtures/poetry/source-legacy.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

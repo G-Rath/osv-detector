@@ -3,6 +3,7 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 )
@@ -28,16 +29,14 @@ func parseGradleLine(line string) (PackageDetails, error) {
 	}, nil
 }
 
-func ParseGradleLock(pathToLockfile string) ([]PackageDetails, error) {
+func ParseGradleLockFile(pathToLockfile string) ([]PackageDetails, error) {
+	return parseFile(pathToLockfile, ParseGradleLock)
+}
+
+func ParseGradleLock(r io.Reader) ([]PackageDetails, error) {
 	var packages []PackageDetails
 
-	lockFile, err := os.Open(pathToLockfile)
-	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not open %s: %w", pathToLockfile, err)
-	}
-	defer lockFile.Close()
-
-	scanner := bufio.NewScanner(lockFile)
+	scanner := bufio.NewScanner(r)
 
 	for scanner.Scan() {
 		lockLine := strings.TrimSpace(scanner.Text())
@@ -57,7 +56,7 @@ func ParseGradleLock(pathToLockfile string) ([]PackageDetails, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		return []PackageDetails{}, fmt.Errorf("error while scanning %s: %w", pathToLockfile, err)
+		return []PackageDetails{}, fmt.Errorf("failed to read: %w", err)
 	}
 
 	return packages, nil

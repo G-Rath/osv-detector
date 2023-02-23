@@ -6,28 +6,28 @@ import (
 	"github.com/g-rath/osv-detector/pkg/lockfile"
 )
 
-func TestParsePubspecLock_FileDoesNotExist(t *testing.T) {
+func TestParsePubspecLockFile_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/does-not-exist")
+	packages, err := lockfile.ParsePubspecLockFile("fixtures/pub/does-not-exist")
 
 	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParsePubspecLock_InvalidYaml(t *testing.T) {
+func TestParsePubspecLockFile_InvalidYaml(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/not-yaml.txt")
+	packages, err := lockfile.ParsePubspecLockFile("fixtures/pub/not-yaml.txt")
 
 	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParsePubspecLock_Empty(t *testing.T) {
+func TestParsePubspecLockFile_Empty(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/empty.lock")
+	packages, err := lockfile.ParsePubspecLockFile("fixtures/pub/empty.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -36,10 +36,10 @@ func TestParsePubspecLock_Empty(t *testing.T) {
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParsePubspecLock_NoPackages(t *testing.T) {
+func TestParsePubspecLockFile_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/no-packages.lock")
+	packages, err := lockfile.ParsePubspecLockFile("fixtures/pub/no-packages.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -48,10 +48,10 @@ func TestParsePubspecLock_NoPackages(t *testing.T) {
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParsePubspecLock_OnePackage(t *testing.T) {
+func TestParsePubspecLockFile_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/one-package.lock")
+	packages, err := lockfile.ParsePubspecLockFile("fixtures/pub/one-package.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -67,10 +67,10 @@ func TestParsePubspecLock_OnePackage(t *testing.T) {
 	})
 }
 
-func TestParsePubspecLock_OnePackageDev(t *testing.T) {
+func TestParsePubspecLockFile_OnePackageDev(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/one-package-dev.lock")
+	packages, err := lockfile.ParsePubspecLockFile("fixtures/pub/one-package-dev.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -86,10 +86,10 @@ func TestParsePubspecLock_OnePackageDev(t *testing.T) {
 	})
 }
 
-func TestParsePubspecLock_TwoPackages(t *testing.T) {
+func TestParsePubspecLockFile_TwoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/two-packages.lock")
+	packages, err := lockfile.ParsePubspecLockFile("fixtures/pub/two-packages.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -111,10 +111,10 @@ func TestParsePubspecLock_TwoPackages(t *testing.T) {
 	})
 }
 
-func TestParsePubspecLock_MixedPackages(t *testing.T) {
+func TestParsePubspecLockFile_MixedPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/mixed-packages.lock")
+	packages, err := lockfile.ParsePubspecLockFile("fixtures/pub/mixed-packages.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -148,10 +148,10 @@ func TestParsePubspecLock_MixedPackages(t *testing.T) {
 	})
 }
 
-func TestParsePubspecLock_PackageWithGitSource(t *testing.T) {
+func TestParsePubspecLockFile_PackageWithGitSource(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/source-git.lock")
+	packages, err := lockfile.ParsePubspecLockFile("fixtures/pub/source-git.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -196,10 +196,10 @@ func TestParsePubspecLock_PackageWithGitSource(t *testing.T) {
 	})
 }
 
-func TestParsePubspecLock_PackageWithSdkSource(t *testing.T) {
+func TestParsePubspecLockFile_PackageWithSdkSource(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/source-sdk.lock")
+	packages, err := lockfile.ParsePubspecLockFile("fixtures/pub/source-sdk.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -216,10 +216,10 @@ func TestParsePubspecLock_PackageWithSdkSource(t *testing.T) {
 	})
 }
 
-func TestParsePubspecLock_PackageWithPathSource(t *testing.T) {
+func TestParsePubspecLockFile_PackageWithPathSource(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/source-path.lock")
+	packages, err := lockfile.ParsePubspecLockFile("fixtures/pub/source-path.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

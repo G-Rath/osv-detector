@@ -6,19 +6,19 @@ import (
 	"github.com/g-rath/osv-detector/pkg/lockfile"
 )
 
-func TestParseGradleLock_FileDoesNotExist(t *testing.T) {
+func TestParseGradleLockFile_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGradleLock("fixtures/gradle/does-not-exist")
+	packages, err := lockfile.ParseGradleLockFile("fixtures/gradle/does-not-exist")
 
-	expectErrContaining(t, err, "could not open")
+	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseGradleLock_OnlyComments(t *testing.T) {
+func TestParseGradleLockFile_OnlyComments(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGradleLock("fixtures/gradle/only-comments")
+	packages, err := lockfile.ParseGradleLockFile("fixtures/gradle/only-comments")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -27,10 +27,10 @@ func TestParseGradleLock_OnlyComments(t *testing.T) {
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseGradleLock_EmptyStatement(t *testing.T) {
+func TestParseGradleLockFile_EmptyStatement(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGradleLock("fixtures/gradle/only-empty")
+	packages, err := lockfile.ParseGradleLockFile("fixtures/gradle/only-empty")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -39,10 +39,10 @@ func TestParseGradleLock_EmptyStatement(t *testing.T) {
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseGradleLock_OnePackage(t *testing.T) {
+func TestParseGradleLockFile_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGradleLock("fixtures/gradle/one-pkg")
+	packages, err := lockfile.ParseGradleLockFile("fixtures/gradle/one-pkg")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -58,10 +58,10 @@ func TestParseGradleLock_OnePackage(t *testing.T) {
 	})
 }
 
-func TestParseGradleLock_MultiplePackage(t *testing.T) {
+func TestParseGradleLockFile_MultiplePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGradleLock("fixtures/gradle/5-pkg")
+	packages, err := lockfile.ParseGradleLockFile("fixtures/gradle/5-pkg")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -102,10 +102,10 @@ func TestParseGradleLock_MultiplePackage(t *testing.T) {
 	})
 }
 
-func TestParseGradleLock_WithInvalidLines(t *testing.T) {
+func TestParseGradleLockFile_WithInvalidLines(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGradleLock("fixtures/gradle/with-bad-pkg")
+	packages, err := lockfile.ParseGradleLockFile("fixtures/gradle/with-bad-pkg")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

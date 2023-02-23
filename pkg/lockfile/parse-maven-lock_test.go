@@ -6,19 +6,19 @@ import (
 	"github.com/g-rath/osv-detector/pkg/lockfile"
 )
 
-func TestParseMavenLock_FileDoesNotExist(t *testing.T) {
+func TestParseMavenLockFile_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMavenLock("fixtures/maven/does-not-exist")
+	packages, err := lockfile.ParseMavenLockFile("fixtures/maven/does-not-exist")
 
 	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseMavenLock_Invalid(t *testing.T) {
+func TestParseMavenLockFile_Invalid(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMavenLock("fixtures/maven/not-pom.txt")
+	packages, err := lockfile.ParseMavenLockFile("fixtures/maven/not-pom.txt")
 
 	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -27,16 +27,16 @@ func TestParseMavenLock_Invalid(t *testing.T) {
 func TestParseMavenLock_InvalidSyntax(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMavenLock("fixtures/maven/invalid-syntax.xml")
+	packages, err := lockfile.ParseMavenLockFile("fixtures/maven/invalid-syntax.xml")
 
 	expectErrContaining(t, err, "XML syntax error")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseMavenLock_NoPackages(t *testing.T) {
+func TestParseMavenLockFile_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMavenLock("fixtures/maven/empty.xml")
+	packages, err := lockfile.ParseMavenLockFile("fixtures/maven/empty.xml")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -45,10 +45,10 @@ func TestParseMavenLock_NoPackages(t *testing.T) {
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseMavenLock_OnePackage(t *testing.T) {
+func TestParseMavenLockFile_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMavenLock("fixtures/maven/one-package.xml")
+	packages, err := lockfile.ParseMavenLockFile("fixtures/maven/one-package.xml")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -64,10 +64,10 @@ func TestParseMavenLock_OnePackage(t *testing.T) {
 	})
 }
 
-func TestParseMavenLock_TwoPackages(t *testing.T) {
+func TestParseMavenLockFile_TwoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMavenLock("fixtures/maven/two-packages.xml")
+	packages, err := lockfile.ParseMavenLockFile("fixtures/maven/two-packages.xml")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -92,7 +92,7 @@ func TestParseMavenLock_TwoPackages(t *testing.T) {
 func TestParseMavenLock_WithDependencyManagement(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMavenLock("fixtures/maven/with-dependency-management.xml")
+	packages, err := lockfile.ParseMavenLockFile("fixtures/maven/with-dependency-management.xml")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -120,10 +120,10 @@ func TestParseMavenLock_WithDependencyManagement(t *testing.T) {
 	})
 }
 
-func TestParseMavenLock_Interpolation(t *testing.T) {
+func TestParseMavenLockFile_Interpolation(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMavenLock("fixtures/maven/interpolation.xml")
+	packages, err := lockfile.ParseMavenLockFile("fixtures/maven/interpolation.xml")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

@@ -5,19 +5,19 @@ import (
 	"testing"
 )
 
-func TestParseApkInstalled_FileDoesNotExist(t *testing.T) {
+func TestParseApkInstalledFile_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseApkInstalled("fixtures/apk/does-not-exist")
+	packages, err := lockfile.ParseApkInstalledFile("fixtures/apk/does-not-exist")
 
-	expectErrContaining(t, err, "could not open")
+	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseApkInstalled_Empty(t *testing.T) {
+func TestParseApkInstalledFile_Empty(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseApkInstalled("fixtures/apk/empty_installed")
+	packages, err := lockfile.ParseApkInstalledFile("fixtures/apk/empty_installed")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -26,10 +26,10 @@ func TestParseApkInstalled_Empty(t *testing.T) {
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseApkInstalled_NotAnInstalled(t *testing.T) {
+func TestParseApkInstalledFile_NotAnInstalled(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseApkInstalled("fixtures/apk/not_installed")
+	packages, err := lockfile.ParseApkInstalledFile("fixtures/apk/not_installed")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -38,10 +38,10 @@ func TestParseApkInstalled_NotAnInstalled(t *testing.T) {
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
-func TestParseApkInstalled_Malformed(t *testing.T) {
+func TestParseApkInstalledFile_Malformed(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseApkInstalled("fixtures/apk/malformed_installed")
+	packages, err := lockfile.ParseApkInstalledFile("fixtures/apk/malformed_installed")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -58,10 +58,10 @@ func TestParseApkInstalled_Malformed(t *testing.T) {
 	})
 }
 
-func TestParseApkInstalled_Single(t *testing.T) {
+func TestParseApkInstalledFile_Single(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseApkInstalled("fixtures/apk/single_installed")
+	packages, err := lockfile.ParseApkInstalledFile("fixtures/apk/single_installed")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -78,10 +78,10 @@ func TestParseApkInstalled_Single(t *testing.T) {
 	})
 }
 
-func TestParseApkInstalled_Shuffled(t *testing.T) {
+func TestParseApkInstalledFile_Shuffled(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseApkInstalled("fixtures/apk/shuffled_installed")
+	packages, err := lockfile.ParseApkInstalledFile("fixtures/apk/shuffled_installed")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -98,10 +98,10 @@ func TestParseApkInstalled_Shuffled(t *testing.T) {
 	})
 }
 
-func TestParseApkInstalled_Multiple(t *testing.T) {
+func TestParseApkInstalledFile_Multiple(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseApkInstalled("fixtures/apk/multiple_installed")
+	packages, err := lockfile.ParseApkInstalledFile("fixtures/apk/multiple_installed")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

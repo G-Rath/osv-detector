@@ -3,8 +3,7 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
-	"os"
-	"path/filepath"
+	"io"
 	"strings"
 
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
@@ -100,20 +99,18 @@ func isLineContinuation(line string) bool {
 	return re.MatchString(line)
 }
 
-func ParseRequirementsTxt(pathToLockfile string) ([]PackageDetails, error) {
-	return parseRequirementsTxt(pathToLockfile, map[string]struct{}{})
+func ParseRequirementsTxtFile(pathToLockfile string) ([]PackageDetails, error) {
+	return parseFile(pathToLockfile, ParseRequirementsTxt)
 }
 
-func parseRequirementsTxt(pathToLockfile string, requiredAlready map[string]struct{}) ([]PackageDetails, error) {
+func ParseRequirementsTxt(r io.Reader) ([]PackageDetails, error) {
+	return parseRequirementsTxt(r /*, map[string]struct{}{}*/)
+}
+
+func parseRequirementsTxt(r io.Reader /*, requiredAlready map[string]struct{}*/) ([]PackageDetails, error) {
 	packages := map[string]PackageDetails{}
 
-	file, err := os.Open(pathToLockfile)
-	if err != nil {
-		return []PackageDetails{}, fmt.Errorf("could not open %s: %w", pathToLockfile, err)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(r)
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -128,27 +125,28 @@ func parseRequirementsTxt(pathToLockfile string, requiredAlready map[string]stru
 
 		line = removeComments(line)
 
-		if ar := strings.TrimPrefix(line, "-r "); ar != line {
-			ar = filepath.Join(filepath.Dir(pathToLockfile), ar)
-
-			if _, ok := requiredAlready[ar]; ok {
-				continue
-			}
-
-			requiredAlready[ar] = struct{}{}
-
-			details, err := parseRequirementsTxt(ar, requiredAlready)
-
-			if err != nil {
-				return []PackageDetails{}, fmt.Errorf("failed to include %s: %w", line, err)
-			}
-
-			for _, detail := range details {
-				packages[detail.Name+"@"+detail.Version] = detail
-			}
-
-			continue
-		}
+		// todo: figure out how to support this
+		// if ar := strings.TrimPrefix(line, "-r "); ar != line {
+		// 	ar = filepath.Join(filepath.Dir(pathToLockfile), ar)
+		//
+		// 	if _, ok := requiredAlready[ar]; ok {
+		// 		continue
+		// 	}
+		//
+		// 	requiredAlready[ar] = struct{}{}
+		//
+		// 	details, err := parseRequirementsTxt(ar, requiredAlready)
+		//
+		// 	if err != nil {
+		// 		return []PackageDetails{}, fmt.Errorf("failed to include %s: %w", line, err)
+		// 	}
+		//
+		// 	for _, detail := range details {
+		// 		packages[detail.Name+"@"+detail.Version] = detail
+		// 	}
+		//
+		// 	continue
+		// }
 
 		if isNotRequirementLine(line) {
 			continue
@@ -159,7 +157,7 @@ func parseRequirementsTxt(pathToLockfile string, requiredAlready map[string]stru
 	}
 
 	if err := scanner.Err(); err != nil {
-		return []PackageDetails{}, fmt.Errorf("error while scanning %s: %w", pathToLockfile, err)
+		return []PackageDetails{}, fmt.Errorf("error while scanning: %w", err)
 	}
 
 	return pkgDetailsMapToSlice(packages), nil
