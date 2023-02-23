@@ -8,6 +8,7 @@ linters:
     - tagliatelle      # we're parsing data from external sources
     - varnamelen       # maybe later
     - exhaustivestruct # overkill
+    - exhaustruct      # overkill
     - forcetypeassert  # too hard
     - interfacer       # deprecated
     - golint           # deprecated
@@ -19,6 +20,7 @@ linters:
     - gomnd            # not every number is magic
     - wsl              # disagree with, for now
     - ireturn          # disagree with, sort of
+    - nonamedreturns   # they have their uses
   presets:
     - bugs
     - comment
