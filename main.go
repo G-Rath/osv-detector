@@ -246,21 +246,25 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs s
 
 		if err == nil {
 			if info.IsDir() {
-				dirs, err := file.ReadDir(-1)
+				if info.Name() == "node_modules" {
+					lockfiles = append(lockfiles, pathToLockOrDirectory)
+				} else {
+					dirs, err := file.ReadDir(-1)
 
-				if err == nil {
-					for _, dir := range dirs {
-						if dir.IsDir() {
-							continue
-						}
-
-						if parseAs != parseAsCsvFile {
-							if p, _ := lockfile.FindParser(dir.Name(), parseAs); p == nil {
+					if err == nil {
+						for _, dir := range dirs {
+							if dir.IsDir() {
 								continue
 							}
-						}
 
-						lockfiles = append(lockfiles, filepath.Join(pathToLockOrDirectory, dir.Name()))
+							if parseAs != parseAsCsvFile {
+								if p, _ := lockfile.FindParser(dir.Name(), parseAs); p == nil {
+									continue
+								}
+							}
+
+							lockfiles = append(lockfiles, filepath.Join(pathToLockOrDirectory, dir.Name()))
+						}
 					}
 				}
 			} else {
@@ -397,6 +401,19 @@ func parseLockfile(pathToLock string, args []string, img *image.Image) (lockfile
 
 			return l, err
 		}
+	}
+
+	// adding the separator to the current lock path is an easy way to handle "node_modules"
+	// is passed by itself when checking that the full directory name is "node_modules",
+	// since it doesn't matter for this check if we end up with two separators at the start
+	if strings.HasSuffix(string(filepath.Separator)+pathToLock, string(filepath.Separator)+"node_modules") {
+		l, err := lockfile.WalkNodeModules(pathToLock)
+
+		if err != nil {
+			err = fmt.Errorf("%w", err)
+		}
+
+		return l, err
 	}
 
 	l, err := lockfile.Parse(pathToLock, parseAs)

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"path"
+	"sort"
 	"strings"
 )
 
@@ -28,6 +29,20 @@ type NpmLockfile struct {
 }
 
 const NpmEcosystem Ecosystem = "npm"
+
+func pkgDetailsMapToSortedSlice(m map[string]PackageDetails) []PackageDetails {
+	packages := pkgDetailsMapToSlice(m)
+
+	sort.Slice(packages, func(i, j int) bool {
+		if packages[i].Name == packages[j].Name {
+			return packages[i].Version < packages[j].Version
+		}
+
+		return packages[i].Name < packages[j].Name
+	})
+
+	return packages
+}
 
 func pkgDetailsMapToSlice(m map[string]PackageDetails) []PackageDetails {
 	details := make([]PackageDetails, 0, len(m))
