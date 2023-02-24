@@ -104,7 +104,27 @@ func ParseApkInstalled(r io.Reader) ([]PackageDetails, error) {
 
 // FromApkInstalled attempts to parse the given file as an "apk-installed" lockfile
 // used by the Alpine Package Keeper (apk) to record installed packages.
-func FromApkInstalled(pathToInstalled string) (Lockfile, error) {
+func FromApkInstalled(r io.Reader, pathToInstalled string) (Lockfile, error) {
+	packages, err := ParseApkInstalled(r)
+
+	sort.Slice(packages, func(i, j int) bool {
+		if packages[i].Name == packages[j].Name {
+			return packages[i].Version < packages[j].Version
+		}
+
+		return packages[i].Name < packages[j].Name
+	})
+
+	return Lockfile{
+		FilePath: pathToInstalled,
+		ParsedAs: "apk-installed",
+		Packages: packages,
+	}, err
+}
+
+// FromApkInstalledFile attempts to parse the given file as an "apk-installed" lockfile
+// used by the Alpine Package Keeper (apk) to record installed packages.
+func FromApkInstalledFile(pathToInstalled string) (Lockfile, error) {
 	packages, err := ParseApkInstalledFile(pathToInstalled)
 
 	sort.Slice(packages, func(i, j int) bool {

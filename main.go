@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"io"
@@ -9,6 +10,9 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/anchore/stereoscope"
+	"github.com/anchore/stereoscope/pkg/file"
+	"github.com/anchore/stereoscope/pkg/image"
 	"github.com/fatih/color"
 	"github.com/g-rath/osv-detector/internal"
 	"github.com/g-rath/osv-detector/internal/configer"
@@ -276,7 +280,9 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs s
 	return lockfiles, err != nil
 }
 
-func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAsGlobal string) ([]string, bool) {
+// findAllLockfiles checks the provided paths to determine an absolute list of lockfiles
+// to be checked, expanding any directories into a list of supported lockfiles
+func findAllLockfilesOnHost(r *reporter.Reporter, pathsToCheck []string, parseAsGlobal string) ([]string, bool) {
 	var paths []string
 
 	if parseAsGlobal == parseAsCsvRow {
@@ -306,9 +312,38 @@ func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAsGlobal
 	return paths, errored
 }
 
-func parseLockfile(pathToLock string, args []string) (lockfile.Lockfile, error) {
-	parseAs, pathToLock := parseLockfilePathWithParseAs(pathToLock)
+func imageID(img *image.Image) string {
+	for _, tag := range img.Metadata.Tags {
+		return tag.Name()
+	}
 
+	return img.Metadata.ID
+}
+
+func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs string, img *image.Image) ([]string, bool) {
+	if img == nil {
+		return findAllLockfilesOnHost(r, pathsToCheck, parseAs)
+	}
+
+	r.PrintText(fmt.Sprintf("reading image %s\n", imageID(img)))
+
+	paths := make([]string, 0, 2)
+
+	if img.SquashedTree().HasPath("/lib/apk/db/installed") {
+		paths = append(paths, "/lib/apk/db/installed")
+	}
+
+	if img.SquashedTree().HasPath("/var/lib/dpkg/status") {
+		paths = append(paths, "/var/lib/dpkg/status")
+	}
+
+	// todo: we want to search the container for things like node_modules, lockfiles, etc
+
+	return paths, false
+}
+
+func parseLockfile(pathToLock string, args []string, img *image.Image) (lockfile.Lockfile, error) {
+	parseAs, pathToLock := parseLockfilePathWithParseAs(pathToLock)
 	if parseAs == parseAsCsvRow {
 		l, err := lockfile.FromCSVRows(pathToLock, parseAs, args)
 
@@ -326,6 +361,42 @@ func parseLockfile(pathToLock string, args []string) (lockfile.Lockfile, error) 
 		}
 
 		return l, err
+	}
+
+	if img != nil {
+		if pathToLock == "/lib/apk/db/installed" {
+			r, err := img.OpenPathFromSquash(file.Path(pathToLock))
+			if err != nil {
+				err = fmt.Errorf("%w", err)
+
+				return lockfile.Lockfile{}, err
+			}
+
+			l, err := lockfile.FromApkInstalled(r, pathToLock)
+
+			if err != nil {
+				err = fmt.Errorf("%w", err)
+			}
+
+			return l, err
+		}
+
+		if pathToLock == "/var/lib/dpkg/status" {
+			r, err := img.OpenPathFromSquash(file.Path(pathToLock))
+			if err != nil {
+				err = fmt.Errorf("%w", err)
+
+				return lockfile.Lockfile{}, err
+			}
+
+			l, err := lockfile.FromDpkgStatus(r, pathToLock)
+
+			if err != nil {
+				err = fmt.Errorf("%w", err)
+			}
+
+			return l, err
+		}
 	}
 
 	l, err := lockfile.Parse(pathToLock, parseAs)
@@ -419,15 +490,20 @@ func parseLockfilePathWithParseAs(lockfilePathWithParseAs string) (string, strin
 func readAllLockfiles(
 	r *reporter.Reporter,
 	pathsToLocksWithParseAs []string,
+	img *image.Image,
 	args []string,
 	checkForLocalConfig bool,
 	config *configer.Config,
 ) lockfileAndConfigOrErrs {
 	lockfiles := make([]lockfileAndConfigOrErr, 0, len(pathsToLocksWithParseAs))
 
+	// todo: for now lets just not do local configs
+	if img != nil {
+		checkForLocalConfig = false
+	}
+
 	for _, pathToLockWithParseAs := range pathsToLocksWithParseAs {
 		_, pathToLock := parseLockfilePathWithParseAs(pathToLockWithParseAs)
-
 		if checkForLocalConfig {
 			base := filepath.Dir(pathToLock)
 			con, err := configer.Find(r, base)
@@ -454,7 +530,7 @@ func readAllLockfiles(
 			}
 		}
 
-		lockf, err := parseLockfile(pathToLockWithParseAs, args)
+		lockf, err := parseLockfile(pathToLockWithParseAs, args, img)
 		lockfiles = append(lockfiles, lockfileAndConfigOrErr{lockf, config, err})
 	}
 
@@ -510,6 +586,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 	useDatabases := cli.Bool("use-dbs", true, "Use the databases from osv.dev to check for known vulnerabilities")
 	useAPI := cli.Bool("use-api", false, "Use the osv.dev API to check for known vulnerabilities")
 	batchSize := cli.Int("batch-size", 1000, "The number of packages to include in each batch when using the api database")
+	imagePath := cli.String("image", "", "Path to an Docker save tar, docker image, or OCI directory/archive to check")
 
 	cli.Var(&globalIgnores, "ignore", `ID of an OSV to ignore when determining exit codes.
 This flag can be passed multiple times to ignore different vulnerabilities`)
@@ -550,7 +627,27 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		}
 	}
 
-	pathsToLocksWithParseAs, errored := findAllLockfiles(r, cli.Args(), *parseAs)
+	var img *image.Image
+
+	if *imagePath != "" {
+		// context for network requests
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+
+		var err error
+
+		r.PrintText(fmt.Sprintf("opening image %s\n", *imagePath))
+		img, err = stereoscope.GetImage(ctx, *imagePath)
+
+		if err != nil {
+			return 1
+		}
+
+		// note: we are writing out temp files which should be cleaned up after you're done with the image object
+		defer img.Cleanup()
+	}
+
+	pathsToLocksWithParseAs, errored := findAllLockfiles(r, cli.Args(), *parseAs, img)
 
 	if len(pathsToLocksWithParseAs) == 0 {
 		r.PrintError(
@@ -589,7 +686,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		loadLocalConfig = false
 	}
 
-	files := readAllLockfiles(r, pathsToLocksWithParseAs, cli.Args(), loadLocalConfig, &config)
+	files := readAllLockfiles(r, pathsToLocksWithParseAs, img, cli.Args(), loadLocalConfig, &config)
 
 	files.adjustExtraDatabases(*noConfigDatabases, *useAPI, *useDatabases)
 

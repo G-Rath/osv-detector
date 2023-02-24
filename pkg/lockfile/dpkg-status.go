@@ -161,7 +161,27 @@ func ParseDpkgStatus(r io.Reader) ([]PackageDetails, error) {
 
 // FromDpkgStatus attempts to parse the given file as an "dpkg-status" lockfile
 // used by the Debian Package (dpkg) to record installed packages.
-func FromDpkgStatus(pathToStatus string) (Lockfile, error) {
+func FromDpkgStatus(r io.Reader, pathToStatus string) (Lockfile, error) {
+	packages, err := ParseDpkgStatus(r)
+
+	sort.Slice(packages, func(i, j int) bool {
+		if packages[i].Name == packages[j].Name {
+			return packages[i].Version < packages[j].Version
+		}
+
+		return packages[i].Name < packages[j].Name
+	})
+
+	return Lockfile{
+		FilePath: pathToStatus,
+		ParsedAs: "dpkg-status",
+		Packages: packages,
+	}, err
+}
+
+// FromDpkgStatusFile attempts to parse the given file as an "dpkg-status" lockfile
+// used by the Debian Package (dpkg) to record installed packages.
+func FromDpkgStatusFile(pathToStatus string) (Lockfile, error) {
 	packages, err := ParseDpkgStatusFile(pathToStatus)
 
 	sort.Slice(packages, func(i, j int) bool {
