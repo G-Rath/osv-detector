@@ -356,7 +356,8 @@ func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs strin
 					return false
 				}
 
-				if strings.HasSuffix(string(path), "/node_modules") {
+				if strings.HasSuffix(string(path), "/node_modules") ||
+					strings.HasSuffix(string(path), "/site-packages") {
 					paths = append(paths, string(path))
 
 					return false
@@ -406,6 +407,16 @@ func parseLockfile(pathToLock string, args []string, img *image.Image) (lockfile
 	if img != nil {
 		if isPathTo(pathToLock, "node_modules") {
 			l, err := lockfile.WalkNodeModulesInImage(*img, pathToLock)
+
+			if err != nil {
+				err = fmt.Errorf("%w", err)
+			}
+
+			return l, err
+		}
+
+		if isPathTo(pathToLock, "site-packages") {
+			l, err := lockfile.WalkPythonSitePackagesInImage(*img, pathToLock)
 
 			if err != nil {
 				err = fmt.Errorf("%w", err)
