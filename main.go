@@ -248,7 +248,7 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs s
 
 		if err == nil {
 			if info.IsDir() {
-				if info.Name() == "node_modules" {
+				if info.Name() == "node_modules" || info.Name() == "site-packages" {
 					lockfiles = append(lockfiles, pathToLockOrDirectory)
 				} else {
 					dirs, err := file.ReadDir(-1)
@@ -374,6 +374,14 @@ func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs strin
 	return paths, err != nil
 }
 
+// isPathTo checks if the given path is to a file with the given name,
+// which isn't fooled by files whose name ends with the given name.
+func isPathTo(path, name string) bool {
+	// by adding the separator to the both paths we ensure that we'll only match on files whose
+	// full name matches the given name, since having two separators at the start is fine here
+	return strings.HasSuffix(string(filepath.Separator)+path, string(filepath.Separator)+name)
+}
+
 func parseLockfile(pathToLock string, args []string, img *image.Image) (lockfile.Lockfile, error) {
 	parseAs, pathToLock := parseLockfilePathWithParseAs(pathToLock)
 	if parseAs == parseAsCsvRow {
@@ -395,13 +403,8 @@ func parseLockfile(pathToLock string, args []string, img *image.Image) (lockfile
 		return l, err
 	}
 
-	// adding the separator to the current lock path is an easy way to handle "node_modules"
-	// is passed by itself when checking that the full directory name is "node_modules",
-	// since it doesn't matter for this check if we end up with two separators at the start
-	isPathToNodeModules := strings.HasSuffix(string(filepath.Separator)+pathToLock, string(filepath.Separator)+"node_modules")
-
 	if img != nil {
-		if isPathToNodeModules {
+		if isPathTo(pathToLock, "node_modules") {
 			l, err := lockfile.WalkNodeModulesInImage(*img, pathToLock)
 
 			if err != nil {
@@ -446,8 +449,18 @@ func parseLockfile(pathToLock string, args []string, img *image.Image) (lockfile
 		}
 	}
 
-	if isPathToNodeModules {
+	if isPathTo(pathToLock, "node_modules") {
 		l, err := lockfile.WalkNodeModules(pathToLock)
+
+		if err != nil {
+			err = fmt.Errorf("%w", err)
+		}
+
+		return l, err
+	}
+
+	if isPathTo(pathToLock, "site-packages") {
+		l, err := lockfile.WalkPythonSitePackages(pathToLock)
 
 		if err != nil {
 			err = fmt.Errorf("%w", err)
