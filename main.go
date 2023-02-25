@@ -12,6 +12,8 @@ import (
 
 	"github.com/anchore/stereoscope"
 	"github.com/anchore/stereoscope/pkg/file"
+	"github.com/anchore/stereoscope/pkg/filetree"
+	"github.com/anchore/stereoscope/pkg/filetree/filenode"
 	"github.com/anchore/stereoscope/pkg/image"
 	"github.com/fatih/color"
 	"github.com/g-rath/osv-detector/internal"
@@ -342,8 +344,34 @@ func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs strin
 	}
 
 	// todo: we want to search the container for things like node_modules, lockfiles, etc
+	err := img.SquashedTree().Walk(
+		func(path file.Path, f filenode.FileNode) error {
+			return nil
+		},
+		&filetree.WalkConditions{
+			ShouldContinueBranch: func(path file.Path, node filenode.FileNode) bool {
+				// We want to avoid any symlinks as they could be cyclical, and they should
+				// be safe to skip since we should end up walking their targets eventually
+				if lockfile.IsSymlink(path, node) {
+					return false
+				}
 
-	return paths, false
+				if strings.HasSuffix(string(path), "/node_modules") {
+					paths = append(paths, string(path))
+
+					return false
+				}
+
+				return true
+			},
+		},
+	)
+
+	if err != nil {
+		r.PrintError(fmt.Sprintf("error while walking image, results may be incomplete: %v", err))
+	}
+
+	return paths, err != nil
 }
 
 func parseLockfile(pathToLock string, args []string, img *image.Image) (lockfile.Lockfile, error) {
@@ -367,7 +395,22 @@ func parseLockfile(pathToLock string, args []string, img *image.Image) (lockfile
 		return l, err
 	}
 
+	// adding the separator to the current lock path is an easy way to handle "node_modules"
+	// is passed by itself when checking that the full directory name is "node_modules",
+	// since it doesn't matter for this check if we end up with two separators at the start
+	isPathToNodeModules := strings.HasSuffix(string(filepath.Separator)+pathToLock, string(filepath.Separator)+"node_modules")
+
 	if img != nil {
+		if isPathToNodeModules {
+			l, err := lockfile.WalkNodeModulesInImage(*img, pathToLock)
+
+			if err != nil {
+				err = fmt.Errorf("%w", err)
+			}
+
+			return l, err
+		}
+
 		if pathToLock == "/lib/apk/db/installed" {
 			r, err := img.OpenPathFromSquash(file.Path(pathToLock))
 			if err != nil {
@@ -403,10 +446,7 @@ func parseLockfile(pathToLock string, args []string, img *image.Image) (lockfile
 		}
 	}
 
-	// adding the separator to the current lock path is an easy way to handle "node_modules"
-	// is passed by itself when checking that the full directory name is "node_modules",
-	// since it doesn't matter for this check if we end up with two separators at the start
-	if strings.HasSuffix(string(filepath.Separator)+pathToLock, string(filepath.Separator)+"node_modules") {
+	if isPathToNodeModules {
 		l, err := lockfile.WalkNodeModules(pathToLock)
 
 		if err != nil {
