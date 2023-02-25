@@ -724,8 +724,10 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 			return 1
 		}
 
-		// note: we are writing out temp files which should be cleaned up after you're done with the image object
-		defer img.Cleanup()
+		defer func() {
+			stereoscope.Cleanup()
+			_ = img.Cleanup()
+		}()
 	}
 
 	pathsToLocksWithParseAs, errored := findAllLockfiles(r, cli.Args(), *parseAs, img)
