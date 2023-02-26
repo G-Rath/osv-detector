@@ -3,6 +3,8 @@ package lockfile
 import (
 	"errors"
 	"fmt"
+	"github.com/anchore/stereoscope/pkg/file"
+	"github.com/anchore/stereoscope/pkg/image"
 	"os"
 	"path/filepath"
 	"sort"
@@ -39,6 +41,26 @@ var parsers = map[string]PackageDetailsParser{
 	"pubspec.lock":                ParsePubspecLockFile,
 	"requirements.txt":            ParseRequirementsTxtFile,
 	"yarn.lock":                   ParseYarnLockFile,
+}
+
+//nolint:gochecknoglobals // this is an optimisation and read-only
+var parsersWithReaders = map[string]PackageDetailsParserWithReader{
+	"buildscript-gradle.lockfile": ParseGradleLock,
+	"Cargo.lock":                  ParseCargoLock,
+	"composer.lock":               ParseComposerLock,
+	"Gemfile.lock":                ParseGemfileLock,
+	"go.mod":                      ParseGoLock,
+	"gradle.lockfile":             ParseGradleLock,
+	"mix.lock":                    ParseMixLock,
+	"Pipfile.lock":                ParsePipenvLock,
+	"package-lock.json":           ParseNpmLock,
+	"packages.lock.json":          ParseNuGetLock,
+	"pnpm-lock.yaml":              ParsePnpmLock,
+	"poetry.lock":                 ParsePoetryLock,
+	"pom.xml":                     ParseMavenLock,
+	"pubspec.lock":                ParsePubspecLock,
+	"requirements.txt":            ParseRequirementsTxt,
+	"yarn.lock":                   ParseYarnLock,
 }
 
 func ListParsers() []string {
@@ -138,6 +160,54 @@ func Parse(pathToLockfile string, parseAs string) (Lockfile, error) {
 	}
 
 	packages, err := parser(pathToLockfile)
+
+	if err != nil && parseAs != "" {
+		err = fmt.Errorf("(parsing as %s) %w", parsedAs, err)
+	}
+
+	sort.Slice(packages, func(i, j int) bool {
+		if packages[i].Name == packages[j].Name {
+			return packages[i].Version < packages[j].Version
+		}
+
+		return packages[i].Name < packages[j].Name
+	})
+
+	return Lockfile{
+		FilePath: pathToLockfile,
+		ParsedAs: parsedAs,
+		Packages: packages,
+	}, err
+}
+
+// ParseInImage attempts to extract a collection of package details from a lockfile
+// that resides in a container image, using one of the native parsers.
+//
+// The parser is selected based on the name of the file, which can be overridden
+// with the "parseAs" parameter.
+func ParseInImage(pathToLockfile string, parseAs string, img image.Image) (Lockfile, error) {
+	parsedAs := parseAs
+	if parsedAs == "" {
+		parsedAs = filepath.Base(pathToLockfile)
+	}
+
+	parser := parsersWithReaders[parsedAs]
+
+	if parser == nil {
+		if parseAs != "" {
+			return Lockfile{}, fmt.Errorf("%w, requested %s", ErrParserNotFound, parseAs)
+		}
+
+		return Lockfile{}, fmt.Errorf("%w for %s", ErrParserNotFound, pathToLockfile)
+	}
+
+	r, err := img.OpenPathFromSquash(file.Path(pathToLockfile))
+
+	if err != nil && parseAs != "" {
+		return Lockfile{}, fmt.Errorf("(parsing as %s) %w", parsedAs, err)
+	}
+
+	packages, err := parser(r)
 
 	if err != nil && parseAs != "" {
 		err = fmt.Errorf("(parsing as %s) %w", parsedAs, err)
