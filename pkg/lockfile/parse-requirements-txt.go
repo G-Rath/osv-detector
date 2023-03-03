@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -91,11 +92,11 @@ func isNotRequirementLine(line string) bool {
 }
 
 func ParseRequirementsTxt(pathToLockfile string) ([]PackageDetails, error) {
-	var packages []PackageDetails
+	packages := map[string]PackageDetails{}
 
 	file, err := os.Open(pathToLockfile)
 	if err != nil {
-		return packages, fmt.Errorf("could not open %s: %w", pathToLockfile, err)
+		return []PackageDetails{}, fmt.Errorf("could not open %s: %w", pathToLockfile, err)
 	}
 	defer file.Close()
 
@@ -104,16 +105,33 @@ func ParseRequirementsTxt(pathToLockfile string) ([]PackageDetails, error) {
 	for scanner.Scan() {
 		line := removeComments(scanner.Text())
 
+		if strings.HasPrefix(line, "-r ") {
+			details, err := ParseRequirementsTxt(
+				filepath.Join(filepath.Dir(pathToLockfile), strings.TrimPrefix(line, "-r ")),
+			)
+
+			if err != nil {
+				return []PackageDetails{}, fmt.Errorf("failed to include %s: %w", line, err)
+			}
+
+			for _, detail := range details {
+				packages[detail.Name+"@"+detail.Version] = detail
+			}
+
+			continue
+		}
+
 		if isNotRequirementLine(line) {
 			continue
 		}
 
-		packages = append(packages, parseLine(line))
+		detail := parseLine(line)
+		packages[detail.Name+"@"+detail.Version] = detail
 	}
 
 	if err := scanner.Err(); err != nil {
-		return packages, fmt.Errorf("error while scanning %s: %w", pathToLockfile, err)
+		return []PackageDetails{}, fmt.Errorf("error while scanning %s: %w", pathToLockfile, err)
 	}
 
-	return packages, nil
+	return pkgDetailsMapToSlice(packages), nil
 }
