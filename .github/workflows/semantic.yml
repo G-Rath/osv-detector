@@ -14,6 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - uses: actions/cache/restore@v3
+        with:
+          path: /tmp/debian-versions-generator-cache.csv
+          key: ${{ runner.os }}-
+
+      - uses: actions/checkout@v3
         with:
           persist-credentials: false
       - uses: actions/setup-python@v4
@@ -21,10 +28,16 @@ jobs:
           python-version: '3.10'
       - run: dpkg --version
       - run: python3 generators/generate-debian-versions.py
+      - run: stat debian-db.zip
       - uses: actions/upload-artifact@v3
         with:
           name: generated-versions
           path: pkg/semantic/fixtures/debian-versions-generated.txt
+
+      - uses: actions/cache/save@v3
+        with:
+          path: /tmp/debian-versions-generator-cache.csv
+          key: ${{ runner.os }}-${{ hashFiles('debian-db.zip') }}
 
   generate-packagist-versions:
     runs-on: ubuntu-latest
@@ -102,7 +115,7 @@ jobs:
   test-semantic:
     runs-on: ubuntu-latest
     needs:
-#      - generate-debian-versions
+      - generate-debian-versions
       - generate-packagist-versions
       - generate-pypi-versions
       - generate-rubygems-versions
