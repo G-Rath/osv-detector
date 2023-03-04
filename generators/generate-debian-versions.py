@@ -184,5 +184,6 @@ outfile = "pkg/semantic/fixtures/debian-versions-generated.txt"
 packs = fetch_packages_versions()
 with open(outfile, "w") as f:
   f.writelines(generate_package_compares(packs))
+  f.write("\n")
 
 compare_versions_in_file(outfile, "failures")

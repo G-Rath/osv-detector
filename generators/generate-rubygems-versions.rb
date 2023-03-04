@@ -96,6 +96,6 @@ outfile = "pkg/semantic/fixtures/rubygems-versions-generated.txt"
 
 packs = fetch_packages_versions
 
-File.open(outfile, "w") { |f| f.write(generate_package_compares(packs).uniq.join("\n")) }
+File.open(outfile, "w") { |f| f.write(generate_package_compares(packs).uniq.join("\n") + "\n") }
 
 compare_versions_in_file(outfile, :failures)

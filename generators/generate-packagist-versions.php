@@ -164,6 +164,6 @@ $outfile = "pkg/semantic/fixtures/packagist-versions-generated.txt";
 /** @noinspection PhpUnhandledExceptionInspection */
 $packages = fetchPackageVersions();
 
-file_put_contents($outfile, implode("\n", array_unique(generatePackageCompares($packages))));
+file_put_contents($outfile, implode("\n", array_unique(generatePackageCompares($packages))) . "\n");
 
 compareVersions(explode("\n", file_get_contents($outfile)), "failures");
