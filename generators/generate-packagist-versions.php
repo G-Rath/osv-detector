@@ -159,7 +159,7 @@ function compareVersions(array $lines, string $select = "all"): void
   }
 }
 
-$outfile = "packagist-versions-generated.txt";
+$outfile = "pkg/semantic/fixtures/packagist-versions-generated.txt";
 
 /** @noinspection PhpUnhandledExceptionInspection */
 $packages = fetchPackageVersions();

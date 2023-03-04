@@ -199,7 +199,7 @@ public class GenerateMavenVersions {
   }
 
   public static void main(String[] args) throws IOException {
-    String outfile = "maven-versions-generated.txt";
+    String outfile = "pkg/semantic/fixtures/maven-versions-generated.txt";
     Map<String, List<String>> packages = fetchPackageVersions();
 
     writeToFile(outfile, generatePackageCompares(packages));
