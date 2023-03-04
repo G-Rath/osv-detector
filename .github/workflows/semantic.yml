@@ -28,6 +28,7 @@ jobs:
           python-version: '3.10'
       - run: dpkg --version
       - run: python3 generators/generate-debian-versions.py
+      - run: git status
       - run: stat debian-db.zip
       - uses: actions/upload-artifact@v3
         with:
@@ -50,6 +51,7 @@ jobs:
           php-version: '8.2'
           extensions: zip
       - run: php generators/generate-packagist-versions.php
+      - run: git status
       - uses: actions/upload-artifact@v3
         with:
           name: generated-versions
@@ -67,6 +69,7 @@ jobs:
       - name: setup dependencies
         run: pip install packaging==21.3
       - run: python3 generators/generate-pypi-versions.py
+      - run: git status
       - uses: actions/upload-artifact@v3
         with:
           name: generated-versions
@@ -84,6 +87,7 @@ jobs:
       - name: setup dependencies
         run: gem install rubyzip
       - run: ruby generators/generate-rubygems-versions.rb
+      - run: git status
       - uses: actions/upload-artifact@v3
         with:
           name: generated-versions
@@ -107,6 +111,7 @@ jobs:
           curl https://repo1.maven.org/maven2/org/apache/maven/maven-artifact/3.8.5/maven-artifact-3.8.5.jar \
             -o generators/lib/maven-artifact-3.8.5.jar
       - run: java -cp 'generators/lib/*' generators/GenerateMavenVersions.java
+      - run: git status
       - uses: actions/upload-artifact@v3
         with:
           name: generated-versions
