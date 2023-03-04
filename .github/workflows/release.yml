@@ -8,12 +8,17 @@ on:
 env:
   GO_VERSION: '1.17.9'
 
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
 jobs:
   test-ubuntu:
     name: Test on Ubuntu
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
@@ -25,6 +30,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
@@ -36,6 +43,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
@@ -45,8 +54,9 @@ jobs:
   golangci-lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-go@v3
         with:
@@ -55,12 +65,13 @@ jobs:
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.44
+          version: v1.47
   go-fmt:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
 
       - run: make lint-with-go-fmt
   goreleaser:
@@ -71,6 +82,8 @@ jobs:
       - test-windows
       - golangci-lint
       - go-fmt
+    permissions:
+      contents: write # to create a GitHub release (goreleaser/goreleaser-action)
     steps:
       - uses: actions/checkout@v3
       - run: git fetch --prune --unshallow
