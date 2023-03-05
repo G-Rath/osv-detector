@@ -133,12 +133,14 @@ public class GenerateMavenVersions {
     throw new RuntimeException("unsupported comparison operator " + op);
   }
 
-  public static void compareVersions(List<String> lines, String select) {
-    lines.forEach(line -> {
+  public static boolean compareVersions(List<String> lines, String select) {
+    boolean didAnyFail = false;
+
+    for(String line : lines) {
       line = line.trim();
 
       if(line.isEmpty() || line.startsWith("#") || line.startsWith("//")) {
-        return;
+        continue;
       }
 
       String[] parts = line.split(" ");
@@ -148,22 +150,28 @@ public class GenerateMavenVersions {
 
       boolean r = compareVers(v1, op, v2);
 
+      if(!r) {
+        didAnyFail = true;
+      }
+
       if(select.equals("failures") && r) {
-        return;
+        continue;
       }
 
       if(select.equals("successes") && !r) {
-        return;
+        continue;
       }
 
       String color = r ? "\033[92m" : "\033[91m";
       String rs = r ? "T" : "F";
 
       System.out.printf("%s%s\033[0m: \033[93m%s\033[0m\n", color, rs, line);
-    });
+    }
+
+    return didAnyFail;
   }
 
-  public static void compareVersionsInFile(String filepath, String select) throws IOException {
+  public static boolean compareVersionsInFile(String filepath, String select) throws IOException {
     List<String> lines = new ArrayList<>();
 
     try(BufferedReader br = new BufferedReader(new FileReader(filepath))) {
@@ -175,7 +183,7 @@ public class GenerateMavenVersions {
       }
     }
 
-    compareVersions(lines, select);
+    return compareVersions(lines, select);
   }
 
   public static List<String> generateVersionCompares(List<String> versions) {
@@ -204,6 +212,10 @@ public class GenerateMavenVersions {
 
     writeToFile(outfile, generatePackageCompares(packages));
 
-    compareVersionsInFile(outfile, "failures");
+    boolean didAnyFail = compareVersionsInFile(outfile, "failures");
+
+    if(didAnyFail) {
+      System.exit(1);
+    }
   }
 }

@@ -43,6 +43,8 @@ def compare(v1, relate, v2):
 
 
 def compare_versions(lines, select="all"):
+  has_any_failed = False
+
   for line in lines:
     line = line.strip()
 
@@ -53,6 +55,9 @@ def compare_versions(lines, select="all"):
 
     r = compare(packaging.version.parse(v1), op, packaging.version.parse(v2))
 
+    if not r:
+      has_any_failed = True
+
     if select == "failures" and r:
       continue
 
@@ -62,12 +67,13 @@ def compare_versions(lines, select="all"):
     color = '\033[92m' if r else '\033[91m'
     rs = "T" if r else "F"
     print(f"{color}{rs}\033[0m: \033[93m{line}\033[0m")
+  return has_any_failed
 
 
 def compare_versions_in_file(filepath, select="all"):
   with open(filepath) as f:
     lines = f.readlines()
-    compare_versions(lines, select)
+    return compare_versions(lines, select)
 
 
 def generate_version_compares(versions):
@@ -108,4 +114,7 @@ with open(outfile, "w") as f:
   f.writelines(generate_package_compares(packs))
   f.write("\n")
 
-compare_versions_in_file(outfile, "failures")
+did_any_fail = compare_versions_in_file(outfile, "failures")
+
+if did_any_fail:
+  sys.exit(1)

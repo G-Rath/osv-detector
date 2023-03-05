@@ -35,7 +35,10 @@ def compare_version(v1, op, v2)
 end
 
 # @param [Array<String>] lines
+# @return [Boolean]
 def compare_versions(lines, select = :all)
+  has_any_failed = false
+
   lines.each do |line|
     line = line.strip
 
@@ -48,6 +51,8 @@ def compare_versions(lines, select = :all)
 
     r = compare_version(v1, op, v2)
 
+    has_any_failed = true unless r
+
     next if select == :failures && r == true
     next if select == :successes && r != true
 
@@ -55,6 +60,8 @@ def compare_versions(lines, select = :all)
     rs = r ? "T" : "F"
     puts "#{color}#{rs}\033[0m: \033[93m#{line}\033[0m"
   end
+
+  has_any_failed
 end
 
 def compare_versions_in_file(filepath, select = :all)
@@ -98,4 +105,6 @@ packs = fetch_packages_versions
 
 File.open(outfile, "w") { |f| f.write(generate_package_compares(packs).uniq.join("\n") + "\n") }
 
-compare_versions_in_file(outfile, :failures)
+did_any_fail = compare_versions_in_file(outfile, :failures)
+
+exit(1) if did_any_fail

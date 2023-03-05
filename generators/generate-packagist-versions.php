@@ -132,8 +132,10 @@ function generatePackageCompares(array $packages): array
   return array_merge(...$comparisons);
 }
 
-function compareVersions(array $lines, string $select = "all"): void
+function compareVersions(array $lines, string $select = "all"): bool
 {
+  $hasAnyFailed = false;
+
   foreach ($lines as $line) {
     $line = trim($line);
 
@@ -144,6 +146,10 @@ function compareVersions(array $lines, string $select = "all"): void
     [$v1, $op, $v2] = explode(" ", $line);
 
     $r = version_compare($v1, $v2, $op);
+
+    if (!$r) {
+      $hasAnyFailed = true;
+    }
 
     if ($select === "failures" && $r === true) {
       continue;
@@ -157,6 +163,8 @@ function compareVersions(array $lines, string $select = "all"): void
     $rs    = $r ? "T" : "F";
     echo "$color$rs\033[0m: \033[93m$line\033[0m\n";
   }
+
+  return $hasAnyFailed;
 }
 
 $outfile = "pkg/semantic/fixtures/packagist-versions-generated.txt";
@@ -166,4 +174,8 @@ $packages = fetchPackageVersions();
 
 file_put_contents($outfile, implode("\n", array_unique(generatePackageCompares($packages))) . "\n");
 
-compareVersions(explode("\n", file_get_contents($outfile)), "failures");
+$didAnyFail = compareVersions(explode("\n", file_get_contents($outfile)), "failures");
+
+if ($didAnyFail === true) {
+  exit(1);
+}
