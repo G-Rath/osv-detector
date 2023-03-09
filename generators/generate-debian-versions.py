@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-import zipfile
-import operator
-import urllib.request
 import json
+import operator
+import os
 import subprocess
+import urllib.request
+import zipfile
 from pathlib import Path
 
 
@@ -192,7 +193,11 @@ with open(outfile, "w") as f:
   f.writelines(generate_package_compares(packs))
   f.write("\n")
 
-did_any_fail = compare_versions_in_file(outfile, "failures")
+# set this to either "failures" or "successes" to only have those comparison results
+# printed; setting it to anything else will have all comparison results printed
+show = os.environ.get("VERSION_GENERATOR_PRINT", "failures")
+
+did_any_fail = compare_versions_in_file(outfile, show)
 
 if did_any_fail:
   sys.exit(1)

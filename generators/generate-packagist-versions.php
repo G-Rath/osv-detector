@@ -174,7 +174,11 @@ $packages = fetchPackageVersions();
 
 file_put_contents($outfile, implode("\n", array_unique(generatePackageCompares($packages))) . "\n");
 
-$didAnyFail = compareVersions(explode("\n", file_get_contents($outfile)), "failures");
+// set this to either "failures" or "successes" to only have those comparison results
+// printed; setting it to anything else will have all comparison results printed
+$show = getenv("VERSION_GENERATOR_PRINT") ?: "failures";
+
+$didAnyFail = compareVersions(explode("\n", file_get_contents($outfile)), $show);
 
 if ($didAnyFail === true) {
   exit(1);

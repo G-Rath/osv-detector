@@ -206,13 +206,27 @@ public class GenerateMavenVersions {
              .collect(Collectors.toList());
   }
 
+  public static String getSelectFilter() {
+    // set this to either "failures" or "successes" to only have those comparison results
+    // printed; setting it to anything else will have all comparison results printed
+    String value = System.getenv("VERSION_GENERATOR_PRINT");
+
+    if(value == null) {
+      return "failures";
+    }
+
+    return value;
+  }
+
   public static void main(String[] args) throws IOException {
     String outfile = "pkg/semantic/fixtures/maven-versions-generated.txt";
     Map<String, List<String>> packages = fetchPackageVersions();
 
     writeToFile(outfile, generatePackageCompares(packages));
 
-    boolean didAnyFail = compareVersionsInFile(outfile, "failures");
+    String show = getSelectFilter();
+
+    boolean didAnyFail = compareVersionsInFile(outfile, show);
 
     if(didAnyFail) {
       System.exit(1);

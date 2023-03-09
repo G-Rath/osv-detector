@@ -105,6 +105,10 @@ packs = fetch_packages_versions
 
 File.open(outfile, "w") { |f| f.write(generate_package_compares(packs).uniq.join("\n") + "\n") }
 
-did_any_fail = compare_versions_in_file(outfile, :failures)
+# set this to either "failures" or "successes" to only have those comparison results
+# printed; setting it to anything else will have all comparison results printed
+show = ENV.fetch("VERSION_GENERATOR_PRINT", :failures).to_sym
+
+did_any_fail = compare_versions_in_file(outfile, show)
 
 exit(1) if did_any_fail

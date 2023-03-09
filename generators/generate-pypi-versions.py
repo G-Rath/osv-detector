@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-import packaging.version
-import zipfile
-import operator
-import urllib.request
 import json
+import operator
+import os
+import packaging.version
+import urllib.request
+import zipfile
 
 
 # this requires you run "pip install packaging" - have to be careful about versions too
@@ -114,7 +115,11 @@ with open(outfile, "w") as f:
   f.writelines(generate_package_compares(packs))
   f.write("\n")
 
-did_any_fail = compare_versions_in_file(outfile, "failures")
+# set this to either "failures" or "successes" to only have those comparison results
+# printed; setting it to anything else will have all comparison results printed
+show = os.environ.get("VERSION_GENERATOR_PRINT", "failures")
+
+did_any_fail = compare_versions_in_file(outfile, show)
 
 if did_any_fail:
   sys.exit(1)
