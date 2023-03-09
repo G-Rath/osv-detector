@@ -4,12 +4,25 @@ on:
   schedule:
     - cron: '0 0 * * SUN'
   workflow_dispatch:
+    inputs:
+      filterResults:
+        description: 'What comparator results the generators should print'
+        required: false
+        default: 'failures'
+        type: choice
+        options:
+          - all
+          - failures
+          - successes
   push:
     branches:
       - generator-workflows
 
 permissions:
   contents: read # to fetch code (actions/checkout)
+
+env:
+  VERSION_GENERATOR_PRINT: ${{ inputs.filterResults }}
 
 jobs:
   generate-debian-versions:
