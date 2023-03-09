@@ -14,9 +14,9 @@ on:
           - all
           - failures
           - successes
-  push:
-    branches:
-      - generator-workflows
+  pull_request:
+    paths:
+      - 'generators/**'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
