@@ -1,0 +1,158 @@
+name: Semantic
+
+on:
+  schedule:
+    - cron: '0 0 * * SUN'
+  workflow_dispatch:
+    inputs:
+      filterResults:
+        description: 'What comparator results the generators should print'
+        required: false
+        default: 'failures'
+        type: choice
+        options:
+          - all
+          - failures
+          - successes
+  pull_request:
+    paths:
+      - 'generators/**'
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+env:
+  VERSION_GENERATOR_PRINT: ${{ inputs.filterResults }}
+
+jobs:
+  generate-debian-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/cache/restore@v3
+        with:
+          path: /tmp/debian-versions-generator-cache.csv
+          key: ${{ runner.os }}-
+
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: dpkg --version
+      - run: python3 generators/generate-debian-versions.py
+      - run: git status
+      - run: stat debian-db.zip
+      - uses: actions/upload-artifact@v3
+        with:
+          name: generated-versions
+          path: pkg/semantic/fixtures/debian-versions-generated.txt
+
+      - uses: actions/cache/save@v3
+        with:
+          path: /tmp/debian-versions-generator-cache.csv
+          key: ${{ runner.os }}-${{ hashFiles('debian-db.zip') }}
+
+  generate-packagist-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: zip
+      - run: php generators/generate-packagist-versions.php
+      - run: git status
+      - uses: actions/upload-artifact@v3
+        with:
+          name: generated-versions
+          path: pkg/semantic/fixtures/packagist-versions-generated.txt
+
+  generate-pypi-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: setup dependencies
+        run: pip install packaging==21.3
+      - run: python3 generators/generate-pypi-versions.py
+      - run: git status
+      - uses: actions/upload-artifact@v3
+        with:
+          name: generated-versions
+          path: pkg/semantic/fixtures/pypi-versions-generated.txt
+
+  generate-rubygems-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+      - name: setup dependencies
+        run: gem install rubyzip
+      - run: ruby generators/generate-rubygems-versions.rb
+      - run: git status
+      - uses: actions/upload-artifact@v3
+        with:
+          name: generated-versions
+          path: pkg/semantic/fixtures/rubygems-versions-generated.txt
+
+  generate-maven-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: oracle
+      - name: setup dependencies
+        run: |
+          mkdir -p generators/lib
+          curl https://repo1.maven.org/maven2/org/json/json/20220924/json-20220924.jar \
+            -o generators/lib/json-20220924.jar
+          curl https://repo1.maven.org/maven2/org/apache/maven/maven-artifact/3.8.5/maven-artifact-3.8.5.jar \
+            -o generators/lib/maven-artifact-3.8.5.jar
+      - run: java -cp 'generators/lib/*' generators/GenerateMavenVersions.java
+      - run: git status
+      - uses: actions/upload-artifact@v3
+        with:
+          name: generated-versions
+          path: pkg/semantic/fixtures/maven-versions-generated.txt
+
+  test-semantic:
+    runs-on: ubuntu-latest
+    needs:
+      - generate-debian-versions
+      - generate-packagist-versions
+      - generate-pypi-versions
+      - generate-rubygems-versions
+      - generate-maven-versions
+    if: always()
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: .go-version
+          cache: true
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: generated-versions
+          path: pkg/semantic/fixtures/
+      - run: git status
+      - run: make test
