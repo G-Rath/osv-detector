@@ -14,6 +14,8 @@ on:
           - all
           - failures
           - successes
+  push:
+    branches: ['update-maven']
   pull_request:
     paths:
       - 'generators/**'
@@ -123,8 +125,8 @@ jobs:
           mkdir -p generators/lib
           curl https://repo1.maven.org/maven2/org/json/json/20220924/json-20220924.jar \
             -o generators/lib/json-20220924.jar
-          curl https://repo1.maven.org/maven2/org/apache/maven/maven-artifact/3.8.5/maven-artifact-3.8.5.jar \
-            -o generators/lib/maven-artifact-3.8.5.jar
+          curl https://repo1.maven.org/maven2/org/apache/maven/maven-artifact/3.9.3/maven-artifact-3.9.3.jar \
+            -o generators/lib/maven-artifact-3.9.3.jar
       - run: java -cp 'generators/lib/*' generators/GenerateMavenVersions.java
       - run: git status
       - uses: actions/upload-artifact@v3
