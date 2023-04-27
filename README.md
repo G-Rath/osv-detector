@@ -77,8 +77,23 @@ that is not a dependency specification (e.g. flags or files in the case of
 `requirements.txt`, though `<properties>` _is_ supported for `pom.xml`)
 
 The detector will attempt to automatically determine the parser to use for each
-file based on the filename - you can manually specify the parser to use for all
-files with the `-parse-as` flag:
+file based on the filename - you can also explicitly specify the parser to use
+by prefixing it to the start of the given path, seperated with an `:` symbol:
+
+```shell
+osv-detector requirements.txt:path/to/my/requirements/ requirements.txt:path/to/my/file.txt
+```
+
+If you have a path with a colon in its name, you can with just a colon to
+explicitly signal to the detector that it should infer the parser based on the
+filename:
+
+```shell
+osv-detector ':/path/to/my:projects/package-lock.json'
+```
+
+You can also set the default parser to use for all files with the `--parse-as`
+flag:
 
 ```shell
 osv-detector --parse-as 'package-lock.json' path/to/my/file.lock
