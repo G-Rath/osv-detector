@@ -5,6 +5,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -24,6 +25,30 @@ type PnpmLockPackage struct {
 type PnpmLockfile struct {
 	Version  float64                    `yaml:"lockfileVersion"`
 	Packages map[string]PnpmLockPackage `yaml:"packages,omitempty"`
+}
+
+type pnpmLockfileV6 struct {
+	Version  string                     `yaml:"lockfileVersion"`
+	Packages map[string]PnpmLockPackage `yaml:"packages,omitempty"`
+}
+
+func (l *PnpmLockfile) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var lockfileV6 pnpmLockfileV6
+
+	if err := unmarshal(&lockfileV6); err != nil {
+		return err
+	}
+
+	parsedVersion, err := strconv.ParseFloat(lockfileV6.Version, 64)
+
+	if err != nil {
+		return fmt.Errorf("%w", err)
+	}
+
+	l.Version = parsedVersion
+	l.Packages = lockfileV6.Packages
+
+	return nil
 }
 
 const PnpmEcosystem = NpmEcosystem
@@ -63,6 +88,10 @@ func extractPnpmPackageNameAndVersion(dependencyPath string) (string, string) {
 		version = parts[0]
 	}
 
+	if version == "" {
+		name, version = parseNameAtVersion(name)
+	}
+
 	if version == "" || !startsWithNumber(version) {
 		return "", ""
 	}
@@ -74,6 +103,17 @@ func extractPnpmPackageNameAndVersion(dependencyPath string) (string, string) {
 	}
 
 	return name, version
+}
+
+func parseNameAtVersion(value string) (name string, version string) {
+	// look for pattern "name@version", where name is allowed to contain zero or more "@"
+	matches := regexp.MustCompile(`^(.+)@([\d.]+)$`).FindStringSubmatch(value)
+
+	if len(matches) != 3 {
+		return name, ""
+	}
+
+	return matches[1], matches[2]
 }
 
 func parsePnpmLock(lockfile PnpmLockfile) []PackageDetails {
