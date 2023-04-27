@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 )
 
 // these come from goreleaser
@@ -283,16 +284,22 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs s
 	return lockfiles, err != nil
 }
 
-func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs string) ([]string, bool) {
+func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAsGlobal string) ([]string, bool) {
 	var paths []string
 
-	if parseAs == parseAsCsvRow {
-		return []string{"-"}, false
+	if parseAsGlobal == parseAsCsvRow {
+		return []string{parseAsCsvRow + ":-"}, false
 	}
 
 	errored := false
 
 	for _, pathToLockOrDirectory := range pathsToCheck {
+		parseAs, pathToLockOrDirectory := parseLockfilePathWithParseAs(pathToLockOrDirectory)
+
+		if parseAs == "" {
+			parseAs = parseAsGlobal
+		}
+
 		lps, erred := findLockfiles(r, pathToLockOrDirectory, parseAs)
 
 		if erred {
@@ -300,14 +307,16 @@ func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs strin
 		}
 
 		for _, p := range lps {
-			paths = append(paths, filepath.Clean(p))
+			paths = append(paths, parseAs+":"+filepath.Clean(p))
 		}
 	}
 
 	return paths, errored
 }
 
-func parseLockfile(pathToLock string, parseAs string, args []string) (lockfile.Lockfile, error) {
+func parseLockfile(pathToLock string, args []string) (lockfile.Lockfile, error) {
+	parseAs, pathToLock := parseLockfilePathWithParseAs(pathToLock)
+
 	if parseAs == parseAsCsvRow {
 		l, err := lockfile.FromCSVRows(pathToLock, parseAs, args)
 
@@ -405,17 +414,28 @@ func (files lockfileAndConfigOrErrs) adjustExtraDatabases(
 	}
 }
 
+func parseLockfilePathWithParseAs(lockfilePathWithParseAs string) (string, string) {
+	if !strings.Contains(lockfilePathWithParseAs, ":") {
+		lockfilePathWithParseAs = ":" + lockfilePathWithParseAs
+	}
+
+	splits := strings.SplitN(lockfilePathWithParseAs, ":", 2)
+
+	return splits[0], splits[1]
+}
+
 func readAllLockfiles(
 	r *reporter.Reporter,
-	pathsToLocks []string,
-	parseAs string,
+	pathsToLocksWithParseAs []string,
 	args []string,
 	checkForLocalConfig bool,
 	config *configer.Config,
 ) lockfileAndConfigOrErrs {
-	lockfiles := make([]lockfileAndConfigOrErr, 0, len(pathsToLocks))
+	lockfiles := make([]lockfileAndConfigOrErr, 0, len(pathsToLocksWithParseAs))
 
-	for _, pathToLock := range pathsToLocks {
+	for _, pathToLockWithParseAs := range pathsToLocksWithParseAs {
+		_, pathToLock := parseLockfilePathWithParseAs(pathToLockWithParseAs)
+
 		if checkForLocalConfig {
 			base := filepath.Dir(pathToLock)
 			con, err := configer.Find(r, base)
@@ -442,7 +462,7 @@ func readAllLockfiles(
 			}
 		}
 
-		lockf, err := parseLockfile(pathToLock, parseAs, args)
+		lockf, err := parseLockfile(pathToLockWithParseAs, args)
 		lockfiles = append(lockfiles, lockfileAndConfigOrErr{lockf, config, err})
 	}
 
@@ -522,6 +542,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		return 0
 	}
 
+	// ensure that if the global parseAs is set, it is one of the supported values
 	if *parseAs != "" && *parseAs != parseAsCsvFile && *parseAs != parseAsCsvRow {
 		if parser, parsedAs := lockfile.FindParser("", *parseAs); parser == nil {
 			r.PrintError(fmt.Sprintf("Don't know how to parse files as \"%s\" - supported values are:\n", parsedAs))
@@ -537,9 +558,9 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		}
 	}
 
-	pathsToLocks, errored := findAllLockfiles(r, cli.Args(), *parseAs)
+	pathsToLocksWithParseAs, errored := findAllLockfiles(r, cli.Args(), *parseAs)
 
-	if len(pathsToLocks) == 0 {
+	if len(pathsToLocksWithParseAs) == 0 {
 		r.PrintError(
 			"You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)\n",
 		)
@@ -576,7 +597,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		loadLocalConfig = false
 	}
 
-	files := readAllLockfiles(r, pathsToLocks, *parseAs, cli.Args(), loadLocalConfig, &config)
+	files := readAllLockfiles(r, pathsToLocksWithParseAs, cli.Args(), loadLocalConfig, &config)
 
 	files.adjustExtraDatabases(*noConfigDatabases, *useAPI, *useDatabases)
 

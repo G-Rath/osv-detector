@@ -499,7 +499,140 @@ func TestRun_DBs(t *testing.T) {
 	}
 }
 
-func TestRun_ParseAs(t *testing.T) {
+func TestRun_ParseAsSpecific(t *testing.T) {
+	t.Parallel()
+
+	tests := []cliTestCase{
+		// when there is just a ":", it defaults as empty
+		{
+			name:         "",
+			args:         []string{filepath.FromSlash(":./fixtures/locks-insecure/composer.lock")},
+			wantExitCode: 0,
+			wantStdout: `
+				Loaded the following OSV databases:
+
+				fixtures/locks-insecure/composer.lock: found 0 packages
+
+					no known vulnerabilities found
+			`,
+			wantStderr: "",
+		},
+		// ":" can be used as an escape (no test though because it's invalid on Windows)
+		{
+			name:         "",
+			args:         []string{filepath.FromSlash(":./fixtures/locks-insecure/my:file")},
+			wantExitCode: 127,
+			wantStdout:   "",
+			wantStderr: `
+				Error reading ./fixtures/locks-insecure/my:file: open ./fixtures/locks-insecure/my:file: %%
+				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
+			`,
+		},
+		// when a path to a file is given, parse-as is applied to that file
+		{
+			name:         "",
+			args:         []string{filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json")},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+			`,
+			wantStderr: "",
+		},
+		// when a path to a directory is given, parse-as is applied to all files in the directory
+		{
+			name:         "",
+			args:         []string{filepath.FromSlash("package-lock.json:./fixtures/locks-insecure")},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/composer.lock: found 0 packages
+
+					no known vulnerabilities found
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+			`,
+			wantStderr: "",
+		},
+		// files that error on parsing don't stop parsable files from being checked
+		{
+			name:         "",
+			args:         []string{filepath.FromSlash("package-lock.json:./fixtures/locks-empty")},
+			wantExitCode: 127,
+			wantStdout: `
+				Loaded the following OSV databases:
+
+
+				fixtures/locks-empty/composer.lock: found 0 packages
+
+					no known vulnerabilities found
+
+			`,
+			wantStderr: `
+				Error, could not parse fixtures/locks-empty/Gemfile.lock: unexpected end of JSON input
+				Error, could not parse fixtures/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+			`,
+		},
+		// files that error on parsing don't stop parsable files from being checked
+		{
+			name:         "",
+			args:         []string{filepath.FromSlash("package-lock.json:./fixtures/locks-empty"), filepath.FromSlash("package-lock.json:./fixtures/locks-insecure")},
+			wantExitCode: 127,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+
+				fixtures/locks-empty/composer.lock: found 0 packages
+
+					no known vulnerabilities found
+
+
+				fixtures/locks-insecure/composer.lock: found 0 packages
+
+					no known vulnerabilities found
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+			`,
+			wantStderr: `
+				Error, could not parse fixtures/locks-empty/Gemfile.lock: unexpected end of JSON input
+				Error, could not parse fixtures/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+			`,
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			testCli(t, tt)
+		})
+	}
+}
+
+func TestRun_ParseAsGlobal(t *testing.T) {
 	t.Parallel()
 
 	tests := []cliTestCase{
@@ -595,6 +728,41 @@ func TestRun_ParseAs(t *testing.T) {
 				Error, could not parse fixtures/locks-empty/Gemfile.lock: unexpected end of JSON input
 				Error, could not parse fixtures/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
 			`,
+		},
+		// specific parse-as takes precedence over global parse-as
+		{
+			name:         "",
+			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("Gemfile.lock:./fixtures/locks-empty"), filepath.FromSlash("./fixtures/locks-insecure")},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (2971 vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-empty/Gemfile.lock: found 0 packages
+
+					no known vulnerabilities found
+
+				fixtures/locks-empty/composer.lock: found 0 packages
+
+					no known vulnerabilities found
+
+				fixtures/locks-empty/yarn.lock: found 0 packages
+
+					no known vulnerabilities found
+
+				fixtures/locks-insecure/composer.lock: found 0 packages
+
+					no known vulnerabilities found
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using db npm (2971 vulnerabilities, including withdrawn - last updated %%)
+
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+			`,
+			wantStderr: "",
 		},
 	}
 	for _, tt := range tests {
