@@ -50,6 +50,10 @@ func ParsePipenvLock(pathToLockfile string) ([]PackageDetails, error) {
 	}
 
 	for name, pipenvPackage := range parsedLockfile.PackagesDev {
+		if pipenvPackage.Version == "" {
+			continue
+		}
+
 		version := pipenvPackage.Version[2:]
 
 		packages[name+"@"+version] = PackageDetails{
