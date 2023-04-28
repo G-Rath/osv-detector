@@ -3,7 +3,6 @@ package lockfile
 import (
 	"encoding/xml"
 	"fmt"
-	"io"
 	"os"
 
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
@@ -103,10 +102,10 @@ func ParseMavenLockFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParseMavenLock)
 }
 
-func ParseMavenLock(r io.Reader) ([]PackageDetails, error) {
+func ParseMavenLock(f ParsableFile) ([]PackageDetails, error) {
 	var parsedLockfile *MavenLockFile
 
-	err := xml.NewDecoder(r).Decode(&parsedLockfile)
+	err := xml.NewDecoder(f).Decode(&parsedLockfile)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)

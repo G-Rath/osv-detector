@@ -2,7 +2,6 @@ package lockfile
 
 import (
 	"fmt"
-	"io"
 
 	"github.com/BurntSushi/toml"
 )
@@ -29,10 +28,10 @@ func ParsePoetryLockFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParsePoetryLock)
 }
 
-func ParsePoetryLock(r io.Reader) ([]PackageDetails, error) {
+func ParsePoetryLock(f ParsableFile) ([]PackageDetails, error) {
 	var parsedLockfile *PoetryLockFile
 
-	_, err := toml.NewDecoder(r).Decode(&parsedLockfile)
+	_, err := toml.NewDecoder(f).Decode(&parsedLockfile)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)

@@ -293,13 +293,13 @@ func TestParseRequirementsTxtFile_FileFormatExample(t *testing.T) {
 			Ecosystem: lockfile.PipEcosystem,
 			CompareAs: lockfile.PipEcosystem,
 		},
-		// todo: requires -r support
-		// {
-		// 	Name:      "django",
-		// 	Version:   "2.2.24",
-		// 	Ecosystem: lockfile.PipEcosystem,
-		// 	CompareAs: lockfile.PipEcosystem,
-		// },
+		// included via -r
+		{
+			Name:      "django",
+			Version:   "2.2.24",
+			Ecosystem: lockfile.PipEcosystem,
+			CompareAs: lockfile.PipEcosystem,
+		},
 	})
 }
 
@@ -354,7 +354,6 @@ func TestParseRequirementsTxtFile_NonNormalizedNames(t *testing.T) {
 }
 
 func TestParseRequirementsTxt_WithMultipleROptions(t *testing.T) {
-	t.SkipNow()
 	t.Parallel()
 
 	packages, err := lockfile.ParseRequirementsTxtFile("fixtures/pip/with-multiple-r-options.txt")
@@ -428,17 +427,15 @@ func TestParseRequirementsTxt_WithMultipleROptions(t *testing.T) {
 }
 
 func TestParseRequirementsTxt_WithBadROption(t *testing.T) {
-	t.SkipNow()
 	t.Parallel()
 
 	packages, err := lockfile.ParseRequirementsTxtFile("fixtures/pip/with-bad-r-option.txt")
 
-	expectErrContaining(t, err, "could not open")
+	expectErrContaining(t, err, "failed to include -r ./does-not-exist.txt")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
 func TestParseRequirementsTxt_DuplicateROptions(t *testing.T) {
-	t.SkipNow()
 	t.Parallel()
 
 	packages, err := lockfile.ParseRequirementsTxtFile("fixtures/pip/duplicate-r-dev.txt")
@@ -476,7 +473,6 @@ func TestParseRequirementsTxt_DuplicateROptions(t *testing.T) {
 }
 
 func TestParseRequirementsTxt_CyclicRSelf(t *testing.T) {
-	t.SkipNow()
 	t.Parallel()
 
 	packages, err := lockfile.ParseRequirementsTxtFile("fixtures/pip/cyclic-r-self.txt")
@@ -502,7 +498,6 @@ func TestParseRequirementsTxt_CyclicRSelf(t *testing.T) {
 }
 
 func TestParseRequirementsTxt_CyclicRComplex(t *testing.T) {
-	t.SkipNow()
 	t.Parallel()
 
 	packages, err := lockfile.ParseRequirementsTxtFile("fixtures/pip/cyclic-r-complex-1.txt")

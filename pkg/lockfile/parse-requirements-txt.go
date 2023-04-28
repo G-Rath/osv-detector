@@ -3,7 +3,6 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"strings"
 
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
@@ -103,14 +102,14 @@ func ParseRequirementsTxtFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParseRequirementsTxt)
 }
 
-func ParseRequirementsTxt(r io.Reader) ([]PackageDetails, error) {
-	return parseRequirementsTxt(r /*, map[string]struct{}{}*/)
+func ParseRequirementsTxt(f ParsableFile) ([]PackageDetails, error) {
+	return parseRequirementsTxt(f, map[string]struct{}{})
 }
 
-func parseRequirementsTxt(r io.Reader /*, requiredAlready map[string]struct{}*/) ([]PackageDetails, error) {
+func parseRequirementsTxt(f ParsableFile, requiredAlready map[string]struct{}) ([]PackageDetails, error) {
 	packages := map[string]PackageDetails{}
 
-	scanner := bufio.NewScanner(r)
+	scanner := bufio.NewScanner(f)
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -125,28 +124,31 @@ func parseRequirementsTxt(r io.Reader /*, requiredAlready map[string]struct{}*/)
 
 		line = removeComments(line)
 
-		// todo: figure out how to support this
-		// if ar := strings.TrimPrefix(line, "-r "); ar != line {
-		// 	ar = filepath.Join(filepath.Dir(pathToLockfile), ar)
-		//
-		// 	if _, ok := requiredAlready[ar]; ok {
-		// 		continue
-		// 	}
-		//
-		// 	requiredAlready[ar] = struct{}{}
-		//
-		// 	details, err := parseRequirementsTxt(ar, requiredAlready)
-		//
-		// 	if err != nil {
-		// 		return []PackageDetails{}, fmt.Errorf("failed to include %s: %w", line, err)
-		// 	}
-		//
-		// 	for _, detail := range details {
-		// 		packages[detail.Name+"@"+detail.Version] = detail
-		// 	}
-		//
-		// 	continue
-		// }
+		if ar := strings.TrimPrefix(line, "-r "); ar != line {
+			af, err := f.OpenRelative(ar)
+
+			if err != nil {
+				return []PackageDetails{}, fmt.Errorf("failed to include %s: %w", line, err)
+			}
+
+			if _, ok := requiredAlready[af.Path()]; ok {
+				continue
+			}
+
+			requiredAlready[af.Path()] = struct{}{}
+
+			details, err := parseRequirementsTxt(af, requiredAlready)
+
+			if err != nil {
+				return []PackageDetails{}, fmt.Errorf("failed to include %s: %w", line, err)
+			}
+
+			for _, detail := range details {
+				packages[detail.Name+"@"+detail.Version] = detail
+			}
+
+			continue
+		}
 
 		if isNotRequirementLine(line) {
 			continue

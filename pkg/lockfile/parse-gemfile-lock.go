@@ -3,7 +3,6 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"log"
 	"strings"
 
@@ -163,10 +162,10 @@ func ParseGemfileLockFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParseGemfileLock)
 }
 
-func ParseGemfileLock(r io.Reader) ([]PackageDetails, error) {
+func ParseGemfileLock(f ParsableFile) ([]PackageDetails, error) {
 	var parser gemfileLockfileParser
 
-	scanner := bufio.NewScanner(r)
+	scanner := bufio.NewScanner(f)
 
 	for scanner.Scan() {
 		parser.parse(scanner.Text())

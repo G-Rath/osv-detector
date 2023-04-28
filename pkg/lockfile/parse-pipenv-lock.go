@@ -3,7 +3,6 @@ package lockfile
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 )
 
 type PipenvPackage struct {
@@ -21,10 +20,10 @@ func ParsePipenvLockFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParsePipenvLock)
 }
 
-func ParsePipenvLock(r io.Reader) ([]PackageDetails, error) {
+func ParsePipenvLock(f ParsableFile) ([]PackageDetails, error) {
 	var parsedLockfile *PipenvLock
 
-	err := json.NewDecoder(r).Decode(&parsedLockfile)
+	err := json.NewDecoder(f).Decode(&parsedLockfile)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)

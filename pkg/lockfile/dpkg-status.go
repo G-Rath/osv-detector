@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
-	"io"
 	"os"
 	"sort"
 	"strings"
@@ -125,8 +124,8 @@ func ParseDpkgStatusFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParseDpkgStatus)
 }
 
-func ParseDpkgStatus(r io.Reader) ([]PackageDetails, error) {
-	scanner := bufio.NewScanner(r)
+func ParseDpkgStatus(f ParsableFile) ([]PackageDetails, error) {
+	scanner := bufio.NewScanner(f)
 	packageGroups := groupDpkgPackageLines(scanner)
 
 	packages := make([]PackageDetails, 0, len(packageGroups))
@@ -161,8 +160,8 @@ func ParseDpkgStatus(r io.Reader) ([]PackageDetails, error) {
 
 // FromDpkgStatus attempts to parse the given file as an "dpkg-status" lockfile
 // used by the Debian Package (dpkg) to record installed packages.
-func FromDpkgStatus(r io.Reader, pathToStatus string) (Lockfile, error) {
-	packages, err := ParseDpkgStatus(r)
+func FromDpkgStatus(f ParsableFile) (Lockfile, error) {
+	packages, err := ParseDpkgStatus(f)
 
 	sort.Slice(packages, func(i, j int) bool {
 		if packages[i].Name == packages[j].Name {
@@ -173,7 +172,7 @@ func FromDpkgStatus(r io.Reader, pathToStatus string) (Lockfile, error) {
 	})
 
 	return Lockfile{
-		FilePath: pathToStatus,
+		FilePath: f.Path(),
 		ParsedAs: "dpkg-status",
 		Packages: packages,
 	}, err

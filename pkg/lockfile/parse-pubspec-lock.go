@@ -66,10 +66,10 @@ func ParsePubspecLockFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParsePubspecLock)
 }
 
-func ParsePubspecLock(r io.Reader) ([]PackageDetails, error) {
+func ParsePubspecLock(f ParsableFile) ([]PackageDetails, error) {
 	var parsedLockfile *PubspecLockfile
 
-	err := yaml.NewDecoder(r).Decode(&parsedLockfile)
+	err := yaml.NewDecoder(f).Decode(&parsedLockfile)
 
 	if err != nil && !errors.Is(err, io.EOF) {
 		return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)

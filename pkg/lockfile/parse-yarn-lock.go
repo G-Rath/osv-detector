@@ -3,7 +3,6 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"net/url"
 	"os"
 	"strings"
@@ -176,8 +175,8 @@ func ParseYarnLockFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParseYarnLock)
 }
 
-func ParseYarnLock(r io.Reader) ([]PackageDetails, error) {
-	scanner := bufio.NewScanner(r)
+func ParseYarnLock(f ParsableFile) ([]PackageDetails, error) {
+	scanner := bufio.NewScanner(f)
 
 	packageGroups := groupYarnPackageLines(scanner)
 

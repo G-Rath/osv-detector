@@ -24,14 +24,14 @@ func ParseGoLockFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParseGoLock)
 }
 
-func ParseGoLock(r io.Reader) ([]PackageDetails, error) {
-	b, err := io.ReadAll(r)
+func ParseGoLock(f ParsableFile) ([]PackageDetails, error) {
+	b, err := io.ReadAll(f)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not read all: %w", err)
 	}
 
-	parsedLockfile, err := modfile.Parse("", b, nil)
+	parsedLockfile, err := modfile.Parse(f.Path(), b, nil)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)

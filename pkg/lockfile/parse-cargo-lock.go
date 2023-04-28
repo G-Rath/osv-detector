@@ -2,7 +2,6 @@ package lockfile
 
 import (
 	"fmt"
-	"io"
 
 	"github.com/BurntSushi/toml"
 )
@@ -23,10 +22,10 @@ func ParseCargoLockFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParseCargoLock)
 }
 
-func ParseCargoLock(r io.Reader) ([]PackageDetails, error) {
+func ParseCargoLock(f ParsableFile) ([]PackageDetails, error) {
 	var parsedLockfile *CargoLockFile
 
-	_, err := toml.NewDecoder(r).Decode(&parsedLockfile)
+	_, err := toml.NewDecoder(f).Decode(&parsedLockfile)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)

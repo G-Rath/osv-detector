@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 )
 
 type NuGetLockPackage struct {
@@ -54,10 +53,10 @@ func ParseNuGetLockFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParseNuGetLock)
 }
 
-func ParseNuGetLock(r io.Reader) ([]PackageDetails, error) {
+func ParseNuGetLock(f ParsableFile) ([]PackageDetails, error) {
 	var parsedLockfile *NuGetLockfile
 
-	err := json.NewDecoder(r).Decode(&parsedLockfile)
+	err := json.NewDecoder(f).Decode(&parsedLockfile)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)

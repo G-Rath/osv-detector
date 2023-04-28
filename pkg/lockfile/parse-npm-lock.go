@@ -3,7 +3,6 @@ package lockfile
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"path"
 	"sort"
 	"strings"
@@ -161,10 +160,10 @@ func ParseNpmLockFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParseNpmLock)
 }
 
-func ParseNpmLock(r io.Reader) ([]PackageDetails, error) {
+func ParseNpmLock(f ParsableFile) ([]PackageDetails, error) {
 	var parsedLockfile *NpmLockfile
 
-	err := json.NewDecoder(r).Decode(&parsedLockfile)
+	err := json.NewDecoder(f).Decode(&parsedLockfile)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)

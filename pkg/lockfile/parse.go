@@ -3,9 +3,7 @@ package lockfile
 import (
 	"errors"
 	"fmt"
-	"github.com/anchore/stereoscope/pkg/file"
 	"github.com/anchore/stereoscope/pkg/image"
-	"os"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -44,7 +42,7 @@ var parsers = map[string]PackageDetailsParser{
 }
 
 //nolint:gochecknoglobals // this is an optimisation and read-only
-var parsersWithReaders = map[string]PackageDetailsParserWithReader{
+var parsersWithReaders = map[string]PackageDetailsParser2{
 	"buildscript-gradle.lockfile": ParseGradleLock,
 	"Cargo.lock":                  ParseCargoLock,
 	"composer.lock":               ParseComposerLock,
@@ -111,38 +109,6 @@ func (ps Packages) Ecosystems() []Ecosystem {
 	return slicedEcosystems
 }
 
-type Lockfile struct {
-	FilePath string   `json:"filePath"`
-	ParsedAs string   `json:"parsedAs"`
-	Packages Packages `json:"packages"`
-}
-
-func (l Lockfile) String() string {
-	lines := make([]string, 0, len(l.Packages))
-
-	for _, details := range l.Packages {
-		ecosystem := details.Ecosystem
-
-		if ecosystem == "" {
-			ecosystem = "<unknown>"
-		}
-
-		ln := fmt.Sprintf("  %s: %s", ecosystem, details.Name)
-
-		if details.Version != "" {
-			ln += "@" + details.Version
-		}
-
-		if details.Commit != "" {
-			ln += " (" + details.Commit + ")"
-		}
-
-		lines = append(lines, ln)
-	}
-
-	return strings.Join(lines, "\n")
-}
-
 // Parse attempts to extract a collection of package details from a lockfile,
 // using one of the native parsers.
 //
@@ -201,13 +167,13 @@ func ParseInImage(pathToLockfile string, parseAs string, img image.Image) (Lockf
 		return Lockfile{}, fmt.Errorf("%w for %s", ErrParserNotFound, pathToLockfile)
 	}
 
-	r, err := img.OpenPathFromSquash(file.Path(pathToLockfile))
+	f, err := OpenImageFile(img, pathToLockfile)
 
 	if err != nil && parseAs != "" {
 		return Lockfile{}, fmt.Errorf("(parsing as %s) %w", parsedAs, err)
 	}
 
-	packages, err := parser(r)
+	packages, err := parser(f)
 
 	if err != nil && parseAs != "" {
 		err = fmt.Errorf("(parsing as %s) %w", parsedAs, err)
@@ -228,14 +194,14 @@ func ParseInImage(pathToLockfile string, parseAs string, img image.Image) (Lockf
 	}, err
 }
 
-func parseFile(pathToLockfile string, parserWithReader PackageDetailsParserWithReader) ([]PackageDetails, error) {
-	r, err := os.Open(pathToLockfile)
+func parseFile(pathToLockfile string, parserWithReader PackageDetailsParser2) ([]PackageDetails, error) {
+	f, err := OpenLocalFile(pathToLockfile)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
 	}
 
-	details, err := parserWithReader(r)
+	details, err := parserWithReader(f)
 
 	if err != nil {
 		err = fmt.Errorf("error while parsing %s: %w", pathToLockfile, err)

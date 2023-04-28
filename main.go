@@ -436,14 +436,14 @@ func parseLockfile(pathToLock string, args []string, img *image.Image) (lockfile
 		}
 
 		if pathToLock == "/lib/apk/db/installed" {
-			r, err := img.OpenPathFromSquash(file.Path(pathToLock))
+			f, err := lockfile.OpenImageFile(*img, pathToLock)
 			if err != nil {
 				err = fmt.Errorf("%w", err)
 
 				return lockfile.Lockfile{}, err
 			}
 
-			l, err := lockfile.FromApkInstalled(r, pathToLock)
+			l, err := lockfile.FromApkInstalled(f)
 
 			if err != nil {
 				err = fmt.Errorf("%w", err)
@@ -453,14 +453,14 @@ func parseLockfile(pathToLock string, args []string, img *image.Image) (lockfile
 		}
 
 		if pathToLock == "/var/lib/dpkg/status" {
-			r, err := img.OpenPathFromSquash(file.Path(pathToLock))
+			f, err := lockfile.OpenImageFile(*img, pathToLock)
 			if err != nil {
 				err = fmt.Errorf("%w", err)
 
 				return lockfile.Lockfile{}, err
 			}
 
-			l, err := lockfile.FromDpkgStatus(r, pathToLock)
+			l, err := lockfile.FromDpkgStatus(f)
 
 			if err != nil {
 				err = fmt.Errorf("%w", err)

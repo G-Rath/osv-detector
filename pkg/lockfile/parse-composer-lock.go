@@ -3,7 +3,6 @@ package lockfile
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 )
 
 type ComposerPackage struct {
@@ -25,10 +24,10 @@ func ParseComposerLockFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParseComposerLock)
 }
 
-func ParseComposerLock(r io.Reader) ([]PackageDetails, error) {
+func ParseComposerLock(f ParsableFile) ([]PackageDetails, error) {
 	var parsedLockfile *ComposerLock
 
-	err := json.NewDecoder(r).Decode(&parsedLockfile)
+	err := json.NewDecoder(f).Decode(&parsedLockfile)
 
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not parse: %w", err)

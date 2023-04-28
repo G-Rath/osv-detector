@@ -3,7 +3,6 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"os"
 	"sort"
 	"strings"
@@ -74,8 +73,8 @@ func ParseApkInstalledFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParseApkInstalled)
 }
 
-func ParseApkInstalled(r io.Reader) ([]PackageDetails, error) {
-	scanner := bufio.NewScanner(r)
+func ParseApkInstalled(f ParsableFile) ([]PackageDetails, error) {
+	scanner := bufio.NewScanner(f)
 	packageGroups := groupApkPackageLines(scanner)
 
 	packages := make([]PackageDetails, 0, len(packageGroups))
@@ -104,8 +103,8 @@ func ParseApkInstalled(r io.Reader) ([]PackageDetails, error) {
 
 // FromApkInstalled attempts to parse the given file as an "apk-installed" lockfile
 // used by the Alpine Package Keeper (apk) to record installed packages.
-func FromApkInstalled(r io.Reader, pathToInstalled string) (Lockfile, error) {
-	packages, err := ParseApkInstalled(r)
+func FromApkInstalled(f ParsableFile) (Lockfile, error) {
+	packages, err := ParseApkInstalled(f)
 
 	sort.Slice(packages, func(i, j int) bool {
 		if packages[i].Name == packages[j].Name {
@@ -116,7 +115,7 @@ func FromApkInstalled(r io.Reader, pathToInstalled string) (Lockfile, error) {
 	})
 
 	return Lockfile{
-		FilePath: pathToInstalled,
+		FilePath: f.Path(),
 		ParsedAs: "apk-installed",
 		Packages: packages,
 	}, err

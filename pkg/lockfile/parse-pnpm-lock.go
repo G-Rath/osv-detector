@@ -165,10 +165,10 @@ func ParsePnpmLockFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParsePnpmLock)
 }
 
-func ParsePnpmLock(r io.Reader) ([]PackageDetails, error) {
+func ParsePnpmLock(f ParsableFile) ([]PackageDetails, error) {
 	var parsedLockfile *PnpmLockfile
 
-	err := yaml.NewDecoder(r).Decode(&parsedLockfile)
+	err := yaml.NewDecoder(f).Decode(&parsedLockfile)
 
 	if err != nil {
 		if !errors.Is(err, io.EOF) {

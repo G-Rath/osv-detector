@@ -3,7 +3,6 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"os"
 	"strings"
 )
@@ -33,10 +32,10 @@ func ParseGradleLockFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParseGradleLock)
 }
 
-func ParseGradleLock(r io.Reader) ([]PackageDetails, error) {
+func ParseGradleLock(f ParsableFile) ([]PackageDetails, error) {
 	var packages []PackageDetails
 
-	scanner := bufio.NewScanner(r)
+	scanner := bufio.NewScanner(f)
 
 	for scanner.Scan() {
 		lockLine := strings.TrimSpace(scanner.Text())

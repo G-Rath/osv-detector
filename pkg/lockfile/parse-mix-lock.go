@@ -3,7 +3,6 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"os"
 	"strings"
 
@@ -16,10 +15,10 @@ func ParseMixLockFile(pathToLockfile string) ([]PackageDetails, error) {
 	return parseFile(pathToLockfile, ParseMixLock)
 }
 
-func ParseMixLock(r io.Reader) ([]PackageDetails, error) {
+func ParseMixLock(f ParsableFile) ([]PackageDetails, error) {
 	re := cachedregexp.MustCompile(`^ +"(\w+)": \{.+,$`)
 
-	scanner := bufio.NewScanner(r)
+	scanner := bufio.NewScanner(f)
 
 	var packages []PackageDetails
 
