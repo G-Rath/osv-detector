@@ -26,6 +26,12 @@
       <artifactId>my.package</artifactId>
       <version>${my.package.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.mine.too</groupId>
+      <artifactId>my.other-package</artifactId>
+      <version>${my.package.missing}</version>
+    </dependency>
   </dependencies>
 
   <dependencyManagement>

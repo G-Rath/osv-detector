@@ -147,6 +147,12 @@ func TestParseMavenLock_Interpolation(t *testing.T) {
 			Ecosystem: lockfile.MavenEcosystem,
 			CompareAs: lockfile.MavenEcosystem,
 		},
+		{
+			Name:      "org.mine.too:my.other-package",
+			Version:   "0",
+			Ecosystem: lockfile.MavenEcosystem,
+			CompareAs: lockfile.MavenEcosystem,
+		},
 	})
 }
 
