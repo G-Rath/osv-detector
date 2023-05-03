@@ -41,7 +41,7 @@ func (mld MavenLockDependency) resolveVersionValue(lockfile MavenLockFile) strin
 
 	fmt.Fprintf(
 		os.Stderr,
-		"Failed to resolve version of %s: property \"%s\" could not be found",
+		"Failed to resolve version of %s: property \"%s\" could not be found\n",
 		mld.GroupID+":"+mld.ArtifactID,
 		results[1],
 	)
