@@ -736,7 +736,7 @@ func TestRun_ParseAsGlobal(t *testing.T) {
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
-					npm (2971 vulnerabilities, including withdrawn - last updated %%)
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 				fixtures/locks-empty/Gemfile.lock: found 0 packages
 
@@ -755,7 +755,7 @@ func TestRun_ParseAsGlobal(t *testing.T) {
 					no known vulnerabilities found
 
 				fixtures/locks-insecure/my-package-lock.json: found 1 package
-					Using db npm (2971 vulnerabilities, including withdrawn - last updated %%)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
