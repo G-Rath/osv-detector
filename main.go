@@ -349,10 +349,14 @@ func findAllLockfiles(r *reporter.Reporter, pathsToCheck []string, parseAs strin
 			return nil
 		},
 		&filetree.WalkConditions{
+			LinkOptions: []filetree.LinkResolutionOption{},
+			ShouldVisit: func(path file.Path, node filenode.FileNode) bool {
+				return !node.IsLink()
+			},
 			ShouldContinueBranch: func(path file.Path, node filenode.FileNode) bool {
 				// We want to avoid any symlinks as they could be cyclical, and they should
 				// be safe to skip since we should end up walking their targets eventually
-				if lockfile.IsSymlink(path, node) {
+				if node.IsLink() {
 					return false
 				}
 

@@ -80,6 +80,7 @@ func WalkNodeModulesInImage(img image.Image, pathToNodeModules string) (Lockfile
 			return nil
 		},
 		&filetree.WalkConditions{
+			LinkOptions: []filetree.LinkResolutionOption{},
 			ShouldVisit: func(path file.Path, node filenode.FileNode) bool {
 				// we only want to visit the node if:
 				//   1. it is a regular file
@@ -92,7 +93,7 @@ func WalkNodeModulesInImage(img image.Image, pathToNodeModules string) (Lockfile
 			ShouldContinueBranch: func(path file.Path, node filenode.FileNode) bool {
 				// We want to avoid any symlinks as they could be cyclical, and they should
 				// be safe to skip since we should end up walking their targets eventually
-				return !IsSymlink(path, node)
+				return !node.IsLink()
 			},
 		},
 	)
