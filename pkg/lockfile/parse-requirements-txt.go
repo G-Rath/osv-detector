@@ -125,26 +125,36 @@ func parseRequirementsTxt(f ParsableFile, requiredAlready map[string]struct{}) (
 		line = removeComments(line)
 
 		if ar := strings.TrimPrefix(line, "-r "); ar != line {
-			af, err := f.OpenRelative(ar)
+			err := func() error {
+				af, err := f.OpenRelative(ar)
+
+				if err != nil {
+					return fmt.Errorf("failed to include %s: %w", line, err)
+				}
+
+				defer af.Close()
+
+				if _, ok := requiredAlready[af.Path()]; ok {
+					return nil
+				}
+
+				requiredAlready[af.Path()] = struct{}{}
+
+				details, err := parseRequirementsTxt(af, requiredAlready)
+
+				if err != nil {
+					return fmt.Errorf("failed to include %s: %w", line, err)
+				}
+
+				for _, detail := range details {
+					packages[detail.Name+"@"+detail.Version] = detail
+				}
+
+				return nil
+			}()
 
 			if err != nil {
-				return []PackageDetails{}, fmt.Errorf("failed to include %s: %w", line, err)
-			}
-
-			if _, ok := requiredAlready[af.Path()]; ok {
-				continue
-			}
-
-			requiredAlready[af.Path()] = struct{}{}
-
-			details, err := parseRequirementsTxt(af, requiredAlready)
-
-			if err != nil {
-				return []PackageDetails{}, fmt.Errorf("failed to include %s: %w", line, err)
-			}
-
-			for _, detail := range details {
-				packages[detail.Name+"@"+detail.Version] = detail
+				return []PackageDetails{}, err
 			}
 
 			continue

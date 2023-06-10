@@ -173,6 +173,8 @@ func ParseInImage(pathToLockfile string, parseAs string, img image.Image) (Lockf
 		return Lockfile{}, fmt.Errorf("(parsing as %s) %w", parsedAs, err)
 	}
 
+	defer f.Close()
+
 	packages, err := parser(f)
 
 	if err != nil && parseAs != "" {
@@ -200,6 +202,8 @@ func parseFile(pathToLockfile string, parserWithReader PackageDetailsParser2) ([
 	if err != nil {
 		return []PackageDetails{}, fmt.Errorf("could not read %s: %w", pathToLockfile, err)
 	}
+
+	defer f.Close()
 
 	details, err := parserWithReader(f)
 
