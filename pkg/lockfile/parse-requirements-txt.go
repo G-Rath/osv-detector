@@ -12,7 +12,8 @@ import (
 const PipEcosystem Ecosystem = "PyPI"
 
 // todo: expand this to support more things, e.g.
-//   https://pip.pypa.io/en/stable/reference/requirements-file-format/#example
+//
+//	https://pip.pypa.io/en/stable/reference/requirements-file-format/#example
 func parseLine(line string) PackageDetails {
 	var constraint string
 	name := line
@@ -41,7 +42,7 @@ func parseLine(line string) PackageDetails {
 		name = strings.TrimSpace(splitted[0])
 
 		if constraint != "!=" {
-			version = strings.TrimSpace(splitted[1])
+			version = strings.Split(strings.TrimSpace(splitted[1]), " ")[0]
 		}
 	}
 

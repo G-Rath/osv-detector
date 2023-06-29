@@ -526,6 +526,43 @@ func TestParseRequirementsTxt_CyclicRComplex(t *testing.T) {
 	})
 }
 
+func TestParseRequirementsTxt_WithPerRequirementOptions(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/with-per-requirement-options.txt")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "boto3",
+			Version:   "1.26.121",
+			Ecosystem: lockfile.PipEcosystem,
+			CompareAs: lockfile.PipEcosystem,
+		},
+		{
+			Name:      "foo",
+			Version:   "1.0.0",
+			Ecosystem: lockfile.PipEcosystem,
+			CompareAs: lockfile.PipEcosystem,
+		},
+		{
+			Name:      "fooproject",
+			Version:   "1.2",
+			Ecosystem: lockfile.PipEcosystem,
+			CompareAs: lockfile.PipEcosystem,
+		},
+		{
+			Name:      "barproject",
+			Version:   "1.2",
+			Ecosystem: lockfile.PipEcosystem,
+			CompareAs: lockfile.PipEcosystem,
+		},
+	})
+}
+
 func TestParseRequirementsTxt_LineContinuation(t *testing.T) {
 	t.Parallel()
 
