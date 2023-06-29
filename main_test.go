@@ -798,8 +798,9 @@ func TestRun_ParseAs_CsvRow(t *testing.T) {
 
 					Yarp.ReverseProxy@ is affected by the following vulnerabilities:
 						GHSA-8xc6-g8xw-h2c4: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-8xc6-g8xw-h2c4)
+						GHSA-jrjw-qgr2-wfcg: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-jrjw-qgr2-wfcg)
 
-					1 known vulnerability found in -
+					2 known vulnerabilities found in -
 			`,
 			wantStderr: "",
 		},
@@ -823,8 +824,9 @@ func TestRun_ParseAs_CsvRow(t *testing.T) {
 
 					Yarp.ReverseProxy@ is affected by the following vulnerabilities:
 						GHSA-8xc6-g8xw-h2c4: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-8xc6-g8xw-h2c4)
+						GHSA-jrjw-qgr2-wfcg: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-jrjw-qgr2-wfcg)
 
-					1 known vulnerability found in -
+					2 known vulnerabilities found in -
 			`,
 			wantStderr: "",
 		},
@@ -873,8 +875,9 @@ func TestRun_ParseAs_CsvFile(t *testing.T) {
 
 					Yarp.ReverseProxy@ is affected by the following vulnerabilities:
 						GHSA-8xc6-g8xw-h2c4: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-8xc6-g8xw-h2c4)
+						GHSA-jrjw-qgr2-wfcg: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-jrjw-qgr2-wfcg)
 
-					1 known vulnerability found in fixtures/csvs-files/two-rows.csv
+					2 known vulnerabilities found in fixtures/csvs-files/two-rows.csv
 			`,
 			wantStderr: "",
 		},
