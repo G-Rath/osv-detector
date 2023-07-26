@@ -126,7 +126,7 @@ func parseRequirementsTxt(f ParsableFile, requiredAlready map[string]struct{}) (
 
 		if ar := strings.TrimPrefix(line, "-r "); ar != line {
 			err := func() error {
-				af, err := f.OpenRelative(ar)
+				af, err := f.Open(ar)
 
 				if err != nil {
 					return fmt.Errorf("failed to include %s: %w", line, err)

@@ -46,15 +46,22 @@ func (l Lockfile) String() string {
 // VFS Virtual File System
 // IFS Image File System
 
-// ParsableFile is an abstraction for a file that has been opened for parsing
-// to create a Lockfile, and that knows how to open other ParsableFiles
-// relative to itself.
+// ParsableFile is an abstraction for a file that has been opened for extraction,
+// and that knows how to open other ParsableFiles relative to itself.
 type ParsableFile interface {
-	io.ReadCloser
+	io.Reader
 
-	OpenRelative(string) (ParsableFile, error)
+	// Open a file either relative to the current file, or otherwise absolute.
+	Open(string) (CloseableParsableFile, error)
 
 	Path() string
+}
+
+// CloseableParsableFile is an abstraction for a file that has been opened while extracting another file,
+// and would need to be closed.
+type CloseableParsableFile interface {
+	io.Closer
+	ParsableFile
 }
 
 // A LocalFile represents a file that exists on the local filesystem.
@@ -64,7 +71,11 @@ type LocalFile struct {
 	path string
 }
 
-func (f LocalFile) OpenRelative(path string) (ParsableFile, error) {
+func (f LocalFile) Open(path string) (CloseableParsableFile, error) {
+	if filepath.IsAbs(path) {
+		return OpenLocalFile(path)
+	}
+
 	return OpenLocalFile(filepath.Join(filepath.Dir(f.path), path))
 }
 
@@ -90,8 +101,13 @@ type ImageFile struct {
 	img  image.Image
 }
 
-func (f ImageFile) OpenRelative(path string) (ParsableFile, error) {
-	return OpenImageFile(f.img, filepath.Join(filepath.Dir(f.path), path))
+func (f ImageFile) Open(path string) (CloseableParsableFile, error) {
+	p := path
+	if !file.Path(p).IsAbsolutePath() {
+		p = filepath.Join(filepath.Dir(f.path), path)
+	}
+
+	return OpenImageFile(f.img, p)
 }
 
 func (f ImageFile) Path() string { return f.path }
