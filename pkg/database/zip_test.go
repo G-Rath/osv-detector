@@ -230,6 +230,24 @@ func TestNewZippedDB_Online_WithoutCache(t *testing.T) {
 	expectDBToHaveOSVs(t, db, osvs)
 }
 
+func TestNewZippedDB_Online_WithoutCache_NotFound(t *testing.T) {
+	t.Parallel()
+
+	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{}))
+	})
+	defer cleanup()
+
+	_, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+
+	if err == nil {
+		t.Errorf("expected an error but did not get one")
+	} else if !errors.Is(err, database.ErrUnexpectedStatusCode) {
+		t.Errorf("expected %v error but got %v", database.ErrUnexpectedStatusCode, err)
+	}
+}
+
 func TestNewZippedDB_Online_WithCache(t *testing.T) {
 	t.Parallel()
 
