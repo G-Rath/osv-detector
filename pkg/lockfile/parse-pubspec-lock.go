@@ -86,6 +86,7 @@ func ParsePubspecLock(pathToLockfile string) ([]PackageDetails, error) {
 			Version:   pkg.Version,
 			Commit:    pkg.Description.Ref,
 			Ecosystem: PubEcosystem,
+			CompareAs: PubEcosystem,
 		})
 	}
 

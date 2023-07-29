@@ -61,6 +61,7 @@ func TestParsePubspecLock_OnePackage(t *testing.T) {
 			Name:      "back_button_interceptor",
 			Version:   "6.0.1",
 			Ecosystem: lockfile.PubEcosystem,
+			CompareAs: lockfile.PubEcosystem,
 		},
 	})
 }
@@ -79,6 +80,7 @@ func TestParsePubspecLock_OnePackageDev(t *testing.T) {
 			Name:      "build_runner",
 			Version:   "2.2.1",
 			Ecosystem: lockfile.PubEcosystem,
+			CompareAs: lockfile.PubEcosystem,
 		},
 	})
 }
@@ -97,11 +99,13 @@ func TestParsePubspecLock_TwoPackages(t *testing.T) {
 			Name:      "shelf",
 			Version:   "1.3.2",
 			Ecosystem: lockfile.PubEcosystem,
+			CompareAs: lockfile.PubEcosystem,
 		},
 		{
 			Name:      "shelf_web_socket",
 			Version:   "1.0.2",
 			Ecosystem: lockfile.PubEcosystem,
+			CompareAs: lockfile.PubEcosystem,
 		},
 	})
 }
@@ -120,21 +124,25 @@ func TestParsePubspecLock_MixedPackages(t *testing.T) {
 			Name:      "back_button_interceptor",
 			Version:   "6.0.1",
 			Ecosystem: lockfile.PubEcosystem,
+			CompareAs: lockfile.PubEcosystem,
 		},
 		{
 			Name:      "build_runner",
 			Version:   "2.2.1",
 			Ecosystem: lockfile.PubEcosystem,
+			CompareAs: lockfile.PubEcosystem,
 		},
 		{
 			Name:      "shelf",
 			Version:   "1.3.2",
 			Ecosystem: lockfile.PubEcosystem,
+			CompareAs: lockfile.PubEcosystem,
 		},
 		{
 			Name:      "shelf_web_socket",
 			Version:   "1.0.2",
 			Ecosystem: lockfile.PubEcosystem,
+			CompareAs: lockfile.PubEcosystem,
 		},
 	})
 }
@@ -153,30 +161,35 @@ func TestParsePubspecLock_PackageWithGitSource(t *testing.T) {
 			Name:      "flutter_rust_bridge",
 			Version:   "1.32.0",
 			Ecosystem: lockfile.PubEcosystem,
+			CompareAs: lockfile.PubEcosystem,
 			Commit:    "e5adce55eea0b74d3680e66a2c5252edf17b07e1",
 		},
 		{
 			Name:      "screen_retriever",
 			Version:   "0.1.2",
 			Ecosystem: lockfile.PubEcosystem,
+			CompareAs: lockfile.PubEcosystem,
 			Commit:    "406b9b038b2c1d779f1e7bf609c8c248be247372",
 		},
 		{
 			Name:      "tray_manager",
 			Version:   "0.1.8",
 			Ecosystem: lockfile.PubEcosystem,
+			CompareAs: lockfile.PubEcosystem,
 			Commit:    "3aa37c86e47ea748e7b5507cbe59f2c54ebdb23a",
 		},
 		{
 			Name:      "window_manager",
 			Version:   "0.2.7",
 			Ecosystem: lockfile.PubEcosystem,
+			CompareAs: lockfile.PubEcosystem,
 			Commit:    "88487257cbafc501599ab4f82ec343b46acec020",
 		},
 		{
 			Name:      "toggle_switch",
 			Version:   "1.4.0",
 			Ecosystem: lockfile.PubEcosystem,
+			CompareAs: lockfile.PubEcosystem,
 			Commit:    "",
 		},
 	})
@@ -196,6 +209,7 @@ func TestParsePubspecLock_PackageWithSdkSource(t *testing.T) {
 			Name:      "flutter_web_plugins",
 			Version:   "0.0.0",
 			Ecosystem: lockfile.PubEcosystem,
+			CompareAs: lockfile.PubEcosystem,
 			Commit:    "",
 		},
 	})
@@ -215,6 +229,7 @@ func TestParsePubspecLock_PackageWithPathSource(t *testing.T) {
 			Name:      "maa_core",
 			Version:   "0.0.1",
 			Ecosystem: lockfile.PubEcosystem,
+			CompareAs: lockfile.PubEcosystem,
 			Commit:    "",
 		},
 	})
