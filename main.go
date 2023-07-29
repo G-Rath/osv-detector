@@ -15,6 +15,7 @@ import (
 	"github.com/g-rath/osv-detector/internal/reporter"
 	"github.com/g-rath/osv-detector/pkg/database"
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/models"
 	"golang.org/x/exp/slices"
 )
 
@@ -33,7 +34,7 @@ func makeAPIDBConfig() database.Config {
 	}
 }
 
-func makeEcosystemDBConfig(ecosystem internal.Ecosystem) database.Config {
+func makeEcosystemDBConfig(ecosystem models.Ecosystem) database.Config {
 	return database.Config{
 		Name: string(ecosystem),
 		Type: "zip",
@@ -461,8 +462,8 @@ func readAllLockfiles(
 	return lockfiles
 }
 
-func collectEcosystems(files []lockfileAndConfigOrErr) []internal.Ecosystem {
-	var ecosystems []internal.Ecosystem
+func collectEcosystems(files []lockfileAndConfigOrErr) []models.Ecosystem {
+	var ecosystems []models.Ecosystem
 
 	for _, result := range files {
 		if result.err != nil {

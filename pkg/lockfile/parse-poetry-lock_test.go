@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/models"
 )
 
 func TestParsePoetryLock_FileDoesNotExist(t *testing.T) {
@@ -49,8 +50,8 @@ func TestParsePoetryLock_OnePackage(t *testing.T) {
 		{
 			Name:      "numpy",
 			Version:   "1.23.3",
-			Ecosystem: lockfile.PoetryEcosystem,
-			CompareAs: lockfile.PoetryEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		},
 	})
 }
@@ -68,14 +69,14 @@ func TestParsePoetryLock_TwoPackages(t *testing.T) {
 		{
 			Name:      "proto-plus",
 			Version:   "1.22.0",
-			Ecosystem: lockfile.PoetryEcosystem,
-			CompareAs: lockfile.PoetryEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		},
 		{
 			Name:      "protobuf",
 			Version:   "4.21.5",
-			Ecosystem: lockfile.PoetryEcosystem,
-			CompareAs: lockfile.PoetryEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		},
 	})
 }
@@ -93,8 +94,8 @@ func TestParsePoetryLock_PackageWithMetadata(t *testing.T) {
 		{
 			Name:      "emoji",
 			Version:   "2.0.0",
-			Ecosystem: lockfile.PoetryEcosystem,
-			CompareAs: lockfile.PoetryEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		},
 	})
 }
@@ -112,8 +113,8 @@ func TestParsePoetryLock_PackageWithGitSource(t *testing.T) {
 		{
 			Name:      "ike",
 			Version:   "0.2.0",
-			Ecosystem: lockfile.PoetryEcosystem,
-			CompareAs: lockfile.PoetryEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 			Commit:    "cd66602cd29f61a2d2e7fb995fef1e61708c034d",
 		},
 	})
@@ -132,8 +133,8 @@ func TestParsePoetryLock_PackageWithLegacySource(t *testing.T) {
 		{
 			Name:      "appdirs",
 			Version:   "1.4.4",
-			Ecosystem: lockfile.PoetryEcosystem,
-			CompareAs: lockfile.PoetryEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 			Commit:    "",
 		},
 	})

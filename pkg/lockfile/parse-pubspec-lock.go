@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/g-rath/osv-detector/pkg/models"
 	"gopkg.in/yaml.v2"
 )
 
@@ -59,8 +60,6 @@ type PubspecLockfile struct {
 	Sdks     map[string]string             `yaml:"sdks"`
 }
 
-const PubEcosystem Ecosystem = "Pub"
-
 func ParsePubspecLock(pathToLockfile string) ([]PackageDetails, error) {
 	var parsedLockfile *PubspecLockfile
 
@@ -86,7 +85,7 @@ func ParsePubspecLock(pathToLockfile string) ([]PackageDetails, error) {
 			Name:      name,
 			Version:   pkg.Version,
 			Commit:    pkg.Description.Ref,
-			Ecosystem: PubEcosystem,
+			Ecosystem: models.EcosystemPub,
 			CompareAs: PubEcosystem,
 		})
 	}

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/g-rath/osv-detector/pkg/models"
 	"os"
 )
 
@@ -18,8 +19,6 @@ type NuGetLockfile struct {
 	Dependencies map[string]map[string]NuGetLockPackage `json:"dependencies"`
 }
 
-const NuGetEcosystem Ecosystem = "NuGet"
-
 func parseNuGetLockDependencies(dependencies map[string]NuGetLockPackage) map[string]PackageDetails {
 	details := map[string]PackageDetails{}
 
@@ -27,8 +26,8 @@ func parseNuGetLockDependencies(dependencies map[string]NuGetLockPackage) map[st
 		details[name+"@"+dependency.Resolved] = PackageDetails{
 			Name:      name,
 			Version:   dependency.Resolved,
-			Ecosystem: NuGetEcosystem,
-			CompareAs: NuGetEcosystem,
+			Ecosystem: models.EcosystemNuGet,
+			CompareAs: models.EcosystemNuGet,
 		}
 	}
 

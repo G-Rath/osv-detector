@@ -3,14 +3,13 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
+	"github.com/g-rath/osv-detector/pkg/models"
 	"net/url"
 	"os"
 	"strings"
 
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
 )
-
-const YarnEcosystem = NpmEcosystem
 
 func shouldSkipYarnLine(line string) bool {
 	return line == "" || strings.HasPrefix(line, "#")
@@ -165,8 +164,8 @@ func parsePackageGroup(group []string) PackageDetails {
 	return PackageDetails{
 		Name:      name,
 		Version:   version,
-		Ecosystem: YarnEcosystem,
-		CompareAs: YarnEcosystem,
+		Ecosystem: models.EcosystemNPM,
+		CompareAs: models.EcosystemNPM,
 		Commit:    tryExtractCommit(resolution),
 	}
 }

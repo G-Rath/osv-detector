@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/BurntSushi/toml"
+	"github.com/g-rath/osv-detector/pkg/models"
 )
 
 type PoetryLockPackageSource struct {
@@ -22,8 +23,6 @@ type PoetryLockFile struct {
 	Version  int                 `toml:"version"`
 	Packages []PoetryLockPackage `toml:"package"`
 }
-
-const PoetryEcosystem = PipEcosystem
 
 func ParsePoetryLock(pathToLockfile string) ([]PackageDetails, error) {
 	var parsedLockfile *PoetryLockFile
@@ -47,8 +46,8 @@ func ParsePoetryLock(pathToLockfile string) ([]PackageDetails, error) {
 			Name:      lockPackage.Name,
 			Version:   lockPackage.Version,
 			Commit:    lockPackage.Source.Commit,
-			Ecosystem: PoetryEcosystem,
-			CompareAs: PoetryEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		})
 	}
 

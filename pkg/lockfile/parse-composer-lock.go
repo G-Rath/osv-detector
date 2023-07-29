@@ -3,6 +3,7 @@ package lockfile
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/g-rath/osv-detector/pkg/models"
 	"os"
 )
 
@@ -18,8 +19,6 @@ type ComposerLock struct {
 	Packages    []ComposerPackage `json:"packages"`
 	PackagesDev []ComposerPackage `json:"packages-dev"`
 }
-
-const ComposerEcosystem Ecosystem = "Packagist"
 
 func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 	var parsedLockfile *ComposerLock
@@ -48,8 +47,8 @@ func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 			Name:      composerPackage.Name,
 			Version:   composerPackage.Version,
 			Commit:    composerPackage.Dist.Reference,
-			Ecosystem: ComposerEcosystem,
-			CompareAs: ComposerEcosystem,
+			Ecosystem: models.EcosystemPackagist,
+			CompareAs: models.EcosystemPackagist,
 		})
 	}
 
@@ -58,8 +57,8 @@ func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 			Name:      composerPackage.Name,
 			Version:   composerPackage.Version,
 			Commit:    composerPackage.Dist.Reference,
-			Ecosystem: ComposerEcosystem,
-			CompareAs: ComposerEcosystem,
+			Ecosystem: models.EcosystemPackagist,
+			CompareAs: models.EcosystemPackagist,
 		})
 	}
 

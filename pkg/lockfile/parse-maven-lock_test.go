@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/models"
 )
 
 func TestParseMavenLock_FileDoesNotExist(t *testing.T) {
@@ -58,8 +59,8 @@ func TestParseMavenLock_OnePackage(t *testing.T) {
 		{
 			Name:      "org.apache.maven:maven-artifact",
 			Version:   "1.0.0",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 	})
 }
@@ -77,14 +78,14 @@ func TestParseMavenLock_TwoPackages(t *testing.T) {
 		{
 			Name:      "io.netty:netty-all",
 			Version:   "4.1.42.Final",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 		{
 			Name:      "org.slf4j:slf4j-log4j12",
 			Version:   "1.7.25",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 	})
 }
@@ -102,20 +103,20 @@ func TestParseMavenLock_WithDependencyManagement(t *testing.T) {
 		{
 			Name:      "io.netty:netty-all",
 			Version:   "4.1.42.Final",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 		{
 			Name:      "org.slf4j:slf4j-log4j12",
 			Version:   "1.7.25",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 		{
 			Name:      "com.google.code.findbugs:jsr305",
 			Version:   "3.0.2",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 	})
 }
@@ -133,26 +134,26 @@ func TestParseMavenLock_Interpolation(t *testing.T) {
 		{
 			Name:      "org.mine:mypackage",
 			Version:   "1.0.0",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 		{
 			Name:      "org.mine:my.package",
 			Version:   "2.3.4",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 		{
 			Name:      "org.mine:ranged-package",
 			Version:   "9.4.35.v20201120",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 		{
 			Name:      "org.mine.too:my.other-package",
 			Version:   "0",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 	})
 }

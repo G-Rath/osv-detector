@@ -11,7 +11,7 @@ import (
 
 	"github.com/g-rath/osv-detector/internal"
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
-	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/models"
 	"github.com/g-rath/osv-detector/pkg/semantic"
 	"golang.org/x/exp/slices"
 )
@@ -40,7 +40,7 @@ type Package struct {
 //
 // In the future, it's hoped that this can be improved.
 func (p Package) NormalizedName() string {
-	if p.Ecosystem != lockfile.PipEcosystem {
+	if p.Ecosystem != models.EcosystemPyPI {
 		return p.Name
 	}
 
@@ -187,7 +187,7 @@ func (osv *OSV) isAliasOf(vulnerability OSV) bool {
 	return false
 }
 
-func (osv *OSV) AffectsEcosystem(ecosystem internal.Ecosystem) bool {
+func (osv *OSV) AffectsEcosystem(ecosystem models.Ecosystem) bool {
 	for _, affected := range osv.Affected {
 		if affected.Package.Ecosystem == ecosystem {
 			return true

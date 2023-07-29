@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/models"
 )
 
 func TestParseGradleLock_FileDoesNotExist(t *testing.T) {
@@ -52,8 +53,8 @@ func TestParseGradleLock_OnePackage(t *testing.T) {
 		{
 			Name:      "org.springframework.security:spring-security-crypto",
 			Version:   "5.7.3",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 	})
 }
@@ -71,33 +72,33 @@ func TestParseGradleLock_MultiplePackage(t *testing.T) {
 		{
 			Name:      "org.springframework.boot:spring-boot-autoconfigure",
 			Version:   "2.7.4",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 		{
 			Name:      "org.springframework.boot:spring-boot-configuration-processor",
 			Version:   "2.7.5",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 		{
 			Name:      "org.springframework.boot:spring-boot-devtools",
 			Version:   "2.7.6",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 
 		{
 			Name:      "org.springframework.boot:spring-boot-starter-aop",
 			Version:   "2.7.7",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 		{
 			Name:      "org.springframework.boot:spring-boot-starter-data-jpa",
 			Version:   "2.7.8",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 	})
 }
@@ -115,14 +116,14 @@ func TestParseGradleLock_WithInvalidLines(t *testing.T) {
 		{
 			Name:      "org.springframework.boot:spring-boot-autoconfigure",
 			Version:   "2.7.4",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 		{
 			Name:      "org.springframework.boot:spring-boot-configuration-processor",
 			Version:   "2.7.5",
-			Ecosystem: lockfile.MavenEcosystem,
-			CompareAs: lockfile.MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		},
 	})
 }

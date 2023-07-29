@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/BurntSushi/toml"
+	"github.com/g-rath/osv-detector/pkg/models"
 )
 
 type CargoLockPackage struct {
@@ -16,8 +17,6 @@ type CargoLockFile struct {
 	Version  int                `toml:"version"`
 	Packages []CargoLockPackage `toml:"package"`
 }
-
-const CargoEcosystem Ecosystem = "crates.io"
 
 func ParseCargoLock(pathToLockfile string) ([]PackageDetails, error) {
 	var parsedLockfile *CargoLockFile
@@ -40,8 +39,8 @@ func ParseCargoLock(pathToLockfile string) ([]PackageDetails, error) {
 		packages = append(packages, PackageDetails{
 			Name:      lockPackage.Name,
 			Version:   lockPackage.Version,
-			Ecosystem: CargoEcosystem,
-			CompareAs: CargoEcosystem,
+			Ecosystem: models.EcosystemCratesIO,
+			CompareAs: models.EcosystemCratesIO,
 		})
 	}
 

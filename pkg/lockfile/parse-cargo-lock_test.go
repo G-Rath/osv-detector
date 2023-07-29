@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/models"
 )
 
 func TestParseCargoLock_FileDoesNotExist(t *testing.T) {
@@ -49,8 +50,8 @@ func TestParseCargoLock_OnePackage(t *testing.T) {
 		{
 			Name:      "addr2line",
 			Version:   "0.15.2",
-			Ecosystem: lockfile.CargoEcosystem,
-			CompareAs: lockfile.CargoEcosystem,
+			Ecosystem: models.EcosystemCratesIO,
+			CompareAs: models.EcosystemCratesIO,
 		},
 	})
 }
@@ -68,14 +69,14 @@ func TestParseCargoLock_TwoPackages(t *testing.T) {
 		{
 			Name:      "addr2line",
 			Version:   "0.15.2",
-			Ecosystem: lockfile.CargoEcosystem,
-			CompareAs: lockfile.CargoEcosystem,
+			Ecosystem: models.EcosystemCratesIO,
+			CompareAs: models.EcosystemCratesIO,
 		},
 		{
 			Name:      "syn",
 			Version:   "1.0.73",
-			Ecosystem: lockfile.CargoEcosystem,
-			CompareAs: lockfile.CargoEcosystem,
+			Ecosystem: models.EcosystemCratesIO,
+			CompareAs: models.EcosystemCratesIO,
 		},
 	})
 }
@@ -93,8 +94,8 @@ func TestParseCargoLock_PackageWithBuildString(t *testing.T) {
 		{
 			Name:      "wasi",
 			Version:   "0.10.2+wasi-snapshot-preview1",
-			Ecosystem: lockfile.CargoEcosystem,
-			CompareAs: lockfile.CargoEcosystem,
+			Ecosystem: models.EcosystemCratesIO,
+			CompareAs: models.EcosystemCratesIO,
 		},
 	})
 }

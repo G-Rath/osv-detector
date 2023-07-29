@@ -3,14 +3,13 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
+	"github.com/g-rath/osv-detector/pkg/models"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
 )
-
-const PipEcosystem Ecosystem = "PyPI"
 
 // todo: expand this to support more things, e.g.
 //
@@ -50,8 +49,8 @@ func parseLine(line string) PackageDetails {
 	return PackageDetails{
 		Name:      normalizedRequirementName(name),
 		Version:   version,
-		Ecosystem: PipEcosystem,
-		CompareAs: PipEcosystem,
+		Ecosystem: models.EcosystemPyPI,
+		CompareAs: models.EcosystemPyPI,
 	}
 }
 

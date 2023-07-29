@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/g-rath/osv-detector/internal"
+	"github.com/g-rath/osv-detector/pkg/models"
 	"github.com/g-rath/osv-detector/pkg/semantic"
 )
 
@@ -44,7 +44,7 @@ func compareWord(t *testing.T, result int) string {
 	}
 }
 
-func runAgainstEcosystemFixture(t *testing.T, ecosystem internal.Ecosystem, filename string) {
+func runAgainstEcosystemFixture(t *testing.T, ecosystem models.Ecosystem, filename string) {
 	t.Helper()
 
 	file, err := os.Open("fixtures/" + filename)
@@ -91,7 +91,7 @@ func runAgainstEcosystemFixture(t *testing.T, ecosystem internal.Ecosystem, file
 	}
 }
 
-func parseAsVersion(t *testing.T, str string, ecosystem internal.Ecosystem) semantic.Version {
+func parseAsVersion(t *testing.T, str string, ecosystem models.Ecosystem) semantic.Version {
 	t.Helper()
 
 	v, err := semantic.Parse(str, ecosystem)
@@ -105,7 +105,7 @@ func parseAsVersion(t *testing.T, str string, ecosystem internal.Ecosystem) sema
 
 func expectCompareResult(
 	t *testing.T,
-	ecosystem internal.Ecosystem,
+	ecosystem models.Ecosystem,
 	a string,
 	b string,
 	expectedResult int,
@@ -131,7 +131,7 @@ func expectCompareResult(
 
 func expectEcosystemCompareResult(
 	t *testing.T,
-	ecosystem internal.Ecosystem,
+	ecosystem models.Ecosystem,
 	a string,
 	c string,
 	b string,
@@ -224,7 +224,7 @@ func TestVersion_Compare_Ecosystems(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			runAgainstEcosystemFixture(t, internal.Ecosystem(tt.name), tt.file)
+			runAgainstEcosystemFixture(t, models.Ecosystem(tt.name), tt.file)
 		})
 	}
 }

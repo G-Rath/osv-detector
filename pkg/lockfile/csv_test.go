@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/models"
 )
 
 func TestFromCSVRows(t *testing.T) {
@@ -54,26 +55,26 @@ func TestFromCSVRows(t *testing.T) {
 					{
 						Name:      "@typescript-eslint/types",
 						Version:   "5.13.0",
-						Ecosystem: lockfile.PnpmEcosystem,
-						CompareAs: lockfile.PnpmEcosystem,
+						Ecosystem: models.EcosystemNPM,
+						CompareAs: models.EcosystemNPM,
 					},
 					{
 						Name:      "addr2line",
 						Version:   "0.15.2",
-						Ecosystem: lockfile.CargoEcosystem,
-						CompareAs: lockfile.CargoEcosystem,
+						Ecosystem: models.EcosystemCratesIO,
+						CompareAs: models.EcosystemCratesIO,
 					},
 					{
 						Name:      "sentry/sdk",
 						Version:   "2.0.4",
-						Ecosystem: lockfile.ComposerEcosystem,
-						CompareAs: lockfile.ComposerEcosystem,
+						Ecosystem: models.EcosystemPackagist,
+						CompareAs: models.EcosystemPackagist,
 					},
 					{
 						Name:      "wasi",
 						Version:   "0.10.2+wasi-snapshot-preview1",
-						Ecosystem: lockfile.CargoEcosystem,
-						CompareAs: lockfile.CargoEcosystem,
+						Ecosystem: models.EcosystemCratesIO,
+						CompareAs: models.EcosystemCratesIO,
 					},
 				},
 			},
@@ -95,8 +96,8 @@ func TestFromCSVRows(t *testing.T) {
 					{
 						Name:      "@typescript-eslint/types",
 						Version:   "5.13.0",
-						Ecosystem: lockfile.PnpmEcosystem,
-						CompareAs: lockfile.PnpmEcosystem,
+						Ecosystem: models.EcosystemNPM,
+						CompareAs: models.EcosystemNPM,
 					},
 					{
 						Name:      "Yarp.ReverseProxy",
@@ -298,32 +299,32 @@ func TestFromCSVFile(t *testing.T) {
 					{
 						Name:      "@typescript-eslint/types",
 						Version:   "4.9.0",
-						Ecosystem: lockfile.PnpmEcosystem,
-						CompareAs: lockfile.PnpmEcosystem,
+						Ecosystem: models.EcosystemNPM,
+						CompareAs: models.EcosystemNPM,
 					},
 					{
 						Name:      "@typescript-eslint/types",
 						Version:   "5.13.0",
-						Ecosystem: lockfile.PnpmEcosystem,
-						CompareAs: lockfile.PnpmEcosystem,
+						Ecosystem: models.EcosystemNPM,
+						CompareAs: models.EcosystemNPM,
 					},
 					{
 						Name:      "addr2line",
 						Version:   "0.15.2",
-						Ecosystem: lockfile.CargoEcosystem,
-						CompareAs: lockfile.CargoEcosystem,
+						Ecosystem: models.EcosystemCratesIO,
+						CompareAs: models.EcosystemCratesIO,
 					},
 					{
 						Name:      "sentry/sdk",
 						Version:   "2.0.4",
-						Ecosystem: lockfile.ComposerEcosystem,
-						CompareAs: lockfile.ComposerEcosystem,
+						Ecosystem: models.EcosystemPackagist,
+						CompareAs: models.EcosystemPackagist,
 					},
 					{
 						Name:      "wasi",
 						Version:   "0.10.2+wasi-snapshot-preview1",
-						Ecosystem: lockfile.CargoEcosystem,
-						CompareAs: lockfile.CargoEcosystem,
+						Ecosystem: models.EcosystemCratesIO,
+						CompareAs: models.EcosystemCratesIO,
 					},
 				},
 			},
@@ -341,26 +342,26 @@ func TestFromCSVFile(t *testing.T) {
 					{
 						Name:      "@typescript-eslint/types",
 						Version:   "5.13.0",
-						Ecosystem: lockfile.PnpmEcosystem,
-						CompareAs: lockfile.PnpmEcosystem,
+						Ecosystem: models.EcosystemNPM,
+						CompareAs: models.EcosystemNPM,
 					},
 					{
 						Name:      "addr2line",
 						Version:   "0.15.2",
-						Ecosystem: lockfile.CargoEcosystem,
-						CompareAs: lockfile.CargoEcosystem,
+						Ecosystem: models.EcosystemCratesIO,
+						CompareAs: models.EcosystemCratesIO,
 					},
 					{
 						Name:      "sentry/sdk",
 						Version:   "2.0.4",
-						Ecosystem: lockfile.ComposerEcosystem,
-						CompareAs: lockfile.ComposerEcosystem,
+						Ecosystem: models.EcosystemPackagist,
+						CompareAs: models.EcosystemPackagist,
 					},
 					{
 						Name:      "wasi",
 						Version:   "0.10.2+wasi-snapshot-preview1",
-						Ecosystem: lockfile.CargoEcosystem,
-						CompareAs: lockfile.CargoEcosystem,
+						Ecosystem: models.EcosystemCratesIO,
+						CompareAs: models.EcosystemCratesIO,
 					},
 				},
 			},
@@ -378,7 +379,7 @@ func TestFromCSVFile(t *testing.T) {
 					{
 						Name:      "@typescript-eslint/types",
 						Version:   "5.13.0",
-						Ecosystem: lockfile.PnpmEcosystem,
+						Ecosystem: models.EcosystemNPM,
 						CompareAs: "NuGet",
 					},
 				},
@@ -397,8 +398,8 @@ func TestFromCSVFile(t *testing.T) {
 					{
 						Name:      "@typescript-eslint/types",
 						Version:   "5.13.0",
-						Ecosystem: lockfile.PnpmEcosystem,
-						CompareAs: lockfile.PnpmEcosystem,
+						Ecosystem: models.EcosystemNPM,
+						CompareAs: models.EcosystemNPM,
 					},
 					{
 						Name:      "Yarp.ReverseProxy",
@@ -422,8 +423,8 @@ func TestFromCSVFile(t *testing.T) {
 					{
 						Name:      "@typescript-eslint/types",
 						Version:   "5.13.0",
-						Ecosystem: lockfile.PnpmEcosystem,
-						CompareAs: lockfile.PnpmEcosystem,
+						Ecosystem: models.EcosystemNPM,
+						CompareAs: models.EcosystemNPM,
 					},
 					{
 						Name:      "Package",
@@ -434,8 +435,8 @@ func TestFromCSVFile(t *testing.T) {
 					{
 						Name:      "sentry/sdk",
 						Version:   "2.0.4",
-						Ecosystem: lockfile.ComposerEcosystem,
-						CompareAs: lockfile.ComposerEcosystem,
+						Ecosystem: models.EcosystemPackagist,
+						CompareAs: models.EcosystemPackagist,
 					},
 				},
 			},
@@ -453,14 +454,14 @@ func TestFromCSVFile(t *testing.T) {
 					{
 						Name:      "@typescript-eslint/types",
 						Version:   "4.9.0",
-						Ecosystem: lockfile.PnpmEcosystem,
-						CompareAs: lockfile.PnpmEcosystem,
+						Ecosystem: models.EcosystemNPM,
+						CompareAs: models.EcosystemNPM,
 					},
 					{
 						Name:      "addr2line",
 						Version:   "0.15.2",
-						Ecosystem: lockfile.CargoEcosystem,
-						CompareAs: lockfile.CargoEcosystem,
+						Ecosystem: models.EcosystemCratesIO,
+						CompareAs: models.EcosystemCratesIO,
 					},
 					{
 						Name:      "babel-preset-php",

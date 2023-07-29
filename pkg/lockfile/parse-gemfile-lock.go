@@ -2,14 +2,13 @@ package lockfile
 
 import (
 	"fmt"
+	"github.com/g-rath/osv-detector/pkg/models"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
 )
-
-const BundlerEcosystem Ecosystem = "RubyGems"
 
 const lockfileSectionBUNDLED = "BUNDLED WITH"
 const lockfileSectionDEPENDENCIES = "DEPENDENCIES"
@@ -49,8 +48,8 @@ func (parser *gemfileLockfileParser) addDependency(name string, version string) 
 	parser.dependencies = append(parser.dependencies, PackageDetails{
 		Name:      name,
 		Version:   version,
-		Ecosystem: BundlerEcosystem,
-		CompareAs: BundlerEcosystem,
+		Ecosystem: models.EcosystemRubyGems,
+		CompareAs: models.EcosystemRubyGems,
 		Commit:    parser.currentGemCommit,
 	})
 }

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/models"
 )
 
 func numberOfLockfileParsers(t *testing.T) int {
@@ -46,7 +47,7 @@ func TestKnownEcosystems(t *testing.T) {
 		t.Errorf("Expected to know about %d ecosystems, but knew about %d", expectedCount, knownCount)
 	}
 
-	uniq := make(map[lockfile.Ecosystem]int)
+	uniq := make(map[models.Ecosystem]int)
 
 	for _, ecosystem := range ecosystems {
 		uniq[ecosystem]++

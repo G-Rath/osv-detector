@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/g-rath/osv-detector/internal"
+	"github.com/g-rath/osv-detector/pkg/models"
 )
 
 type APIDB struct {
@@ -22,8 +22,8 @@ type apiQuery struct {
 	Commit  string `json:"commit,omitempty"`
 	Version string `json:"version,omitempty"`
 	Package struct {
-		Name      string             `json:"name"`
-		Ecosystem internal.Ecosystem `json:"ecosystem"`
+		Name      string           `json:"name"`
+		Ecosystem models.Ecosystem `json:"ecosystem"`
 	} `json:"package,omitempty"`
 }
 

@@ -3,13 +3,12 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
+	"github.com/g-rath/osv-detector/pkg/models"
 	"os"
 	"strings"
 
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
 )
-
-const MixEcosystem Ecosystem = "Hex"
 
 func ParseMixLock(pathToLockfile string) ([]PackageDetails, error) {
 	file, err := os.Open(pathToLockfile)
@@ -64,8 +63,8 @@ func ParseMixLock(pathToLockfile string) ([]PackageDetails, error) {
 		packages = append(packages, PackageDetails{
 			Name:      name,
 			Version:   version,
-			Ecosystem: MixEcosystem,
-			CompareAs: MixEcosystem,
+			Ecosystem: models.EcosystemHex,
+			CompareAs: models.EcosystemHex,
 			Commit:    commit,
 		})
 	}

@@ -3,6 +3,7 @@ package lockfile
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/g-rath/osv-detector/pkg/models"
 	"os"
 	"path"
 	"strings"
@@ -26,8 +27,6 @@ type NpmLockfile struct {
 	// npm v2+ lockfiles use "packages"
 	Packages map[string]NpmLockPackage `json:"packages,omitempty"`
 }
-
-const NpmEcosystem Ecosystem = "npm"
 
 func pkgDetailsMapToSlice(m map[string]PackageDetails) []PackageDetails {
 	details := make([]PackageDetails, 0, len(m))
@@ -84,8 +83,8 @@ func parseNpmLockDependencies(dependencies map[string]NpmLockDependency) map[str
 		details[name+"@"+version] = PackageDetails{
 			Name:      name,
 			Version:   finalVersion,
-			Ecosystem: NpmEcosystem,
-			CompareAs: NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    commit,
 		}
 	}
@@ -125,8 +124,8 @@ func parseNpmLockPackages(packages map[string]NpmLockPackage) map[string]Package
 		details[finalName+"@"+finalVersion] = PackageDetails{
 			Name:      finalName,
 			Version:   detail.Version,
-			Ecosystem: NpmEcosystem,
-			CompareAs: NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    commit,
 		}
 	}

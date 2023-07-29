@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/models"
 )
 
 func TestParsePipenvLock_FileDoesNotExist(t *testing.T) {
@@ -49,8 +50,8 @@ func TestParsePipenvLock_OnePackage(t *testing.T) {
 		{
 			Name:      "markupsafe",
 			Version:   "2.1.1",
-			Ecosystem: lockfile.PipenvEcosystem,
-			CompareAs: lockfile.PipenvEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		},
 	})
 }
@@ -68,8 +69,8 @@ func TestParsePipenvLock_OnePackageDev(t *testing.T) {
 		{
 			Name:      "markupsafe",
 			Version:   "2.1.1",
-			Ecosystem: lockfile.PipenvEcosystem,
-			CompareAs: lockfile.PipenvEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		},
 	})
 }
@@ -87,14 +88,14 @@ func TestParsePipenvLock_TwoPackages(t *testing.T) {
 		{
 			Name:      "itsdangerous",
 			Version:   "2.1.2",
-			Ecosystem: lockfile.PipenvEcosystem,
-			CompareAs: lockfile.PipenvEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		},
 		{
 			Name:      "markupsafe",
 			Version:   "2.1.1",
-			Ecosystem: lockfile.PipenvEcosystem,
-			CompareAs: lockfile.PipenvEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		},
 	})
 }
@@ -112,14 +113,14 @@ func TestParsePipenvLock_TwoPackagesAlt(t *testing.T) {
 		{
 			Name:      "itsdangerous",
 			Version:   "2.1.2",
-			Ecosystem: lockfile.PipenvEcosystem,
-			CompareAs: lockfile.PipenvEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		},
 		{
 			Name:      "markupsafe",
 			Version:   "2.1.1",
-			Ecosystem: lockfile.PipenvEcosystem,
-			CompareAs: lockfile.PipenvEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		},
 	})
 }
@@ -137,26 +138,26 @@ func TestParsePipenvLock_MultiplePackages(t *testing.T) {
 		{
 			Name:      "itsdangerous",
 			Version:   "2.1.2",
-			Ecosystem: lockfile.PipenvEcosystem,
-			CompareAs: lockfile.PipenvEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		},
 		{
 			Name:      "pluggy",
 			Version:   "1.0.1",
-			Ecosystem: lockfile.PipenvEcosystem,
-			CompareAs: lockfile.PipenvEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		},
 		{
 			Name:      "pluggy",
 			Version:   "1.0.0",
-			Ecosystem: lockfile.PipenvEcosystem,
-			CompareAs: lockfile.PipenvEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		},
 		{
 			Name:      "markupsafe",
 			Version:   "2.1.1",
-			Ecosystem: lockfile.PipenvEcosystem,
-			CompareAs: lockfile.PipenvEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		},
 	})
 }

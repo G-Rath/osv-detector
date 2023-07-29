@@ -6,7 +6,7 @@ import (
 
 	"github.com/g-rath/osv-detector/internal"
 	"github.com/g-rath/osv-detector/pkg/database"
-	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/models"
 )
 
 func expectOSVDescription(t *testing.T, expected string, osv database.OSV) {
@@ -23,8 +23,8 @@ func expectIsAffected(t *testing.T, osv database.OSV, version string, expectAffe
 	pkg := internal.PackageDetails{
 		Name:      "my-package",
 		Version:   version,
-		Ecosystem: lockfile.NpmEcosystem,
-		CompareAs: lockfile.NpmEcosystem,
+		Ecosystem: models.EcosystemNPM,
+		CompareAs: models.EcosystemNPM,
 	}
 
 	if osv.IsAffected(pkg) != expectAffected {
@@ -77,7 +77,7 @@ func TestPackage_NormalizedName_PipEcosystem(t *testing.T) {
 	}
 
 	for _, strings := range x {
-		name := database.Package{Name: strings[0], Ecosystem: lockfile.PipEcosystem}.NormalizedName()
+		name := database.Package{Name: strings[0], Ecosystem: models.EcosystemPyPI}.NormalizedName()
 
 		if name != strings[1] {
 			t.Errorf(
@@ -101,7 +101,7 @@ func TestPackage_NormalizedName_NotPipEcosystem(t *testing.T) {
 	}
 
 	for _, na := range x {
-		name := database.Package{Name: na, Ecosystem: lockfile.NpmEcosystem}.NormalizedName()
+		name := database.Package{Name: na, Ecosystem: models.EcosystemNPM}.NormalizedName()
 
 		if name != na {
 			t.Errorf(
@@ -118,7 +118,7 @@ func TestOSV_AffectsEcosystem(t *testing.T) {
 
 	type AffectsTest struct {
 		Affected  []database.Affected
-		Ecosystem database.Ecosystem
+		Ecosystem models.Ecosystem
 		Expected  bool
 	}
 
@@ -193,7 +193,7 @@ func TestOSV_IsAffected_AffectsWithEcosystem_DifferentEcosystem(t *testing.T) {
 
 	osv := buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.PipEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemPyPI, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildEcosystemAffectsRange(database.RangeEvent{Introduced: "0"}),
 			},
@@ -213,7 +213,7 @@ func TestOSV_IsAffected_AffectsWithEcosystem_SingleAffected(t *testing.T) {
 	// "Introduced: 0" means everything is affected
 	osv = buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildEcosystemAffectsRange(database.RangeEvent{Introduced: "0"}),
 			},
@@ -230,7 +230,7 @@ func TestOSV_IsAffected_AffectsWithEcosystem_SingleAffected(t *testing.T) {
 	// "Fixed: 1" means all versions after this are not vulnerable
 	osv = buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildEcosystemAffectsRange(
 					database.RangeEvent{Introduced: "0"},
@@ -254,7 +254,7 @@ func TestOSV_IsAffected_AffectsWithEcosystem_SingleAffected(t *testing.T) {
 	// multiple fixes and introduced
 	osv = buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildEcosystemAffectsRange(
 					database.RangeEvent{Introduced: "0"},
@@ -322,7 +322,7 @@ func TestOSV_IsAffected_AffectsWithEcosystem_SingleAffected(t *testing.T) {
 	// "LastAffected: 1" means all versions after this are not vulnerable
 	osv = buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildEcosystemAffectsRange(
 					database.RangeEvent{Introduced: "0"},
@@ -346,7 +346,7 @@ func TestOSV_IsAffected_AffectsWithEcosystem_SingleAffected(t *testing.T) {
 	// mix of fixes, last_known_affected, and introduced
 	osv = buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildEcosystemAffectsRange(
 					database.RangeEvent{Introduced: "0"},
@@ -417,7 +417,7 @@ func TestOSV_IsAffected_AffectsWithEcosystem_MultipleAffected(t *testing.T) {
 
 	osv := buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildEcosystemAffectsRange(
 					database.RangeEvent{Introduced: "0"},
@@ -426,7 +426,7 @@ func TestOSV_IsAffected_AffectsWithEcosystem_MultipleAffected(t *testing.T) {
 			},
 		},
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildEcosystemAffectsRange(
 					database.RangeEvent{Introduced: "2.1.0"},
@@ -435,7 +435,7 @@ func TestOSV_IsAffected_AffectsWithEcosystem_MultipleAffected(t *testing.T) {
 			},
 		},
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildEcosystemAffectsRange(
 					database.RangeEvent{Introduced: "3.3.0"},
@@ -566,7 +566,7 @@ func TestOSV_IsAffected_AffectsWithEcosystem_PipNamesAreNormalised(t *testing.T)
 
 	osv = buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.PipEcosystem, Name: "Pillow"},
+			Package: database.Package{Ecosystem: models.EcosystemPyPI, Name: "Pillow"},
 			Ranges: []database.AffectsRange{
 				buildEcosystemAffectsRange(
 					database.RangeEvent{Introduced: "0"},
@@ -579,8 +579,8 @@ func TestOSV_IsAffected_AffectsWithEcosystem_PipNamesAreNormalised(t *testing.T)
 	pkg = internal.PackageDetails{
 		Name:      "pillow",
 		Version:   "0.5",
-		Ecosystem: lockfile.PipEcosystem,
-		CompareAs: lockfile.PipEcosystem,
+		Ecosystem: models.EcosystemPyPI,
+		CompareAs: models.EcosystemPyPI,
 	}
 
 	if !osv.IsAffected(pkg) {
@@ -589,7 +589,7 @@ func TestOSV_IsAffected_AffectsWithEcosystem_PipNamesAreNormalised(t *testing.T)
 
 	osv = buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "Pillow"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "Pillow"},
 			Ranges: []database.AffectsRange{
 				buildEcosystemAffectsRange(
 					database.RangeEvent{Introduced: "0"},
@@ -602,8 +602,8 @@ func TestOSV_IsAffected_AffectsWithEcosystem_PipNamesAreNormalised(t *testing.T)
 	pkg = internal.PackageDetails{
 		Name:      "pillow",
 		Version:   "0.5",
-		Ecosystem: lockfile.NpmEcosystem,
-		CompareAs: lockfile.NpmEcosystem,
+		Ecosystem: models.EcosystemNPM,
+		CompareAs: models.EcosystemNPM,
 	}
 
 	if osv.IsAffected(pkg) {
@@ -616,7 +616,7 @@ func TestOSV_IsAffected_AffectsWithSemver_DifferentEcosystem(t *testing.T) {
 
 	osv := buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.PipEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemPyPI, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildSemverAffectsRange(database.RangeEvent{Introduced: "0"}),
 			},
@@ -636,7 +636,7 @@ func TestOSV_IsAffected_AffectsWithSemver_SingleAffected(t *testing.T) {
 	// "Introduced: 0" means everything is affected
 	osv = buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildSemverAffectsRange(database.RangeEvent{Introduced: "0"}),
 			},
@@ -650,7 +650,7 @@ func TestOSV_IsAffected_AffectsWithSemver_SingleAffected(t *testing.T) {
 	// "Fixed: 1" means all versions after this are not vulnerable
 	osv = buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildSemverAffectsRange(
 					database.RangeEvent{Introduced: "0"},
@@ -671,7 +671,7 @@ func TestOSV_IsAffected_AffectsWithSemver_SingleAffected(t *testing.T) {
 	// multiple fixes and introduced
 	osv = buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildSemverAffectsRange(
 					database.RangeEvent{Introduced: "0"},
@@ -739,7 +739,7 @@ func TestOSV_IsAffected_AffectsWithSemver_SingleAffected(t *testing.T) {
 	// "LastAffected: 1" means all versions after this are not vulnerable
 	osv = buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildSemverAffectsRange(
 					database.RangeEvent{Introduced: "0"},
@@ -760,7 +760,7 @@ func TestOSV_IsAffected_AffectsWithSemver_SingleAffected(t *testing.T) {
 	// mix of fixes, last_known_affected, and introduced
 	osv = buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildSemverAffectsRange(
 					database.RangeEvent{Introduced: "0"},
@@ -831,7 +831,7 @@ func TestOSV_IsAffected_AffectsWithSemver_MultipleAffected(t *testing.T) {
 
 	osv := buildOSVWithAffected(
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildSemverAffectsRange(
 					database.RangeEvent{Introduced: "0"},
@@ -840,7 +840,7 @@ func TestOSV_IsAffected_AffectsWithSemver_MultipleAffected(t *testing.T) {
 			},
 		},
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildSemverAffectsRange(
 					database.RangeEvent{Introduced: "2.1.0"},
@@ -849,7 +849,7 @@ func TestOSV_IsAffected_AffectsWithSemver_MultipleAffected(t *testing.T) {
 			},
 		},
 		database.Affected{
-			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package: database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Ranges: []database.AffectsRange{
 				buildSemverAffectsRange(
 					database.RangeEvent{Introduced: "3.3.0"},
@@ -888,7 +888,7 @@ func TestOSV_IsAffected_OnlyVersions(t *testing.T) {
 
 	osv := buildOSVWithAffected(
 		database.Affected{
-			Package:  database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Package:  database.Package{Ecosystem: models.EcosystemNPM, Name: "my-package"},
 			Versions: []string{"1.0.0"},
 		},
 	)

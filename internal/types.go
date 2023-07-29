@@ -1,11 +1,7 @@
 package internal
 
-type PackageDetails struct {
-	Name      string    `json:"name"`
-	Version   string    `json:"version"`
-	Commit    string    `json:"commit,omitempty"`
-	Ecosystem Ecosystem `json:"ecosystem,omitempty"`
-	CompareAs Ecosystem `json:"compareAs,omitempty"`
-}
+import "github.com/g-rath/osv-detector/pkg/models"
 
-type Ecosystem string
+type Ecosystem = models.Ecosystem
+
+type PackageDetails = models.PackageInfo

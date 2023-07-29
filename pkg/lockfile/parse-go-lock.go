@@ -5,10 +5,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/g-rath/osv-detector/pkg/models"
 	"golang.org/x/mod/modfile"
 )
-
-const GoEcosystem Ecosystem = "Go"
 
 func deduplicatePackages(packages map[string]PackageDetails) map[string]PackageDetails {
 	details := map[string]PackageDetails{}
@@ -39,8 +38,8 @@ func ParseGoLock(pathToLockfile string) ([]PackageDetails, error) {
 		packages[require.Mod.Path+"@"+require.Mod.Version] = PackageDetails{
 			Name:      require.Mod.Path,
 			Version:   strings.TrimPrefix(require.Mod.Version, "v"),
-			Ecosystem: GoEcosystem,
-			CompareAs: GoEcosystem,
+			Ecosystem: models.EcosystemGo,
+			CompareAs: models.EcosystemGo,
 		}
 	}
 
@@ -69,8 +68,8 @@ func ParseGoLock(pathToLockfile string) ([]PackageDetails, error) {
 			packages[replacement] = PackageDetails{
 				Name:      replace.New.Path,
 				Version:   strings.TrimPrefix(replace.New.Version, "v"),
-				Ecosystem: GoEcosystem,
-				CompareAs: GoEcosystem,
+				Ecosystem: models.EcosystemGo,
+				CompareAs: models.EcosystemGo,
 			}
 		}
 	}

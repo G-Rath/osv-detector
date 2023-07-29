@@ -3,6 +3,7 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
+	"github.com/g-rath/osv-detector/pkg/models"
 	"os"
 	"strings"
 )
@@ -23,8 +24,8 @@ func parseGradleLine(line string) (PackageDetails, error) {
 	return PackageDetails{
 		Name:      fmt.Sprintf("%s:%s", group, artifact),
 		Version:   version,
-		Ecosystem: MavenEcosystem,
-		CompareAs: MavenEcosystem,
+		Ecosystem: models.EcosystemMaven,
+		CompareAs: models.EcosystemMaven,
 	}, nil
 }
 

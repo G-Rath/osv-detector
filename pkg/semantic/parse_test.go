@@ -4,14 +4,31 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/models"
 	"github.com/g-rath/osv-detector/pkg/semantic"
 )
+
+func supportedEcosystems(t *testing.T) []models.Ecosystem {
+	t.Helper()
+
+	return []models.Ecosystem{
+		models.EcosystemNPM,
+		models.EcosystemNuGet,
+		models.EcosystemCratesIO,
+		models.EcosystemRubyGems,
+		models.EcosystemPackagist,
+		models.EcosystemGo,
+		models.EcosystemHex,
+		models.EcosystemMaven,
+		models.EcosystemPyPI,
+		models.EcosystemPub,
+	}
+}
 
 func TestParse(t *testing.T) {
 	t.Parallel()
 
-	ecosystems := lockfile.KnownEcosystems()
+	ecosystems := supportedEcosystems(t)
 
 	for _, ecosystem := range ecosystems {
 		_, err := semantic.Parse("", ecosystem)
@@ -31,7 +48,7 @@ func TestMustParse(t *testing.T) {
 		}
 	}()
 
-	ecosystems := lockfile.KnownEcosystems()
+	ecosystems := supportedEcosystems(t)
 
 	for _, ecosystem := range ecosystems {
 		semantic.MustParse("", ecosystem)

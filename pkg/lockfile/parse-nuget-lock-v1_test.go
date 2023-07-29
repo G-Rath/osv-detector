@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/models"
 )
 
 func TestParseNuGetLock_v1_FileDoesNotExist(t *testing.T) {
@@ -49,8 +50,8 @@ func TestParseNuGetLock_v1_OneFramework_OnePackage(t *testing.T) {
 		{
 			Name:      "Test.Core",
 			Version:   "6.0.5",
-			Ecosystem: lockfile.NuGetEcosystem,
-			CompareAs: lockfile.NuGetEcosystem,
+			Ecosystem: models.EcosystemNuGet,
+			CompareAs: models.EcosystemNuGet,
 		},
 	})
 }
@@ -68,14 +69,14 @@ func TestParseNuGetLock_v1_OneFramework_TwoPackages(t *testing.T) {
 		{
 			Name:      "Test.Core",
 			Version:   "6.0.5",
-			Ecosystem: lockfile.NuGetEcosystem,
-			CompareAs: lockfile.NuGetEcosystem,
+			Ecosystem: models.EcosystemNuGet,
+			CompareAs: models.EcosystemNuGet,
 		},
 		{
 			Name:      "Test.System",
 			Version:   "0.13.0-beta4",
-			Ecosystem: lockfile.NuGetEcosystem,
-			CompareAs: lockfile.NuGetEcosystem,
+			Ecosystem: models.EcosystemNuGet,
+			CompareAs: models.EcosystemNuGet,
 		},
 	})
 }
@@ -93,20 +94,20 @@ func TestParseNuGetLock_v1_TwoFrameworks_MixedPackages(t *testing.T) {
 		{
 			Name:      "Test.Core",
 			Version:   "6.0.5",
-			Ecosystem: lockfile.NuGetEcosystem,
-			CompareAs: lockfile.NuGetEcosystem,
+			Ecosystem: models.EcosystemNuGet,
+			CompareAs: models.EcosystemNuGet,
 		},
 		{
 			Name:      "Test.System",
 			Version:   "0.13.0-beta4",
-			Ecosystem: lockfile.NuGetEcosystem,
-			CompareAs: lockfile.NuGetEcosystem,
+			Ecosystem: models.EcosystemNuGet,
+			CompareAs: models.EcosystemNuGet,
 		},
 		{
 			Name:      "Test.System",
 			Version:   "2.15.0",
-			Ecosystem: lockfile.NuGetEcosystem,
-			CompareAs: lockfile.NuGetEcosystem,
+			Ecosystem: models.EcosystemNuGet,
+			CompareAs: models.EcosystemNuGet,
 		},
 	})
 }
@@ -124,14 +125,14 @@ func TestParseNuGetLock_v1_TwoFrameworks_DifferentPackages(t *testing.T) {
 		{
 			Name:      "Test.Core",
 			Version:   "6.0.5",
-			Ecosystem: lockfile.NuGetEcosystem,
-			CompareAs: lockfile.NuGetEcosystem,
+			Ecosystem: models.EcosystemNuGet,
+			CompareAs: models.EcosystemNuGet,
 		},
 		{
 			Name:      "Test.System",
 			Version:   "0.13.0-beta4",
-			Ecosystem: lockfile.NuGetEcosystem,
-			CompareAs: lockfile.NuGetEcosystem,
+			Ecosystem: models.EcosystemNuGet,
+			CompareAs: models.EcosystemNuGet,
 		},
 	})
 }
@@ -149,8 +150,8 @@ func TestParseNuGetLock_v1_TwoFrameworks_DuplicatePackages(t *testing.T) {
 		{
 			Name:      "Test.Core",
 			Version:   "6.0.5",
-			Ecosystem: lockfile.NuGetEcosystem,
-			CompareAs: lockfile.NuGetEcosystem,
+			Ecosystem: models.EcosystemNuGet,
+			CompareAs: models.EcosystemNuGet,
 		},
 	})
 }

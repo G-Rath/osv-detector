@@ -8,6 +8,7 @@ import (
 	"github.com/g-rath/osv-detector/internal/reporter"
 	"github.com/g-rath/osv-detector/pkg/database"
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/models"
 )
 
 func TestReport_HasKnownVulnerabilities(t *testing.T) {
@@ -16,8 +17,8 @@ func TestReport_HasKnownVulnerabilities(t *testing.T) {
 	packageDetails := internal.PackageDetails{
 		Name:      "addr2line",
 		Version:   "0.15.2",
-		Ecosystem: lockfile.CargoEcosystem,
-		CompareAs: lockfile.CargoEcosystem,
+		Ecosystem: models.EcosystemCratesIO,
+		CompareAs: models.EcosystemCratesIO,
 	}
 	type fields struct {
 		Lockfile lockfile.Lockfile
@@ -105,8 +106,8 @@ func TestReport_HasIgnoredVulnerabilities(t *testing.T) {
 	packageDetails := internal.PackageDetails{
 		Name:      "addr2line",
 		Version:   "0.15.2",
-		Ecosystem: lockfile.CargoEcosystem,
-		CompareAs: lockfile.CargoEcosystem,
+		Ecosystem: models.EcosystemCratesIO,
+		CompareAs: models.EcosystemCratesIO,
 	}
 	type fields struct {
 		Lockfile lockfile.Lockfile
@@ -267,8 +268,8 @@ func TestReport_String_OneVulnerability(t *testing.T) {
 				PackageDetails: internal.PackageDetails{
 					Name:      "my-package",
 					Version:   "1.2.3",
-					Ecosystem: lockfile.BundlerEcosystem,
-					CompareAs: lockfile.BundlerEcosystem,
+					Ecosystem: models.EcosystemRubyGems,
+					CompareAs: models.EcosystemRubyGems,
 				},
 				Vulnerabilities: []database.OSV{
 					{
@@ -305,8 +306,8 @@ func TestReport_String_MultipleVulnerabilities(t *testing.T) {
 				PackageDetails: internal.PackageDetails{
 					Name:      "my-package",
 					Version:   "1.2.3",
-					Ecosystem: lockfile.BundlerEcosystem,
-					CompareAs: lockfile.BundlerEcosystem,
+					Ecosystem: models.EcosystemRubyGems,
+					CompareAs: models.EcosystemRubyGems,
 				},
 				Vulnerabilities: []database.OSV{
 					{
@@ -319,8 +320,8 @@ func TestReport_String_MultipleVulnerabilities(t *testing.T) {
 				PackageDetails: internal.PackageDetails{
 					Name:      "middle-package",
 					Version:   "1.2.0",
-					Ecosystem: lockfile.BundlerEcosystem,
-					CompareAs: lockfile.BundlerEcosystem,
+					Ecosystem: models.EcosystemRubyGems,
+					CompareAs: models.EcosystemRubyGems,
 				},
 				Vulnerabilities: []database.OSV{},
 			},
@@ -328,8 +329,8 @@ func TestReport_String_MultipleVulnerabilities(t *testing.T) {
 				PackageDetails: internal.PackageDetails{
 					Name:      "their-package",
 					Version:   "4.5.6",
-					Ecosystem: lockfile.BundlerEcosystem,
-					CompareAs: lockfile.BundlerEcosystem,
+					Ecosystem: models.EcosystemRubyGems,
+					CompareAs: models.EcosystemRubyGems,
 				},
 				Vulnerabilities: []database.OSV{
 					{
@@ -358,8 +359,8 @@ func TestReport_String_AllIgnoredVulnerabilities(t *testing.T) {
 				PackageDetails: internal.PackageDetails{
 					Name:      "my-package",
 					Version:   "1.2.3",
-					Ecosystem: lockfile.BundlerEcosystem,
-					CompareAs: lockfile.BundlerEcosystem,
+					Ecosystem: models.EcosystemRubyGems,
+					CompareAs: models.EcosystemRubyGems,
 				},
 				Ignored: []database.OSV{
 					{
@@ -372,8 +373,8 @@ func TestReport_String_AllIgnoredVulnerabilities(t *testing.T) {
 				PackageDetails: internal.PackageDetails{
 					Name:      "their-package",
 					Version:   "4.5.6",
-					Ecosystem: lockfile.BundlerEcosystem,
-					CompareAs: lockfile.BundlerEcosystem,
+					Ecosystem: models.EcosystemRubyGems,
+					CompareAs: models.EcosystemRubyGems,
 				},
 				Ignored: []database.OSV{
 					{
@@ -408,8 +409,8 @@ func TestReport_String_SomeIgnoredVulnerability(t *testing.T) {
 				PackageDetails: internal.PackageDetails{
 					Name:      "my-package",
 					Version:   "1.2.3",
-					Ecosystem: lockfile.BundlerEcosystem,
-					CompareAs: lockfile.BundlerEcosystem,
+					Ecosystem: models.EcosystemRubyGems,
+					CompareAs: models.EcosystemRubyGems,
 				},
 				Vulnerabilities: []database.OSV{
 					{
@@ -422,8 +423,8 @@ func TestReport_String_SomeIgnoredVulnerability(t *testing.T) {
 				PackageDetails: internal.PackageDetails{
 					Name:      "their-package",
 					Version:   "4.5.6",
-					Ecosystem: lockfile.BundlerEcosystem,
-					CompareAs: lockfile.BundlerEcosystem,
+					Ecosystem: models.EcosystemRubyGems,
+					CompareAs: models.EcosystemRubyGems,
 				},
 				Ignored: []database.OSV{
 					{

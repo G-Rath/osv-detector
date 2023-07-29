@@ -1,7 +1,9 @@
 package lockfile
 
-import "github.com/g-rath/osv-detector/internal"
+import (
+	"github.com/g-rath/osv-detector/pkg/models"
+)
 
-type Ecosystem = internal.Ecosystem
-type PackageDetails = internal.PackageDetails
+type Ecosystem = models.Ecosystem
+type PackageDetails = models.PackageInfo
 type PackageDetailsParser = func(pathToLockfile string) ([]PackageDetails, error)

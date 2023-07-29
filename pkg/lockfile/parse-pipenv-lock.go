@@ -3,6 +3,7 @@ package lockfile
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/g-rath/osv-detector/pkg/models"
 	"os"
 )
 
@@ -14,8 +15,6 @@ type PipenvLock struct {
 	Packages    map[string]PipenvPackage `json:"default"`
 	PackagesDev map[string]PipenvPackage `json:"develop"`
 }
-
-const PipenvEcosystem = PipEcosystem
 
 func ParsePipenvLock(pathToLockfile string) ([]PackageDetails, error) {
 	var parsedLockfile *PipenvLock
@@ -44,8 +43,8 @@ func ParsePipenvLock(pathToLockfile string) ([]PackageDetails, error) {
 		packages[name+"@"+version] = PackageDetails{
 			Name:      name,
 			Version:   version,
-			Ecosystem: PipenvEcosystem,
-			CompareAs: PipenvEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		}
 	}
 
@@ -59,8 +58,8 @@ func ParsePipenvLock(pathToLockfile string) ([]PackageDetails, error) {
 		packages[name+"@"+version] = PackageDetails{
 			Name:      name,
 			Version:   version,
-			Ecosystem: PipenvEcosystem,
-			CompareAs: PipenvEcosystem,
+			Ecosystem: models.EcosystemPyPI,
+			CompareAs: models.EcosystemPyPI,
 		}
 	}
 

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
+	"github.com/g-rath/osv-detector/pkg/models"
 	"gopkg.in/yaml.v2"
 )
 
@@ -51,8 +52,6 @@ func (l *PnpmLockfile) UnmarshalYAML(unmarshal func(any) error) error {
 
 	return nil
 }
-
-const PnpmEcosystem = NpmEcosystem
 
 func startsWithNumber(str string) bool {
 	matcher := cachedregexp.MustCompile(`^\d`)
@@ -151,8 +150,8 @@ func parsePnpmLock(lockfile PnpmLockfile) []PackageDetails {
 		packages = append(packages, PackageDetails{
 			Name:      name,
 			Version:   version,
-			Ecosystem: PnpmEcosystem,
-			CompareAs: PnpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    commit,
 		})
 	}

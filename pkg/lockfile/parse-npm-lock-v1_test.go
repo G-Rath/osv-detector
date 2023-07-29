@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/models"
 )
 
 func TestParseNpmLock_v1_FileDoesNotExist(t *testing.T) {
@@ -49,8 +50,8 @@ func TestParseNpmLock_v1_OnePackage(t *testing.T) {
 		{
 			Name:      "wrappy",
 			Version:   "1.0.2",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 		},
 	})
 }
@@ -68,8 +69,8 @@ func TestParseNpmLock_v1_OnePackageDev(t *testing.T) {
 		{
 			Name:      "wrappy",
 			Version:   "1.0.2",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 		},
 	})
 }
@@ -87,14 +88,14 @@ func TestParseNpmLock_v1_TwoPackages(t *testing.T) {
 		{
 			Name:      "wrappy",
 			Version:   "1.0.2",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 		},
 		{
 			Name:      "supports-color",
 			Version:   "5.5.0",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 		},
 	})
 }
@@ -112,14 +113,14 @@ func TestParseNpmLock_v1_ScopedPackages(t *testing.T) {
 		{
 			Name:      "wrappy",
 			Version:   "1.0.2",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 		},
 		{
 			Name:      "@babel/code-frame",
 			Version:   "7.0.0",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 		},
 	})
 }
@@ -137,32 +138,32 @@ func TestParseNpmLock_v1_NestedDependencies(t *testing.T) {
 		{
 			Name:      "postcss",
 			Version:   "6.0.23",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 		},
 		{
 			Name:      "postcss",
 			Version:   "7.0.16",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 		},
 		{
 			Name:      "postcss-calc",
 			Version:   "7.0.1",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 		},
 		{
 			Name:      "supports-color",
 			Version:   "6.1.0",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 		},
 		{
 			Name:      "supports-color",
 			Version:   "5.5.0",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 		},
 	})
 }
@@ -184,22 +185,22 @@ func TestParseNpmLock_v1_NestedDependenciesDup(t *testing.T) {
 	expectPackage(t, packages, lockfile.PackageDetails{
 		Name:      "supports-color",
 		Version:   "6.1.0",
-		Ecosystem: lockfile.NpmEcosystem,
-		CompareAs: lockfile.NpmEcosystem,
+		Ecosystem: models.EcosystemNPM,
+		CompareAs: models.EcosystemNPM,
 	})
 
 	expectPackage(t, packages, lockfile.PackageDetails{
 		Name:      "supports-color",
 		Version:   "5.5.0",
-		Ecosystem: lockfile.NpmEcosystem,
-		CompareAs: lockfile.NpmEcosystem,
+		Ecosystem: models.EcosystemNPM,
+		CompareAs: models.EcosystemNPM,
 	})
 
 	expectPackage(t, packages, lockfile.PackageDetails{
 		Name:      "supports-color",
 		Version:   "2.0.0",
-		Ecosystem: lockfile.NpmEcosystem,
-		CompareAs: lockfile.NpmEcosystem,
+		Ecosystem: models.EcosystemNPM,
+		CompareAs: models.EcosystemNPM,
 	})
 }
 
@@ -216,106 +217,106 @@ func TestParseNpmLock_v1_Commits(t *testing.T) {
 		{
 			Name:      "@segment/analytics.js-integration-facebook-pixel",
 			Version:   "",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "3b1bb80b302c2e552685dc8a029797ec832ea7c9",
 		},
 		{
 			Name:      "ansi-styles",
 			Version:   "1.0.0",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "",
 		},
 		{
 			Name:      "babel-preset-php",
 			Version:   "",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "c5a7ba5e0ad98b8db1cb8ce105403dd4b768cced",
 		},
 		{
 			Name:      "is-number-1",
 			Version:   "",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "af885e2e890b9ef0875edd2b117305119ee5bdc5",
 		},
 		{
 			Name:      "is-number-1",
 			Version:   "",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "be5935f8d2595bcd97b05718ef1eeae08d812e10",
 		},
 		{
 			Name:      "is-number-2",
 			Version:   "",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "d5ac0584ee9ae7bd9288220a39780f155b9ad4c8",
 		},
 		{
 			Name:      "is-number-2",
 			Version:   "",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "82dcc8e914dabd9305ab9ae580709a7825e824f5",
 		},
 		{
 			Name:      "is-number-3",
 			Version:   "",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "d5ac0584ee9ae7bd9288220a39780f155b9ad4c8",
 		},
 		{
 			Name:      "is-number-3",
 			Version:   "",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "82ae8802978da40d7f1be5ad5943c9e550ab2c89",
 		},
 		{
 			Name:      "is-number-4",
 			Version:   "",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "af885e2e890b9ef0875edd2b117305119ee5bdc5",
 		},
 		{
 			Name:      "is-number-5",
 			Version:   "",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "af885e2e890b9ef0875edd2b117305119ee5bdc5",
 		},
 		{
 			Name:      "is-number-6",
 			Version:   "",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "af885e2e890b9ef0875edd2b117305119ee5bdc5",
 		},
 		{
 			Name:      "postcss-calc",
 			Version:   "7.0.1",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "",
 		},
 		{
 			Name:      "raven-js",
 			Version:   "",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "c2b377e7a254264fd4a1fe328e4e3cfc9e245570",
 		},
 		{
 			Name:      "slick-carousel",
 			Version:   "",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "280b560161b751ba226d50c7db1e0a14a78c2de0",
 		},
 	})
@@ -334,15 +335,15 @@ func TestParseNpmLock_v1_Files(t *testing.T) {
 		{
 			Name:      "lodash",
 			Version:   "1.3.1",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "",
 		},
 		{
 			Name:      "other_package",
 			Version:   "",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: models.EcosystemNPM,
+			CompareAs: models.EcosystemNPM,
 			Commit:    "",
 		},
 	})

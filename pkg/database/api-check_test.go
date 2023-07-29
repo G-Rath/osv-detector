@@ -16,7 +16,7 @@ import (
 type objectsWithIDs = []database.ObjectWithID
 type apiPackage struct {
 	Name      string             `json:"name"`
-	Ecosystem internal.Ecosystem `json:"ecosystem"`
+	Ecosystem models.Ecosystem `json:"ecosystem"`
 }
 type apiQuery struct {
 	Commit  string     `json:"commit,omitempty"`
@@ -143,7 +143,7 @@ func TestAPIDB_Check_NotOK(t *testing.T) {
 		expectRequestPayload(t, r, []apiQuery{
 			{
 				Version: "1.0.0",
-				Package: apiPackage{Name: "my-package", Ecosystem: lockfile.NpmEcosystem},
+				Package: apiPackage{Name: "my-package", Ecosystem: models.EcosystemNPM},
 			},
 		})
 
@@ -181,7 +181,7 @@ func TestAPIDB_Check_InvalidBody(t *testing.T) {
 		expectRequestPayload(t, r, []apiQuery{
 			{
 				Version: "1.0.0",
-				Package: apiPackage{Name: "my-package", Ecosystem: lockfile.NpmEcosystem},
+				Package: apiPackage{Name: "my-package", Ecosystem: models.EcosystemNPM},
 			},
 		})
 
@@ -219,11 +219,11 @@ func TestAPIDB_Check_UnbalancedResponse(t *testing.T) {
 		expectRequestPayload(t, r, []apiQuery{
 			{
 				Version: "1.0.0",
-				Package: apiPackage{Name: "my-package", Ecosystem: lockfile.NpmEcosystem},
+				Package: apiPackage{Name: "my-package", Ecosystem: models.EcosystemNPM},
 			},
 			{
 				Version: "1.2.0",
-				Package: apiPackage{Name: "my-package", Ecosystem: lockfile.NpmEcosystem},
+				Package: apiPackage{Name: "my-package", Ecosystem: models.EcosystemNPM},
 			}},
 		)
 
@@ -264,7 +264,7 @@ func TestAPIDB_Check_FetchSuccessful(t *testing.T) {
 		expectRequestPayload(t, r, []apiQuery{
 			{
 				Version: "1.0.0",
-				Package: apiPackage{Name: "my-package", Ecosystem: lockfile.NpmEcosystem},
+				Package: apiPackage{Name: "my-package", Ecosystem: models.EcosystemNPM},
 			},
 		})
 
@@ -320,7 +320,7 @@ func TestAPIDB_Check_FetchFails(t *testing.T) {
 		expectRequestPayload(t, r, []apiQuery{
 			{
 				Version: "1.0.0",
-				Package: apiPackage{Name: "my-package", Ecosystem: lockfile.NpmEcosystem},
+				Package: apiPackage{Name: "my-package", Ecosystem: models.EcosystemNPM},
 			},
 		})
 
@@ -377,7 +377,7 @@ func TestAPIDB_Check_FetchMixed(t *testing.T) {
 		expectRequestPayload(t, r, []apiQuery{
 			{
 				Version: "1.0.0",
-				Package: apiPackage{Name: "my-package", Ecosystem: lockfile.NpmEcosystem},
+				Package: apiPackage{Name: "my-package", Ecosystem: models.EcosystemNPM},
 			},
 		})
 
@@ -482,11 +482,11 @@ func TestAPIDB_Check_Batches(t *testing.T) {
 			expectedPayload = []apiQuery{
 				{
 					Version: "1.0.0",
-					Package: apiPackage{Name: "my-package", Ecosystem: lockfile.NpmEcosystem},
+					Package: apiPackage{Name: "my-package", Ecosystem: models.EcosystemNPM},
 				},
 				{
 					Version: "1.2.0",
-					Package: apiPackage{Name: "my-package", Ecosystem: lockfile.NpmEcosystem},
+					Package: apiPackage{Name: "my-package", Ecosystem: models.EcosystemNPM},
 				},
 			}
 			batchResponse = []objectsWithIDs{{}, {}}
@@ -494,7 +494,7 @@ func TestAPIDB_Check_Batches(t *testing.T) {
 			expectedPayload = []apiQuery{
 				{
 					Version: "2.3.1",
-					Package: apiPackage{Name: "their-package", Ecosystem: lockfile.NpmEcosystem},
+					Package: apiPackage{Name: "their-package", Ecosystem: models.EcosystemNPM},
 				},
 			}
 			batchResponse = []objectsWithIDs{{}}

@@ -4,12 +4,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/g-rath/osv-detector/internal"
+	"github.com/g-rath/osv-detector/pkg/models"
 )
 
 var ErrUnsupportedEcosystem = errors.New("unsupported ecosystem")
 
-func MustParse(str string, ecosystem internal.Ecosystem) Version {
+func MustParse(str string, ecosystem models.Ecosystem) Version {
 	v, err := Parse(str, ecosystem)
 
 	if err != nil {
@@ -19,7 +19,7 @@ func MustParse(str string, ecosystem internal.Ecosystem) Version {
 	return v
 }
 
-func Parse(str string, ecosystem internal.Ecosystem) (Version, error) {
+func Parse(str string, ecosystem models.Ecosystem) (Version, error) {
 	switch ecosystem {
 	case "npm":
 		return parseSemverVersion(str), nil

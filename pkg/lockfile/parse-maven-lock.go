@@ -3,6 +3,7 @@ package lockfile
 import (
 	"encoding/xml"
 	"fmt"
+	"github.com/g-rath/osv-detector/pkg/models"
 	"os"
 
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
@@ -64,8 +65,6 @@ type MavenLockFile struct {
 	ManagedDependencies []MavenLockDependency `xml:"dependencyManagement>dependencies>dependency"`
 }
 
-const MavenEcosystem Ecosystem = "Maven"
-
 type MavenLockProperties struct {
 	m map[string]string
 }
@@ -121,8 +120,8 @@ func ParseMavenLock(pathToLockfile string) ([]PackageDetails, error) {
 		details[finalName] = PackageDetails{
 			Name:      finalName,
 			Version:   lockPackage.ResolveVersion(*parsedLockfile),
-			Ecosystem: MavenEcosystem,
-			CompareAs: MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		}
 	}
 
@@ -133,8 +132,8 @@ func ParseMavenLock(pathToLockfile string) ([]PackageDetails, error) {
 		details[finalName] = PackageDetails{
 			Name:      finalName,
 			Version:   lockPackage.ResolveVersion(*parsedLockfile),
-			Ecosystem: MavenEcosystem,
-			CompareAs: MavenEcosystem,
+			Ecosystem: models.EcosystemMaven,
+			CompareAs: models.EcosystemMaven,
 		}
 	}
 
