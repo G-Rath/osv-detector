@@ -280,6 +280,40 @@ func TestOSV_IsAffected_AffectsWithEcosystem_SingleAffected(t *testing.T) {
 	// an empty version should always be treated as affected
 	expectIsAffected(t, osv, "", true)
 
+	// multiple fixes and introduced, shuffled
+	osv = buildOSVWithAffected(
+		database.Affected{
+			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildEcosystemAffectsRange(
+					database.RangeEvent{Introduced: "0"},
+					database.RangeEvent{Introduced: "2.1.0"},
+					database.RangeEvent{Fixed: "3.2.0"},
+					database.RangeEvent{Fixed: "1"},
+				),
+			},
+		},
+	)
+
+	for _, v := range []string{"0.0.0", "0.1.0", "0.0.0.1", "1.0.0-rc"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	for _, v := range []string{"1.0.0", "1.1.0", "2.0.0rc2", "2.0.1"} {
+		expectIsAffected(t, osv, v, false)
+	}
+
+	for _, v := range []string{"2.1.1", "2.3.4", "3.0.0", "3.0.0-rc"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	for _, v := range []string{"3.2.0", "3.2.1", "4.0.0"} {
+		expectIsAffected(t, osv, v, false)
+	}
+
+	// an empty version should always be treated as affected
+	expectIsAffected(t, osv, "", true)
+
 	// "LastAffected: 1" means all versions after this are not vulnerable
 	osv = buildOSVWithAffected(
 		database.Affected{
@@ -337,6 +371,40 @@ func TestOSV_IsAffected_AffectsWithEcosystem_SingleAffected(t *testing.T) {
 
 	// an empty version should always be treated as affected
 	expectIsAffected(t, osv, "", true)
+
+	// mix of fixes, last_known_affected, and introduced, shuffled
+	osv = buildOSVWithAffected(
+		database.Affected{
+			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildEcosystemAffectsRange(
+					database.RangeEvent{Introduced: "0"},
+					database.RangeEvent{Introduced: "2.1.0"},
+					database.RangeEvent{Fixed: "1"},
+					database.RangeEvent{LastAffected: "3.1.9"},
+				),
+			},
+		},
+	)
+
+	for _, v := range []string{"0.0.0", "0.1.0", "0.0.0.1", "1.0.0-rc"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	for _, v := range []string{"1.0.0", "1.1.0", "2.0.0rc2", "2.0.1"} {
+		expectIsAffected(t, osv, v, false)
+	}
+
+	for _, v := range []string{"2.1.1", "2.3.4", "3.0.0", "3.0.0-rc", "3.1.9"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	for _, v := range []string{"3.2.0", "3.2.1", "4.0.0"} {
+		expectIsAffected(t, osv, v, false)
+	}
+
+	// an empty version should always be treated as affected
+	expectIsAffected(t, osv, "", true)
 }
 
 func TestOSV_IsAffected_AffectsWithEcosystem_MultipleAffected(t *testing.T) {
@@ -367,6 +435,60 @@ func TestOSV_IsAffected_AffectsWithEcosystem_MultipleAffected(t *testing.T) {
 				buildEcosystemAffectsRange(
 					database.RangeEvent{Introduced: "3.3.0"},
 					database.RangeEvent{LastAffected: "3.5.0"},
+				),
+			},
+		},
+	)
+
+	for _, v := range []string{"0.0.0", "0.1.0", "0.0.0.1", "1.0.0-rc"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	for _, v := range []string{"1.0.0", "1.1.0", "2.0.0rc2", "2.0.1"} {
+		expectIsAffected(t, osv, v, false)
+	}
+
+	for _, v := range []string{"2.1.1", "2.3.4", "3.0.0", "3.0.0-rc"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	for _, v := range []string{"3.2.0", "3.2.1", "4.0.0"} {
+		expectIsAffected(t, osv, v, false)
+	}
+
+	for _, v := range []string{"3.3.1", "3.4.5"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	// an empty version should always be treated as affected
+	expectIsAffected(t, osv, "", true)
+
+	// shuffled
+	osv = buildOSVWithAffected(
+		database.Affected{
+			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildEcosystemAffectsRange(
+					database.RangeEvent{Fixed: "1"},
+					database.RangeEvent{Introduced: "0"},
+				),
+			},
+		},
+		database.Affected{
+			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildEcosystemAffectsRange(
+					database.RangeEvent{Fixed: "3.2.0"},
+					database.RangeEvent{Introduced: "2.1.0"},
+				),
+			},
+		},
+		database.Affected{
+			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildEcosystemAffectsRange(
+					database.RangeEvent{LastAffected: "3.5.0"},
+					database.RangeEvent{Introduced: "3.3.0"},
 				),
 			},
 		},
@@ -540,6 +662,40 @@ func TestOSV_IsAffected_AffectsWithSemver_SingleAffected(t *testing.T) {
 	// an empty version should always be treated as affected
 	expectIsAffected(t, osv, "", true)
 
+	// multiple fixes and introduced, shuffled
+	osv = buildOSVWithAffected(
+		database.Affected{
+			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildSemverAffectsRange(
+					database.RangeEvent{Fixed: "1"},
+					database.RangeEvent{Fixed: "3.2.0"},
+					database.RangeEvent{Introduced: "0"},
+					database.RangeEvent{Introduced: "2.1.0"},
+				),
+			},
+		},
+	)
+
+	for _, v := range []string{"0.0.0", "0.1.0", "0.0.0.1", "1.0.0-rc"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	for _, v := range []string{"1.0.0", "1.1.0", "2.0.0rc2", "2.0.1"} {
+		expectIsAffected(t, osv, v, false)
+	}
+
+	for _, v := range []string{"2.1.1", "2.3.4", "3.0.0", "3.0.0-rc"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	for _, v := range []string{"3.2.0", "3.2.1", "4.0.0"} {
+		expectIsAffected(t, osv, v, false)
+	}
+
+	// an empty version should always be treated as affected
+	expectIsAffected(t, osv, "", true)
+
 	// "LastAffected: 1" means all versions after this are not vulnerable
 	osv = buildOSVWithAffected(
 		database.Affected{
@@ -571,6 +727,40 @@ func TestOSV_IsAffected_AffectsWithSemver_SingleAffected(t *testing.T) {
 					database.RangeEvent{Fixed: "1"},
 					database.RangeEvent{Introduced: "2.1.0"},
 					database.RangeEvent{LastAffected: "3.1.9"},
+				),
+			},
+		},
+	)
+
+	for _, v := range []string{"0.0.0", "0.1.0", "0.0.0.1", "1.0.0-rc"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	for _, v := range []string{"1.0.0", "1.1.0", "2.0.0rc2", "2.0.1"} {
+		expectIsAffected(t, osv, v, false)
+	}
+
+	for _, v := range []string{"2.1.1", "2.3.4", "3.0.0", "3.0.0-rc"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	for _, v := range []string{"3.2.0", "3.2.1", "4.0.0"} {
+		expectIsAffected(t, osv, v, false)
+	}
+
+	// an empty version should always be treated as affected
+	expectIsAffected(t, osv, "", true)
+
+	// mix of fixes, last_known_affected, and introduced, shuffled
+	osv = buildOSVWithAffected(
+		database.Affected{
+			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildSemverAffectsRange(
+					database.RangeEvent{Introduced: "2.1.0"},
+					database.RangeEvent{Introduced: "0"},
+					database.RangeEvent{LastAffected: "3.1.9"},
+					database.RangeEvent{Fixed: "1"},
 				),
 			},
 		},

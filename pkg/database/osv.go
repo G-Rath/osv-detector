@@ -8,6 +8,7 @@ import (
 	"github.com/g-rath/osv-detector/pkg/semantic"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 	"unicode"
@@ -58,6 +59,22 @@ type AffectsRange struct {
 	Events []RangeEvent     `json:"events"`
 }
 
+func (e RangeEvent) version() string {
+	if e.Introduced != "" {
+		return e.Introduced
+	}
+
+	if e.Fixed != "" {
+		return e.Fixed
+	}
+
+	if e.LastAffected != "" {
+		return e.LastAffected
+	}
+
+	return ""
+}
+
 func (ar AffectsRange) containsVersion(pkg internal.PackageDetails) bool {
 	if ar.Type != TypeEcosystem && ar.Type != TypeSemver {
 		return false
@@ -68,6 +85,13 @@ func (ar AffectsRange) containsVersion(pkg internal.PackageDetails) bool {
 	}
 
 	vp := semantic.MustParse(pkg.Version, pkg.CompareAs)
+
+	sort.Slice(ar.Events, func(i, j int) bool {
+		a := ar.Events[i]
+		b := ar.Events[j]
+
+		return semantic.MustParse(a.version(), pkg.CompareAs).CompareStr(b.version()) < 0
+	})
 
 	var affected bool
 	for _, e := range ar.Events {
