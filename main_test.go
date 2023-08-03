@@ -1021,7 +1021,7 @@ func TestRun_Configs(t *testing.T) {
 
 					no known vulnerabilities found
 			`,
-			wantStderr: " failed: unable to fetch OSV database: could not read OSV database archive: zip: not a valid zip file",
+			wantStderr: " failed: unable to fetch OSV database: db host returned an unexpected status code (404 Not Found)",
 		},
 		// databases from configs are ignored if "--no-config-databases" is passed...
 		{

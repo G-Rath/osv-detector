@@ -38,6 +38,7 @@ type Cache struct {
 }
 
 var ErrOfflineDatabaseNotFound = errors.New("no offline version of the OSV database is available")
+var ErrUnexpectedStatusCode = errors.New("db host returned an unexpected status code")
 
 func (db *ZipDB) cachePath() string {
 	hash := sha256.Sum256([]byte(db.ArchiveURL))
@@ -90,6 +91,8 @@ func (db *ZipDB) fetchZip() ([]byte, error) {
 		db.UpdatedAt = cache.Date
 
 		return cache.Body, nil
+	} else if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("%w (%s)", ErrUnexpectedStatusCode, resp.Status)
 	}
 
 	var body []byte
