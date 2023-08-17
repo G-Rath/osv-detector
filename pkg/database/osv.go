@@ -90,6 +90,14 @@ func (ar AffectsRange) containsVersion(pkg internal.PackageDetails) bool {
 		a := ar.Events[i]
 		b := ar.Events[j]
 
+		if a.Introduced == "0" {
+			return true
+		}
+
+		if b.Introduced == "0" {
+			return false
+		}
+
 		return semantic.MustParse(a.version(), pkg.CompareAs).CompareStr(b.version()) < 0
 	})
 

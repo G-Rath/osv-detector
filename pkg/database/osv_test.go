@@ -27,6 +27,10 @@ func expectIsAffected(t *testing.T, osv database.OSV, version string, expectAffe
 	}
 
 	if osv.IsAffected(pkg) != expectAffected {
+		if version == "" {
+			version = "<empty>"
+		}
+
 		if expectAffected {
 			t.Errorf("Expected OSV to affect package version %s but it did not", version)
 		} else {
@@ -511,6 +515,41 @@ func TestOSV_IsAffected_AffectsWithEcosystem_MultipleAffected(t *testing.T) {
 	}
 
 	for _, v := range []string{"3.3.1", "3.4.5"} {
+		expectIsAffected(t, osv, v, true)
+	}
+
+	// an empty version should always be treated as affected
+	expectIsAffected(t, osv, "", true)
+
+	// zeros with build strings
+	osv = buildOSVWithAffected(
+		database.Affected{
+			// golang.org/x/sys
+			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildEcosystemAffectsRange(
+					database.RangeEvent{Fixed: "0.0.0-20220412211240-33da011f77ad"},
+					database.RangeEvent{Introduced: "0"},
+				),
+			},
+		},
+		database.Affected{
+			// golang.org/x/net
+			Package: database.Package{Ecosystem: lockfile.NpmEcosystem, Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildEcosystemAffectsRange(
+					database.RangeEvent{Introduced: "0.0.0-20180925071336-cf3bd585ca2a"},
+					database.RangeEvent{Fixed: "0"},
+				),
+			},
+		},
+	)
+
+	for _, v := range []string{"0.0.0", "0.14.0"} {
+		expectIsAffected(t, osv, v, false)
+	}
+
+	for _, v := range []string{"0.0.0-20180925071336-cf3bd585ca2a"} {
 		expectIsAffected(t, osv, v, true)
 	}
 
