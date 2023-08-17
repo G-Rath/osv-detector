@@ -55,7 +55,7 @@ func (db *ZipDB) fetchZip() ([]byte, error) {
 		err := json.Unmarshal(cacheContent, &cache)
 
 		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "Failed to parse cache from %s: %v", cachePath, err)
+			_, _ = fmt.Fprintf(os.Stderr, "Failed to parse cache from %s: %v\n", cachePath, err)
 		}
 	}
 
@@ -119,7 +119,7 @@ func (db *ZipDB) fetchZip() ([]byte, error) {
 		err = os.WriteFile(cachePath, cacheContents, 0644)
 
 		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "Failed to write cache to %s: %v", cachePath, err)
+			_, _ = fmt.Fprintf(os.Stderr, "Failed to write cache to %s: %v\n", cachePath, err)
 		}
 	}
 
@@ -131,7 +131,7 @@ func (db *ZipDB) fetchZip() ([]byte, error) {
 func (db *ZipDB) loadZipFile(zipFile *zip.File) {
 	file, err := zipFile.Open()
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "Could not read %s: %v", zipFile.Name, err)
+		_, _ = fmt.Fprintf(os.Stderr, "Could not read %s: %v\n", zipFile.Name, err)
 
 		return
 	}
@@ -139,7 +139,7 @@ func (db *ZipDB) loadZipFile(zipFile *zip.File) {
 
 	content, err := io.ReadAll(file)
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "Could not read %s: %v", zipFile.Name, err)
+		_, _ = fmt.Fprintf(os.Stderr, "Could not read %s: %v\n", zipFile.Name, err)
 
 		return
 	}
@@ -147,7 +147,7 @@ func (db *ZipDB) loadZipFile(zipFile *zip.File) {
 	var osv OSV
 
 	if err := json.Unmarshal(content, &osv); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "%s is not a valid JSON file: %v", zipFile.Name, err)
+		_, _ = fmt.Fprintf(os.Stderr, "%s is not a valid JSON file: %v\n", zipFile.Name, err)
 
 		return
 	}
