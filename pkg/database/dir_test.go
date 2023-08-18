@@ -9,7 +9,17 @@ import (
 func TestNewDirDB(t *testing.T) {
 	t.Parallel()
 
-	osvs := []database.OSV{{ID: "OSV-1"}, {ID: "OSV-2"}, {ID: "GHSA-1234"}}
+	osvs := []database.OSV{
+		{ID: "OSV-1"},
+		{ID: "OSV-2"},
+		{
+			ID: "GHSA-1234",
+			Affected: []database.Affected{
+				{Package: database.Package{Ecosystem: "npm", Name: "request"}},
+				{Package: database.Package{Ecosystem: "npm", Name: "@cypress/request"}},
+			},
+		},
+	}
 
 	db, err := database.NewDirDB(database.Config{URL: "file:/fixtures/db"}, false)
 

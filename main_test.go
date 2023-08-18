@@ -1036,12 +1036,12 @@ func TestRun_Configs(t *testing.T) {
 			wantStdout: `
 				Loaded the following OSV databases:
 					api#https://example.com/v1 (using batches of 1000)
-					dir#file:/fixtures/configs-extra-dbs (0 vulnerabilities, including withdrawn)
+					dir#file:/fixtures/configs-extra-dbs (3 vulnerabilities, including withdrawn)
 					zip#https://example.com/osvs/all
 				fixtures/configs-extra-dbs/yarn.lock: found 0 packages
 					Using config at fixtures/configs-extra-dbs/.osv-detector.yaml (0 ignores)
 					Using db api#https://example.com/v1 (using batches of 1000)
-					Using db dir#file:/fixtures/configs-extra-dbs (0 vulnerabilities, including withdrawn)
+					Using db dir#file:/fixtures/configs-extra-dbs (3 vulnerabilities, including withdrawn)
 
 					no known vulnerabilities found
 			`,

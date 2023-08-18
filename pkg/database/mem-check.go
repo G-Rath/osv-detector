@@ -32,11 +32,17 @@ func (db *memDB) addVulnerability(osv OSV) {
 
 func (db *memDB) Vulnerabilities(includeWithdrawn bool) []OSV {
 	var vulnerabilities []OSV
+	ids := make(map[string]struct{})
 
 	for _, vulns := range db.vulnerabilities {
 		for _, vulnerability := range vulns {
+			if _, ok := ids[vulnerability.ID]; ok {
+				continue
+			}
+
 			if (vulnerability.Withdrawn == nil) || includeWithdrawn {
 				vulnerabilities = append(vulnerabilities, vulnerability)
+				ids[vulnerability.ID] = struct{}{}
 			}
 		}
 	}
