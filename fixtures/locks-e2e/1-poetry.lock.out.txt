@@ -1,0 +1,42 @@
+Loaded the following OSV databases:
+  PyPI (%% vulnerabilities, including withdrawn - last updated %%)
+
+fixtures/locks-e2e/1-poetry.lock: found 142 packages
+  Using db PyPI (%% vulnerabilities, including withdrawn - last updated %%)
+
+  cryptography@41.0.2 is affected by the following vulnerabilities:
+    GHSA-jm77-qphf-c4w8: pyca/cryptography's wheels include vulnerable OpenSSL (https://github.com/advisories/GHSA-jm77-qphf-c4w8)
+  django@3.2 is affected by the following vulnerabilities:
+    GHSA-2gwj-7jmv-h26r: SQL Injection in Django (https://github.com/advisories/GHSA-2gwj-7jmv-h26r)
+    GHSA-2hrw-hx67-34x6: Resource exhaustion in Django (https://github.com/advisories/GHSA-2hrw-hx67-34x6)
+    GHSA-53qw-q765-4fww: Denial-of-service in Django (https://github.com/advisories/GHSA-53qw-q765-4fww)
+    GHSA-68w8-qjq3-2gfm: Path Traversal in Django (https://github.com/advisories/GHSA-68w8-qjq3-2gfm)
+    GHSA-6cw3-g6wv-c2xv: Infinite Loop in Django (https://github.com/advisories/GHSA-6cw3-g6wv-c2xv)
+    GHSA-8c5j-9r9f-c6w8: Information disclosure in Django (https://github.com/advisories/GHSA-8c5j-9r9f-c6w8)
+    GHSA-8x94-hmjh-97hq: Django vulnerable to Reflected File Download attack  (https://github.com/advisories/GHSA-8x94-hmjh-97hq)
+    GHSA-95rw-fx8r-36v6: Cross-site Scripting in Django (https://github.com/advisories/GHSA-95rw-fx8r-36v6)
+    GHSA-jh3w-4vvf-mjgr: Django has regular expression denial of service vulnerability in EmailValidator/URLValidator (https://github.com/advisories/GHSA-jh3w-4vvf-mjgr)
+    GHSA-jrh2-hc4r-7jwx: Directory-traversal in Django (https://github.com/advisories/GHSA-jrh2-hc4r-7jwx)
+    GHSA-p64x-8rxx-wf6q: Django `Trunc()` and `Extract()` database functions vulnerable to SQL Injection (https://github.com/advisories/GHSA-p64x-8rxx-wf6q)
+    GHSA-p99v-5w3c-jqq9: Bypass of access control in Django (https://github.com/advisories/GHSA-p99v-5w3c-jqq9)
+    GHSA-q2jf-h9jm-m7p4: Django contains Uncontrolled Resource Consumption via cached header (https://github.com/advisories/GHSA-q2jf-h9jm-m7p4)
+    GHSA-qm57-vhq3-3fwf: Header injection possible in Django (https://github.com/advisories/GHSA-qm57-vhq3-3fwf)
+    GHSA-qrw5-5h28-6cmg: Denial-of-service vulnerability in internationalized URLs (https://github.com/advisories/GHSA-qrw5-5h28-6cmg)
+    GHSA-r3xc-prgr-mg9p: Django bypasses validation when using one form field to upload multiple files (https://github.com/advisories/GHSA-r3xc-prgr-mg9p)
+    GHSA-rxjp-mfm9-w4wr: Path Traversal in Django (https://github.com/advisories/GHSA-rxjp-mfm9-w4wr)
+    GHSA-v6rh-hp5x-86rv: Potential bypass of an upstream access control based on URL paths in Django (https://github.com/advisories/GHSA-v6rh-hp5x-86rv)
+    GHSA-w24h-v9qh-8gxj: SQL Injection in Django (https://github.com/advisories/GHSA-w24h-v9qh-8gxj)
+    GHSA-xpfp-f569-q3p2: SQL Injection in Django (https://github.com/advisories/GHSA-xpfp-f569-q3p2)
+  pillow@8.4.0 is affected by the following vulnerabilities:
+    GHSA-4fx9-vc88-q2xc: Infinite loop in Pillow (https://github.com/advisories/GHSA-4fx9-vc88-q2xc)
+    GHSA-8vj2-vxx3-667w: Arbitrary expression injection in Pillow (https://github.com/advisories/GHSA-8vj2-vxx3-667w)
+    GHSA-9j59-75qj-795w: Path traversal in Pillow (https://github.com/advisories/GHSA-9j59-75qj-795w)
+    GHSA-m2vv-5vj5-2hm7: Pillow vulnerable to Data Amplification attack. (https://github.com/advisories/GHSA-m2vv-5vj5-2hm7)
+    GHSA-pw3c-h7wp-cvhx: Improper Initialization in Pillow (https://github.com/advisories/GHSA-pw3c-h7wp-cvhx)
+    GHSA-xrcv-f9gm-v42c: Out-of-bounds Read in Pillow (https://github.com/advisories/GHSA-xrcv-f9gm-v42c)
+  wagtail@2.15 is affected by the following vulnerabilities:
+    GHSA-33pv-vcgh-jfg9: Wagtail vulnerable to denial-of-service via memory exhaustion when uploading large files (https://github.com/advisories/GHSA-33pv-vcgh-jfg9)
+    GHSA-5286-f2rf-35c2: Wagtail vulnerable to stored Cross-site Scripting attack via ModelAdmin views (https://github.com/advisories/GHSA-5286-f2rf-35c2)
+    GHSA-xqxm-2rpm-3889: Comment reply notifications sent to incorrect users (https://github.com/advisories/GHSA-xqxm-2rpm-3889)
+
+  30 known vulnerabilities found in fixtures/locks-e2e/1-poetry.lock

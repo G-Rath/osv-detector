@@ -1,0 +1,94 @@
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+fixtures/locks-e2e/3-yarn.lock: found 1225 packages
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-regex@3.0.0 is affected by the following vulnerabilities:
+    GHSA-93q8-gq69-wqmw: Inefficient Regular Expression Complexity in chalk/ansi-regex (https://github.com/advisories/GHSA-93q8-gq69-wqmw)
+  ansi-regex@4.1.0 is affected by the following vulnerabilities:
+    GHSA-93q8-gq69-wqmw: Inefficient Regular Expression Complexity in chalk/ansi-regex (https://github.com/advisories/GHSA-93q8-gq69-wqmw)
+  ansi-regex@5.0.0 is affected by the following vulnerabilities:
+    GHSA-93q8-gq69-wqmw: Inefficient Regular Expression Complexity in chalk/ansi-regex (https://github.com/advisories/GHSA-93q8-gq69-wqmw)
+  browserslist@4.16.3 is affected by the following vulnerabilities:
+    GHSA-w8qv-6jwh-64r5: Regular Expression Denial of Service in browserslist (https://github.com/advisories/GHSA-w8qv-6jwh-64r5)
+  decode-uri-component@0.2.0 is affected by the following vulnerabilities:
+    GHSA-w573-4hg7-7wgq: decode-uri-component vulnerable to Denial of Service (DoS) (https://github.com/advisories/GHSA-w573-4hg7-7wgq)
+  glob-parent@3.1.0 is affected by the following vulnerabilities:
+    GHSA-ww39-953v-wcq6: glob-parent before 5.1.2 vulnerable to Regular Expression Denial of Service in enclosure regex (https://github.com/advisories/GHSA-ww39-953v-wcq6)
+  got@6.7.1 is affected by the following vulnerabilities:
+    GHSA-pfrx-2q88-qq97: Got allows a redirect to a UNIX socket (https://github.com/advisories/GHSA-pfrx-2q88-qq97)
+  hosted-git-info@2.8.8 is affected by the following vulnerabilities:
+    GHSA-43f8-2h32-f4cj: Regular Expression Denial of Service in hosted-git-info (https://github.com/advisories/GHSA-43f8-2h32-f4cj)
+  http-cache-semantics@3.8.1 is affected by the following vulnerabilities:
+    GHSA-rc47-6667-2j5j: http-cache-semantics vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-rc47-6667-2j5j)
+  json-schema@0.2.3 is affected by the following vulnerabilities:
+    GHSA-896r-f27r-55mw: json-schema is vulnerable to Prototype Pollution (https://github.com/advisories/GHSA-896r-f27r-55mw)
+  json5@1.0.1 is affected by the following vulnerabilities:
+    GHSA-9c47-m6qq-7p4h: Prototype Pollution in JSON5 via Parse Method (https://github.com/advisories/GHSA-9c47-m6qq-7p4h)
+  json5@2.2.0 is affected by the following vulnerabilities:
+    GHSA-9c47-m6qq-7p4h: Prototype Pollution in JSON5 via Parse Method (https://github.com/advisories/GHSA-9c47-m6qq-7p4h)
+  marked@2.0.1 is affected by the following vulnerabilities:
+    GHSA-5v2h-r2cx-5xgj: Inefficient Regular Expression Complexity in marked (https://github.com/advisories/GHSA-5v2h-r2cx-5xgj)
+    GHSA-rrrm-qjm4-v8hf: Inefficient Regular Expression Complexity in marked (https://github.com/advisories/GHSA-rrrm-qjm4-v8hf)
+  mem@1.1.0 is affected by the following vulnerabilities:
+    GHSA-4xcv-9jjx-gfj3: Denial of Service in mem (https://github.com/advisories/GHSA-4xcv-9jjx-gfj3)
+  minimatch@3.0.4 is affected by the following vulnerabilities:
+    GHSA-f8q6-p94x-37v3: minimatch ReDoS vulnerability (https://github.com/advisories/GHSA-f8q6-p94x-37v3)
+  minimist@1.2.5 is affected by the following vulnerabilities:
+    GHSA-xvch-5gv4-984h: Prototype Pollution in minimist (https://github.com/advisories/GHSA-xvch-5gv4-984h)
+  node-fetch@2.6.1 is affected by the following vulnerabilities:
+    GHSA-r683-j2x4-v87g: node-fetch is vulnerable to Exposure of Sensitive Information to an Unauthorized Actor (https://github.com/advisories/GHSA-r683-j2x4-v87g)
+  normalize-url@5.3.0 is affected by the following vulnerabilities:
+    GHSA-px4h-xg32-q955: ReDoS in normalize-url (https://github.com/advisories/GHSA-px4h-xg32-q955)
+  path-parse@1.0.6 is affected by the following vulnerabilities:
+    GHSA-hj48-42vr-x3v9: Regular Expression Denial of Service in path-parse (https://github.com/advisories/GHSA-hj48-42vr-x3v9)
+  qs@6.5.2 is affected by the following vulnerabilities:
+    GHSA-hrpp-h998-j3pp: qs vulnerable to Prototype Pollution (https://github.com/advisories/GHSA-hrpp-h998-j3pp)
+  request@2.88.2 is affected by the following vulnerabilities:
+    GHSA-p8p7-x288-28g6: Server-Side Request Forgery in Request (https://github.com/advisories/GHSA-p8p7-x288-28g6)
+  semantic-release@17.4.2 is affected by the following vulnerabilities:
+    GHSA-x2pg-mjhr-2m5x: Exposure of Sensitive Information to an Unauthorized Actor in semantic-release (https://github.com/advisories/GHSA-x2pg-mjhr-2m5x)
+  semver@5.7.1 is affected by the following vulnerabilities:
+    GHSA-c2qf-rxjj-qqgw: semver vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-c2qf-rxjj-qqgw)
+  semver@6.3.0 is affected by the following vulnerabilities:
+    GHSA-c2qf-rxjj-qqgw: semver vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-c2qf-rxjj-qqgw)
+  semver@7.0.0 is affected by the following vulnerabilities:
+    GHSA-c2qf-rxjj-qqgw: semver vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-c2qf-rxjj-qqgw)
+  semver@7.3.4 is affected by the following vulnerabilities:
+    GHSA-c2qf-rxjj-qqgw: semver vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-c2qf-rxjj-qqgw)
+  semver-regex@3.1.2 is affected by the following vulnerabilities:
+    GHSA-44c6-4v22-4mhx: semver-regex Regular Expression Denial of Service (ReDOS) (https://github.com/advisories/GHSA-44c6-4v22-4mhx)
+    GHSA-4x5v-gmq8-25ch: Regular expression denial of service in semver-regex (https://github.com/advisories/GHSA-4x5v-gmq8-25ch)
+  ssri@6.0.1 is affected by the following vulnerabilities:
+    GHSA-vx3p-948g-6vhq: Regular Expression Denial of Service (ReDoS) (https://github.com/advisories/GHSA-vx3p-948g-6vhq)
+  tar@4.4.13 is affected by the following vulnerabilities:
+    GHSA-3jfq-g458-7qm9: Arbitrary File Creation/Overwrite due to insufficient absolute path sanitization (https://github.com/advisories/GHSA-3jfq-g458-7qm9)
+    GHSA-5955-9wpr-37jh: Arbitrary File Creation/Overwrite on Windows via insufficient relative path sanitization (https://github.com/advisories/GHSA-5955-9wpr-37jh)
+    GHSA-9r2w-394v-53qc: Arbitrary File Creation/Overwrite via insufficient symlink protection due to directory cache poisoning using symbolic links (https://github.com/advisories/GHSA-9r2w-394v-53qc)
+    GHSA-qq89-hq3f-393p: Arbitrary File Creation/Overwrite via insufficient symlink protection due to directory cache poisoning using symbolic links (https://github.com/advisories/GHSA-qq89-hq3f-393p)
+    GHSA-r628-mhmh-qjhw: Arbitrary File Creation/Overwrite via insufficient symlink protection due to directory cache poisoning (https://github.com/advisories/GHSA-r628-mhmh-qjhw)
+  tar@6.1.0 is affected by the following vulnerabilities:
+    GHSA-3jfq-g458-7qm9: Arbitrary File Creation/Overwrite due to insufficient absolute path sanitization (https://github.com/advisories/GHSA-3jfq-g458-7qm9)
+    GHSA-5955-9wpr-37jh: Arbitrary File Creation/Overwrite on Windows via insufficient relative path sanitization (https://github.com/advisories/GHSA-5955-9wpr-37jh)
+    GHSA-9r2w-394v-53qc: Arbitrary File Creation/Overwrite via insufficient symlink protection due to directory cache poisoning using symbolic links (https://github.com/advisories/GHSA-9r2w-394v-53qc)
+    GHSA-qq89-hq3f-393p: Arbitrary File Creation/Overwrite via insufficient symlink protection due to directory cache poisoning using symbolic links (https://github.com/advisories/GHSA-qq89-hq3f-393p)
+    GHSA-r628-mhmh-qjhw: Arbitrary File Creation/Overwrite via insufficient symlink protection due to directory cache poisoning (https://github.com/advisories/GHSA-r628-mhmh-qjhw)
+  tmpl@1.0.4 is affected by the following vulnerabilities:
+    GHSA-jgrx-mgxx-jf9v: tmpl vulnerable to Inefficient Regular Expression Complexity which may lead to resource exhaustion (https://github.com/advisories/GHSA-jgrx-mgxx-jf9v)
+  tough-cookie@2.5.0 is affected by the following vulnerabilities:
+    GHSA-72xf-g2v4-qvf3: tough-cookie Prototype Pollution vulnerability (https://github.com/advisories/GHSA-72xf-g2v4-qvf3)
+  tough-cookie@4.0.0 is affected by the following vulnerabilities:
+    GHSA-72xf-g2v4-qvf3: tough-cookie Prototype Pollution vulnerability (https://github.com/advisories/GHSA-72xf-g2v4-qvf3)
+  trim-newlines@3.0.0 is affected by the following vulnerabilities:
+    GHSA-7p7h-4mm5-852v: Uncontrolled Resource Consumption in trim-newlines (https://github.com/advisories/GHSA-7p7h-4mm5-852v)
+  trim-off-newlines@1.0.1 is affected by the following vulnerabilities:
+    GHSA-38fc-wpqx-33j7: Uncontrolled Resource Consumption in trim-off-newlines (https://github.com/advisories/GHSA-38fc-wpqx-33j7)
+  word-wrap@1.2.3 is affected by the following vulnerabilities:
+    GHSA-j8xg-fqg3-53r7: word-wrap vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-j8xg-fqg3-53r7)
+  ws@7.4.4 is affected by the following vulnerabilities:
+    GHSA-6fc8-4gx4-v693: ReDoS in Sec-Websocket-Protocol header (https://github.com/advisories/GHSA-6fc8-4gx4-v693)
+  yargs-parser@7.0.0 is affected by the following vulnerabilities:
+    GHSA-p9pc-299p-vxgp: yargs-parser Vulnerable to Prototype Pollution (https://github.com/advisories/GHSA-p9pc-299p-vxgp)
+
+  48 known vulnerabilities found in fixtures/locks-e2e/3-yarn.lock

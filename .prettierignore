@@ -1,5 +1,6 @@
 **/fixtures/pnpm/*.yaml
 **/fixtures/**/invalid.json
 **/fixtures/configs-invalid/*.yaml
+**/fixtures/locks-e2e/
 internal/configer/fixtures/ext-yaml-invalid/*.yaml
 internal/configer/fixtures/ext-yml-invalid/*.yml

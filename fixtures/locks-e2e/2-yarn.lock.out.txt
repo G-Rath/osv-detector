@@ -1,0 +1,108 @@
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+fixtures/locks-e2e/2-yarn.lock: found 1991 packages
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  @cypress/request@2.88.5 is affected by the following vulnerabilities:
+    GHSA-p8p7-x288-28g6: Server-Side Request Forgery in Request (https://github.com/advisories/GHSA-p8p7-x288-28g6)
+  ansi-html@0.0.7 is affected by the following vulnerabilities:
+    GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+  ansi-regex@3.0.0 is affected by the following vulnerabilities:
+    GHSA-93q8-gq69-wqmw: Inefficient Regular Expression Complexity in chalk/ansi-regex (https://github.com/advisories/GHSA-93q8-gq69-wqmw)
+  ansi-regex@4.1.0 is affected by the following vulnerabilities:
+    GHSA-93q8-gq69-wqmw: Inefficient Regular Expression Complexity in chalk/ansi-regex (https://github.com/advisories/GHSA-93q8-gq69-wqmw)
+  ansi-regex@5.0.0 is affected by the following vulnerabilities:
+    GHSA-93q8-gq69-wqmw: Inefficient Regular Expression Complexity in chalk/ansi-regex (https://github.com/advisories/GHSA-93q8-gq69-wqmw)
+  async@2.6.3 is affected by the following vulnerabilities:
+    GHSA-fwr7-v2mv-hh25: Prototype Pollution in async (https://github.com/advisories/GHSA-fwr7-v2mv-hh25)
+  async@3.2.0 is affected by the following vulnerabilities:
+    GHSA-fwr7-v2mv-hh25: Prototype Pollution in async (https://github.com/advisories/GHSA-fwr7-v2mv-hh25)
+  decode-uri-component@0.2.0 is affected by the following vulnerabilities:
+    GHSA-w573-4hg7-7wgq: decode-uri-component vulnerable to Denial of Service (DoS) (https://github.com/advisories/GHSA-w573-4hg7-7wgq)
+  ejs@3.1.5 is affected by the following vulnerabilities:
+    GHSA-phwq-j96m-2c2q: ejs template injection vulnerability (https://github.com/advisories/GHSA-phwq-j96m-2c2q)
+  eventsource@1.0.7 is affected by the following vulnerabilities:
+    GHSA-6h5x-7c5m-7cr7: Exposure of Sensitive Information in eventsource (https://github.com/advisories/GHSA-6h5x-7c5m-7cr7)
+  glob-parent@3.1.0 is affected by the following vulnerabilities:
+    GHSA-ww39-953v-wcq6: glob-parent before 5.1.2 vulnerable to Regular Expression Denial of Service in enclosure regex (https://github.com/advisories/GHSA-ww39-953v-wcq6)
+  glob-parent@5.1.1 is affected by the following vulnerabilities:
+    GHSA-ww39-953v-wcq6: glob-parent before 5.1.2 vulnerable to Regular Expression Denial of Service in enclosure regex (https://github.com/advisories/GHSA-ww39-953v-wcq6)
+  highlight.js@10.1.2 is affected by the following vulnerabilities:
+    GHSA-7wwv-vh3v-89cq: ReDOS vulnerabities: multiple grammars (https://github.com/advisories/GHSA-7wwv-vh3v-89cq)
+  is-svg@3.0.0 is affected by the following vulnerabilities:
+    GHSA-7r28-3m3f-r2pr: Regular Expression Denial of Service (ReDoS) (https://github.com/advisories/GHSA-7r28-3m3f-r2pr)
+    GHSA-r8j5-h5cx-65gg: ReDOS in IS-SVG (https://github.com/advisories/GHSA-r8j5-h5cx-65gg)
+  json-schema@0.2.3 is affected by the following vulnerabilities:
+    GHSA-896r-f27r-55mw: json-schema is vulnerable to Prototype Pollution (https://github.com/advisories/GHSA-896r-f27r-55mw)
+  json5@0.5.1 is affected by the following vulnerabilities:
+    GHSA-9c47-m6qq-7p4h: Prototype Pollution in JSON5 via Parse Method (https://github.com/advisories/GHSA-9c47-m6qq-7p4h)
+  json5@1.0.1 is affected by the following vulnerabilities:
+    GHSA-9c47-m6qq-7p4h: Prototype Pollution in JSON5 via Parse Method (https://github.com/advisories/GHSA-9c47-m6qq-7p4h)
+  json5@2.1.3 is affected by the following vulnerabilities:
+    GHSA-9c47-m6qq-7p4h: Prototype Pollution in JSON5 via Parse Method (https://github.com/advisories/GHSA-9c47-m6qq-7p4h)
+  loader-utils@1.4.0 is affected by the following vulnerabilities:
+    GHSA-3rfm-jhwj-7488: loader-utils is vulnerable to Regular Expression Denial of Service (ReDoS) via url variable (https://github.com/advisories/GHSA-3rfm-jhwj-7488)
+    GHSA-76p3-8jx3-jpfq: Prototype pollution in webpack loader-utils (https://github.com/advisories/GHSA-76p3-8jx3-jpfq)
+    GHSA-hhq3-ff78-jv3g: loader-utils is vulnerable to Regular Expression Denial of Service (ReDoS) (https://github.com/advisories/GHSA-hhq3-ff78-jv3g)
+  loader-utils@2.0.0 is affected by the following vulnerabilities:
+    GHSA-3rfm-jhwj-7488: loader-utils is vulnerable to Regular Expression Denial of Service (ReDoS) via url variable (https://github.com/advisories/GHSA-3rfm-jhwj-7488)
+    GHSA-76p3-8jx3-jpfq: Prototype pollution in webpack loader-utils (https://github.com/advisories/GHSA-76p3-8jx3-jpfq)
+    GHSA-hhq3-ff78-jv3g: loader-utils is vulnerable to Regular Expression Denial of Service (ReDoS) (https://github.com/advisories/GHSA-hhq3-ff78-jv3g)
+  lodash@4.17.19 is affected by the following vulnerabilities:
+    GHSA-29mw-wpgm-hmr9: Regular Expression Denial of Service (ReDoS) in lodash (https://github.com/advisories/GHSA-29mw-wpgm-hmr9)
+    GHSA-35jh-r3h4-6jhm: Command Injection in lodash (https://github.com/advisories/GHSA-35jh-r3h4-6jhm)
+    GHSA-p6mc-m468-83gw: Prototype Pollution in lodash (https://github.com/advisories/GHSA-p6mc-m468-83gw)
+  minimatch@3.0.4 is affected by the following vulnerabilities:
+    GHSA-f8q6-p94x-37v3: minimatch ReDoS vulnerability (https://github.com/advisories/GHSA-f8q6-p94x-37v3)
+  minimist@1.2.5 is affected by the following vulnerabilities:
+    GHSA-xvch-5gv4-984h: Prototype Pollution in minimist (https://github.com/advisories/GHSA-xvch-5gv4-984h)
+  moment@2.26.0 is affected by the following vulnerabilities:
+    GHSA-8hfj-j24r-96c4: Path Traversal: 'dir/../../filename' in moment.locale (https://github.com/advisories/GHSA-8hfj-j24r-96c4)
+    GHSA-wc69-rhjr-hc9g: Moment.js vulnerable to Inefficient Regular Expression Complexity (https://github.com/advisories/GHSA-wc69-rhjr-hc9g)
+  node-forge@0.9.0 is affected by the following vulnerabilities:
+    GHSA-2r2c-g63r-vccr: Improper Verification of Cryptographic Signature in `node-forge` (https://github.com/advisories/GHSA-2r2c-g63r-vccr)
+    GHSA-5rrq-pxf6-6jx5: Prototype Pollution in node-forge debug API. (https://github.com/advisories/GHSA-5rrq-pxf6-6jx5)
+    GHSA-8fr3-hfg3-gpgp: Open Redirect in node-forge (https://github.com/advisories/GHSA-8fr3-hfg3-gpgp)
+    GHSA-92xj-mqp7-vmcj: Prototype Pollution in node-forge (https://github.com/advisories/GHSA-92xj-mqp7-vmcj)
+    GHSA-cfm4-qjh2-4765: Improper Verification of Cryptographic Signature in node-forge (https://github.com/advisories/GHSA-cfm4-qjh2-4765)
+    GHSA-gf8q-jrpm-jvxq: URL parsing in node-forge could lead to undesired behavior. (https://github.com/advisories/GHSA-gf8q-jrpm-jvxq)
+    GHSA-wxgw-qj99-44c2: Prototype Pollution in node-forge util.setPath API (https://github.com/advisories/GHSA-wxgw-qj99-44c2)
+    GHSA-x4jg-mjrx-434g: Improper Verification of Cryptographic Signature in node-forge (https://github.com/advisories/GHSA-x4jg-mjrx-434g)
+  node-notifier@6.0.0 is affected by the following vulnerabilities:
+    GHSA-5fw9-fq32-wv5p: OS Command Injection in node-notifier (https://github.com/advisories/GHSA-5fw9-fq32-wv5p)
+  nth-check@1.0.2 is affected by the following vulnerabilities:
+    GHSA-rp65-9cf3-cjxr: Inefficient Regular Expression Complexity in nth-check (https://github.com/advisories/GHSA-rp65-9cf3-cjxr)
+  qs@6.5.2 is affected by the following vulnerabilities:
+    GHSA-hrpp-h998-j3pp: qs vulnerable to Prototype Pollution (https://github.com/advisories/GHSA-hrpp-h998-j3pp)
+  qs@6.7.0 is affected by the following vulnerabilities:
+    GHSA-hrpp-h998-j3pp: qs vulnerable to Prototype Pollution (https://github.com/advisories/GHSA-hrpp-h998-j3pp)
+  semver@5.7.1 is affected by the following vulnerabilities:
+    GHSA-c2qf-rxjj-qqgw: semver vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-c2qf-rxjj-qqgw)
+  semver@6.3.0 is affected by the following vulnerabilities:
+    GHSA-c2qf-rxjj-qqgw: semver vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-c2qf-rxjj-qqgw)
+  semver@7.0.0 is affected by the following vulnerabilities:
+    GHSA-c2qf-rxjj-qqgw: semver vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-c2qf-rxjj-qqgw)
+  semver@7.3.5 is affected by the following vulnerabilities:
+    GHSA-c2qf-rxjj-qqgw: semver vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-c2qf-rxjj-qqgw)
+  semver-regex@2.0.0 is affected by the following vulnerabilities:
+    GHSA-44c6-4v22-4mhx: semver-regex Regular Expression Denial of Service (ReDOS) (https://github.com/advisories/GHSA-44c6-4v22-4mhx)
+    GHSA-4x5v-gmq8-25ch: Regular expression denial of service in semver-regex (https://github.com/advisories/GHSA-4x5v-gmq8-25ch)
+  shell-quote@1.7.2 is affected by the following vulnerabilities:
+    GHSA-g4rg-993r-mgx7: Improper Neutralization of Special Elements used in a Command in Shell-quote (https://github.com/advisories/GHSA-g4rg-993r-mgx7)
+  terser@4.8.0 is affected by the following vulnerabilities:
+    GHSA-4wf5-vphf-c2xc: Terser insecure use of regular expressions leads to ReDoS (https://github.com/advisories/GHSA-4wf5-vphf-c2xc)
+  terser@5.9.0 is affected by the following vulnerabilities:
+    GHSA-4wf5-vphf-c2xc: Terser insecure use of regular expressions leads to ReDoS (https://github.com/advisories/GHSA-4wf5-vphf-c2xc)
+  tough-cookie@2.5.0 is affected by the following vulnerabilities:
+    GHSA-72xf-g2v4-qvf3: tough-cookie Prototype Pollution vulnerability (https://github.com/advisories/GHSA-72xf-g2v4-qvf3)
+  tough-cookie@4.0.0 is affected by the following vulnerabilities:
+    GHSA-72xf-g2v4-qvf3: tough-cookie Prototype Pollution vulnerability (https://github.com/advisories/GHSA-72xf-g2v4-qvf3)
+  trim@0.0.1 is affected by the following vulnerabilities:
+    GHSA-w5p7-h5w8-2hfq: Regular Expression Denial of Service in trim (https://github.com/advisories/GHSA-w5p7-h5w8-2hfq)
+  vuetify@2.1.5 is affected by the following vulnerabilities:
+    GHSA-q4q5-c5cv-2p68: Vuetify Cross-site Scripting vulnerability (https://github.com/advisories/GHSA-q4q5-c5cv-2p68)
+  word-wrap@1.2.3 is affected by the following vulnerabilities:
+    GHSA-j8xg-fqg3-53r7: word-wrap vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-j8xg-fqg3-53r7)
+
+  58 known vulnerabilities found in fixtures/locks-e2e/2-yarn.lock
