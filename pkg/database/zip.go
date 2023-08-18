@@ -152,7 +152,7 @@ func (db *ZipDB) loadZipFile(zipFile *zip.File) {
 		return
 	}
 
-	db.vulnerabilities = append(db.vulnerabilities, osv)
+	db.addVulnerability(osv)
 }
 
 // load fetches a zip archive of the OSV database and loads known vulnerabilities
@@ -162,7 +162,7 @@ func (db *ZipDB) loadZipFile(zipFile *zip.File) {
 // so that a new version of the archive is only downloaded if it has been
 // modified, per HTTP caching standards.
 func (db *ZipDB) load() error {
-	db.vulnerabilities = []OSV{}
+	db.vulnerabilities = make(map[string][]OSV)
 
 	body, err := db.fetchZip()
 
