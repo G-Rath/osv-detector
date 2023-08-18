@@ -1,0 +1,12 @@
+Loaded the following OSV databases:
+  Go (%% vulnerabilities, including withdrawn - last updated %%)
+
+fixtures/locks-e2e/1-go.mod: found 7 packages
+  Using db Go (%% vulnerabilities, including withdrawn - last updated %%)
+
+  golang.org/x/image@0.0.0-20210628002857-a66eb6448b8d is affected by the following vulnerabilities:
+    GHSA-qgc7-mgm3-q253: Uncontrolled Resource Consumption in golang.org/x/image (https://github.com/advisories/GHSA-qgc7-mgm3-q253)
+    GO-2023-1989: Excessive resource consumption in golang.org/x/image/tiff
+    GO-2023-1990: Excessive CPU consumption when decoding 0-height images in golang.org/x/image/tiff
+
+  3 known vulnerabilities found in fixtures/locks-e2e/1-go.mod

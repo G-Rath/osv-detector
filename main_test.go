@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -1339,6 +1340,68 @@ func TestRun_Ignores(t *testing.T) {
 			wantStderr: "",
 		},
 	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			testCli(t, tt)
+		})
+	}
+}
+
+func TestRun_EndToEnd(t *testing.T) {
+	t.Parallel()
+
+	e2eFixturesDir := "./fixtures/locks-e2e"
+
+	files, err := os.ReadDir(e2eFixturesDir)
+
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+
+	tests := make([]cliTestCase, 0, len(files)/2)
+	re := regexp.MustCompile(`\d+-(.*)`)
+
+	for _, f := range files {
+		if strings.HasSuffix(f.Name(), ".out.txt") {
+			continue
+		}
+
+		if f.IsDir() {
+			t.Errorf("unexpected directory in e2e tests")
+
+			continue
+		}
+
+		matches := re.FindStringSubmatch(f.Name())
+
+		if matches == nil {
+			t.Errorf("could not determine parser for %s", f.Name())
+
+			continue
+		}
+
+		parseAs := matches[1]
+
+		fp := filepath.FromSlash(filepath.Join(e2eFixturesDir, f.Name()))
+
+		wantStdout, err := os.ReadFile(fp + ".out.txt")
+
+		if err != nil {
+			t.Errorf("could not read outfile for e2e fixture: %v", err)
+
+			continue
+		}
+
+		tests = append(tests, cliTestCase{
+			args:         []string{parseAs + ":" + fp},
+			wantExitCode: 1,
+			wantStdout:   strings.ReplaceAll(string(wantStdout), "\r", ""),
+		})
+	}
+
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {

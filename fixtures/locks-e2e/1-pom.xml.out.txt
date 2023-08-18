@@ -1,0 +1,34 @@
+Loaded the following OSV databases:
+  Maven (%% vulnerabilities, including withdrawn - last updated %%)
+
+fixtures/locks-e2e/1-pom.xml: found 5 packages
+  Using db Maven (%% vulnerabilities, including withdrawn - last updated %%)
+
+  commons-io:commons-io@2.4 is affected by the following vulnerabilities:
+    GHSA-gwrp-pvrq-jmwv: Path Traversal and Improper Input Validation in Apache Commons IO (https://github.com/advisories/GHSA-gwrp-pvrq-jmwv)
+  junit:junit@4.8.1 is affected by the following vulnerabilities:
+    GHSA-269g-pwp5-87pp: TemporaryFolder on unix-like systems does not limit access to created files (https://github.com/advisories/GHSA-269g-pwp5-87pp)
+  log4j:log4j@1.2.17 is affected by the following vulnerabilities:
+    GHSA-2qrg-x229-3v8q: Deserialization of Untrusted Data in Log4j (https://github.com/advisories/GHSA-2qrg-x229-3v8q)
+    GHSA-65fg-84f6-3jq3: SQL Injection in Log4j 1.2.x (https://github.com/advisories/GHSA-65fg-84f6-3jq3)
+    GHSA-f7vh-qwp3-x37m: Deserialization of Untrusted Data in Apache Log4j (https://github.com/advisories/GHSA-f7vh-qwp3-x37m)
+    GHSA-fp5r-v3w9-4333: JMSAppender in Log4j 1.2 is vulnerable to deserialization of untrusted data (https://github.com/advisories/GHSA-fp5r-v3w9-4333)
+    GHSA-w9p3-5cr8-m3jj: Deserialization of Untrusted Data in Log4j 1.x (https://github.com/advisories/GHSA-w9p3-5cr8-m3jj)
+  org.springframework:spring-core@4.1.2.RELEASE is affected by the following vulnerabilities:
+    GHSA-3rmv-2pg5-xvqj: Improperly Implemented Security Check for Standard in org.springframework:spring-core (https://github.com/advisories/GHSA-3rmv-2pg5-xvqj)
+    GHSA-4487-x383-qpph: Possible privilege escalation in org.springframework:spring-core (https://github.com/advisories/GHSA-4487-x383-qpph)
+    GHSA-45vg-2v73-vm62: Moderate severity vulnerability that affects org.springframework:spring-core (https://github.com/advisories/GHSA-45vg-2v73-vm62)
+    GHSA-564r-hj7v-mcr5: Spring Framework vulnerable to denial of service via specially crafted SpEL expression (https://github.com/advisories/GHSA-564r-hj7v-mcr5)
+    GHSA-6v7w-535j-rq5m: Moderate severity vulnerability that affects org.springframework:spring-core (https://github.com/advisories/GHSA-6v7w-535j-rq5m)
+    GHSA-8crv-49fr-2h6j: Spring Security and Spring Framework may not recognize certain paths that should be protected (https://github.com/advisories/GHSA-8crv-49fr-2h6j)
+    GHSA-ffvq-7w96-97p7: Denial of Service in Spring Framework (https://github.com/advisories/GHSA-ffvq-7w96-97p7)
+    GHSA-g5mm-vmx4-3rg7: Improper handling of case sensitivity in Spring Framework (https://github.com/advisories/GHSA-g5mm-vmx4-3rg7)
+    GHSA-g8hw-794c-4j9g: Path Traversal in org.springframework:spring-core (https://github.com/advisories/GHSA-g8hw-794c-4j9g)
+    GHSA-hh26-6xwr-ggv7: Denial of service in Spring Framework (https://github.com/advisories/GHSA-hh26-6xwr-ggv7)
+    GHSA-p5hg-3xm3-gcjg: Spring Framework allows applications to expose STOMP over WebSocket endpoints (https://github.com/advisories/GHSA-p5hg-3xm3-gcjg)
+    GHSA-pgf9-h69p-pcgf: Files or Directories Accessible to External Parties in org.springframework:spring-core (https://github.com/advisories/GHSA-pgf9-h69p-pcgf)
+    GHSA-rcpf-vj53-7h2m: Denial of Service in org.springframework:spring-core (https://github.com/advisories/GHSA-rcpf-vj53-7h2m)
+    GHSA-rqph-vqwm-22vc: Allocation of Resources Without Limits or Throttling in Spring Framework (https://github.com/advisories/GHSA-rqph-vqwm-22vc)
+    GHSA-wxqc-pxw9-g2p8: Spring Framework vulnerable to denial of service (https://github.com/advisories/GHSA-wxqc-pxw9-g2p8)
+
+  22 known vulnerabilities found in fixtures/locks-e2e/1-pom.xml

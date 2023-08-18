@@ -1,0 +1,14 @@
+Loaded the following OSV databases:
+  PyPI (%% vulnerabilities, including withdrawn - last updated %%)
+
+fixtures/locks-e2e/2-poetry.lock: found 143 packages
+  Using db PyPI (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansible@8.2.0 is affected by the following vulnerabilities:
+    PYSEC-2020-220: A flaw was found in Ansible Base when using the aws_ssm connection plugin as...
+    PYSEC-2021-125: A flaw was found in Ansible where the secret information present in async_files...
+  wagtail@2.16.3 is affected by the following vulnerabilities:
+    GHSA-33pv-vcgh-jfg9: Wagtail vulnerable to denial-of-service via memory exhaustion when uploading large files (https://github.com/advisories/GHSA-33pv-vcgh-jfg9)
+    GHSA-5286-f2rf-35c2: Wagtail vulnerable to stored Cross-site Scripting attack via ModelAdmin views (https://github.com/advisories/GHSA-5286-f2rf-35c2)
+
+  4 known vulnerabilities found in fixtures/locks-e2e/2-poetry.lock
