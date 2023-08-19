@@ -53,7 +53,7 @@ func extractYarnPackageName(str string) string {
 		str = strings.TrimPrefix(str, "@")
 	}
 
-	name := strings.SplitN(str, "@", 2)[0]
+	name, _, _ := strings.Cut(str, "@")
 
 	if isScoped {
 		name = "@" + name

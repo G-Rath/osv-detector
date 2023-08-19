@@ -416,12 +416,12 @@ func (files lockfileAndConfigOrErrs) adjustExtraDatabases(
 
 func parseLockfilePathWithParseAs(lockfilePathWithParseAs string) (string, string) {
 	if !strings.Contains(lockfilePathWithParseAs, ":") {
-		lockfilePathWithParseAs = ":" + lockfilePathWithParseAs
+		return "", lockfilePathWithParseAs
 	}
 
-	splits := strings.SplitN(lockfilePathWithParseAs, ":", 2)
+	parseAs, path, _ := strings.Cut(lockfilePathWithParseAs, ":")
 
-	return splits[0], splits[1]
+	return parseAs, path
 }
 
 func readAllLockfiles(

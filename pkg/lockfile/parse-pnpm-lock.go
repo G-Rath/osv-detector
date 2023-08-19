@@ -98,7 +98,7 @@ func extractPnpmPackageNameAndVersion(dependencyPath string) (string, string) {
 
 	// peer dependencies in v5 lockfiles are attached to the end of the version
 	// with an "_", so we always want the first element if an "_" is present
-	version = strings.Split(version, "_")[0]
+	version, _, _ = strings.Cut(version, "_")
 
 	return name, version
 }
