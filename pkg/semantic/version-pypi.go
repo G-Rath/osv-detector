@@ -313,7 +313,7 @@ func (pv PyPIVersion) compareLocal(pw PyPIVersion) int {
 	}
 
 	// Additionally a local version with a great number of segments will always compare as greater than a local version with fewer segments,
-	// as long as the shorter local version’s segments match the beginning of the longer local version’s segments exactly.
+	// as long as the shorter local version's segments match the beginning of the longer local version's segments exactly.
 	if len(pv.local) > len(pw.local) {
 		return +1
 	}
