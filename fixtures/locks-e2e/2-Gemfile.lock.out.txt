@@ -16,12 +16,12 @@ fixtures/locks-e2e/2-Gemfile.lock: found 426 packages
     GHSA-xp5h-f8jf-rc8q: rails-ujs vulnerable to DOM Based Cross-site Scripting contenteditable HTML Elements (https://github.com/advisories/GHSA-xp5h-f8jf-rc8q)
   activerecord@6.0.4.1 is affected by the following vulnerabilities:
     GHSA-3hhc-qp5v-9p2j: Active Record RCE bug with Serialized Columns (https://github.com/advisories/GHSA-3hhc-qp5v-9p2j)
-    GHSA-579w-22j4-4749: Denial of Service Vulnerability in ActiveRecord’s PostgreSQL adapter (https://github.com/advisories/GHSA-579w-22j4-4749)
+    GHSA-579w-22j4-4749: Denial of Service Vulnerability in ActiveRecord's PostgreSQL adapter (https://github.com/advisories/GHSA-579w-22j4-4749)
     GHSA-hq7p-j377-6v63: SQL Injection Vulnerability via ActiveRecord comments (https://github.com/advisories/GHSA-hq7p-j377-6v63)
   activestorage@6.0.4.1 is affected by the following vulnerabilities:
     GHSA-w749-p3v6-hccq: Possible code injection vulnerability in Rails / Active Storage (https://github.com/advisories/GHSA-w749-p3v6-hccq)
   activesupport@6.0.4.1 is affected by the following vulnerabilities:
-    GHSA-j6gc-792m-qgm2: ReDoS based DoS vulnerability in Active Support’s underscore (https://github.com/advisories/GHSA-j6gc-792m-qgm2)
+    GHSA-j6gc-792m-qgm2: ReDoS based DoS vulnerability in Active Support's underscore (https://github.com/advisories/GHSA-j6gc-792m-qgm2)
     GHSA-pj73-v5mw-pm9j: Possible XSS Security Vulnerability in SafeBuffer#bytesplice (https://github.com/advisories/GHSA-pj73-v5mw-pm9j)
   globalid@1.0.0 is affected by the following vulnerabilities:
     GHSA-23c2-gwp5-pxw9: ReDoS based DoS vulnerability in GlobalID (https://github.com/advisories/GHSA-23c2-gwp5-pxw9)
@@ -38,11 +38,13 @@ fixtures/locks-e2e/2-Gemfile.lock: found 426 packages
     GHSA-cgx6-hpwq-fhv5: Integer Overflow or Wraparound in libxml2 affects Nokogiri (https://github.com/advisories/GHSA-cgx6-hpwq-fhv5)
     GHSA-pxvg-2qj5-37jq: Nokogiri updates packaged libxml2 to v2.10.4 to resolve multiple CVEs (https://github.com/advisories/GHSA-pxvg-2qj5-37jq)
     GHSA-xh29-r2w5-wx8m: Nokogiri Improperly Handles Unexpected Data Type (https://github.com/advisories/GHSA-xh29-r2w5-wx8m)
+  puma@5.6.4 is affected by the following vulnerabilities:
+    GHSA-68xg-gqqm-vgj8: Puma HTTP Request/Response Smuggling vulnerability (https://github.com/advisories/GHSA-68xg-gqqm-vgj8)
   rack@2.2.3 is affected by the following vulnerabilities:
     GHSA-3h57-hmj3-gj3p: Rack has possible DoS Vulnerability in Multipart MIME parsing (https://github.com/advisories/GHSA-3h57-hmj3-gj3p)
     GHSA-65f5-mfpf-vfhj: Denial of service via header parsing in Rack (https://github.com/advisories/GHSA-65f5-mfpf-vfhj)
     GHSA-93pm-5p5f-3ghx: Denial of Service Vulnerability in Rack Content-Disposition parsing (https://github.com/advisories/GHSA-93pm-5p5f-3ghx)
-    GHSA-c6qg-cjj8-47qp: Possible Denial of Service Vulnerability in Rack’s header parsing (https://github.com/advisories/GHSA-c6qg-cjj8-47qp)
+    GHSA-c6qg-cjj8-47qp: Possible Denial of Service Vulnerability in Rack's header parsing (https://github.com/advisories/GHSA-c6qg-cjj8-47qp)
     GHSA-hxqx-xwvh-44m2: Denial of Service Vulnerability in Rack Multipart Parsing (https://github.com/advisories/GHSA-hxqx-xwvh-44m2)
     GHSA-rqv2-275x-2jq5: Denial of service via multipart parsing in Rack (https://github.com/advisories/GHSA-rqv2-275x-2jq5)
     GHSA-wq4h-7r42-5hrr: Possible shell escape sequence injection vulnerability in Rack (https://github.com/advisories/GHSA-wq4h-7r42-5hrr)
@@ -55,4 +57,4 @@ fixtures/locks-e2e/2-Gemfile.lock: found 426 packages
   tzinfo@1.2.9 is affected by the following vulnerabilities:
     GHSA-5cm2-9h8c-rvfx: TZInfo relative path traversal vulnerability allows loading of arbitrary files (https://github.com/advisories/GHSA-5cm2-9h8c-rvfx)
 
-  37 known vulnerabilities found in fixtures/locks-e2e/2-Gemfile.lock
+  38 known vulnerabilities found in fixtures/locks-e2e/2-Gemfile.lock
