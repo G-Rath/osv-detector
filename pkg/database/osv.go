@@ -7,6 +7,7 @@ import (
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"github.com/g-rath/osv-detector/pkg/semantic"
+	"golang.org/x/exp/slices"
 	"os"
 	"sort"
 	"strings"
@@ -157,16 +158,6 @@ func (vs Versions) MarshalJSON() ([]byte, error) {
 	return out, nil
 }
 
-func (vs Versions) includes(v string) bool {
-	for _, v2 := range vs {
-		if v == v2 {
-			return true
-		}
-	}
-
-	return false
-}
-
 type Affected struct {
 	Package  Package  `json:"package"`
 	Versions Versions `json:"versions"`
@@ -185,19 +176,9 @@ type OSV struct {
 	Affected  []Affected `json:"affected"`
 }
 
-func (osv *OSV) isAliasOfID(id string) bool {
-	for _, alias := range osv.Aliases {
-		if alias == id {
-			return true
-		}
-	}
-
-	return false
-}
-
 func (osv *OSV) isAliasOf(vulnerability OSV) bool {
 	for _, alias := range vulnerability.Aliases {
-		if osv.ID == alias || osv.isAliasOfID(alias) {
+		if osv.ID == alias || slices.Contains(osv.Aliases, alias) {
 			return true
 		}
 	}
@@ -287,7 +268,7 @@ func (osv *OSV) IsAffected(pkg internal.PackageDetails) bool {
 				continue
 			}
 
-			if affected.Versions.includes(pkg.Version) {
+			if slices.Contains(affected.Versions, pkg.Version) {
 				return true
 			}
 

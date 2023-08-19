@@ -9,6 +9,7 @@ import (
 	"github.com/g-rath/osv-detector/internal/reporter"
 	"github.com/g-rath/osv-detector/pkg/database"
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"golang.org/x/exp/slices"
 	"io"
 	"os"
 	"path/filepath"
@@ -41,16 +42,6 @@ func makeEcosystemDBConfig(ecosystem internal.Ecosystem) database.Config {
 
 type OSVDatabases []database.DB
 
-func contains(items []string, value string) bool {
-	for _, item := range items {
-		if value == item {
-			return true
-		}
-	}
-
-	return false
-}
-
 func (dbs OSVDatabases) transposePkgResults(
 	pkg internal.PackageDetails,
 	ignores []string,
@@ -69,7 +60,7 @@ func (dbs OSVDatabases) transposePkgResults(
 				continue
 			}
 
-			if contains(ignores, vulnerability.ID) {
+			if slices.Contains(ignores, vulnerability.ID) {
 				ignored = append(ignored, vulnerability)
 			} else {
 				vulnerabilities = append(vulnerabilities, vulnerability)
