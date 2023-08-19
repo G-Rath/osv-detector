@@ -21,6 +21,7 @@ linters:
     - wsl              # disagree with, for now
     - ireturn          # disagree with, sort of
     - nonamedreturns   # they have their uses
+    - depguard         # does not make any sense
   presets:
     - bugs
     - comment

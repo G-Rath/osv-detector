@@ -29,12 +29,12 @@ func (db APIDB) Fetch(id string) (OSV, error) {
 	)
 
 	if err != nil {
-		return osv, fmt.Errorf("%v: %w", ErrAPIRequestInvalid, err)
+		return osv, fmt.Errorf("%w: %w", ErrAPIRequestInvalid, err)
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return osv, fmt.Errorf("%v: %w", ErrAPIRequestFailed, err)
+		return osv, fmt.Errorf("%w: %w", ErrAPIRequestFailed, err)
 	}
 
 	defer resp.Body.Close()
@@ -55,7 +55,7 @@ func (db APIDB) Fetch(id string) (OSV, error) {
 
 	if err != nil {
 		return osv, fmt.Errorf(
-			"%v (%s %s): %w",
+			"%w (%s %s): %w",
 			ErrAPIUnreadableResponse,
 			resp.Request.Method,
 			resp.Request.URL,
@@ -67,7 +67,7 @@ func (db APIDB) Fetch(id string) (OSV, error) {
 
 	if err != nil {
 		return osv, fmt.Errorf(
-			"%v (%s %s): %w",
+			"%w (%s %s): %w",
 			ErrAPIResponseNotJSON,
 			resp.Request.Method,
 			resp.Request.URL,

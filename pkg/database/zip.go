@@ -31,10 +31,10 @@ func (db *ZipDB) Identifier() string { return db.identifier }
 
 // Cache stores the OSV database archive for re-use
 type Cache struct {
-	URL  string
-	ETag string
-	Date string
-	Body []byte
+	URL  string `json:"url"`
+	ETag string `json:"etag"`
+	Date string `json:"date"`
+	Body []byte `json:"body"`
 }
 
 var ErrOfflineDatabaseNotFound = errors.New("no offline version of the OSV database is available")

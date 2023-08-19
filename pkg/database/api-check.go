@@ -59,7 +59,7 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([][]ObjectWithID, er
 	}{queries})
 
 	if err != nil {
-		return [][]ObjectWithID{}, fmt.Errorf("%v: %w", ErrAPICouldNotMarshalPayload, err)
+		return [][]ObjectWithID{}, fmt.Errorf("%w: %w", ErrAPICouldNotMarshalPayload, err)
 	}
 
 	req, err := http.NewRequestWithContext(
@@ -70,12 +70,12 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([][]ObjectWithID, er
 	)
 
 	if err != nil {
-		return [][]ObjectWithID{}, fmt.Errorf("%v: %w", ErrAPIRequestInvalid, err)
+		return [][]ObjectWithID{}, fmt.Errorf("%w: %w", ErrAPIRequestInvalid, err)
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return [][]ObjectWithID{}, fmt.Errorf("%v: %w", ErrAPIRequestFailed, err)
+		return [][]ObjectWithID{}, fmt.Errorf("%w: %w", ErrAPIRequestFailed, err)
 	}
 
 	defer resp.Body.Close()
@@ -96,7 +96,7 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([][]ObjectWithID, er
 
 	if err != nil {
 		return [][]ObjectWithID{}, fmt.Errorf(
-			"%v (%s %s): %w",
+			"%w (%s %s): %w",
 			ErrAPIUnreadableResponse,
 			resp.Request.Method,
 			resp.Request.URL,
@@ -114,7 +114,7 @@ func (db APIDB) checkBatch(pkgs []internal.PackageDetails) ([][]ObjectWithID, er
 
 	if err != nil {
 		return [][]ObjectWithID{}, fmt.Errorf(
-			"%v (%s %s): %w",
+			"%w (%s %s): %w",
 			ErrAPIResponseNotJSON,
 			resp.Request.Method,
 			resp.Request.URL,
