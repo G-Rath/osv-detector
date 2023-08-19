@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/g-rath/osv-detector/pkg/database"
+	"github.com/google/go-cmp/cmp"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -36,7 +37,7 @@ func expectDBToHaveOSVs(
 	})
 
 	if !reflect.DeepEqual(vulns, actual) {
-		t.Errorf("db is missing some vulnerabilities: %v vs %v", vulns, actual)
+		t.Errorf("db is missing some vulnerabilities:\n%s", cmp.Diff(vulns, actual))
 	}
 }
 
