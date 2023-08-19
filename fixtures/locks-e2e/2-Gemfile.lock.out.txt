@@ -38,6 +38,8 @@ fixtures/locks-e2e/2-Gemfile.lock: found 426 packages
     GHSA-cgx6-hpwq-fhv5: Integer Overflow or Wraparound in libxml2 affects Nokogiri (https://github.com/advisories/GHSA-cgx6-hpwq-fhv5)
     GHSA-pxvg-2qj5-37jq: Nokogiri updates packaged libxml2 to v2.10.4 to resolve multiple CVEs (https://github.com/advisories/GHSA-pxvg-2qj5-37jq)
     GHSA-xh29-r2w5-wx8m: Nokogiri Improperly Handles Unexpected Data Type (https://github.com/advisories/GHSA-xh29-r2w5-wx8m)
+  puma@5.6.4 is affected by the following vulnerabilities:
+    GHSA-68xg-gqqm-vgj8: Puma HTTP Request/Response Smuggling vulnerability (https://github.com/advisories/GHSA-68xg-gqqm-vgj8)
   rack@2.2.3 is affected by the following vulnerabilities:
     GHSA-3h57-hmj3-gj3p: Rack has possible DoS Vulnerability in Multipart MIME parsing (https://github.com/advisories/GHSA-3h57-hmj3-gj3p)
     GHSA-65f5-mfpf-vfhj: Denial of service via header parsing in Rack (https://github.com/advisories/GHSA-65f5-mfpf-vfhj)
