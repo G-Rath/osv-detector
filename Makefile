@@ -11,10 +11,10 @@ build-snapshot:
 	goreleaser build --single-target --snapshot --rm-dist -o osv-detector
 
 test:
-	go test ./... -parallel=4
+	go test ./...
 
 test-with-coverage:
-	go test ./... -parallel=4 -cover
+	go test ./... -cover
 
 lint:	lint-with-golangci-lint lint-with-go-fmt
 
