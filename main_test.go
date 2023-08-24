@@ -81,6 +81,15 @@ func normalizeFilePaths(output string) string {
 	return strings.ReplaceAll(strings.ReplaceAll(output, "\\\\", "/"), "\\", "/")
 }
 
+// wildcardDatabaseStats attempts to replace references to database stats (such as
+// the number of vulnerabilities and the time that the database was last updated)
+// in the output with %% wildcards, in order to reduce the noise of the cmp diff
+func wildcardDatabaseStats(str string) string {
+	re := regexp.MustCompile(`(\w+) \(\d+ vulnerabilities, including withdrawn - last updated \w{3}, \d\d \w{3} \d{4} [012]\d:\d\d:\d\d GMT\)`)
+
+	return re.ReplaceAllString(str, "$1 (%% vulnerabilities, including withdrawn - last updated %%)")
+}
+
 func expectAreEqual(t *testing.T, subject, actual, expect string) {
 	t.Helper()
 
@@ -106,6 +115,8 @@ func testCli(t *testing.T, tc cliTestCase) {
 
 	stdout := normalizeFilePaths(stdoutBuffer.String())
 	stderr := normalizeFilePaths(stderrBuffer.String())
+
+	stdout = wildcardDatabaseStats(stdout)
 
 	if ec != tc.wantExitCode {
 		t.Errorf("cli exited with code %d, not %d", ec, tc.wantExitCode)
