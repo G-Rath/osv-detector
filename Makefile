@@ -2,8 +2,10 @@ BINARY=osv-detector
 VERSION=0.1
 OS_ARCH=linux_amd64
 
-build:
+${BINARY}:
 	go build -o ${BINARY}
+
+build: ${BINARY}
 
 build-snapshot:
 	goreleaser build --single-target --snapshot --rm-dist -o osv-detector
@@ -24,3 +26,6 @@ lint-with-go-fmt:
 
 format-with-prettier:
 	npx prettier --prose-wrap always --write .
+
+regenerate-e2e-fixtures: ${BINARY}
+	OSV_DETECTOR_CMD=./${BINARY} ./generators/generate-e2e-fixtures.js
