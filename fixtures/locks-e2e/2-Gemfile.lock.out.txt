@@ -21,6 +21,7 @@ fixtures/locks-e2e/2-Gemfile.lock: found 426 packages
   activestorage@6.0.4.1 is affected by the following vulnerabilities:
     GHSA-w749-p3v6-hccq: Possible code injection vulnerability in Rails / Active Storage (https://github.com/advisories/GHSA-w749-p3v6-hccq)
   activesupport@6.0.4.1 is affected by the following vulnerabilities:
+    GHSA-cr5q-6q9f-rq6q: Active Support Possibly Discloses Locally Encrypted Files (https://github.com/advisories/GHSA-cr5q-6q9f-rq6q)
     GHSA-j6gc-792m-qgm2: ReDoS based DoS vulnerability in Active Support's underscore (https://github.com/advisories/GHSA-j6gc-792m-qgm2)
     GHSA-pj73-v5mw-pm9j: Possible XSS Security Vulnerability in SafeBuffer#bytesplice (https://github.com/advisories/GHSA-pj73-v5mw-pm9j)
   globalid@1.0.0 is affected by the following vulnerabilities:
@@ -57,4 +58,4 @@ fixtures/locks-e2e/2-Gemfile.lock: found 426 packages
   tzinfo@1.2.9 is affected by the following vulnerabilities:
     GHSA-5cm2-9h8c-rvfx: TZInfo relative path traversal vulnerability allows loading of arbitrary files (https://github.com/advisories/GHSA-5cm2-9h8c-rvfx)
 
-  38 known vulnerabilities found in fixtures/locks-e2e/2-Gemfile.lock
+  39 known vulnerabilities found in fixtures/locks-e2e/2-Gemfile.lock
