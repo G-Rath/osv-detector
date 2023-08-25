@@ -277,6 +277,92 @@ func TestParsePnpmLock_PeerDependenciesAdvanced(t *testing.T) {
 	})
 }
 
+func TestParsePnpmLock_PeerDependenciesAdvancedV6(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/peer-dependencies-advanced-v6.yaml")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "js-tokens",
+			Version:   "4.0.0",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "loose-envify",
+			Version:   "1.4.0",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "react-dom",
+			Version:   "18.3.0-canary-ab31a9ed2-20230824",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "react",
+			Version:   "18.3.0-canary-ab31a9ed2-20230824",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "scheduler",
+			Version:   "0.24.0-canary-ab31a9ed2-20230824",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+	})
+}
+
+func TestParsePnpmLock_PeerDependenciesAdvancedRCV6(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/peer-dependencies-advanced-rc-v6.yaml")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "js-tokens",
+			Version:   "4.0.0",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "loose-envify",
+			Version:   "1.4.0",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "react-dom",
+			Version:   "18.0.0-rc.3",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "react",
+			Version:   "18.2.0",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "scheduler",
+			Version:   "0.21.0",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+	})
+}
+
 func TestParsePnpmLock_MultiplePackages(t *testing.T) {
 	t.Parallel()
 
