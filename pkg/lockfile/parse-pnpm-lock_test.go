@@ -167,6 +167,49 @@ func TestParsePnpmLock_PeerDependencies(t *testing.T) {
 	})
 }
 
+func TestParsePnpmLock_PeerDependenciesV6(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/peer-dependencies-v6.yaml")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "js-tokens",
+			Version:   "4.0.0",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "loose-envify",
+			Version:   "1.4.0",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "react-dom",
+			Version:   "18.2.0",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "react",
+			Version:   "18.2.0",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "scheduler",
+			Version:   "0.23.0",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+	})
+}
+
 func TestParsePnpmLock_PeerDependenciesAdvanced(t *testing.T) {
 	t.Parallel()
 
