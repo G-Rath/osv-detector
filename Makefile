@@ -2,6 +2,8 @@ BINARY=osv-detector
 VERSION=0.1
 OS_ARCH=linux_amd64
 
+.PHONY: ${BINARY}
+
 ${BINARY}:
 	go build -o ${BINARY}
 
