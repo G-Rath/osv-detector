@@ -142,11 +142,9 @@ jobs:
         with:
           go-version-file: .go-version
           cache: true
-      - run: make build
-      - run: go install
-
       - uses: actions/setup-node@v3
-      - run: generators/generate-e2e-fixtures.js
+
+      - run: make regenerate-e2e-fixtures
       - uses: actions/upload-artifact@v3
         with:
           name: e2e-fixtures
