@@ -3,9 +3,9 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 )
 
@@ -67,7 +67,7 @@ func parseLine(line string) PackageDetails {
 // than false negatives, and can be dealt with when/if it actually happens.
 func normalizedRequirementName(name string) string {
 	// per https://www.python.org/dev/peps/pep-0503/#normalized-names
-	name = regexp.MustCompile(`[-_.]+`).ReplaceAllString(name, "-")
+	name = cachedregexp.MustCompile(`[-_.]+`).ReplaceAllString(name, "-")
 	name = strings.ToLower(name)
 	name = strings.Split(name, "[")[0]
 
@@ -75,7 +75,7 @@ func normalizedRequirementName(name string) string {
 }
 
 func removeComments(line string) string {
-	var re = regexp.MustCompile(`(^|\s+)#.*$`)
+	var re = cachedregexp.MustCompile(`(^|\s+)#.*$`)
 
 	return strings.TrimSpace(re.ReplaceAllString(line, ""))
 }
@@ -95,7 +95,7 @@ func isNotRequirementLine(line string) bool {
 func isLineContinuation(line string) bool {
 	// checks that the line ends with an odd number of backslashes,
 	// meaning the last one isn't escaped
-	var re = regexp.MustCompile(`([^\\]|^)(\\{2})*\\$`)
+	var re = cachedregexp.MustCompile(`([^\\]|^)(\\{2})*\\$`)
 
 	return re.MatchString(line)
 }

@@ -3,9 +3,9 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"net/url"
 	"os"
-	"regexp"
 	"strings"
 )
 
@@ -63,7 +63,7 @@ func extractYarnPackageName(str string) string {
 }
 
 func determineYarnPackageVersion(group []string) string {
-	re := regexp.MustCompile(`^ {2}"?version"?:? "?([\w-.]+)"?$`)
+	re := cachedregexp.MustCompile(`^ {2}"?version"?:? "?([\w-.]+)"?$`)
 
 	for _, s := range group {
 		matched := re.FindStringSubmatch(s)
@@ -78,7 +78,7 @@ func determineYarnPackageVersion(group []string) string {
 }
 
 func determineYarnPackageResolution(group []string) string {
-	re := regexp.MustCompile(`^ {2}"?(?:resolution:|resolved)"? "([^ '"]+)"$`)
+	re := cachedregexp.MustCompile(`^ {2}"?(?:resolution:|resolved)"? "([^ '"]+)"$`)
 
 	for _, s := range group {
 		matched := re.FindStringSubmatch(s)
@@ -111,7 +111,7 @@ func tryExtractCommit(resolution string) string {
 	}
 
 	for _, matcher := range matchers {
-		re := regexp.MustCompile(matcher)
+		re := cachedregexp.MustCompile(matcher)
 		matched := re.FindStringSubmatch(resolution)
 
 		if matched != nil {

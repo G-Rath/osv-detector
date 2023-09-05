@@ -3,8 +3,8 @@ package lockfile
 import (
 	"encoding/xml"
 	"fmt"
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"os"
-	"regexp"
 )
 
 type MavenLockDependency struct {
@@ -15,7 +15,7 @@ type MavenLockDependency struct {
 }
 
 func (mld MavenLockDependency) parseResolvedVersion(version string) string {
-	versionRequirementReg := regexp.MustCompile(`[[(]?(.*?)(?:,|[)\]]|$)`)
+	versionRequirementReg := cachedregexp.MustCompile(`[[(]?(.*?)(?:,|[)\]]|$)`)
 
 	results := versionRequirementReg.FindStringSubmatch(version)
 
@@ -27,7 +27,7 @@ func (mld MavenLockDependency) parseResolvedVersion(version string) string {
 }
 
 func (mld MavenLockDependency) resolveVersionValue(lockfile MavenLockFile) string {
-	interpolationReg := regexp.MustCompile(`\${(.+)}`)
+	interpolationReg := cachedregexp.MustCompile(`\${(.+)}`)
 
 	results := interpolationReg.FindStringSubmatch(mld.Version)
 
