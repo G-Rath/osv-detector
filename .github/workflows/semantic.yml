@@ -143,6 +143,7 @@ jobs:
           go-version-file: .go-version
           cache: true
       - run: make build
+      - run: go install
 
       - uses: actions/setup-node@v3
       - run: generators/generate-e2e-fixtures.js
