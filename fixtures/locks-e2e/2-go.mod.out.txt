@@ -20,8 +20,8 @@ fixtures/locks-e2e/2-go.mod: found 73 packages
     GHSA-jpxj-2jvg-6jv9: Data Amplification in HashiCorp go-getter (https://github.com/advisories/GHSA-jpxj-2jvg-6jv9)
     GHSA-x24g-9w7v-vprh: HashiCorp go-getter command injection (https://github.com/advisories/GHSA-x24g-9w7v-vprh)
   golang.org/x/crypto@0.0.0-20210421170649-83a5a9bb288b is affected by the following vulnerabilities:
-    GHSA-8c26-wmh5-6g9v: Use of a Broken or Risky Cryptographic Algorithm in golang.org/x/crypto/ssh (https://github.com/advisories/GHSA-8c26-wmh5-6g9v)
-    GHSA-gwc9-m7rh-j2ww: x/crypto/ssh vulnerable to panic via SSH server (https://github.com/advisories/GHSA-gwc9-m7rh-j2ww)
+    GHSA-8c26-wmh5-6g9v: golang.org/x/crypto/ssh Denial of service via crafted Signer (https://github.com/advisories/GHSA-8c26-wmh5-6g9v)
+    GHSA-gwc9-m7rh-j2ww: x/crypto/ssh vulnerable to panic via malformed packets (https://github.com/advisories/GHSA-gwc9-m7rh-j2ww)
   golang.org/x/net@0.0.0-20210326060303-6b1517762897 is affected by the following vulnerabilities:
     GHSA-69cg-p879-7622: golang.org/x/net/http2 Denial of Service vulnerability (https://github.com/advisories/GHSA-69cg-p879-7622)
     GHSA-83g2-8m93-v3w7: golang.org/x/net/html Infinite Loop vulnerability (https://github.com/advisories/GHSA-83g2-8m93-v3w7)
@@ -31,7 +31,7 @@ fixtures/locks-e2e/2-go.mod: found 73 packages
     GO-2022-1144: Excessive memory growth in net/http and golang.org/x/net/http2
     GO-2023-1988: Improper rendering of text nodes in golang.org/x/net/html
   golang.org/x/sys@0.0.0-20210502180810-71e4cd670f79 is affected by the following vulnerabilities:
-    GHSA-p782-xgp4-8hr8: golang.org/x/sys/unix has Incorrect Privilege Assignment (https://github.com/advisories/GHSA-p782-xgp4-8hr8)
+    GHSA-p782-xgp4-8hr8: golang.org/x/sys/unix has Incorrect privilege reporting in syscall (https://github.com/advisories/GHSA-p782-xgp4-8hr8)
   golang.org/x/text@0.3.5 is affected by the following vulnerabilities:
     GHSA-69ch-w2m2-3vjp: Denial of service in golang.org/x/text/language (https://github.com/advisories/GHSA-69ch-w2m2-3vjp)
     GHSA-ppp9-7jff-5vj2: golang.org/x/text/language Out-of-bounds Read vulnerability (https://github.com/advisories/GHSA-ppp9-7jff-5vj2)

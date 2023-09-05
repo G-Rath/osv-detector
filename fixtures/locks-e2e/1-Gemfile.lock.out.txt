@@ -27,7 +27,7 @@ fixtures/locks-e2e/1-Gemfile.lock: found 229 packages
   globalid@0.4.2 is affected by the following vulnerabilities:
     GHSA-23c2-gwp5-pxw9: ReDoS based DoS vulnerability in GlobalID (https://github.com/advisories/GHSA-23c2-gwp5-pxw9)
   gon@6.2.1 is affected by the following vulnerabilities:
-    GHSA-78vq-9j56-wrfr: Cross-site Scripting in gon (https://github.com/advisories/GHSA-78vq-9j56-wrfr)
+    GHSA-78vq-9j56-wrfr: Gon gem lack of escaping certain input when outputting as JSON (https://github.com/advisories/GHSA-78vq-9j56-wrfr)
   jmespath@1.4.0 is affected by the following vulnerabilities:
     GHSA-5c5f-7vfq-3732: JMESPath for Ruby uses unsafe JSON.load when safe JSON.parse is preferable (https://github.com/advisories/GHSA-5c5f-7vfq-3732)
   loofah@2.10.0 is affected by the following vulnerabilities:
