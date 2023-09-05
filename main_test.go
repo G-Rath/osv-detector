@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"github.com/google/go-cmp/cmp"
 	"os"
 	"path/filepath"
@@ -18,17 +19,17 @@ func dedent(t *testing.T, str string) string {
 	str = strings.ReplaceAll(str, "\t", "  ")
 
 	// 1. remove trailing whitespace
-	re := regexp.MustCompile(`\r?\n([\t ]*)$`)
+	re := cachedregexp.MustCompile(`\r?\n([\t ]*)$`)
 	str = re.ReplaceAllString(str, "")
 
 	// 2. if any of the lines are not indented, return as we're already dedent-ed
-	re = regexp.MustCompile(`(^|\r?\n)[^\t \n]`)
+	re = cachedregexp.MustCompile(`(^|\r?\n)[^\t \n]`)
 	if re.MatchString(str) {
 		return str
 	}
 
 	// 3. find all line breaks to determine the highest common indentation level
-	re = regexp.MustCompile(`\n[\t ]+`)
+	re = cachedregexp.MustCompile(`\n[\t ]+`)
 	matches := re.FindAllString(str, -1)
 
 	// 4. remove the common indentation from all strings
@@ -41,12 +42,12 @@ func dedent(t *testing.T, str string) string {
 			}
 		}
 
-		re := regexp.MustCompile(`\n[\t ]{` + fmt.Sprint(size) + `}`)
+		re := cachedregexp.MustCompile(`\n[\t ]{` + fmt.Sprint(size) + `}`)
 		str = re.ReplaceAllString(str, "\n")
 	}
 
 	// 5. Remove leading whitespace.
-	re = regexp.MustCompile(`^\r?\n`)
+	re = cachedregexp.MustCompile(`^\r?\n`)
 	str = re.ReplaceAllString(str, "")
 
 	return str
@@ -60,7 +61,7 @@ func areEqual(t *testing.T, actual, expect string) bool {
 	expect = regexp.QuoteMeta(expect)
 	expect = strings.ReplaceAll(expect, "%%", ".+")
 
-	re := regexp.MustCompile(`^` + expect + `$`)
+	re := cachedregexp.MustCompile(`^` + expect + `$`)
 
 	return re.MatchString(actual)
 }
@@ -85,7 +86,7 @@ func normalizeFilePaths(output string) string {
 // the number of vulnerabilities and the time that the database was last updated)
 // in the output with %% wildcards, in order to reduce the noise of the cmp diff
 func wildcardDatabaseStats(str string) string {
-	re := regexp.MustCompile(`(\w+) \(\d+ vulnerabilities, including withdrawn - last updated \w{3}, \d\d \w{3} \d{4} [012]\d:\d\d:\d\d GMT\)`)
+	re := cachedregexp.MustCompile(`(\w+) \(\d+ vulnerabilities, including withdrawn - last updated \w{3}, \d\d \w{3} \d{4} [012]\d:\d\d:\d\d GMT\)`)
 
 	return re.ReplaceAllString(str, "$1 (%% vulnerabilities, including withdrawn - last updated %%)")
 }
@@ -1384,7 +1385,7 @@ func TestRun_EndToEnd(t *testing.T) {
 	}
 
 	tests := make([]cliTestCase, 0, len(files)/2)
-	re := regexp.MustCompile(`\d+-(.*)`)
+	re := cachedregexp.MustCompile(`\d+-(.*)`)
 
 	for _, f := range files {
 		if strings.HasSuffix(f.Name(), ".out.txt") {

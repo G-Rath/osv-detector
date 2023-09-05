@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/g-rath/osv-detector/internal"
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"github.com/g-rath/osv-detector/pkg/semantic"
 	"os"
-	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -43,7 +43,7 @@ func (p Package) NormalizedName() string {
 	}
 
 	// per https://www.python.org/dev/peps/pep-0503/#normalized-names
-	name := regexp.MustCompile(`[-_.]+`).ReplaceAllString(p.Name, "-")
+	name := cachedregexp.MustCompile(`[-_.]+`).ReplaceAllString(p.Name, "-")
 
 	return strings.ToLower(name)
 }

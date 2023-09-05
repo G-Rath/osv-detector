@@ -2,8 +2,8 @@ package semantic
 
 import (
 	"fmt"
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"math/big"
-	"regexp"
 	"strings"
 )
 
@@ -55,7 +55,7 @@ func parseSemverLike(line string) SemverLikeVersion {
 	var components []*big.Int
 	originStr := line
 
-	numberReg := regexp.MustCompile(`\d`)
+	numberReg := cachedregexp.MustCompile(`\d`)
 
 	currentCom := ""
 	foundBuild := false

@@ -3,8 +3,8 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"os"
-	"regexp"
 	"strings"
 )
 
@@ -17,7 +17,7 @@ func ParseMixLock(pathToLockfile string) ([]PackageDetails, error) {
 	}
 	defer file.Close()
 
-	re := regexp.MustCompile(`^ +"(\w+)": \{.+,$`)
+	re := cachedregexp.MustCompile(`^ +"(\w+)": \{.+,$`)
 
 	scanner := bufio.NewScanner(file)
 
