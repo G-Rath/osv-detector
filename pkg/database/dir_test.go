@@ -3,8 +3,6 @@ package database_test
 import (
 	"errors"
 	"github.com/g-rath/osv-detector/pkg/database"
-	"github.com/google/go-cmp/cmp"
-	"reflect"
 	"testing"
 )
 
@@ -79,7 +77,5 @@ func TestNewDirDB_WorkingDirectory(t *testing.T) {
 		t.Errorf("unexpected error \"%v\"", err)
 	}
 
-	if !reflect.DeepEqual(db.Vulnerabilities(false), osvs) {
-		t.Errorf("db is missing some vulnerabilities:\n%s", cmp.Diff(db.Vulnerabilities(false), osvs))
-	}
+	expectDBToHaveOSVs(t, db, osvs)
 }
