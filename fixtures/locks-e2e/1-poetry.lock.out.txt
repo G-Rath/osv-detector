@@ -21,7 +21,7 @@ fixtures/locks-e2e/1-poetry.lock: found 142 packages
     GHSA-p99v-5w3c-jqq9: Django Access Control Bypass possibly leading to SSRF, RFI, and LFI attacks  (https://github.com/advisories/GHSA-p99v-5w3c-jqq9)
     GHSA-q2jf-h9jm-m7p4: Django contains Uncontrolled Resource Consumption via cached header (https://github.com/advisories/GHSA-q2jf-h9jm-m7p4)
     GHSA-qm57-vhq3-3fwf: Header injection possible in Django (https://github.com/advisories/GHSA-qm57-vhq3-3fwf)
-    GHSA-qrw5-5h28-6cmg: Denial-of-service vulnerability in internationalized URLs (https://github.com/advisories/GHSA-qrw5-5h28-6cmg)
+    GHSA-qrw5-5h28-6cmg: Django denial-of-service vulnerability in internationalized URLs (https://github.com/advisories/GHSA-qrw5-5h28-6cmg)
     GHSA-r3xc-prgr-mg9p: Django bypasses validation when using one form field to upload multiple files (https://github.com/advisories/GHSA-r3xc-prgr-mg9p)
     GHSA-rxjp-mfm9-w4wr: Path Traversal in Django (https://github.com/advisories/GHSA-rxjp-mfm9-w4wr)
     GHSA-v6rh-hp5x-86rv: Potential bypass of an upstream access control based on URL paths in Django (https://github.com/advisories/GHSA-v6rh-hp5x-86rv)
