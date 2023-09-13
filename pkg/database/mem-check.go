@@ -7,7 +7,8 @@ import (
 // an OSV database that lives in-memory, and can be used by other structs
 // that handle loading the vulnerabilities from where ever
 type memDB struct {
-	vulnerabilities map[string][]OSV
+	vulnerabilities      map[string][]OSV
+	VulnerabilitiesCount int
 }
 
 func (db *memDB) addVulnerabilityToMap(osv OSV, hash string) {
@@ -21,6 +22,8 @@ func (db *memDB) addVulnerabilityToMap(osv OSV, hash string) {
 }
 
 func (db *memDB) addVulnerability(osv OSV) {
+	db.VulnerabilitiesCount++
+
 	if len(osv.Affected) == 0 {
 		db.addVulnerabilityToMap(osv, "*")
 	} else {
