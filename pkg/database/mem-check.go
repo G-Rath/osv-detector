@@ -11,25 +11,18 @@ type memDB struct {
 	VulnerabilitiesCount int
 }
 
-func (db *memDB) addVulnerabilityToMap(osv OSV, hash string) {
-	vulns := db.vulnerabilities[hash]
-
-	if vulns == nil {
-		vulns = []OSV{}
-	}
-
-	db.vulnerabilities[hash] = append(vulns, osv)
-}
-
 func (db *memDB) addVulnerability(osv OSV) {
 	db.VulnerabilitiesCount++
 
-	if len(osv.Affected) == 0 {
-		db.addVulnerabilityToMap(osv, "*")
-	} else {
-		for _, affected := range osv.Affected {
-			db.addVulnerabilityToMap(osv, string(affected.Package.Ecosystem)+"-"+affected.Package.NormalizedName())
+	for _, affected := range osv.Affected {
+		hash := string(affected.Package.Ecosystem) + "-" + affected.Package.NormalizedName()
+		vulns := db.vulnerabilities[hash]
+
+		if vulns == nil {
+			vulns = []OSV{}
 		}
+
+		db.vulnerabilities[hash] = append(vulns, osv)
 	}
 }
 

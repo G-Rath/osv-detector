@@ -10,8 +10,8 @@ func TestNewDirDB(t *testing.T) {
 	t.Parallel()
 
 	osvs := []database.OSV{
-		{ID: "OSV-1"},
-		{ID: "OSV-2"},
+		withDefaultAffected("OSV-1"),
+		withDefaultAffected("OSV-2"),
 		{
 			ID: "GHSA-1234",
 			Affected: []database.Affected{
@@ -79,7 +79,7 @@ func TestNewDirDB_DoesNotExist(t *testing.T) {
 func TestNewDirDB_WorkingDirectory(t *testing.T) {
 	t.Parallel()
 
-	osvs := []database.OSV{{ID: "OSV-1"}}
+	osvs := []database.OSV{withDefaultAffected("OSV-1")}
 
 	db, err := database.NewDirDB(database.Config{URL: "file:/fixtures/db", WorkingDirectory: "nested-1"}, false)
 
