@@ -38,7 +38,7 @@ fixtures/locks-e2e/3-yarn.lock: found 1225 packages
   minimist@1.2.5 is affected by the following vulnerabilities:
     GHSA-xvch-5gv4-984h: Prototype Pollution in minimist (https://github.com/advisories/GHSA-xvch-5gv4-984h)
   node-fetch@2.6.1 is affected by the following vulnerabilities:
-    GHSA-r683-j2x4-v87g: node-fetch is vulnerable to Exposure of Sensitive Information to an Unauthorized Actor (https://github.com/advisories/GHSA-r683-j2x4-v87g)
+    GHSA-r683-j2x4-v87g: node-fetch forwards secure headers to untrusted sites (https://github.com/advisories/GHSA-r683-j2x4-v87g)
   normalize-url@5.3.0 is affected by the following vulnerabilities:
     GHSA-px4h-xg32-q955: ReDoS in normalize-url (https://github.com/advisories/GHSA-px4h-xg32-q955)
   path-parse@1.0.6 is affected by the following vulnerabilities:
