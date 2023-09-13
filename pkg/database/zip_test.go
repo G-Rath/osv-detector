@@ -23,7 +23,7 @@ func expectDBToHaveOSVs(
 	db interface {
 		Vulnerabilities(includeWithdrawn bool) []database.OSV
 	},
-	actual []database.OSV,
+	expect []database.OSV,
 ) {
 	t.Helper()
 
@@ -32,12 +32,12 @@ func expectDBToHaveOSVs(
 	sort.Slice(vulns, func(i, j int) bool {
 		return vulns[i].ID < vulns[j].ID
 	})
-	sort.Slice(actual, func(i, j int) bool {
-		return actual[i].ID < actual[j].ID
+	sort.Slice(expect, func(i, j int) bool {
+		return expect[i].ID < expect[j].ID
 	})
 
-	if !reflect.DeepEqual(vulns, actual) {
-		t.Errorf("db is missing some vulnerabilities:\n%s", cmp.Diff(vulns, actual))
+	if !reflect.DeepEqual(expect, vulns) {
+		t.Errorf("db is missing some vulnerabilities:\n%s", cmp.Diff(expect, vulns))
 	}
 }
 
