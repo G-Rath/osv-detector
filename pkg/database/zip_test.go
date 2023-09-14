@@ -18,6 +18,21 @@ import (
 	"testing"
 )
 
+func withDefaultAffected(id string) database.OSV {
+	return database.OSV{
+		ID: id,
+		Affected: []database.Affected{
+			{
+				Package: database.Package{
+					Name:      "mine",
+					Ecosystem: "PyPi",
+				},
+				Versions: database.Versions{},
+			},
+		},
+	}
+}
+
 func expectDBToHaveOSVs(
 	t *testing.T,
 	db interface {
@@ -137,11 +152,11 @@ func TestNewZippedDB_Offline_WithCache(t *testing.T) {
 
 	date := "Fri, 17 Jun 2022 22:28:13 GMT"
 	osvs := []database.OSV{
-		{ID: "GHSA-1"},
-		{ID: "GHSA-2"},
-		{ID: "GHSA-3"},
-		{ID: "GHSA-4"},
-		{ID: "GHSA-5"},
+		withDefaultAffected("GHSA-1"),
+		withDefaultAffected("GHSA-2"),
+		withDefaultAffected("GHSA-3"),
+		withDefaultAffected("GHSA-4"),
+		withDefaultAffected("GHSA-5"),
 	}
 
 	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
@@ -154,11 +169,11 @@ func TestNewZippedDB_Offline_WithCache(t *testing.T) {
 		ETag: "",
 		Date: date,
 		Body: zipOSVs(t, map[string]database.OSV{
-			"GHSA-1.json": {ID: "GHSA-1"},
-			"GHSA-2.json": {ID: "GHSA-2"},
-			"GHSA-3.json": {ID: "GHSA-3"},
-			"GHSA-4.json": {ID: "GHSA-4"},
-			"GHSA-5.json": {ID: "GHSA-5"},
+			"GHSA-1.json": withDefaultAffected("GHSA-1"),
+			"GHSA-2.json": withDefaultAffected("GHSA-2"),
+			"GHSA-3.json": withDefaultAffected("GHSA-3"),
+			"GHSA-4.json": withDefaultAffected("GHSA-4"),
+			"GHSA-5.json": withDefaultAffected("GHSA-5"),
 		}),
 	})
 
@@ -204,20 +219,20 @@ func TestNewZippedDB_Online_WithoutCache(t *testing.T) {
 	t.Parallel()
 
 	osvs := []database.OSV{
-		{ID: "GHSA-1"},
-		{ID: "GHSA-2"},
-		{ID: "GHSA-3"},
-		{ID: "GHSA-4"},
-		{ID: "GHSA-5"},
+		withDefaultAffected("GHSA-1"),
+		withDefaultAffected("GHSA-2"),
+		withDefaultAffected("GHSA-3"),
+		withDefaultAffected("GHSA-4"),
+		withDefaultAffected("GHSA-5"),
 	}
 
 	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
-			"GHSA-1.json": {ID: "GHSA-1"},
-			"GHSA-2.json": {ID: "GHSA-2"},
-			"GHSA-3.json": {ID: "GHSA-3"},
-			"GHSA-4.json": {ID: "GHSA-4"},
-			"GHSA-5.json": {ID: "GHSA-5"},
+			"GHSA-1.json": withDefaultAffected("GHSA-1"),
+			"GHSA-2.json": withDefaultAffected("GHSA-2"),
+			"GHSA-3.json": withDefaultAffected("GHSA-3"),
+			"GHSA-4.json": withDefaultAffected("GHSA-4"),
+			"GHSA-5.json": withDefaultAffected("GHSA-5"),
 		}))
 	})
 	defer cleanup()
@@ -254,9 +269,9 @@ func TestNewZippedDB_Online_WithCache(t *testing.T) {
 
 	date := "Fri, 18 Jun 2022 22:28:13 GMT"
 	osvs := []database.OSV{
-		{ID: "GHSA-1"},
-		{ID: "GHSA-2"},
-		{ID: "GHSA-3"},
+		withDefaultAffected("GHSA-1"),
+		withDefaultAffected("GHSA-2"),
+		withDefaultAffected("GHSA-3"),
 	}
 
 	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
@@ -273,9 +288,9 @@ func TestNewZippedDB_Online_WithCache(t *testing.T) {
 		ETag: "",
 		Date: date,
 		Body: zipOSVs(t, map[string]database.OSV{
-			"GHSA-1.json": {ID: "GHSA-1"},
-			"GHSA-2.json": {ID: "GHSA-2"},
-			"GHSA-3.json": {ID: "GHSA-3"},
+			"GHSA-1.json": withDefaultAffected("GHSA-1"),
+			"GHSA-2.json": withDefaultAffected("GHSA-2"),
+			"GHSA-3.json": withDefaultAffected("GHSA-3"),
 		}),
 	})
 
@@ -297,11 +312,11 @@ func TestNewZippedDB_Online_WithOldCache(t *testing.T) {
 
 	date := "Fri, 17 Jun 2022 22:28:13 GMT"
 	osvs := []database.OSV{
-		{ID: "GHSA-1"},
-		{ID: "GHSA-2"},
-		{ID: "GHSA-3"},
-		{ID: "GHSA-4"},
-		{ID: "GHSA-5"},
+		withDefaultAffected("GHSA-1"),
+		withDefaultAffected("GHSA-2"),
+		withDefaultAffected("GHSA-3"),
+		withDefaultAffected("GHSA-4"),
+		withDefaultAffected("GHSA-5"),
 	}
 
 	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
@@ -311,11 +326,11 @@ func TestNewZippedDB_Online_WithOldCache(t *testing.T) {
 
 		w.Header().Set("Date", "Today")
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
-			"GHSA-1.json": {ID: "GHSA-1"},
-			"GHSA-2.json": {ID: "GHSA-2"},
-			"GHSA-3.json": {ID: "GHSA-3"},
-			"GHSA-4.json": {ID: "GHSA-4"},
-			"GHSA-5.json": {ID: "GHSA-5"},
+			"GHSA-1.json": withDefaultAffected("GHSA-1"),
+			"GHSA-2.json": withDefaultAffected("GHSA-2"),
+			"GHSA-3.json": withDefaultAffected("GHSA-3"),
+			"GHSA-4.json": withDefaultAffected("GHSA-4"),
+			"GHSA-5.json": withDefaultAffected("GHSA-5"),
 		}))
 	})
 	defer cleanup()
@@ -325,9 +340,9 @@ func TestNewZippedDB_Online_WithOldCache(t *testing.T) {
 		ETag: "",
 		Date: date,
 		Body: zipOSVs(t, map[string]database.OSV{
-			"GHSA-1.json": {ID: "GHSA-1"},
-			"GHSA-2.json": {ID: "GHSA-2"},
-			"GHSA-3.json": {ID: "GHSA-3"},
+			"GHSA-1.json": withDefaultAffected("GHSA-1"),
+			"GHSA-2.json": withDefaultAffected("GHSA-2"),
+			"GHSA-3.json": withDefaultAffected("GHSA-3"),
 		}),
 	})
 
@@ -348,16 +363,16 @@ func TestNewZippedDB_Online_WithBadCache(t *testing.T) {
 	t.Parallel()
 
 	osvs := []database.OSV{
-		{ID: "GHSA-1"},
-		{ID: "GHSA-2"},
-		{ID: "GHSA-3"},
+		withDefaultAffected("GHSA-1"),
+		withDefaultAffected("GHSA-2"),
+		withDefaultAffected("GHSA-3"),
 	}
 
 	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
-			"GHSA-1.json": {ID: "GHSA-1"},
-			"GHSA-2.json": {ID: "GHSA-2"},
-			"GHSA-3.json": {ID: "GHSA-3"},
+			"GHSA-1.json": withDefaultAffected("GHSA-1"),
+			"GHSA-2.json": withDefaultAffected("GHSA-2"),
+			"GHSA-3.json": withDefaultAffected("GHSA-3"),
 		}))
 	})
 	defer cleanup()
@@ -376,15 +391,15 @@ func TestNewZippedDB_Online_WithBadCache(t *testing.T) {
 func TestNewZippedDB_FileChecks(t *testing.T) {
 	t.Parallel()
 
-	osvs := []database.OSV{{ID: "GHSA-1234"}, {ID: "GHSA-4321"}}
+	osvs := []database.OSV{withDefaultAffected("GHSA-1234"), withDefaultAffected("GHSA-4321")}
 
 	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
-			"file.json": {ID: "GHSA-1234"},
+			"file.json": withDefaultAffected("GHSA-1234"),
 			// only files with .json suffix should be loaded
-			"file.yaml": {ID: "GHSA-5678"},
+			"file.yaml": withDefaultAffected("GHSA-5678"),
 			// (no longer) special case for the GH security database
-			"advisory-database-main/advisories/unreviewed/file.json": {ID: "GHSA-4321"},
+			"advisory-database-main/advisories/unreviewed/file.json": withDefaultAffected("GHSA-4321"),
 		}))
 	})
 	defer cleanup()
@@ -401,13 +416,13 @@ func TestNewZippedDB_FileChecks(t *testing.T) {
 func TestNewZippedDB_WorkingDirectory(t *testing.T) {
 	t.Parallel()
 
-	osvs := []database.OSV{{ID: "GHSA-1234"}, {ID: "GHSA-5678"}}
+	osvs := []database.OSV{withDefaultAffected("GHSA-1234"), withDefaultAffected("GHSA-5678")}
 
 	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
-			"reviewed/file.json":        {ID: "GHSA-1234"},
-			"reviewed/nested/file.json": {ID: "GHSA-5678"},
-			"unreviewed/file.json":      {ID: "GHSA-4321"},
+			"reviewed/file.json":        withDefaultAffected("GHSA-1234"),
+			"reviewed/nested/file.json": withDefaultAffected("GHSA-5678"),
+			"unreviewed/file.json":      withDefaultAffected("GHSA-4321"),
 		}))
 	})
 	defer cleanup()

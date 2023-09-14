@@ -29,7 +29,7 @@ var ErrDirPathWrongProtocol = errors.New("directory path must start with \"file:
 // load walks the filesystem starting with the working directory within the local path,
 // loading all OSVs found along the way.
 func (db *DirDB) load() error {
-	db.vulnerabilities = []OSV{}
+	db.vulnerabilities = make(map[string][]OSV)
 
 	if !strings.HasPrefix(db.LocalPath, "file:") {
 		return ErrDirPathWrongProtocol
@@ -78,7 +78,7 @@ func (db *DirDB) load() error {
 			return nil
 		}
 
-		db.vulnerabilities = append(db.vulnerabilities, pa)
+		db.addVulnerability(pa)
 
 		return nil
 	})

@@ -170,7 +170,7 @@ func describeDB(db database.DB) string {
 			color.YellowString("%d", tt.BatchSize),
 		)
 	case *database.ZipDB:
-		count := len(tt.Vulnerabilities(true))
+		count := tt.VulnerabilitiesCount
 
 		return fmt.Sprintf(
 			"%s %s, including withdrawn - last updated %s",
@@ -179,7 +179,7 @@ func describeDB(db database.DB) string {
 			tt.UpdatedAt,
 		)
 	case *database.DirDB:
-		count := len(tt.Vulnerabilities(true))
+		count := tt.VulnerabilitiesCount
 
 		return fmt.Sprintf(
 			"%s %s, including withdrawn",
