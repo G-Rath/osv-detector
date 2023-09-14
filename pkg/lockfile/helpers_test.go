@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/g-rath/osv-detector/internal/reporter"
 	"github.com/g-rath/osv-detector/pkg/lockfile"
 )
 
@@ -70,7 +71,12 @@ func expectPackages(t *testing.T, actualPackages []lockfile.PackageDetails, expe
 	t.Helper()
 
 	if len(expectedPackages) != len(actualPackages) {
-		t.Errorf("Expected to get %d packages, but got %d", len(expectedPackages), len(actualPackages))
+		t.Errorf(
+			"Expected to get %d %s, but got %d",
+			len(expectedPackages),
+			reporter.Form(len(expectedPackages), "package", "packages"),
+			len(actualPackages),
+		)
 	}
 
 	missingActualPackages := findMissingPackages(actualPackages, expectedPackages)
