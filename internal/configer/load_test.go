@@ -3,12 +3,13 @@ package configer_test
 import (
 	"bytes"
 	"fmt"
-	"github.com/g-rath/osv-detector/internal/configer"
-	"github.com/g-rath/osv-detector/internal/reporter"
 	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/g-rath/osv-detector/internal/configer"
+	"github.com/g-rath/osv-detector/internal/reporter"
 )
 
 //nolint:unparam

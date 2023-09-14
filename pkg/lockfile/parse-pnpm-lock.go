@@ -2,11 +2,12 @@ package lockfile
 
 import (
 	"fmt"
-	"github.com/g-rath/osv-detector/internal/cachedregexp"
-	"gopkg.in/yaml.v2"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
+	"gopkg.in/yaml.v2"
 )
 
 type PnpmLockPackageResolution struct {

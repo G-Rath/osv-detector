@@ -3,8 +3,9 @@ package lockfile
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"os"
+
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
 )
 
 type MavenLockDependency struct {

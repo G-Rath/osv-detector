@@ -2,9 +2,10 @@ package semantic
 
 import (
 	"fmt"
-	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"math/big"
 	"strings"
+
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
 )
 
 // SemverLikeVersion is a version that is _like_ a version as defined by the

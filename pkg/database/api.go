@@ -3,8 +3,9 @@ package database
 import (
 	"errors"
 	"fmt"
-	"github.com/g-rath/osv-detector/internal"
 	"net/url"
+
+	"github.com/g-rath/osv-detector/internal"
 )
 
 type APIDB struct {

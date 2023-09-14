@@ -3,10 +3,11 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
-	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"net/url"
 	"os"
 	"strings"
+
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
 )
 
 const YarnEcosystem = NpmEcosystem

@@ -1,10 +1,11 @@
 package database_test
 
 import (
-	"github.com/g-rath/osv-detector/pkg/database"
 	"net/url"
 	"reflect"
 	"testing"
+
+	"github.com/g-rath/osv-detector/pkg/database"
 )
 
 func TestNewAPIDB(t *testing.T) {

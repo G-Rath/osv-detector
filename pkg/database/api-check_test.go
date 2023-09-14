@@ -3,13 +3,14 @@ package database_test
 import (
 	"encoding/json"
 	"errors"
-	"github.com/g-rath/osv-detector/internal"
-	"github.com/g-rath/osv-detector/pkg/database"
-	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
+
+	"github.com/g-rath/osv-detector/internal"
+	"github.com/g-rath/osv-detector/pkg/database"
+	"github.com/g-rath/osv-detector/pkg/lockfile"
 )
 
 type objectsWithIDs = []database.ObjectWithID

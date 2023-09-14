@@ -3,9 +3,10 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
-	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"os"
 	"strings"
+
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
 )
 
 const MixEcosystem Ecosystem = "Hex"

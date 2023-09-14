@@ -1,11 +1,12 @@
 package lockfile_test
 
 import (
-	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/g-rath/osv-detector/pkg/lockfile"
 )
 
 func TestFromCSVRows(t *testing.T) {

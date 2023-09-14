@@ -2,10 +2,11 @@ package lockfile
 
 import (
 	"fmt"
-	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
 )
 
 const BundlerEcosystem Ecosystem = "RubyGems"

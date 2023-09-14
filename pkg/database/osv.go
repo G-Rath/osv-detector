@@ -3,16 +3,17 @@ package database
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/g-rath/osv-detector/internal"
-	"github.com/g-rath/osv-detector/internal/cachedregexp"
-	"github.com/g-rath/osv-detector/pkg/lockfile"
-	"github.com/g-rath/osv-detector/pkg/semantic"
-	"golang.org/x/exp/slices"
 	"os"
 	"sort"
 	"strings"
 	"time"
 	"unicode"
+
+	"github.com/g-rath/osv-detector/internal"
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
+	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/g-rath/osv-detector/pkg/semantic"
+	"golang.org/x/exp/slices"
 )
 
 type AffectsRangeType string

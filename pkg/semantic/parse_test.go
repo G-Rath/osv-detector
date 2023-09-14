@@ -2,9 +2,10 @@ package semantic_test
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"github.com/g-rath/osv-detector/pkg/semantic"
-	"testing"
 )
 
 func TestParse(t *testing.T) {

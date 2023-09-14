@@ -6,11 +6,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/g-rath/osv-detector/internal"
 	"io"
 	"math"
 	"net/http"
 	"path"
+
+	"github.com/g-rath/osv-detector/internal"
 )
 
 func (db APIDB) buildAPIPayload(pkg internal.PackageDetails) apiQuery {

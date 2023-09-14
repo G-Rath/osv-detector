@@ -3,10 +3,11 @@ package lockfile
 import (
 	"bufio"
 	"fmt"
-	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
 )
 
 const PipEcosystem Ecosystem = "PyPI"

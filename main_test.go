@@ -3,13 +3,14 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/g-rath/osv-detector/internal/cachedregexp"
-	"github.com/google/go-cmp/cmp"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
+
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
+	"github.com/google/go-cmp/cmp"
 )
 
 func dedent(t *testing.T, str string) string {
