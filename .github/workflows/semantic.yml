@@ -28,14 +28,14 @@ jobs:
   generate-debian-versions:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: actions/cache/restore@v3
         with:
           path: /tmp/debian-versions-generator-cache.csv
           key: ${{ runner.os }}-
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - uses: actions/setup-python@v4
@@ -58,7 +58,7 @@ jobs:
   generate-packagist-versions:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - uses: shivammathur/setup-php@v2
@@ -75,7 +75,7 @@ jobs:
   generate-pypi-versions:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - uses: actions/setup-python@v4
@@ -93,7 +93,7 @@ jobs:
   generate-rubygems-versions:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - uses: ruby/setup-ruby@v1
@@ -111,7 +111,7 @@ jobs:
   generate-maven-versions:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - uses: actions/setup-java@v3
@@ -142,7 +142,7 @@ jobs:
       - generate-maven-versions
     if: always()
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - uses: actions/setup-go@v3
