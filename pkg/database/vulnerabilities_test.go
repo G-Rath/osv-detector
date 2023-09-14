@@ -2,8 +2,9 @@ package database_test
 
 import (
 	"encoding/json"
-	"github.com/g-rath/osv-detector/pkg/database"
 	"testing"
+
+	"github.com/g-rath/osv-detector/pkg/database"
 )
 
 func TestVulnerabilities_Includes(t *testing.T) {

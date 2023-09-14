@@ -1,12 +1,13 @@
 package reporter_test
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/g-rath/osv-detector/internal"
 	"github.com/g-rath/osv-detector/internal/reporter"
 	"github.com/g-rath/osv-detector/pkg/database"
 	"github.com/g-rath/osv-detector/pkg/lockfile"
-	"strings"
-	"testing"
 )
 
 func TestReport_HasKnownVulnerabilities(t *testing.T) {

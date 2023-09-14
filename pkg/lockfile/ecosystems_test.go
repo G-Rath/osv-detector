@@ -1,10 +1,11 @@
 package lockfile_test
 
 import (
-	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/g-rath/osv-detector/pkg/lockfile"
 )
 
 func numberOfLockfileParsers(t *testing.T) int {

@@ -7,8 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/g-rath/osv-detector/pkg/database"
-	"github.com/google/go-cmp/cmp"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -16,6 +14,9 @@ import (
 	"reflect"
 	"sort"
 	"testing"
+
+	"github.com/g-rath/osv-detector/pkg/database"
+	"github.com/google/go-cmp/cmp"
 )
 
 func withDefaultAffected(id string) database.OSV {

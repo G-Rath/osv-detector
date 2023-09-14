@@ -3,6 +3,7 @@ output:
 linters:
   enable:
     - gofmt
+    - goimports
   # prettier-ignore
   disable:
     - tagliatelle      # we're parsing data from external sources

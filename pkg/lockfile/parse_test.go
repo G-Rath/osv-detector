@@ -2,12 +2,13 @@ package lockfile_test
 
 import (
 	"errors"
-	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/g-rath/osv-detector/pkg/lockfile"
 )
 
 func expectNumberOfParsersCalled(t *testing.T, numberOfParsersCalled int) {

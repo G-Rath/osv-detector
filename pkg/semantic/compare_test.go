@@ -2,11 +2,12 @@ package semantic_test
 
 import (
 	"bufio"
-	"github.com/g-rath/osv-detector/internal"
-	"github.com/g-rath/osv-detector/pkg/semantic"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/g-rath/osv-detector/internal"
+	"github.com/g-rath/osv-detector/pkg/semantic"
 )
 
 func expectedResult(t *testing.T, comparator string) int {

@@ -1,11 +1,12 @@
 package database_test
 
 import (
+	"testing"
+	"time"
+
 	"github.com/g-rath/osv-detector/internal"
 	"github.com/g-rath/osv-detector/pkg/database"
 	"github.com/g-rath/osv-detector/pkg/lockfile"
-	"testing"
-	"time"
 )
 
 func expectOSVDescription(t *testing.T, expected string, osv database.OSV) {

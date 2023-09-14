@@ -2,8 +2,9 @@ package lockfile
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
 type PubspecLockDescription struct {

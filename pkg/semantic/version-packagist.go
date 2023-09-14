@@ -1,9 +1,10 @@
 package semantic
 
 import (
-	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"strconv"
 	"strings"
+
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
 )
 
 func canonicalizePackagistVersion(v string) string {

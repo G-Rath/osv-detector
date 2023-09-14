@@ -2,9 +2,10 @@ package semantic
 
 import (
 	"fmt"
-	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"sort"
 	"strings"
+
+	"github.com/g-rath/osv-detector/internal/cachedregexp"
 )
 
 type mavenVersionToken struct {

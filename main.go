@@ -3,6 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"sort"
+	"strings"
+
 	"github.com/fatih/color"
 	"github.com/g-rath/osv-detector/internal"
 	"github.com/g-rath/osv-detector/internal/configer"
@@ -10,11 +16,6 @@ import (
 	"github.com/g-rath/osv-detector/pkg/database"
 	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"golang.org/x/exp/slices"
-	"io"
-	"os"
-	"path/filepath"
-	"sort"
-	"strings"
 )
 
 // these come from goreleaser

@@ -1,8 +1,9 @@
 package lockfile_test
 
 import (
-	"github.com/g-rath/osv-detector/pkg/lockfile"
 	"testing"
+
+	"github.com/g-rath/osv-detector/pkg/lockfile"
 )
 
 func TestParseComposerLock_FileDoesNotExist(t *testing.T) {

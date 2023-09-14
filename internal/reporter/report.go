@@ -2,11 +2,12 @@ package reporter
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/fatih/color"
 	"github.com/g-rath/osv-detector/internal"
 	"github.com/g-rath/osv-detector/pkg/database"
 	"github.com/g-rath/osv-detector/pkg/lockfile"
-	"strings"
 )
 
 type PackageDetailsWithVulnerabilities struct {
