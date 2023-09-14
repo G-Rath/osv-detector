@@ -15,7 +15,7 @@ type PubspecLockDescription struct {
 
 var _ yaml.Unmarshaler = &PubspecLockDescription{}
 
-func (pld *PubspecLockDescription) UnmarshalYAML(unmarshal func(interface{}) error) error {
+func (pld *PubspecLockDescription) UnmarshalYAML(unmarshal func(any) error) error {
 	var m struct {
 		Name string `yaml:"name"`
 		URL  string `yaml:"url"`

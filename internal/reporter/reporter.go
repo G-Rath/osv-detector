@@ -65,7 +65,7 @@ func (r *Reporter) PrintResult(result Result) {
 // stdout as JSON.
 func (r *Reporter) PrintJSONResults() {
 	out, err := json.Marshal(struct {
-		Results interface{} `json:"results"`
+		Results any `json:"results"`
 	}{Results: r.results})
 
 	if err != nil {

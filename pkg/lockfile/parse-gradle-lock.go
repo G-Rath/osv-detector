@@ -18,7 +18,7 @@ func parseGradleLine(line string) (PackageDetails, error) {
 	}
 
 	group, artifact, version := parts[0], parts[1], parts[2]
-	version = strings.SplitN(version, "=", 2)[0]
+	version, _, _ = strings.Cut(version, "=")
 
 	return PackageDetails{
 		Name:      fmt.Sprintf("%s:%s", group, artifact),

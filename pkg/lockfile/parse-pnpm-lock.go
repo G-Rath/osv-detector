@@ -32,7 +32,7 @@ type pnpmLockfileV6 struct {
 	Packages map[string]PnpmLockPackage `yaml:"packages,omitempty"`
 }
 
-func (l *PnpmLockfile) UnmarshalYAML(unmarshal func(interface{}) error) error {
+func (l *PnpmLockfile) UnmarshalYAML(unmarshal func(any) error) error {
 	var lockfileV6 pnpmLockfileV6
 
 	if err := unmarshal(&lockfileV6); err != nil {
@@ -98,7 +98,7 @@ func extractPnpmPackageNameAndVersion(dependencyPath string) (string, string) {
 
 	// peer dependencies in v5 lockfiles are attached to the end of the version
 	// with an "_", so we always want the first element if an "_" is present
-	version = strings.Split(version, "_")[0]
+	version, _, _ = strings.Cut(version, "_")
 
 	return name, version
 }
