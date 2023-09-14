@@ -21,7 +21,6 @@ linters:
     - wsl              # disagree with, for now
     - ireturn          # disagree with, sort of
     - nonamedreturns   # they have their uses
-    - depguard         # does not make any sense
   presets:
     - bugs
     - comment
@@ -31,6 +30,18 @@ linters:
     - style
     - test
     - unused
+
+linters-settings:
+  depguard:
+    rules:
+      regexp:
+        files:
+          - '!**/internal/cachedregexp/**'
+          - '!**/main_test.go'
+        deny:
+          - pkg: 'regexp'
+            desc:
+              'Use github.com/g-rath/osv-detector/internal/cachedregexp instead'
 
 issues:
   exclude-rules:
