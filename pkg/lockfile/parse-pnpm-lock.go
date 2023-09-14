@@ -32,7 +32,7 @@ type pnpmLockfileV6 struct {
 	Packages map[string]PnpmLockPackage `yaml:"packages,omitempty"`
 }
 
-func (l *PnpmLockfile) UnmarshalYAML(unmarshal func(interface{}) error) error {
+func (l *PnpmLockfile) UnmarshalYAML(unmarshal func(any) error) error {
 	var lockfileV6 pnpmLockfileV6
 
 	if err := unmarshal(&lockfileV6); err != nil {
