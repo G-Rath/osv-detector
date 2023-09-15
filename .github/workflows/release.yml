@@ -51,7 +51,8 @@ jobs:
   golangci-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
@@ -62,27 +63,42 @@ jobs:
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.47
+          version: v1.54
   go-fmt:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - run: make lint-with-go-fmt
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v3
+
+      - run: npx prettier --prose-wrap always --check .
+
   goreleaser:
     runs-on: ubuntu-latest
     needs:
       - test-ubuntu
       - test-macos
       - test-windows
+      - prettier
       - golangci-lint
       - go-fmt
     permissions:
       contents: write # to create a GitHub release (goreleaser/goreleaser-action)
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - run: git fetch --prune --unshallow
       - uses: actions/setup-go@v4
         with:
