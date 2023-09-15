@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
+const fs = require('fs/promises');
 const path = require('path');
 const child_process = require('child_process');
 
@@ -9,32 +9,40 @@ const fixturesDir = 'fixtures/locks-e2e';
 
 const OSV_DETECTOR_CMD = process.env.OSV_DETECTOR_CMD ?? 'osv-detector';
 
-const files = fs
-  .readdirSync(path.join(root, fixturesDir), { withFileTypes: true })
-  .filter(dirent => dirent.isFile() && !dirent.name.endsWith('.out.txt'));
+const runOsvDetector = async (...args) => {
+  return new Promise((resolve, reject) => {
+    const child = child_process.spawn(OSV_DETECTOR_CMD, args, {
+      encoding: 'utf-8',
+      cwd: root
+    });
 
-const runOsvDetector = (...args) => {
-  const { stdout, stderr, status, error } = child_process.spawnSync(
-    OSV_DETECTOR_CMD,
-    args,
-    { encoding: 'utf-8', cwd: root }
-  );
+    let stdout = '';
+    let stderr = '';
 
-  if (status > 1) {
-    throw new Error(
-      `osv-detector exited with unexpected code ${status}: ${stderr}`
-    );
-  }
+    child.stdout.on('data', data => {
+      stdout += data;
+    });
 
-  if (error) {
-    throw error;
-  }
+    child.stderr.on('data', data => {
+      stderr += data;
+    });
 
-  if (stderr.length) {
-    console.warn('unexpected output to stderr', stderr);
-  }
+    child.on('error', reject);
 
-  return stdout;
+    child.on('close', status => {
+      if (status > 1) {
+        reject(
+          new Error(
+            `osv-detector exited with unexpected code ${status}: ${stderr}`
+          )
+        );
+      } else if (stderr.length) {
+        console.warn('unexpected output to stderr', stderr);
+      }
+
+      resolve(stdout);
+    });
+  });
 };
 
 const wildcardDatabaseStats = output => {
@@ -44,19 +52,28 @@ const wildcardDatabaseStats = output => {
   );
 };
 
-for (const file of files) {
-  const [, parseAs] = /\d+-(.*)/u.exec(file.name) ?? [];
+const regenerateFixture = async fileName => {
+  const [, parseAs] = /\d+-(.*)/u.exec(fileName) ?? [];
 
-  const p = path.join(fixturesDir, file.name);
+  const p = path.join(fixturesDir, fileName);
   if (!parseAs) {
     console.error('could not determine parser for', p);
   }
 
-  console.log('(re)generating', p, 'fixture', `(parsing as ${parseAs})`);
-  const output = runOsvDetector(`${parseAs}:${p}`);
+  const output = await runOsvDetector(`${parseAs}:${p}`);
 
-  fs.writeFileSync(
-    path.join(root, fixturesDir, `${file.name}.out.txt`),
+  console.log('(re)generated', p, 'fixture', `(parsed as ${parseAs})`);
+
+  await fs.writeFile(
+    path.join(root, fixturesDir, `${fileName}.out.txt`),
     wildcardDatabaseStats(output)
   );
-}
+};
+
+(async () => {
+  const files = (
+    await fs.readdir(path.join(root, fixturesDir), { withFileTypes: true })
+  ).filter(dirent => dirent.isFile() && !dirent.name.endsWith('.out.txt'));
+
+  await Promise.all(files.map(file => regenerateFixture(file.name)));
+})();
