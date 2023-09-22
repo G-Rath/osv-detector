@@ -6,6 +6,7 @@ fixtures/locks-e2e/1-poetry.lock: found 142 packages
 
   cryptography@41.0.2 is affected by the following vulnerabilities:
     GHSA-jm77-qphf-c4w8: pyca/cryptography's wheels include vulnerable OpenSSL (https://github.com/advisories/GHSA-jm77-qphf-c4w8)
+    GHSA-v8gr-m533-ghj9: Vulnerable OpenSSL included in cryptography wheels (https://github.com/advisories/GHSA-v8gr-m533-ghj9)
   django@3.2 is affected by the following vulnerabilities:
     GHSA-2gwj-7jmv-h26r: SQL Injection in Django (https://github.com/advisories/GHSA-2gwj-7jmv-h26r)
     GHSA-2hrw-hx67-34x6: Resource exhaustion in Django (https://github.com/advisories/GHSA-2hrw-hx67-34x6)
@@ -39,4 +40,4 @@ fixtures/locks-e2e/1-poetry.lock: found 142 packages
     GHSA-5286-f2rf-35c2: Wagtail vulnerable to stored Cross-site Scripting attack via ModelAdmin views (https://github.com/advisories/GHSA-5286-f2rf-35c2)
     GHSA-xqxm-2rpm-3889: Comment reply notifications sent to incorrect users (https://github.com/advisories/GHSA-xqxm-2rpm-3889)
 
-  30 known vulnerabilities found in fixtures/locks-e2e/1-poetry.lock
+  31 known vulnerabilities found in fixtures/locks-e2e/1-poetry.lock

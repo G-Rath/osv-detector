@@ -20,15 +20,15 @@ fixtures/locks-e2e/1-composer.lock: found 203 packages
     GHSA-jxcx-3h54-qqxx: SilverStripe CMS Cross-site Scripting vulnerabilities inherited from TinyMCE (https://github.com/advisories/GHSA-jxcx-3h54-qqxx)
     GHSA-wqm8-jx8r-8rcq: Cross-site scripting vulnerabilities in old version of bundled TinyMCE (https://github.com/advisories/GHSA-wqm8-jx8r-8rcq)
   silverstripe/assets@1.8.0 is affected by the following vulnerabilities:
-    GHSA-9cx2-hj6m-fv58: XSS in shortcodes (https://github.com/advisories/GHSA-9cx2-hj6m-fv58)
+    GHSA-9cx2-hj6m-fv58: Silverstripe XSS in shortcodes (https://github.com/advisories/GHSA-9cx2-hj6m-fv58)
     GHSA-v68g-62v9-39w5: Unpublished, protected files can be published via shortcode (https://github.com/advisories/GHSA-v68g-62v9-39w5)
     GHSA-vv3r-fxqp-vr3f: XSS via uploaded gpx file (https://github.com/advisories/GHSA-vv3r-fxqp-vr3f)
   silverstripe/cms@4.8.0 is affected by the following vulnerabilities:
-    GHSA-pp74-g2q5-j4jf: Stored XSS in custom meta tags (https://github.com/advisories/GHSA-pp74-g2q5-j4jf)
+    GHSA-pp74-g2q5-j4jf: Silverstipe CMS Stored XSS in custom meta tags (https://github.com/advisories/GHSA-pp74-g2q5-j4jf)
   silverstripe/framework@4.8.0 is affected by the following vulnerabilities:
     GHSA-32m2-9f76-4gv8: Business Logic Errors in SilverStripe Framework (https://github.com/advisories/GHSA-32m2-9f76-4gv8)
     GHSA-36xx-7vf6-7mv3: Silverstripe Framework: Members with no password can be created and bypass custom login forms (https://github.com/advisories/GHSA-36xx-7vf6-7mv3)
-    GHSA-9cx2-hj6m-fv58: XSS in shortcodes (https://github.com/advisories/GHSA-9cx2-hj6m-fv58)
+    GHSA-9cx2-hj6m-fv58: Silverstripe XSS in shortcodes (https://github.com/advisories/GHSA-9cx2-hj6m-fv58)
     GHSA-9fmg-89fx-r33w: Quadratic blowup in Convert::xml2array() (https://github.com/advisories/GHSA-9fmg-89fx-r33w)
     GHSA-fw84-xgm8-9jmv: Open redirect vulnerability on CMSSecurity relogin screen  (https://github.com/advisories/GHSA-fw84-xgm8-9jmv)
     GHSA-jh3w-6jp2-vqqm: Missing permission check of canView in GridFieldPrintButton (https://github.com/advisories/GHSA-jh3w-6jp2-vqqm)
