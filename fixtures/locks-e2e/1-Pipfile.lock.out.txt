@@ -12,6 +12,7 @@ fixtures/locks-e2e/1-Pipfile.lock: found 114 packages
   cryptography@41.0.1 is affected by the following vulnerabilities:
     GHSA-cf7p-gm2m-833m: cryptography mishandles SSH certificates (https://github.com/advisories/GHSA-cf7p-gm2m-833m)
     GHSA-jm77-qphf-c4w8: pyca/cryptography's wheels include vulnerable OpenSSL (https://github.com/advisories/GHSA-jm77-qphf-c4w8)
+    GHSA-v8gr-m533-ghj9: Vulnerable OpenSSL included in cryptography wheels (https://github.com/advisories/GHSA-v8gr-m533-ghj9)
   pillow@8.4.0 is affected by the following vulnerabilities:
     GHSA-4fx9-vc88-q2xc: Infinite loop in Pillow (https://github.com/advisories/GHSA-4fx9-vc88-q2xc)
     GHSA-8vj2-vxx3-667w: Arbitrary expression injection in Pillow (https://github.com/advisories/GHSA-8vj2-vxx3-667w)
@@ -29,4 +30,4 @@ fixtures/locks-e2e/1-Pipfile.lock: found 114 packages
     GHSA-33pv-vcgh-jfg9: Wagtail vulnerable to denial-of-service via memory exhaustion when uploading large files (https://github.com/advisories/GHSA-33pv-vcgh-jfg9)
     GHSA-5286-f2rf-35c2: Wagtail vulnerable to stored Cross-site Scripting attack via ModelAdmin views (https://github.com/advisories/GHSA-5286-f2rf-35c2)
 
-  16 known vulnerabilities found in fixtures/locks-e2e/1-Pipfile.lock
+  17 known vulnerabilities found in fixtures/locks-e2e/1-Pipfile.lock
