@@ -183,10 +183,10 @@ func TestParseYarnLock_v1_ScopedPackages(t *testing.T) {
 	})
 }
 
-func TestParseYarnLock_v1_VersionsWithBuildString(t *testing.T) {
+func TestParseYarnLock_v1_WithPrerelease(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseYarnLock("fixtures/yarn/versions-with-build-strings.v1.lock")
+	packages, err := lockfile.ParseYarnLock("fixtures/yarn/with-prerelease.v1.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
