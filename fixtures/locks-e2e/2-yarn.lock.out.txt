@@ -18,12 +18,18 @@ fixtures/locks-e2e/2-yarn.lock: found 1991 packages
     GHSA-fwr7-v2mv-hh25: Prototype Pollution in async (https://github.com/advisories/GHSA-fwr7-v2mv-hh25)
   async@3.2.0 is affected by the following vulnerabilities:
     GHSA-fwr7-v2mv-hh25: Prototype Pollution in async (https://github.com/advisories/GHSA-fwr7-v2mv-hh25)
+  debug@3.2.6 is affected by the following vulnerabilities:
+    GHSA-gxpj-cx7g-858c: Regular Expression Denial of Service in debug (https://github.com/advisories/GHSA-gxpj-cx7g-858c)
+  debug@4.1.1 is affected by the following vulnerabilities:
+    GHSA-gxpj-cx7g-858c: Regular Expression Denial of Service in debug (https://github.com/advisories/GHSA-gxpj-cx7g-858c)
   decode-uri-component@0.2.0 is affected by the following vulnerabilities:
     GHSA-w573-4hg7-7wgq: decode-uri-component vulnerable to Denial of Service (DoS) (https://github.com/advisories/GHSA-w573-4hg7-7wgq)
   ejs@3.1.5 is affected by the following vulnerabilities:
     GHSA-phwq-j96m-2c2q: ejs template injection vulnerability (https://github.com/advisories/GHSA-phwq-j96m-2c2q)
   eventsource@1.0.7 is affected by the following vulnerabilities:
     GHSA-6h5x-7c5m-7cr7: Exposure of Sensitive Information in eventsource (https://github.com/advisories/GHSA-6h5x-7c5m-7cr7)
+  get-func-name@2.0.0 is affected by the following vulnerabilities:
+    GHSA-4q6p-r6v2-jvc5: Chaijs/get-func-name vulnerable to ReDoS (https://github.com/advisories/GHSA-4q6p-r6v2-jvc5)
   glob-parent@3.1.0 is affected by the following vulnerabilities:
     GHSA-ww39-953v-wcq6: glob-parent before 5.1.2 vulnerable to Regular Expression Denial of Service in enclosure regex (https://github.com/advisories/GHSA-ww39-953v-wcq6)
   glob-parent@5.1.1 is affected by the following vulnerabilities:
@@ -73,6 +79,8 @@ fixtures/locks-e2e/2-yarn.lock: found 1991 packages
     GHSA-5fw9-fq32-wv5p: OS Command Injection in node-notifier (https://github.com/advisories/GHSA-5fw9-fq32-wv5p)
   nth-check@1.0.2 is affected by the following vulnerabilities:
     GHSA-rp65-9cf3-cjxr: Inefficient Regular Expression Complexity in nth-check (https://github.com/advisories/GHSA-rp65-9cf3-cjxr)
+  postcss@7.0.39 is affected by the following vulnerabilities:
+    GHSA-7fh5-64p2-3v2j: PostCSS line return parsing error (https://github.com/advisories/GHSA-7fh5-64p2-3v2j)
   qs@6.5.2 is affected by the following vulnerabilities:
     GHSA-hrpp-h998-j3pp: qs vulnerable to Prototype Pollution (https://github.com/advisories/GHSA-hrpp-h998-j3pp)
   qs@6.7.0 is affected by the following vulnerabilities:
@@ -105,4 +113,4 @@ fixtures/locks-e2e/2-yarn.lock: found 1991 packages
   word-wrap@1.2.3 is affected by the following vulnerabilities:
     GHSA-j8xg-fqg3-53r7: word-wrap vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-j8xg-fqg3-53r7)
 
-  58 known vulnerabilities found in fixtures/locks-e2e/2-yarn.lock
+  62 known vulnerabilities found in fixtures/locks-e2e/2-yarn.lock

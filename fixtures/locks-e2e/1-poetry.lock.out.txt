@@ -30,14 +30,19 @@ fixtures/locks-e2e/1-poetry.lock: found 142 packages
     GHSA-xpfp-f569-q3p2: SQL Injection in Django (https://github.com/advisories/GHSA-xpfp-f569-q3p2)
   pillow@8.4.0 is affected by the following vulnerabilities:
     GHSA-4fx9-vc88-q2xc: Infinite loop in Pillow (https://github.com/advisories/GHSA-4fx9-vc88-q2xc)
+    GHSA-56pw-mpj4-fxww: Bundled libwebp in Pillow vulnerable (https://github.com/advisories/GHSA-56pw-mpj4-fxww)
     GHSA-8vj2-vxx3-667w: Arbitrary expression injection in Pillow (https://github.com/advisories/GHSA-8vj2-vxx3-667w)
     GHSA-9j59-75qj-795w: Path traversal in Pillow (https://github.com/advisories/GHSA-9j59-75qj-795w)
+    GHSA-j7hp-h8jx-5ppr: libwebp: OOB write in BuildHuffmanTable (https://github.com/advisories/GHSA-j7hp-h8jx-5ppr)
     GHSA-m2vv-5vj5-2hm7: Pillow vulnerable to Data Amplification attack. (https://github.com/advisories/GHSA-m2vv-5vj5-2hm7)
     GHSA-pw3c-h7wp-cvhx: Improper Initialization in Pillow (https://github.com/advisories/GHSA-pw3c-h7wp-cvhx)
     GHSA-xrcv-f9gm-v42c: Out-of-bounds Read in Pillow (https://github.com/advisories/GHSA-xrcv-f9gm-v42c)
+    PYSEC-2023-175: Pillow versions before v10.0.1 bundled libwebp binaries in wheels that are...
+  urllib3@1.26.16 is affected by the following vulnerabilities:
+    GHSA-v845-jxx5-vc9f: `Cookie` HTTP header isn't stripped on cross-origin redirects (https://github.com/advisories/GHSA-v845-jxx5-vc9f)
   wagtail@2.15 is affected by the following vulnerabilities:
     GHSA-33pv-vcgh-jfg9: Wagtail vulnerable to denial-of-service via memory exhaustion when uploading large files (https://github.com/advisories/GHSA-33pv-vcgh-jfg9)
     GHSA-5286-f2rf-35c2: Wagtail vulnerable to stored Cross-site Scripting attack via ModelAdmin views (https://github.com/advisories/GHSA-5286-f2rf-35c2)
     GHSA-xqxm-2rpm-3889: Comment reply notifications sent to incorrect users (https://github.com/advisories/GHSA-xqxm-2rpm-3889)
 
-  31 known vulnerabilities found in fixtures/locks-e2e/1-poetry.lock
+  35 known vulnerabilities found in fixtures/locks-e2e/1-poetry.lock

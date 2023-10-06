@@ -9,7 +9,7 @@ fixtures/locks-e2e/2-pom.xml: found 8 packages
     GHSA-fvm3-cfvj-gxqq: High severity vulnerability that affects commons-fileupload:commons-fileupload (https://github.com/advisories/GHSA-fvm3-cfvj-gxqq)
     GHSA-hfrx-6qgj-fp6c: Apache Commons FileUpload denial of service vulnerability (https://github.com/advisories/GHSA-hfrx-6qgj-fp6c)
     GHSA-qx6h-9567-5fqw: Arbitrary file write in Apache Commons Fileupload (https://github.com/advisories/GHSA-qx6h-9567-5fqw)
-    GHSA-xx68-jfcg-xmmf: High severity vulnerability that affects commons-fileupload:commons-fileupload (https://github.com/advisories/GHSA-xx68-jfcg-xmmf)
+    GHSA-xx68-jfcg-xmmf: Commons FileUpload Denial of service vulnerability (https://github.com/advisories/GHSA-xx68-jfcg-xmmf)
   org.jsoup:jsoup@1.8.1 is affected by the following vulnerabilities:
     GHSA-48rh-qgjr-xfj6: Improper Neutralization of Input During Web Page Generation in Jsoup (https://github.com/advisories/GHSA-48rh-qgjr-xfj6)
     GHSA-gp7f-rwcx-9369: jsoup may not sanitize code injection XSS attempts if SafeList.preserveRelativeLinks is enabled (https://github.com/advisories/GHSA-gp7f-rwcx-9369)
