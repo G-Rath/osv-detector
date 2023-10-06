@@ -9,8 +9,14 @@ fixtures/locks-e2e/2-poetry.lock: found 143 packages
     PYSEC-2021-125: A flaw was found in Ansible where the secret information present in async_files...
   cryptography@41.0.3 is affected by the following vulnerabilities:
     GHSA-v8gr-m533-ghj9: Vulnerable OpenSSL included in cryptography wheels (https://github.com/advisories/GHSA-v8gr-m533-ghj9)
+  pillow@9.5.0 is affected by the following vulnerabilities:
+    GHSA-56pw-mpj4-fxww: Bundled libwebp in Pillow vulnerable (https://github.com/advisories/GHSA-56pw-mpj4-fxww)
+    GHSA-j7hp-h8jx-5ppr: libwebp: OOB write in BuildHuffmanTable (https://github.com/advisories/GHSA-j7hp-h8jx-5ppr)
+    PYSEC-2023-175: Pillow versions before v10.0.1 bundled libwebp binaries in wheels that are...
+  urllib3@1.26.16 is affected by the following vulnerabilities:
+    GHSA-v845-jxx5-vc9f: `Cookie` HTTP header isn't stripped on cross-origin redirects (https://github.com/advisories/GHSA-v845-jxx5-vc9f)
   wagtail@2.16.3 is affected by the following vulnerabilities:
     GHSA-33pv-vcgh-jfg9: Wagtail vulnerable to denial-of-service via memory exhaustion when uploading large files (https://github.com/advisories/GHSA-33pv-vcgh-jfg9)
     GHSA-5286-f2rf-35c2: Wagtail vulnerable to stored Cross-site Scripting attack via ModelAdmin views (https://github.com/advisories/GHSA-5286-f2rf-35c2)
 
-  5 known vulnerabilities found in fixtures/locks-e2e/2-poetry.lock
+  9 known vulnerabilities found in fixtures/locks-e2e/2-poetry.lock

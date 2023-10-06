@@ -19,7 +19,6 @@ fixtures/locks-e2e/1-pom.xml: found 5 packages
     GHSA-4487-x383-qpph: Possible privilege escalation in org.springframework:spring-core (https://github.com/advisories/GHSA-4487-x383-qpph)
     GHSA-45vg-2v73-vm62: Moderate severity vulnerability that affects org.springframework:spring-core (https://github.com/advisories/GHSA-45vg-2v73-vm62)
     GHSA-564r-hj7v-mcr5: Spring Framework vulnerable to denial of service via specially crafted SpEL expression (https://github.com/advisories/GHSA-564r-hj7v-mcr5)
-    GHSA-6v7w-535j-rq5m: Moderate severity vulnerability that affects org.springframework:spring-core (https://github.com/advisories/GHSA-6v7w-535j-rq5m)
     GHSA-8crv-49fr-2h6j: Spring Security and Spring Framework may not recognize certain paths that should be protected (https://github.com/advisories/GHSA-8crv-49fr-2h6j)
     GHSA-ffvq-7w96-97p7: Denial of Service in Spring Framework (https://github.com/advisories/GHSA-ffvq-7w96-97p7)
     GHSA-g5mm-vmx4-3rg7: Improper handling of case sensitivity in Spring Framework (https://github.com/advisories/GHSA-g5mm-vmx4-3rg7)
@@ -31,4 +30,4 @@ fixtures/locks-e2e/1-pom.xml: found 5 packages
     GHSA-rqph-vqwm-22vc: Allocation of Resources Without Limits or Throttling in Spring Framework (https://github.com/advisories/GHSA-rqph-vqwm-22vc)
     GHSA-wxqc-pxw9-g2p8: Spring Framework vulnerable to denial of service (https://github.com/advisories/GHSA-wxqc-pxw9-g2p8)
 
-  22 known vulnerabilities found in fixtures/locks-e2e/1-pom.xml
+  21 known vulnerabilities found in fixtures/locks-e2e/1-pom.xml

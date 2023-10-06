@@ -33,7 +33,7 @@ fixtures/locks-e2e/2-go.mod: found 73 packages
   golang.org/x/sys@0.0.0-20210502180810-71e4cd670f79 is affected by the following vulnerabilities:
     GHSA-p782-xgp4-8hr8: golang.org/x/sys/unix has Incorrect privilege reporting in syscall (https://github.com/advisories/GHSA-p782-xgp4-8hr8)
   golang.org/x/text@0.3.5 is affected by the following vulnerabilities:
-    GHSA-69ch-w2m2-3vjp: Denial of service in golang.org/x/text/language (https://github.com/advisories/GHSA-69ch-w2m2-3vjp)
+    GHSA-69ch-w2m2-3vjp: golang.org/x/text/language Denial of service via crafted Accept-Language header (https://github.com/advisories/GHSA-69ch-w2m2-3vjp)
     GHSA-ppp9-7jff-5vj2: golang.org/x/text/language Out-of-bounds Read vulnerability (https://github.com/advisories/GHSA-ppp9-7jff-5vj2)
 
   24 known vulnerabilities found in fixtures/locks-e2e/2-go.mod

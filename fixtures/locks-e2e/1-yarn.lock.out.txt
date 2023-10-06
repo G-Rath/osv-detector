@@ -10,6 +10,8 @@ fixtures/locks-e2e/1-yarn.lock: found 1678 packages
     GHSA-93q8-gq69-wqmw: Inefficient Regular Expression Complexity in chalk/ansi-regex (https://github.com/advisories/GHSA-93q8-gq69-wqmw)
   async@2.6.3 is affected by the following vulnerabilities:
     GHSA-fwr7-v2mv-hh25: Prototype Pollution in async (https://github.com/advisories/GHSA-fwr7-v2mv-hh25)
+  debug@4.1.1 is affected by the following vulnerabilities:
+    GHSA-gxpj-cx7g-858c: Regular Expression Denial of Service in debug (https://github.com/advisories/GHSA-gxpj-cx7g-858c)
   decode-uri-component@0.2.0 is affected by the following vulnerabilities:
     GHSA-w573-4hg7-7wgq: decode-uri-component vulnerable to Denial of Service (DoS) (https://github.com/advisories/GHSA-w573-4hg7-7wgq)
   engine.io@3.5.0 is affected by the following vulnerabilities:
@@ -52,6 +54,8 @@ fixtures/locks-e2e/1-yarn.lock: found 1678 packages
     GHSA-r8f7-9pfq-mjmv: Improper Certificate Validation in node-sass (https://github.com/advisories/GHSA-r8f7-9pfq-mjmv)
   nth-check@1.0.2 is affected by the following vulnerabilities:
     GHSA-rp65-9cf3-cjxr: Inefficient Regular Expression Complexity in nth-check (https://github.com/advisories/GHSA-rp65-9cf3-cjxr)
+  postcss@7.0.39 is affected by the following vulnerabilities:
+    GHSA-7fh5-64p2-3v2j: PostCSS line return parsing error (https://github.com/advisories/GHSA-7fh5-64p2-3v2j)
   qs@6.2.3 is affected by the following vulnerabilities:
     GHSA-hrpp-h998-j3pp: qs vulnerable to Prototype Pollution (https://github.com/advisories/GHSA-hrpp-h998-j3pp)
   request@2.88.2 is affected by the following vulnerabilities:
@@ -99,4 +103,4 @@ fixtures/locks-e2e/1-yarn.lock: found 1678 packages
   word-wrap@1.2.3 is affected by the following vulnerabilities:
     GHSA-j8xg-fqg3-53r7: word-wrap vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-j8xg-fqg3-53r7)
 
-  56 known vulnerabilities found in fixtures/locks-e2e/1-yarn.lock
+  58 known vulnerabilities found in fixtures/locks-e2e/1-yarn.lock
