@@ -40,9 +40,10 @@ fixtures/locks-e2e/1-composer.lock: found 203 packages
     GHSA-wc6r-4ggc-79w5: Stored XSS using HTMLEditor (https://github.com/advisories/GHSA-wc6r-4ggc-79w5)
   silverstripe/graphql@3.5.0 is affected by the following vulnerabilities:
     GHSA-r7rh-g777-g5gx: SilverStripe GraphQL Server permission checker not inherited by query subclass. (https://github.com/advisories/GHSA-r7rh-g777-g5gx)
+    GHSA-v23w-pppm-jh66: Silverstripe GraphQL has DDOS Vulnerability due to lack of protection against recursive queries (https://github.com/advisories/GHSA-v23w-pppm-jh66)
   silverstripe/hybridsessions@2.2.1 is affected by the following vulnerabilities:
     GHSA-c7q8-m4xw-c674: Hybridsessions does not expire session id on logout (https://github.com/advisories/GHSA-c7q8-m4xw-c674)
   silverstripe/versioned-admin@1.8.0 is affected by the following vulnerabilities:
     GHSA-66jf-xm2m-7m8r: Stored XSS in Compare Mode (https://github.com/advisories/GHSA-66jf-xm2m-7m8r)
 
-  31 known vulnerabilities found in fixtures/locks-e2e/1-composer.lock
+  32 known vulnerabilities found in fixtures/locks-e2e/1-composer.lock

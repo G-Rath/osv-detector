@@ -4,6 +4,8 @@ Loaded the following OSV databases:
 fixtures/locks-e2e/3-yarn.lock: found 1225 packages
   Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
+  @babel/traverse@7.13.0 is affected by the following vulnerabilities:
+    GHSA-67hx-6x53-jw92: Babel vulnerable to arbitrary code execution when compiling specifically crafted malicious code (https://github.com/advisories/GHSA-67hx-6x53-jw92)
   ansi-regex@3.0.0 is affected by the following vulnerabilities:
     GHSA-93q8-gq69-wqmw: Inefficient Regular Expression Complexity in chalk/ansi-regex (https://github.com/advisories/GHSA-93q8-gq69-wqmw)
   ansi-regex@4.1.0 is affected by the following vulnerabilities:
@@ -91,4 +93,4 @@ fixtures/locks-e2e/3-yarn.lock: found 1225 packages
   yargs-parser@7.0.0 is affected by the following vulnerabilities:
     GHSA-p9pc-299p-vxgp: yargs-parser Vulnerable to Prototype Pollution (https://github.com/advisories/GHSA-p9pc-299p-vxgp)
 
-  48 known vulnerabilities found in fixtures/locks-e2e/3-yarn.lock
+  49 known vulnerabilities found in fixtures/locks-e2e/3-yarn.lock
