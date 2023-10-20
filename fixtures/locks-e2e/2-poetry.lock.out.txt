@@ -14,9 +14,11 @@ fixtures/locks-e2e/2-poetry.lock: found 143 packages
     GHSA-j7hp-h8jx-5ppr: libwebp: OOB write in BuildHuffmanTable (https://github.com/advisories/GHSA-j7hp-h8jx-5ppr)
     PYSEC-2023-175: Pillow versions before v10.0.1 bundled libwebp binaries in wheels that are...
   urllib3@1.26.16 is affected by the following vulnerabilities:
+    GHSA-g4mx-q9vg-27p4: urllib3's request body not stripped after redirect from 303 status changes request method to GET (https://github.com/advisories/GHSA-g4mx-q9vg-27p4)
     GHSA-v845-jxx5-vc9f: `Cookie` HTTP header isn't stripped on cross-origin redirects (https://github.com/advisories/GHSA-v845-jxx5-vc9f)
   wagtail@2.16.3 is affected by the following vulnerabilities:
     GHSA-33pv-vcgh-jfg9: Wagtail vulnerable to denial-of-service via memory exhaustion when uploading large files (https://github.com/advisories/GHSA-33pv-vcgh-jfg9)
     GHSA-5286-f2rf-35c2: Wagtail vulnerable to stored Cross-site Scripting attack via ModelAdmin views (https://github.com/advisories/GHSA-5286-f2rf-35c2)
+    GHSA-fc75-58r8-rm3h: Wagtail vulnerable to disclosure of user names via admin bulk action views (https://github.com/advisories/GHSA-fc75-58r8-rm3h)
 
-  9 known vulnerabilities found in fixtures/locks-e2e/2-poetry.lock
+  11 known vulnerabilities found in fixtures/locks-e2e/2-poetry.lock
