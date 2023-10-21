@@ -132,6 +132,24 @@ jobs:
           name: generated-versions
           path: pkg/semantic/fixtures/maven-versions-generated.txt
 
+  generate-e2e-fixtures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: .go-version
+          cache: true
+      - uses: actions/setup-node@v3
+
+      - run: make regenerate-e2e-fixtures
+      - uses: actions/upload-artifact@v3
+        with:
+          name: e2e-fixtures
+          path: fixtures/locks-e2e/
+
   test-semantic:
     runs-on: ubuntu-latest
     needs:
@@ -140,6 +158,7 @@ jobs:
       - generate-pypi-versions
       - generate-rubygems-versions
       - generate-maven-versions
+      - generate-e2e-fixtures
     if: always()
     steps:
       - uses: actions/checkout@v4
@@ -150,6 +169,10 @@ jobs:
           go-version-file: .go-version
           cache: true
 
+      - uses: actions/download-artifact@v3
+        with:
+          name: e2e-fixtures
+          path: fixtures/locks-e2e/
       - uses: actions/download-artifact@v3
         with:
           name: generated-versions
