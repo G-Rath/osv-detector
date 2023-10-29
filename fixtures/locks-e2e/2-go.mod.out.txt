@@ -37,5 +37,7 @@ fixtures/locks-e2e/2-go.mod: found 73 packages
   golang.org/x/text@0.3.5 is affected by the following vulnerabilities:
     GHSA-69ch-w2m2-3vjp: golang.org/x/text/language Denial of service via crafted Accept-Language header (https://github.com/advisories/GHSA-69ch-w2m2-3vjp)
     GHSA-ppp9-7jff-5vj2: golang.org/x/text/language Out-of-bounds Read vulnerability (https://github.com/advisories/GHSA-ppp9-7jff-5vj2)
+  google.golang.org/grpc@1.32.0 is affected by the following vulnerabilities:
+    GHSA-m425-mq94-257g: gRPC-Go HTTP/2 Rapid Reset vulnerability (https://github.com/advisories/GHSA-m425-mq94-257g)
 
-  26 known vulnerabilities found in fixtures/locks-e2e/2-go.mod
+  27 known vulnerabilities found in fixtures/locks-e2e/2-go.mod
