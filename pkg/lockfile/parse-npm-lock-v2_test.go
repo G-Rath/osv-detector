@@ -336,3 +336,34 @@ func TestParseNpmLock_v2_Files(t *testing.T) {
 		},
 	})
 }
+
+func TestParseNpmLock_v2_WithAliases(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParseNpmLock("fixtures/npm/with-aliases.v2.json")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "@babel/helper-validator-identifier",
+			Version:   "7.22.20",
+			Ecosystem: lockfile.NpmEcosystem,
+			CompareAs: lockfile.NpmEcosystem,
+		},
+		{
+			Name:      "ansi-regex",
+			Version:   "6.0.1",
+			Ecosystem: lockfile.NpmEcosystem,
+			CompareAs: lockfile.NpmEcosystem,
+		},
+		{
+			Name:      "ansi-regex",
+			Version:   "5.0.1",
+			Ecosystem: lockfile.NpmEcosystem,
+			CompareAs: lockfile.NpmEcosystem,
+		},
+	})
+}
