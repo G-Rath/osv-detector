@@ -628,37 +628,99 @@ func TestParsePnpmLock_Files(t *testing.T) {
 		{
 			Name:      "my-file-package",
 			Version:   "0.0.0",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
 			Commit:    "",
 		},
 		{
 			Name:      "a-local-package",
 			Version:   "1.0.0",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
 			Commit:    "",
 		},
 		{
 			Name:      "a-nested-local-package",
 			Version:   "1.0.0",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
 			Commit:    "",
 		},
 		{
 			Name:      "one-up",
 			Version:   "1.0.0",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
 			Commit:    "",
 		},
 		{
 			Name:      "one-up-with-peer",
 			Version:   "1.0.0",
-			Ecosystem: lockfile.NpmEcosystem,
-			CompareAs: lockfile.NpmEcosystem,
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
 			Commit:    "",
+		},
+	})
+}
+
+func TestParsePnpmLock_WithAliases(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/with-aliases.yaml")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "@babel/helper-validator-identifier",
+			Version:   "7.22.20",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "ansi-regex",
+			Version:   "6.0.1",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "ansi-regex",
+			Version:   "5.0.1",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+	})
+}
+
+func TestParsePnpmLock_WithAliasesV6(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/with-aliases-v6.yaml")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "@babel/helper-validator-identifier",
+			Version:   "7.22.20",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "ansi-regex",
+			Version:   "6.0.1",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
+		},
+		{
+			Name:      "ansi-regex",
+			Version:   "5.0.1",
+			Ecosystem: lockfile.PnpmEcosystem,
+			CompareAs: lockfile.PnpmEcosystem,
 		},
 	})
 }
