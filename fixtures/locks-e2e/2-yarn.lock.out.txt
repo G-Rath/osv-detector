@@ -28,6 +28,8 @@ fixtures/locks-e2e/2-yarn.lock: found 1991 packages
     GHSA-fwr7-v2mv-hh25: Prototype Pollution in async (https://github.com/advisories/GHSA-fwr7-v2mv-hh25)
   async@3.2.0 is affected by the following vulnerabilities:
     GHSA-fwr7-v2mv-hh25: Prototype Pollution in async (https://github.com/advisories/GHSA-fwr7-v2mv-hh25)
+  browserify-sign@4.2.0 is affected by the following vulnerabilities:
+    GHSA-x9w5-v3q2-3rhw: browserify-sign upper bound check issue in `dsaVerify` leads to a signature forgery attack (https://github.com/advisories/GHSA-x9w5-v3q2-3rhw)
   debug@3.2.6 is affected by the following vulnerabilities:
     GHSA-gxpj-cx7g-858c: Regular Expression Denial of Service in debug (https://github.com/advisories/GHSA-gxpj-cx7g-858c)
   debug@4.1.1 is affected by the following vulnerabilities:
@@ -68,7 +70,6 @@ fixtures/locks-e2e/2-yarn.lock: found 1991 packages
   lodash@4.17.19 is affected by the following vulnerabilities:
     GHSA-29mw-wpgm-hmr9: Regular Expression Denial of Service (ReDoS) in lodash (https://github.com/advisories/GHSA-29mw-wpgm-hmr9)
     GHSA-35jh-r3h4-6jhm: Command Injection in lodash (https://github.com/advisories/GHSA-35jh-r3h4-6jhm)
-    GHSA-p6mc-m468-83gw: Prototype Pollution in lodash (https://github.com/advisories/GHSA-p6mc-m468-83gw)
   minimatch@3.0.4 is affected by the following vulnerabilities:
     GHSA-f8q6-p94x-37v3: minimatch ReDoS vulnerability (https://github.com/advisories/GHSA-f8q6-p94x-37v3)
   minimist@1.2.5 is affected by the following vulnerabilities:
