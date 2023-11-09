@@ -1,0 +1,28 @@
+dependencies:
+  ansi-regex: 6.0.1
+  ansi-regex-cjs: /ansi-regex/5.0.1
+  babel-hvi: /@babel/helper-validator-identifier/7.22.20
+lockfileVersion: 5.2
+packages:
+  /@babel/helper-validator-identifier/7.22.20:
+    dev: false
+    engines:
+      node: '>=6.9.0'
+    resolution:
+      integrity: sha512-Y4OZ+ytlatR8AI+8KZfKuL5urKp7qey08ha31L8b3BwewJAoJamTzyvxPR/5D+KkdJCGPq/+8TukHBlY10FX9A==
+  /ansi-regex/5.0.1:
+    dev: false
+    engines:
+      node: '>=8'
+    resolution:
+      integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==
+  /ansi-regex/6.0.1:
+    dev: false
+    engines:
+      node: '>=12'
+    resolution:
+      integrity: sha512-n5M855fKb2SsfMIiFFoVrABHJC8QtHwVx+mHWP3QcEqBHYienj5dHSgjbxtC0WEZXYt4wcD6zrQElDPhFuZgfA==
+specifiers:
+  ansi-regex: ^6.0.0
+  ansi-regex-cjs: npm:ansi-regex@^5.0.0
+  babel-hvi: npm:@babel/helper-validator-identifier@^7.0.0

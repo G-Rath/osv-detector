@@ -14,6 +14,7 @@ type NpmLockDependency struct {
 }
 
 type NpmLockPackage struct {
+	Name         string            `json:"name"`
 	Version      string            `json:"version"`
 	Resolved     string            `json:"resolved"`
 	Dependencies map[string]string `json:"dependencies"`
@@ -69,6 +70,13 @@ func parseNpmLockDependencies(dependencies map[string]NpmLockDependency) map[str
 		if strings.HasPrefix(detail.Version, "file:") {
 			finalVersion = ""
 		} else {
+			// use the name of the underlying package rather than the alias
+			if strings.HasPrefix(detail.Version, "npm:") {
+				i := strings.LastIndex(detail.Version, "@")
+				name = detail.Version[4:i]
+				finalVersion = detail.Version[i+1:]
+			}
+
 			commit = tryExtractCommit(detail.Version)
 
 			// if there is a commit, we want to deduplicate based on that rather than
@@ -111,7 +119,12 @@ func parseNpmLockPackages(packages map[string]NpmLockPackage) map[string]Package
 		if namePath == "" {
 			continue
 		}
-		finalName := extractNpmPackageName(namePath)
+
+		finalName := detail.Name
+		if finalName == "" {
+			finalName = extractNpmPackageName(namePath)
+		}
+
 		finalVersion := detail.Version
 
 		commit := tryExtractCommit(detail.Resolved)
