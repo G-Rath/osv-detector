@@ -19,6 +19,36 @@ download_cran_db <- function() {
   download.file(url, dest, method = "auto")
 }
 
+extract_packages_with_versions <- function(osvs) {
+  result <- list()
+
+  for (osv in osvs) {
+    for (affected in osv$affected) {
+      package <- affected$package$name
+
+      if (!(package %in% names(result))) {
+        result[[package]] <- list()
+      }
+
+      for (version in affected$versions) {
+        tryCatch(
+          result[[package]] <- c(result[[package]], as.version(version)),
+          error = function(e) {
+            cat(sprintf("skipping invalid version %s for %s\n", version, package))
+          }
+        )
+      }
+    }
+  }
+
+  # deduplicate and sort the versions for each package
+  for (package in names(result)) {
+    result[[package]] <- sort(unique(result[[package]]))
+  }
+
+  return(result)
+}
+
 is_unsupported_comparison <- function(line) {
   line %in% UNSUPPORTED_COMPARISONS
 }
