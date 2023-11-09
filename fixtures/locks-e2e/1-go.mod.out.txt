@@ -5,8 +5,8 @@ fixtures/locks-e2e/1-go.mod: found 7 packages
   Using db Go (%% vulnerabilities, including withdrawn - last updated %%)
 
   golang.org/x/image@0.0.0-20210628002857-a66eb6448b8d is affected by the following vulnerabilities:
+    GHSA-j3p8-6mrq-6g7h: Golang TIFF decoder vulnerable to excessive CPU consumption (https://github.com/advisories/GHSA-j3p8-6mrq-6g7h)
     GHSA-qgc7-mgm3-q253: Uncontrolled Resource Consumption in golang.org/x/image (https://github.com/advisories/GHSA-qgc7-mgm3-q253)
-    GO-2023-1989: Excessive resource consumption in golang.org/x/image/tiff
-    GO-2023-1990: Excessive CPU consumption when decoding 0-height images in golang.org/x/image/tiff
+    GHSA-x92r-3vfx-4cv3: Golang TIFF decoder does not place a limit on the size of compressed tile data (https://github.com/advisories/GHSA-x92r-3vfx-4cv3)
 
   3 known vulnerabilities found in fixtures/locks-e2e/1-go.mod

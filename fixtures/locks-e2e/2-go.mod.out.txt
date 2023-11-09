@@ -39,5 +39,6 @@ fixtures/locks-e2e/2-go.mod: found 73 packages
     GHSA-ppp9-7jff-5vj2: golang.org/x/text/language Out-of-bounds Read vulnerability (https://github.com/advisories/GHSA-ppp9-7jff-5vj2)
   google.golang.org/grpc@1.32.0 is affected by the following vulnerabilities:
     GHSA-m425-mq94-257g: gRPC-Go HTTP/2 Rapid Reset vulnerability (https://github.com/advisories/GHSA-m425-mq94-257g)
+    GHSA-qppj-fm5r-hxr3: swift-nio-http2 vulnerable to HTTP/2 Stream Cancellation Attack (https://github.com/advisories/GHSA-qppj-fm5r-hxr3)
 
-  27 known vulnerabilities found in fixtures/locks-e2e/2-go.mod
+  28 known vulnerabilities found in fixtures/locks-e2e/2-go.mod
