@@ -1,6 +1,9 @@
 #!/usr/bin/env Rscript
 
+install.packages("jsonlite", repos = 'https://cran.r-project.org')
+
 library(utils)
+library(jsonlite)
 
 # An array of version comparisons that are known to be unsupported and so
 # should be commented out in the generated fixture.
