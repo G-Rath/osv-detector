@@ -156,7 +156,7 @@ fetch_packages_versions <- function() {
   with_zip <- unzip("cran-db.zip", list = TRUE)
 
   for (fname in with_zip$Name) {
-    osv <- jsonlite::fromJSON(unzip("cran-db.zip", files = fname, exdir = tempdir()))
+    osv <- jsonlite::fromJSON(unzip("cran-db.zip", files = fname, exdir = tempdir()), simplifyDataFrame = FALSE)
     osvs <- c(osvs, list(osv))
   }
 
