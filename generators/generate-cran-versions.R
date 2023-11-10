@@ -32,7 +32,10 @@ extract_packages_with_versions <- function(osvs) {
 
       for (version in affected$versions) {
         tryCatch(
-          result[[package]] <- c(result[[package]], as.version(version)),
+          {
+            as.package_version(version)
+            result[[package]] <- c(result[[package]], version)
+          },
           error = function(e) {
             cat(sprintf("skipping invalid version %s for %s\n", version, package))
           }
@@ -43,7 +46,7 @@ extract_packages_with_versions <- function(osvs) {
 
   # deduplicate and sort the versions for each package
   for (package in names(result)) {
-    result[[package]] <- sort(unique(result[[package]]))
+    result[[package]] <- sort(numeric_version(unique(result[[package]])))
   }
 
   return(result)
