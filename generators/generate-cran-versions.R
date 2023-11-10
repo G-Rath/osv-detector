@@ -128,7 +128,7 @@ generate_version_compares <- function(versions) {
       next
     }
 
-    comparison <- sprintf("%s < %s\n", versions[i - 1], versions[i])
+    comparison <- sprintf("%s < %s", versions[i - 1], versions[i])
 
     if (is_unsupported_comparison(trimws(comparison))) {
       comparison <- paste("#", comparison)
