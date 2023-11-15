@@ -28,6 +28,8 @@ fixtures/locks-e2e/2-yarn.lock: found 1991 packages
     GHSA-fwr7-v2mv-hh25: Prototype Pollution in async (https://github.com/advisories/GHSA-fwr7-v2mv-hh25)
   async@3.2.0 is affected by the following vulnerabilities:
     GHSA-fwr7-v2mv-hh25: Prototype Pollution in async (https://github.com/advisories/GHSA-fwr7-v2mv-hh25)
+  axios@0.24.0 is affected by the following vulnerabilities:
+    GHSA-wf5p-g6vw-rhxx: Axios Cross-Site Request Forgery Vulnerability (https://github.com/advisories/GHSA-wf5p-g6vw-rhxx)
   browserify-sign@4.2.0 is affected by the following vulnerabilities:
     GHSA-x9w5-v3q2-3rhw: browserify-sign upper bound check issue in `dsaVerify` leads to a signature forgery attack (https://github.com/advisories/GHSA-x9w5-v3q2-3rhw)
   debug@3.2.6 is affected by the following vulnerabilities:
@@ -124,4 +126,4 @@ fixtures/locks-e2e/2-yarn.lock: found 1991 packages
   word-wrap@1.2.3 is affected by the following vulnerabilities:
     GHSA-j8xg-fqg3-53r7: word-wrap vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-j8xg-fqg3-53r7)
 
-  67 known vulnerabilities found in fixtures/locks-e2e/2-yarn.lock
+  68 known vulnerabilities found in fixtures/locks-e2e/2-yarn.lock
