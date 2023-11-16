@@ -12,7 +12,6 @@ fixtures/locks-e2e/1-composer.lock: found 203 packages
     GHSA-w248-ffj2-4v5q: Fix failure to strip Authorization header on HTTP downgrade (https://github.com/advisories/GHSA-w248-ffj2-4v5q)
   guzzlehttp/psr7@1.8.2 is affected by the following vulnerabilities:
     GHSA-q7rv-6hp3-vh96: Improper Input Validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-q7rv-6hp3-vh96)
-    GHSA-wxmh-65f7-jcvw: Improper header name validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-wxmh-65f7-jcvw)
   silverstripe/admin@1.8.0 is affected by the following vulnerabilities:
     GHSA-44xv-v98g-v79f: URL XSS vulnerability due to outdated jquery in CMS (https://github.com/advisories/GHSA-44xv-v98g-v79f)
     GHSA-4q66-g4mm-8rg5: Silverstripe has Cross-site Scripting (XSS) vulnerabilities inherited from TinyMCE (https://github.com/advisories/GHSA-4q66-g4mm-8rg5)
@@ -46,4 +45,4 @@ fixtures/locks-e2e/1-composer.lock: found 203 packages
   silverstripe/versioned-admin@1.8.0 is affected by the following vulnerabilities:
     GHSA-66jf-xm2m-7m8r: Stored XSS in Compare Mode (https://github.com/advisories/GHSA-66jf-xm2m-7m8r)
 
-  32 known vulnerabilities found in fixtures/locks-e2e/1-composer.lock
+  31 known vulnerabilities found in fixtures/locks-e2e/1-composer.lock

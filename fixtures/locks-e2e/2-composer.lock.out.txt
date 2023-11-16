@@ -27,7 +27,6 @@ fixtures/locks-e2e/2-composer.lock: found 254 packages
     GHSA-w248-ffj2-4v5q: Fix failure to strip Authorization header on HTTP downgrade (https://github.com/advisories/GHSA-w248-ffj2-4v5q)
   guzzlehttp/psr7@1.6.1 is affected by the following vulnerabilities:
     GHSA-q7rv-6hp3-vh96: Improper Input Validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-q7rv-6hp3-vh96)
-    GHSA-wxmh-65f7-jcvw: Improper header name validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-wxmh-65f7-jcvw)
   laminas/laminas-diactoros@1.8.7p2 is affected by the following vulnerabilities:
     GHSA-8274-h5jp-97vr: Diactoros before 2.11.1 vulnerable to HTTP Host Header Attack (https://github.com/advisories/GHSA-8274-h5jp-97vr)
     GHSA-xv3h-4844-9h36: HTTP Multiline Header Termination (https://github.com/advisories/GHSA-xv3h-4844-9h36)
@@ -36,4 +35,4 @@ fixtures/locks-e2e/2-composer.lock: found 254 packages
   twig/twig@v1.42.5 is affected by the following vulnerabilities:
     GHSA-52m2-vc4m-jj33: Twig may load a template outside a configured directory when using the filesystem loader (https://github.com/advisories/GHSA-52m2-vc4m-jj33)
 
-  24 known vulnerabilities found in fixtures/locks-e2e/2-composer.lock
+  23 known vulnerabilities found in fixtures/locks-e2e/2-composer.lock
