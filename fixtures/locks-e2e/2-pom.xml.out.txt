@@ -19,5 +19,6 @@ fixtures/locks-e2e/2-pom.xml: found 8 packages
     GHSA-7c2q-5qmr-v76q: DoS vulnerabilities persist in ESAPI file uploads despite remediation of CVE-2023-24998 (https://github.com/advisories/GHSA-7c2q-5qmr-v76q)
     GHSA-8m5h-hrqm-pxm2: Path traversal in the OWASP Enterprise Security API (https://github.com/advisories/GHSA-8m5h-hrqm-pxm2)
     GHSA-q77q-vx4q-xx6q: Cross-site Scripting in org.owasp.esapi:esapi (https://github.com/advisories/GHSA-q77q-vx4q-xx6q)
+    GHSA-r68h-jhhj-9jvm: Validator.isValidSafeHTML is being deprecated and will be deleted from org.owasp.esapi:esapi in 1 year (https://github.com/advisories/GHSA-r68h-jhhj-9jvm)
 
-  12 known vulnerabilities found in fixtures/locks-e2e/2-pom.xml
+  13 known vulnerabilities found in fixtures/locks-e2e/2-pom.xml

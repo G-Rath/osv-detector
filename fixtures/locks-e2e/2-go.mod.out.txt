@@ -18,6 +18,7 @@ fixtures/locks-e2e/2-go.mod: found 73 packages
     GHSA-x24g-9w7v-vprh: HashiCorp go-getter command injection (https://github.com/advisories/GHSA-x24g-9w7v-vprh)
     GO-2022-0586: Resource exhaustion in github.com/hashicorp/go-getter and related modules
   golang.org/x/crypto@0.0.0-20210421170649-83a5a9bb288b is affected by the following vulnerabilities:
+    GHSA-45x7-px36-x8w8: Russh vulnerable to Prefix Truncation Attack against ChaCha20-Poly1305 and Encrypt-then-MAC (https://github.com/advisories/GHSA-45x7-px36-x8w8)
     GHSA-8c26-wmh5-6g9v: golang.org/x/crypto/ssh Denial of service via crafted Signer (https://github.com/advisories/GHSA-8c26-wmh5-6g9v)
     GHSA-gwc9-m7rh-j2ww: x/crypto/ssh vulnerable to panic via malformed packets (https://github.com/advisories/GHSA-gwc9-m7rh-j2ww)
   golang.org/x/net@0.0.0-20210326060303-6b1517762897 is affected by the following vulnerabilities:
@@ -26,6 +27,7 @@ fixtures/locks-e2e/2-go.mod: found 73 packages
     GHSA-69cg-p879-7622: golang.org/x/net/http2 Denial of Service vulnerability (https://github.com/advisories/GHSA-69cg-p879-7622)
     GHSA-83g2-8m93-v3w7: golang.org/x/net/html Infinite Loop vulnerability (https://github.com/advisories/GHSA-83g2-8m93-v3w7)
     GHSA-h86h-8ppg-mxmh: golang.org/x/net/http/httpguts vulnerable to Uncontrolled Recursion (https://github.com/advisories/GHSA-h86h-8ppg-mxmh)
+    GHSA-qppj-fm5r-hxr3: swift-nio-http2 vulnerable to HTTP/2 Stream Cancellation Attack (https://github.com/advisories/GHSA-qppj-fm5r-hxr3)
     GHSA-vvpx-j8f3-3w6h: Uncontrolled Resource Consumption (https://github.com/advisories/GHSA-vvpx-j8f3-3w6h)
     GO-2022-0288: Unbounded memory growth in net/http and golang.org/x/net/http2
     GO-2022-1144: Excessive memory growth in net/http and golang.org/x/net/http2
@@ -38,4 +40,4 @@ fixtures/locks-e2e/2-go.mod: found 73 packages
     GHSA-m425-mq94-257g: gRPC-Go HTTP/2 Rapid Reset vulnerability (https://github.com/advisories/GHSA-m425-mq94-257g)
     GHSA-qppj-fm5r-hxr3: swift-nio-http2 vulnerable to HTTP/2 Stream Cancellation Attack (https://github.com/advisories/GHSA-qppj-fm5r-hxr3)
 
-  25 known vulnerabilities found in fixtures/locks-e2e/2-go.mod
+  27 known vulnerabilities found in fixtures/locks-e2e/2-go.mod

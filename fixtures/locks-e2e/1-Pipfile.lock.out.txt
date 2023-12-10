@@ -13,6 +13,7 @@ fixtures/locks-e2e/1-Pipfile.lock: found 114 packages
     GHSA-xqr8-7jwr-rhp7: Removal of e-Tugra root certificate (https://github.com/advisories/GHSA-xqr8-7jwr-rhp7)
   cryptography@41.0.1 is affected by the following vulnerabilities:
     GHSA-cf7p-gm2m-833m: cryptography mishandles SSH certificates (https://github.com/advisories/GHSA-cf7p-gm2m-833m)
+    GHSA-jfhm-5ghh-2f97: cryptography vulnerable to NULL-dereference when loading PKCS7 certificates (https://github.com/advisories/GHSA-jfhm-5ghh-2f97)
     GHSA-jm77-qphf-c4w8: pyca/cryptography's wheels include vulnerable OpenSSL (https://github.com/advisories/GHSA-jm77-qphf-c4w8)
     GHSA-v8gr-m533-ghj9: Vulnerable OpenSSL included in cryptography wheels (https://github.com/advisories/GHSA-v8gr-m533-ghj9)
   pillow@8.4.0 is affected by the following vulnerabilities:
@@ -40,4 +41,4 @@ fixtures/locks-e2e/1-Pipfile.lock: found 114 packages
     GHSA-5286-f2rf-35c2: Wagtail vulnerable to stored Cross-site Scripting attack via ModelAdmin views (https://github.com/advisories/GHSA-5286-f2rf-35c2)
     GHSA-fc75-58r8-rm3h: Wagtail vulnerable to disclosure of user names via admin bulk action views (https://github.com/advisories/GHSA-fc75-58r8-rm3h)
 
-  25 known vulnerabilities found in fixtures/locks-e2e/1-Pipfile.lock
+  26 known vulnerabilities found in fixtures/locks-e2e/1-Pipfile.lock

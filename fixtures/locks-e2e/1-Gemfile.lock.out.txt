@@ -13,6 +13,8 @@ fixtures/locks-e2e/1-Gemfile.lock: found 229 packages
   actionview@5.2.6 is affected by the following vulnerabilities:
     GHSA-ch3h-j2vf-95pv: XSS Vulnerability in Action View tag helpers (https://github.com/advisories/GHSA-ch3h-j2vf-95pv)
     GHSA-xp5h-f8jf-rc8q: rails-ujs vulnerable to DOM Based Cross-site Scripting contenteditable HTML Elements (https://github.com/advisories/GHSA-xp5h-f8jf-rc8q)
+  activeadmin@2.7.0 is affected by the following vulnerabilities:
+    GHSA-356j-hg45-x525: Potential CSV export data leak (https://github.com/advisories/GHSA-356j-hg45-x525)
   activerecord@5.2.6 is affected by the following vulnerabilities:
     GHSA-3hhc-qp5v-9p2j: Active Record RCE bug with Serialized Columns (https://github.com/advisories/GHSA-3hhc-qp5v-9p2j)
     GHSA-579w-22j4-4749: Denial of Service Vulnerability in ActiveRecord's PostgreSQL adapter (https://github.com/advisories/GHSA-579w-22j4-4749)
@@ -69,6 +71,12 @@ fixtures/locks-e2e/1-Gemfile.lock: found 229 packages
     GHSA-mcvf-2q2m-x72m: Improper neutralization of data URIs may allow XSS in rails-html-sanitizer (https://github.com/advisories/GHSA-mcvf-2q2m-x72m)
     GHSA-pg8v-g4xq-hww9: Rails::Html::Sanitizer vulnerable to Cross-site Scripting (https://github.com/advisories/GHSA-pg8v-g4xq-hww9)
     GHSA-rrfc-7g8p-99q8: Possible XSS vulnerability with certain configurations of rails-html-sanitizer (https://github.com/advisories/GHSA-rrfc-7g8p-99q8)
+  resque@2.0.0 is affected by the following vulnerabilities:
+    GHSA-gc3j-vvwf-4rp8: Resque vulnerable to reflected XSS in resque-web failed and queues lists (https://github.com/advisories/GHSA-gc3j-vvwf-4rp8)
+    GHSA-r8xx-8vm8-x6wj: Resque vulnerable to Reflected Cross Site Scripting through pathnames (https://github.com/advisories/GHSA-r8xx-8vm8-x6wj)
+    GHSA-r9mq-m72x-257g: Resque vulnerable to reflected XSS in Queue Endpoint (https://github.com/advisories/GHSA-r9mq-m72x-257g)
+  resque-scheduler@4.4.0 is affected by the following vulnerabilities:
+    GHSA-9hmq-fm33-x4xx: Resque Scheduler Reflected XSS In Delayed Jobs View (https://github.com/advisories/GHSA-9hmq-fm33-x4xx)
   rexml@3.2.4 is affected by the following vulnerabilities:
     GHSA-8cr8-4vfw-mr7h: REXML round-trip instability (https://github.com/advisories/GHSA-8cr8-4vfw-mr7h)
   sinatra@2.1.0 is affected by the following vulnerabilities:
@@ -77,4 +85,4 @@ fixtures/locks-e2e/1-Gemfile.lock: found 229 packages
   tzinfo@1.2.9 is affected by the following vulnerabilities:
     GHSA-5cm2-9h8c-rvfx: TZInfo relative path traversal vulnerability allows loading of arbitrary files (https://github.com/advisories/GHSA-5cm2-9h8c-rvfx)
 
-  54 known vulnerabilities found in fixtures/locks-e2e/1-Gemfile.lock
+  59 known vulnerabilities found in fixtures/locks-e2e/1-Gemfile.lock
