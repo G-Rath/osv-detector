@@ -1,8 +1,6 @@
 name: Checks
 
 on:
-  schedule:
-    - cron: '0 0 * * SUN'
   pull_request:
   push:
     branches:

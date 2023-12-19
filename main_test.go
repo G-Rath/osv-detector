@@ -1377,6 +1377,10 @@ func TestRun_Ignores(t *testing.T) {
 func TestRun_EndToEnd(t *testing.T) {
 	t.Parallel()
 
+	if os.Getenv("TEST_ACCEPTANCE") != "true" {
+		t.Skip("Skipping acceptance tests")
+	}
+
 	e2eFixturesDir := "./fixtures/locks-e2e"
 
 	files, err := os.ReadDir(e2eFixturesDir)
