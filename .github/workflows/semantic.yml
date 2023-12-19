@@ -152,10 +152,6 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          name: e2e-fixtures
-          path: fixtures/locks-e2e/
-      - uses: actions/download-artifact@v3
-        with:
           name: generated-versions
           path: pkg/semantic/fixtures/
       - run: git status
