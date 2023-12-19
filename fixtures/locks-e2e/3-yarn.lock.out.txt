@@ -17,7 +17,7 @@ fixtures/locks-e2e/3-yarn.lock: found 1225 packages
   decode-uri-component@0.2.0 is affected by the following vulnerabilities:
     GHSA-w573-4hg7-7wgq: decode-uri-component vulnerable to Denial of Service (DoS) (https://github.com/advisories/GHSA-w573-4hg7-7wgq)
   glob-parent@3.1.0 is affected by the following vulnerabilities:
-    GHSA-ww39-953v-wcq6: glob-parent before 5.1.2 vulnerable to Regular Expression Denial of Service in enclosure regex (https://github.com/advisories/GHSA-ww39-953v-wcq6)
+    GHSA-ww39-953v-wcq6: glob-parent vulnerable to Regular Expression Denial of Service in enclosure regex (https://github.com/advisories/GHSA-ww39-953v-wcq6)
   got@6.7.1 is affected by the following vulnerabilities:
     GHSA-pfrx-2q88-qq97: Got allows a redirect to a UNIX socket (https://github.com/advisories/GHSA-pfrx-2q88-qq97)
   hosted-git-info@2.8.8 is affected by the following vulnerabilities:

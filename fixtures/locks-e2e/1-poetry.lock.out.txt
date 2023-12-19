@@ -5,6 +5,7 @@ fixtures/locks-e2e/1-poetry.lock: found 142 packages
   Using db PyPI (%% vulnerabilities, including withdrawn - last updated %%)
 
   cryptography@41.0.2 is affected by the following vulnerabilities:
+    GHSA-jfhm-5ghh-2f97: cryptography vulnerable to NULL-dereference when loading PKCS7 certificates (https://github.com/advisories/GHSA-jfhm-5ghh-2f97)
     GHSA-jm77-qphf-c4w8: pyca/cryptography's wheels include vulnerable OpenSSL (https://github.com/advisories/GHSA-jm77-qphf-c4w8)
     GHSA-v8gr-m533-ghj9: Vulnerable OpenSSL included in cryptography wheels (https://github.com/advisories/GHSA-v8gr-m533-ghj9)
   django@3.2 is affected by the following vulnerabilities:
@@ -23,8 +24,8 @@ fixtures/locks-e2e/1-poetry.lock: found 142 packages
     GHSA-p64x-8rxx-wf6q: Django `Trunc()` and `Extract()` database functions vulnerable to SQL Injection (https://github.com/advisories/GHSA-p64x-8rxx-wf6q)
     GHSA-p99v-5w3c-jqq9: Django Access Control Bypass possibly leading to SSRF, RFI, and LFI attacks  (https://github.com/advisories/GHSA-p99v-5w3c-jqq9)
     GHSA-q2jf-h9jm-m7p4: Django contains Uncontrolled Resource Consumption via cached header (https://github.com/advisories/GHSA-q2jf-h9jm-m7p4)
-    GHSA-qmf9-6jqf-j8fq: Django potential denial of service vulnerability in UsernameField on Windows (https://github.com/advisories/GHSA-qmf9-6jqf-j8fq)
     GHSA-qm57-vhq3-3fwf: Header injection possible in Django (https://github.com/advisories/GHSA-qm57-vhq3-3fwf)
+    GHSA-qmf9-6jqf-j8fq: Django potential denial of service vulnerability in UsernameField on Windows (https://github.com/advisories/GHSA-qmf9-6jqf-j8fq)
     GHSA-qrw5-5h28-6cmg: Django denial-of-service vulnerability in internationalized URLs (https://github.com/advisories/GHSA-qrw5-5h28-6cmg)
     GHSA-r3xc-prgr-mg9p: Django bypasses validation when using one form field to upload multiple files (https://github.com/advisories/GHSA-r3xc-prgr-mg9p)
     GHSA-rxjp-mfm9-w4wr: Path Traversal in Django (https://github.com/advisories/GHSA-rxjp-mfm9-w4wr)
@@ -51,4 +52,4 @@ fixtures/locks-e2e/1-poetry.lock: found 142 packages
     GHSA-fc75-58r8-rm3h: Wagtail vulnerable to disclosure of user names via admin bulk action views (https://github.com/advisories/GHSA-fc75-58r8-rm3h)
     GHSA-xqxm-2rpm-3889: Comment reply notifications sent to incorrect users (https://github.com/advisories/GHSA-xqxm-2rpm-3889)
 
-  41 known vulnerabilities found in fixtures/locks-e2e/1-poetry.lock
+  42 known vulnerabilities found in fixtures/locks-e2e/1-poetry.lock
