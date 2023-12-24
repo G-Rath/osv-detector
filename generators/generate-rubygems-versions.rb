@@ -38,6 +38,8 @@ def extract_packages_with_versions(osvs)
 
   osvs.each do |osv|
     osv["affected"].each do |affected|
+      next unless affected["package"]["ecosystem"] == "RubyGems"
+
       package = affected["package"]["name"]
 
       packages[package] ||= []
