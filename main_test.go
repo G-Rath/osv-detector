@@ -73,6 +73,8 @@ type cliTestCase struct {
 	wantExitCode int
 	wantStdout   string
 	wantStderr   string
+
+	around func(t *testing.T) func()
 }
 
 // Attempts to normalize any file paths in the given `output` so that they can
@@ -1371,6 +1373,184 @@ func TestRun_Ignores(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
+
+			testCli(t, tt)
+		})
+	}
+}
+
+func setupConfigForUpdating(t *testing.T, path string, initial string, updated string) func() {
+	t.Helper()
+
+	err := os.WriteFile(path, []byte(initial), os.ModePerm)
+
+	if err != nil {
+		t.Fatalf("could not create test file: %v", err)
+	}
+
+	return func() {
+		t.Helper()
+
+		// ensure that we always try to remove the file
+		defer func() {
+			if err = os.Remove(path); err != nil {
+				t.Fatalf("could not remove test file: %v", err)
+			}
+		}()
+
+		content, err := os.ReadFile(path)
+
+		if err != nil {
+			t.Fatalf("could not read test config file: %v", err)
+		}
+
+		expectAreEqual(t, "config", string(content), updated)
+	}
+}
+
+func TestRun_UpdatingConfigIgnores(t *testing.T) {
+	t.Parallel()
+
+	tests := []cliTestCase{
+		// when there is no existing config, nothing should be updated
+		{
+			name:         "",
+			args:         []string{"--update-config-ignores", filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json")},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+			`,
+			wantStderr: "",
+		},
+		// when given an explicit config, that should be updated
+		{
+			name: "",
+			args: []string{
+				"--update-config-ignores",
+				"--config", "fixtures/existing-config.yml",
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json"),
+			},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using config at fixtures/existing-config.yml (0 ignores)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+
+				Updated fixtures/existing-config.yml with 1 vulnerability
+			`,
+			wantStderr: "",
+			around: func(t *testing.T) func() {
+				t.Helper()
+
+				return setupConfigForUpdating(t,
+					"fixtures/existing-config.yml",
+					"",
+					`
+						ignore:
+  					- GHSA-whgm-jr23-g3j9
+					`,
+				)
+			},
+		},
+		// when there are existing ignores
+		{
+			name: "",
+			args: []string{
+				"--update-config-ignores",
+				"--config", "fixtures/existing-config-with-ignores.yml",
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json"),
+			},
+			wantExitCode: 0,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using config at fixtures/existing-config-with-ignores.yml (1 ignore)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					no new vulnerabilities found (1 was ignored)
+
+				Updated fixtures/existing-config-with-ignores.yml with 0 vulnerabilities
+			`,
+			wantStderr: "",
+			around: func(t *testing.T) func() {
+				t.Helper()
+
+				return setupConfigForUpdating(t,
+					"fixtures/existing-config-with-ignores.yml",
+					"ignore: [GHSA-whgm-jr23-g3j9]",
+					"ignore: []",
+				)
+			},
+		},
+		// when there are existing ignores but told to ignore those
+		{
+			name: "",
+			args: []string{
+				"--update-config-ignores",
+				"--no-config-ignores",
+				"--config", "fixtures/existing-config-with-ignored-ignores.yml",
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json"),
+			},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using config at fixtures/existing-config-with-ignored-ignores.yml (skipping any ignores)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+
+				Updated fixtures/existing-config-with-ignored-ignores.yml with 1 vulnerability
+			`,
+			wantStderr: "",
+			around: func(t *testing.T) func() {
+				t.Helper()
+
+				return setupConfigForUpdating(t,
+					"fixtures/existing-config-with-ignored-ignores.yml",
+					"ignore: [GHSA-whgm-jr23-g3j9]",
+					`
+					ignore:
+					- GHSA-whgm-jr23-g3j9
+					`,
+				)
+			},
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			if tt.around != nil {
+				teardown := tt.around(t)
+
+				defer teardown()
+			}
 
 			testCli(t, tt)
 		})

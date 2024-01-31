@@ -14,16 +14,16 @@ import (
 )
 
 type rawDatabaseConfig struct {
-	Name             string `yaml:"name"`
-	Type             string `yaml:"type"`
 	URL              string `yaml:"url"`
-	WorkingDirectory string `yaml:"working-directory"`
+	Name             string `yaml:"name,omitempty"`
+	Type             string `yaml:"type,omitempty"`
+	WorkingDirectory string `yaml:"working-directory,omitempty"`
 }
 
 type rawConfig struct {
 	FilePath  string              `yaml:"-"`
 	Ignore    []string            `yaml:"ignore"`
-	Databases []rawDatabaseConfig `yaml:"extra-databases"`
+	Databases []rawDatabaseConfig `yaml:"extra-databases,omitempty"`
 }
 
 type Config struct {
@@ -130,7 +130,7 @@ func Find(r *reporter.Reporter, pathToDirectory string) (Config, error) {
 	return Config{}, nil
 }
 
-func Load(r *reporter.Reporter, pathToConfig string) (Config, error) {
+func load(pathToConfig string) (rawConfig, error) {
 	var raw rawConfig
 
 	pathToConfig = filepath.Clean(pathToConfig)
@@ -140,13 +140,23 @@ func Load(r *reporter.Reporter, pathToConfig string) (Config, error) {
 	configContents, err := os.ReadFile(pathToConfig)
 
 	if err != nil {
-		return Config{FilePath: pathToConfig}, fmt.Errorf("could not read %s: %w", pathToConfig, err)
+		return raw, fmt.Errorf("could not read %s: %w", pathToConfig, err)
 	}
 
 	err = yaml.Unmarshal(configContents, &raw)
 
 	if err != nil {
-		return Config{FilePath: pathToConfig}, fmt.Errorf("could not read %s: %w", pathToConfig, err)
+		return raw, fmt.Errorf("could not read %s: %w", pathToConfig, err)
+	}
+
+	return raw, nil
+}
+
+func Load(r *reporter.Reporter, pathToConfig string) (Config, error) {
+	raw, err := load(pathToConfig)
+
+	if err != nil {
+		return Config{FilePath: raw.FilePath}, err
 	}
 
 	return newConfig(r, raw)

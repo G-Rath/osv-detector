@@ -501,6 +501,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 	parseAs := cli.String("parse-as", "", "Name of a supported lockfile to parse the input files as")
 	configPath := cli.String("config", "", "Path to a config file to use for all lockfiles")
 	noConfig := cli.Bool("no-config", false, "Disable loading of any config files")
+	updateConfigIgnores := cli.Bool("update-config-ignores", false, "Update the list of ignored OSVs in config files")
 	noConfigIgnores := cli.Bool("no-config-ignores", false, "Don't respect any OSVs listed as ignored in configs")
 	noConfigDatabases := cli.Bool("no-config-databases", false, "Don't load any extra databases listed in configs")
 	printVersion := cli.Bool("version", false, "Print version information")
@@ -605,6 +606,8 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		exitCode = 127
 	}
 
+	vulnsPerConfig := make(map[string]map[string]struct{})
+
 	for i, result := range files {
 		if i >= 1 {
 			r.PrintTextf("\n")
@@ -687,12 +690,56 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 		r.PrintResult(report)
 
+		// if we're meant to be updating the list of ignored osvs,
+		// then we need to capture the id of each osv from each file
+		// against the location of each config being used for that lockfile
+		if *updateConfigIgnores && config.FilePath != "" {
+			if _, ok := vulnsPerConfig[config.FilePath]; !ok {
+				vulnsPerConfig[config.FilePath] = make(map[string]struct{})
+			}
+
+			for _, pkg := range report.Packages {
+				for _, vul := range pkg.Vulnerabilities.Unique() {
+					vulnsPerConfig[config.FilePath][vul.ID] = struct{}{}
+				}
+			}
+		}
+
 		if report.HasKnownVulnerabilities() && exitCode == 0 {
 			exitCode = 1
 		}
 	}
 
+	if *updateConfigIgnores {
+		writeUpdatedConfigs(r, vulnsPerConfig)
+	}
+
 	return exitCode
+}
+
+func writeUpdatedConfigs(r *reporter.Reporter, vulnsPerConfig map[string]map[string]struct{}) {
+	if len(vulnsPerConfig) != 0 {
+		r.PrintTextf("\n")
+	}
+
+	for configPath, vulns := range vulnsPerConfig {
+		var ignores []string
+
+		for id := range vulns {
+			ignores = append(ignores, id)
+		}
+		sort.Slice(ignores, func(i, j int) bool {
+			return ignores[i] < ignores[j]
+		})
+
+		err := configer.UpdateWithIgnores(configPath, ignores)
+
+		if err == nil {
+			r.PrintTextf("Updated %s with %d %s\n", configPath, len(vulns), reporter.Form(len(vulns), "vulnerability", "vulnerabilities"))
+		} else {
+			r.PrintErrorf("error updating config: %v", err)
+		}
+	}
 }
 
 func main() {
