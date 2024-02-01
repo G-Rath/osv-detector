@@ -10,7 +10,7 @@ import (
 
 	"github.com/g-rath/osv-detector/internal/reporter"
 	"github.com/g-rath/osv-detector/pkg/database"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type rawDatabaseConfig struct {
@@ -21,7 +21,7 @@ type rawDatabaseConfig struct {
 }
 
 type rawConfig struct {
-	FilePath  string
+	FilePath  string              `yaml:"-"`
 	Ignore    []string            `yaml:"ignore"`
 	Databases []rawDatabaseConfig `yaml:"extra-databases"`
 }

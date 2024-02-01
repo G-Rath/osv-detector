@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type PnpmLockPackageResolution struct {
@@ -33,11 +33,11 @@ type pnpmLockfileV6 struct {
 	Packages map[string]PnpmLockPackage `yaml:"packages,omitempty"`
 }
 
-func (l *PnpmLockfile) UnmarshalYAML(unmarshal func(any) error) error {
+func (l *PnpmLockfile) UnmarshalYAML(value *yaml.Node) error {
 	var lockfileV6 pnpmLockfileV6
 
-	if err := unmarshal(&lockfileV6); err != nil {
-		return err
+	if err := value.Decode(&lockfileV6); err != nil {
+		return fmt.Errorf("%w", err)
 	}
 
 	parsedVersion, err := strconv.ParseFloat(lockfileV6.Version, 64)

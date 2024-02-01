@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type PubspecLockDescription struct {
@@ -14,9 +14,7 @@ type PubspecLockDescription struct {
 	Ref  string `yaml:"resolved-ref"`
 }
 
-var _ yaml.Unmarshaler = &PubspecLockDescription{}
-
-func (pld *PubspecLockDescription) UnmarshalYAML(unmarshal func(any) error) error {
+func (pld *PubspecLockDescription) UnmarshalYAML(value *yaml.Node) error {
 	var m struct {
 		Name string `yaml:"name"`
 		URL  string `yaml:"url"`
@@ -24,7 +22,7 @@ func (pld *PubspecLockDescription) UnmarshalYAML(unmarshal func(any) error) erro
 		Ref  string `yaml:"resolved-ref"`
 	}
 
-	err := unmarshal(&m)
+	err := value.Decode(&m)
 
 	if err == nil {
 		pld.Name = m.Name
@@ -37,10 +35,10 @@ func (pld *PubspecLockDescription) UnmarshalYAML(unmarshal func(any) error) erro
 
 	var str *string
 
-	err = unmarshal(&str)
+	err = value.Decode(&str)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
 	pld.Path = *str
