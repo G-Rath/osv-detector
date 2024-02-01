@@ -1463,7 +1463,7 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 					"",
 					`
 						ignore:
-  					- GHSA-whgm-jr23-g3j9
+  						- GHSA-whgm-jr23-g3j9
 					`,
 				)
 			},
@@ -1534,7 +1534,7 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 					"ignore: [GHSA-whgm-jr23-g3j9]",
 					`
 					ignore:
-					- GHSA-whgm-jr23-g3j9
+						- GHSA-whgm-jr23-g3j9
 					`,
 				)
 			},

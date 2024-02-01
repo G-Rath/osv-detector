@@ -9,7 +9,7 @@ import (
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"github.com/g-rath/osv-detector/internal/configer"
 	"github.com/google/go-cmp/cmp"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 func dedent(t *testing.T, str string) string {
@@ -140,9 +140,9 @@ func TestUpdateWithIgnores(t *testing.T) {
 			initial: "ignore:",
 			updated: `
 				ignore:
-				- OSV-1
-				- OSV-2
-				- OSV-3
+					- OSV-1
+					- OSV-2
+					- OSV-3
 			`,
 		},
 		{
@@ -151,12 +151,12 @@ func TestUpdateWithIgnores(t *testing.T) {
 			initial: "ignore:",
 			updated: `
 				ignore:
-				- OSV-2
-				- OSV-5
-				- OSV-1
-				- OSV-2
-				- OSV-4
-				- OSV-3
+					- OSV-2
+					- OSV-5
+					- OSV-1
+					- OSV-2
+					- OSV-4
+					- OSV-3
 			`,
 		},
 		{
@@ -165,8 +165,8 @@ func TestUpdateWithIgnores(t *testing.T) {
 			initial: readConfigFixture(t, "fixtures/ext-yml/.osv-detector.yml"),
 			updated: `
 				ignore:
-				- OSV-1
-				- OSV-2
+					- OSV-1
+					- OSV-2
 			`,
 		},
 		{
@@ -175,22 +175,22 @@ func TestUpdateWithIgnores(t *testing.T) {
 			initial: readConfigFixture(t, "fixtures/extra-databases/.osv-detector.yml"),
 			updated: `
 				ignore:
-				- OSV-4
-				- OSV-5
+					- OSV-4
+					- OSV-5
 				extra-databases:
-				- url: https://github.com/github/advisory-database/archive/refs/heads/main.zip
-				- url: file:/relative/path/to/dir
-				- url: file:////root/path/to/dir
-				- url: https://api-staging.osv.dev/v1
-				- url: https://github.com/github/advisory-database/archive/refs/heads/main.zip
-					name: GitHub Advisory Database
-				- url: https://my-site.com/osvs/all
-					type: zip
-				- url: https://github.com/github/advisory-database/archive/refs/heads/main.zip
-					working-directory: advisory-database-main/advisories/unreviewed
-				- url: https://my-site.com/osvs/all
-					type: file
-				- url: www.github.com/github/advisory-database/archive/refs/heads/main.zip
+					- url: https://github.com/github/advisory-database/archive/refs/heads/main.zip
+					- url: file:/relative/path/to/dir
+					- url: file:////root/path/to/dir
+					- url: https://api-staging.osv.dev/v1
+					- url: https://github.com/github/advisory-database/archive/refs/heads/main.zip
+						name: GitHub Advisory Database
+					- url: https://my-site.com/osvs/all
+						type: zip
+					- url: https://github.com/github/advisory-database/archive/refs/heads/main.zip
+						working-directory: advisory-database-main/advisories/unreviewed
+					- url: https://my-site.com/osvs/all
+						type: file
+					- url: www.github.com/github/advisory-database/archive/refs/heads/main.zip
 			`,
 		},
 	}

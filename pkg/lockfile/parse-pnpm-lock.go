@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type PnpmLockPackageResolution struct {

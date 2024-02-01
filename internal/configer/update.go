@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 func UpdateWithIgnores(pathToConfig string, ignores []string) error {
@@ -16,19 +16,15 @@ func UpdateWithIgnores(pathToConfig string, ignores []string) error {
 
 	raw.Ignore = ignores
 
-	out, err := yaml.Marshal(raw)
-
-	if err != nil {
-		return fmt.Errorf("%w", err)
-	}
-
 	f, err := os.OpenFile(pathToConfig, os.O_TRUNC|os.O_WRONLY, os.ModePerm)
 
 	if err != nil {
 		return fmt.Errorf("%w", err)
 	}
 
-	_, err = f.Write(out)
+	encoder := yaml.NewEncoder(f)
+	encoder.SetIndent(2)
+	err = encoder.Encode(raw)
 
 	if err != nil {
 		return fmt.Errorf("%w", err)
