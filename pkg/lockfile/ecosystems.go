@@ -2,6 +2,7 @@ package lockfile
 
 func KnownEcosystems() []Ecosystem {
 	return []Ecosystem{
+		CRANEcosystem,
 		NpmEcosystem,
 		NuGetEcosystem,
 		CargoEcosystem,
