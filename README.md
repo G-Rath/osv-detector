@@ -66,6 +66,7 @@ The detector supports parsing the following lockfiles:
 | `mix.lock`                    | `Hex`       | `mix`      |
 | `poetry.lock`                 | `PyPI`      | `poetry`   |
 | `Pipfile.lock`                | `PyPI`      | `pipenv`   |
+| `pdm.lock`                    | `PyPI`      | `pdm`      |
 | `pubspec.lock`                | `Pub`       | `pub`      |
 | `pom.xml`\*                   | `Maven`     | `maven`    |
 | `requirements.txt`\*          | `PyPI`      | `pip`      |

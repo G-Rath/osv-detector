@@ -164,6 +164,7 @@ func TestRun(t *testing.T) {
 					mix.lock
 					package-lock.json
 					packages.lock.json
+					pdm.lock
 					Pipfile.lock
 					pnpm-lock.yaml
 					poetry.lock
