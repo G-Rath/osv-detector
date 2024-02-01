@@ -105,6 +105,7 @@ func TestParse_FindsExpectedParsers(t *testing.T) {
 		"renv.lock",
 		"mix.lock",
 		"pom.xml",
+		"pdm.lock",
 		"poetry.lock",
 		"Pipfile.lock",
 		"pubspec.lock",
