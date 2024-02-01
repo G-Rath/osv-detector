@@ -265,6 +265,7 @@ func TestReporter_PrintKnownEcosystems(t *testing.T) {
 
 	expected := strings.Join([]string{
 		"The detector supports parsing for the following ecosystems:",
+		"  CRAN",
 		"  npm",
 		"  NuGet",
 		"  crates.io",

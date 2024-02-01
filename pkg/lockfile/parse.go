@@ -30,6 +30,7 @@ var parsers = map[string]PackageDetailsParser{
 	"Pipfile.lock":                ParsePipenvLock,
 	"pom.xml":                     ParseMavenLock,
 	"pubspec.lock":                ParsePubspecLock,
+	"renv.lock":                   ParseRenvLock,
 	"requirements.txt":            ParseRequirementsTxt,
 	"yarn.lock":                   ParseYarnLock,
 	"gradle.lockfile":             ParseGradleLock,

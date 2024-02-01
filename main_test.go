@@ -169,6 +169,7 @@ func TestRun(t *testing.T) {
 					poetry.lock
 					pom.xml
 					pubspec.lock
+					renv.lock
 					requirements.txt
 					yarn.lock
 					csv-file

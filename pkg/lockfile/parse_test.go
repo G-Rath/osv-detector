@@ -102,6 +102,7 @@ func TestParse_FindsExpectedParsers(t *testing.T) {
 		"Gemfile.lock",
 		"go.mod",
 		"gradle.lockfile",
+		"renv.lock",
 		"mix.lock",
 		"pom.xml",
 		"poetry.lock",
