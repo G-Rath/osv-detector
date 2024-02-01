@@ -88,7 +88,7 @@ func (dbs OSVDatabases) check(r *reporter.Reporter, lockf lockfile.Lockfile, ign
 		results, err := db.Check(lockf.Packages)
 
 		if err != nil {
-			r.PrintError(color.RedString(fmt.Sprintf(
+			r.PrintErrorf(color.RedString(fmt.Sprintf(
 				"  an api error occurred while trying to check the packages listed in %s: %v\n",
 				lockf.FilePath,
 				err,
@@ -200,10 +200,10 @@ func loadDatabases(
 
 	errored := false
 
-	r.PrintText("Loaded the following OSV databases:\n")
+	r.PrintTextf("Loaded the following OSV databases:\n")
 
 	for _, dbConfig := range dbConfigs {
-		r.PrintText(fmt.Sprintf("  %s", dbConfig.Name))
+		r.PrintTextf("  %s", dbConfig.Name)
 
 		db, err := database.Load(dbConfig, offline, batchSize)
 
@@ -220,12 +220,12 @@ func loadDatabases(
 			desc = fmt.Sprintf(" (%s)", desc)
 		}
 
-		r.PrintText(fmt.Sprintf("%s\n", desc))
+		r.PrintTextf("%s\n", desc)
 
 		dbs = append(dbs, db)
 	}
 
-	r.PrintText("\n")
+	r.PrintTextf("\n")
 
 	return dbs, errored
 }
@@ -266,7 +266,7 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs s
 	}
 
 	if err != nil {
-		r.PrintError(fmt.Sprintf("Error reading %s: %v\n", pathToLockOrDirectory, err))
+		r.PrintErrorf("Error reading %s: %v\n", pathToLockOrDirectory, err)
 	}
 
 	sort.Slice(lockfiles, func(i, j int) bool {
@@ -523,7 +523,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 	}
 
 	if *printVersion {
-		r.PrintText(fmt.Sprintf("osv-detector %s (%s, commit %s)\n", version, date, commit))
+		r.PrintTextf("osv-detector %s (%s, commit %s)\n", version, date, commit)
 
 		return 0
 	}
@@ -537,14 +537,14 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 	// ensure that if the global parseAs is set, it is one of the supported values
 	if *parseAs != "" && *parseAs != parseAsCsvFile && *parseAs != parseAsCsvRow {
 		if parser, parsedAs := lockfile.FindParser("", *parseAs); parser == nil {
-			r.PrintError(fmt.Sprintf("Don't know how to parse files as \"%s\" - supported values are:\n", parsedAs))
+			r.PrintErrorf("Don't know how to parse files as \"%s\" - supported values are:\n", parsedAs)
 
 			for _, s := range lockfile.ListParsers() {
-				r.PrintError(fmt.Sprintf("  %s\n", s))
+				r.PrintErrorf("  %s\n", s)
 			}
 
-			r.PrintError(fmt.Sprintf("  %s\n", parseAsCsvFile))
-			r.PrintError(fmt.Sprintf("  %s\n", parseAsCsvRow))
+			r.PrintErrorf("  %s\n", parseAsCsvFile)
+			r.PrintErrorf("  %s\n", parseAsCsvRow)
 
 			return 127
 		}
@@ -553,7 +553,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 	pathsToLocksWithParseAs, errored := findAllLockfiles(r, cli.Args(), *parseAs)
 
 	if len(pathsToLocksWithParseAs) == 0 {
-		r.PrintError(
+		r.PrintErrorf(
 			"You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)\n",
 		)
 
@@ -580,7 +580,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		con, err := configer.Load(r, *configPath)
 
 		if err != nil {
-			r.PrintError(fmt.Sprintf("Error, %s\n", err))
+			r.PrintErrorf("Error, %s\n", err)
 
 			return 127
 		}
@@ -607,11 +607,11 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 	for i, result := range files {
 		if i >= 1 {
-			r.PrintText("\n")
+			r.PrintTextf("\n")
 		}
 
 		if result.err != nil {
-			r.PrintError(fmt.Sprintf("Error, %s\n", result.err))
+			r.PrintErrorf("Error, %s\n", result.err)
 			exitCode = 127
 
 			continue
@@ -624,12 +624,12 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 			config.Ignore = []string{}
 		}
 
-		r.PrintText(fmt.Sprintf(
+		r.PrintTextf(
 			"%s: found %s %s\n",
 			color.MagentaString("%s", lockf.FilePath),
 			color.YellowString("%d", len(lockf.Packages)),
 			reporter.Form(len(lockf.Packages), "package", "packages"),
-		))
+		)
 
 		if *listPackages {
 			r.PrintResult(lockf)
@@ -658,11 +658,11 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 				)
 			}
 
-			r.PrintText(fmt.Sprintf(
+			r.PrintTextf(
 				"  Using config at %s (%s)\n",
 				color.MagentaString(config.FilePath),
 				ignoresStr,
-			))
+			)
 		}
 
 		ignores = append(ignores, globalIgnores...)
@@ -675,13 +675,13 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 				desc = fmt.Sprintf(" (%s)", desc)
 			}
 
-			r.PrintText(fmt.Sprintf(
+			r.PrintTextf(
 				"  Using db %s%s\n",
 				color.HiCyanString(db.Name()),
 				desc,
-			))
+			)
 		}
-		r.PrintText("\n")
+		r.PrintTextf("\n")
 
 		report := dbs.check(r, lockf, ignores)
 
