@@ -2,10 +2,10 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -43,7 +43,7 @@ func dedent(t *testing.T, str string) string {
 			}
 		}
 
-		re := cachedregexp.MustCompile(`\n[\t ]{` + fmt.Sprint(size) + `}`)
+		re := cachedregexp.MustCompile(`\n[\t ]{` + strconv.Itoa(size) + `}`)
 		str = re.ReplaceAllString(str, "\n")
 	}
 
