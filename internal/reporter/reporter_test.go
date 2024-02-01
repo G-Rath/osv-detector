@@ -44,7 +44,7 @@ func TestReporter_PrintError(t *testing.T) {
 	stderr := &bytes.Buffer{}
 	r := reporter.New(stdout, stderr, false)
 
-	r.PrintError(msg)
+	r.PrintErrorf(msg)
 
 	if gotStdout := stdout.String(); gotStdout != "" {
 		t.Errorf("Expected stdout to be empty, but got \"%s\"", gotStdout)
@@ -175,7 +175,7 @@ func TestReporter_PrintText(t *testing.T) {
 			stderr := &bytes.Buffer{}
 
 			r := reporter.New(stdout, stderr, tt.args.outputAsJSON)
-			r.PrintText(tt.args.msg)
+			r.PrintTextf(tt.args.msg)
 
 			if gotStdout := stdout.String(); gotStdout != tt.wantedStdout {
 				t.Errorf("stdout got = %s, want %s", gotStdout, tt.wantedStdout)

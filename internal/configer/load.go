@@ -86,7 +86,7 @@ func newConfig(r *reporter.Reporter, raw rawConfig) (Config, error) {
 		dbc, err := d.toConfig()
 
 		if err != nil {
-			r.PrintError(fmt.Sprintf("%s contains an invalid database: %v\n", raw.FilePath, err))
+			r.PrintErrorf("%s contains an invalid database: %v\n", raw.FilePath, err)
 
 			continue
 		}
