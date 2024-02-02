@@ -1394,7 +1394,9 @@ func setupConfigForUpdating(t *testing.T, path string, initial string, updated s
 		// ensure that we always try to remove the file
 		defer func() {
 			if err = os.Remove(path); err != nil {
-				t.Fatalf("could not remove test file: %v", err)
+				// this will typically fail on Windows due to processes,
+				// so we just treat it as a warning instead of an error
+				t.Logf("could not remove test file: %v", err)
 			}
 		}()
 
