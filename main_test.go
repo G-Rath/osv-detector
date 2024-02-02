@@ -1540,6 +1540,69 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 				)
 			},
 		},
+		// when there are multiple implicit configs, it updates the right ones
+		{
+			name: "",
+			args: []string{
+				"--update-config-ignores",
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure-nested/my-package-lock.json"),
+				filepath.FromSlash("composer.lock:./fixtures/locks-insecure-nested/nested/my-composer-lock.json"),
+			},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure-nested/my-package-lock.json: found 1 package
+					Using config at fixtures/locks-insecure-nested/.osv-detector.yml (0 ignores)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in fixtures/locks-insecure-nested/my-package-lock.json
+
+				fixtures/locks-insecure-nested/nested/my-composer-lock.json: found 1 package
+					Using config at fixtures/locks-insecure-nested/nested/.osv-detector.yml (0 ignores)
+					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+					guzzlehttp/psr7@1.8.2 is affected by the following vulnerabilities:
+						GHSA-q7rv-6hp3-vh96: Improper Input Validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-q7rv-6hp3-vh96)
+
+					1 known vulnerability found in fixtures/locks-insecure-nested/nested/my-composer-lock.json
+
+				Updated fixtures/locks-insecure-nested/.osv-detector.yml with 1 vulnerability
+				Updated fixtures/locks-insecure-nested/nested/.osv-detector.yml with 1 vulnerability
+			`,
+			wantStderr: "",
+			around: func(t *testing.T) func() {
+				t.Helper()
+
+				cleanupConfig1 := setupConfigForUpdating(t,
+					"fixtures/locks-insecure-nested/.osv-detector.yml",
+					"ignore: []",
+					`
+					ignore:
+						- GHSA-whgm-jr23-g3j9
+					`,
+				)
+
+				cleanupConfig2 := setupConfigForUpdating(t,
+					"fixtures/locks-insecure-nested/nested/.osv-detector.yml",
+					"ignore: []",
+					`
+					ignore:
+						- GHSA-q7rv-6hp3-vh96
+					`,
+				)
+
+				return func() {
+					cleanupConfig1()
+					cleanupConfig2()
+				}
+			},
+		},
 	}
 	for _, tt := range tests {
 		tt := tt
