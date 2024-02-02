@@ -702,6 +702,10 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 				for _, vul := range pkg.Vulnerabilities.Unique() {
 					vulnsPerConfig[config.FilePath][vul.ID] = struct{}{}
 				}
+
+				for _, vul := range pkg.Ignored.Unique() {
+					vulnsPerConfig[config.FilePath][vul.ID] = struct{}{}
+				}
 			}
 		}
 

@@ -1488,7 +1488,7 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 
 					no new vulnerabilities found (1 was ignored)
 
-				Updated fixtures/existing-config-with-ignores.yml with 0 vulnerabilities
+				Updated fixtures/existing-config-with-ignores.yml with 1 vulnerability
 			`,
 			wantStderr: "",
 			around: func(t *testing.T) func() {
@@ -1497,7 +1497,10 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 				return setupConfigForUpdating(t,
 					"fixtures/existing-config-with-ignores.yml",
 					"ignore: [GHSA-whgm-jr23-g3j9]",
-					"ignore: []",
+					`
+						ignore:
+							- GHSA-whgm-jr23-g3j9
+					`,
 				)
 			},
 		},
@@ -1601,6 +1604,51 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 					cleanupConfig1()
 					cleanupConfig2()
 				}
+			},
+		},
+		// when there are existing ignores, it updates them and removes patched ones
+		{
+			name: "",
+			args: []string{
+				"--update-config-ignores",
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure-many/my-package-lock.json"),
+			},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure-many/my-package-lock.json: found 6 packages
+					Using config at fixtures/locks-insecure-many/.osv-detector.yml (3 ignores)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+          nth-check@1.0.2 is affected by the following vulnerabilities:
+            GHSA-rp65-9cf3-cjxr: Inefficient Regular Expression Complexity in nth-check (https://github.com/advisories/GHSA-rp65-9cf3-cjxr)
+          ua-parser-js@1.0.2 is affected by the following vulnerabilities:
+            GHSA-fhg7-m89q-25r3: ReDoS Vulnerability in ua-parser-js version (https://github.com/advisories/GHSA-fhg7-m89q-25r3)
+          word-wrap@1.2.3 is affected by the following vulnerabilities:
+            GHSA-j8xg-fqg3-53r7: word-wrap vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-j8xg-fqg3-53r7)
+
+					3 new vulnerabilities found in fixtures/locks-insecure-many/my-package-lock.json (2 were ignored)
+
+				Updated fixtures/locks-insecure-many/.osv-detector.yml with 5 vulnerabilities
+			`,
+			wantStderr: "",
+			around: func(t *testing.T) func() {
+				t.Helper()
+
+				return setupConfigForUpdating(t,
+					"fixtures/locks-insecure-many/.osv-detector.yml",
+					"ignore: [GHSA-7p7h-4mm5-852v, GHSA-93q8-gq69-wqmw, GHSA-67hx-6x53-jw92]",
+					`
+						ignore:
+							- GHSA-7p7h-4mm5-852v
+							- GHSA-93q8-gq69-wqmw
+							- GHSA-fhg7-m89q-25r3
+							- GHSA-j8xg-fqg3-53r7
+							- GHSA-rp65-9cf3-cjxr
+					`,
+				)
 			},
 		},
 	}
