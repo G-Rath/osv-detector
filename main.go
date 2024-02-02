@@ -722,6 +722,8 @@ func writeUpdatedConfigs(r *reporter.Reporter, vulnsPerConfig map[string]map[str
 		r.PrintTextf("\n")
 	}
 
+	lines := make([]string, 0, len(vulnsPerConfig))
+
 	for configPath, vulns := range vulnsPerConfig {
 		var ignores []string
 
@@ -735,9 +737,26 @@ func writeUpdatedConfigs(r *reporter.Reporter, vulnsPerConfig map[string]map[str
 		err := configer.UpdateWithIgnores(configPath, ignores)
 
 		if err == nil {
-			r.PrintTextf("Updated %s with %d %s\n", configPath, len(vulns), reporter.Form(len(vulns), "vulnerability", "vulnerabilities"))
+			lines = append(lines, fmt.Sprintf(
+				"Updated %s with %d %s\n",
+				configPath,
+				len(vulns),
+				reporter.Form(len(vulns), "vulnerability", "vulnerabilities"),
+			))
 		} else {
-			r.PrintErrorf("error updating config: %v", err)
+			lines = append(lines, fmt.Sprintf("Error updating config: %v", err))
+		}
+	}
+
+	sort.Slice(lines, func(i, j int) bool {
+		return lines[i] < lines[j]
+	})
+
+	for _, line := range lines {
+		if strings.HasPrefix(line, "Error updating") {
+			r.PrintErrorf(line)
+		} else {
+			r.PrintTextf(line)
 		}
 	}
 }
