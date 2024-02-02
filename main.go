@@ -743,7 +743,7 @@ func writeUpdatedConfigs(r *reporter.Reporter, vulnsPerConfig map[string]map[str
 		if err == nil {
 			lines = append(lines, fmt.Sprintf(
 				"Updated %s with %d %s\n",
-				configPath,
+				color.MagentaString(configPath),
 				len(vulns),
 				reporter.Form(len(vulns), "vulnerability", "vulnerabilities"),
 			))
