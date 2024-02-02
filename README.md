@@ -242,8 +242,8 @@ Ignores provided via the flag will be combined with any ignores specified in the
 loaded config file.
 
 You can use `--update-config-ignores` to have the detector update configs being
-used for lockfiles to ignore any vulnerabilities that were found; note if you
-have existing ignores you'll want to use `--no-config-ignores` as well.
+used for lockfiles to ignore any vulnerabilities that were found; it will also
+remove ignores for vulnerabilities that are no longer present.
 
 Alternatively, you can use `jq` to generate a list of OSV ids if you want to
 ignore all current known vulnerabilities found by the detector:
