@@ -1545,6 +1545,83 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 				)
 			},
 		},
+		// when there are many lockfiles with one config
+		{
+			name: "",
+			args: []string{
+				"--update-config-ignores",
+				"--config", "fixtures/existing-config-with-many-lockfiles.yml",
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json"),
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure-many/my-package-lock.json"),
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure-nested/my-package-lock.json"),
+				filepath.FromSlash("composer.lock:./fixtures/locks-insecure-nested/nested/my-composer-lock.json"),
+			},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using config at fixtures/existing-config-with-many-lockfiles.yml (1 ignore)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					no new vulnerabilities found (1 was ignored)
+
+				fixtures/locks-insecure-many/my-package-lock.json: found 6 packages
+					Using config at fixtures/existing-config-with-many-lockfiles.yml (1 ignore)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+          ansi-regex@4.1.0 is affected by the following vulnerabilities:
+            GHSA-93q8-gq69-wqmw: Inefficient Regular Expression Complexity in chalk/ansi-regex (https://github.com/advisories/GHSA-93q8-gq69-wqmw)
+          nth-check@1.0.2 is affected by the following vulnerabilities:
+            GHSA-rp65-9cf3-cjxr: Inefficient Regular Expression Complexity in nth-check (https://github.com/advisories/GHSA-rp65-9cf3-cjxr)
+          trim-newlines@3.0.0 is affected by the following vulnerabilities:
+            GHSA-7p7h-4mm5-852v: Uncontrolled Resource Consumption in trim-newlines (https://github.com/advisories/GHSA-7p7h-4mm5-852v)
+          ua-parser-js@1.0.2 is affected by the following vulnerabilities:
+            GHSA-fhg7-m89q-25r3: ReDoS Vulnerability in ua-parser-js version (https://github.com/advisories/GHSA-fhg7-m89q-25r3)
+          word-wrap@1.2.3 is affected by the following vulnerabilities:
+            GHSA-j8xg-fqg3-53r7: word-wrap vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-j8xg-fqg3-53r7)
+
+					5 known vulnerabilities found in fixtures/locks-insecure-many/my-package-lock.json
+
+				fixtures/locks-insecure-nested/my-package-lock.json: found 1 package
+					Using config at fixtures/existing-config-with-many-lockfiles.yml (1 ignore)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					no new vulnerabilities found (1 was ignored)
+
+				fixtures/locks-insecure-nested/nested/my-composer-lock.json: found 1 package
+					Using config at fixtures/existing-config-with-many-lockfiles.yml (1 ignore)
+					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+					guzzlehttp/psr7@1.8.2 is affected by the following vulnerabilities:
+						GHSA-q7rv-6hp3-vh96: Improper Input Validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-q7rv-6hp3-vh96)
+
+					1 known vulnerability found in fixtures/locks-insecure-nested/nested/my-composer-lock.json
+
+				Updated fixtures/existing-config-with-many-lockfiles.yml with 7 vulnerabilities
+			`,
+			wantStderr: "",
+			around: func(t *testing.T) func() {
+				t.Helper()
+
+				return setupConfigForUpdating(t,
+					"fixtures/existing-config-with-many-lockfiles.yml",
+					"ignore: [GHSA-whgm-jr23-g3j9]",
+					`
+					ignore:
+						- GHSA-7p7h-4mm5-852v
+						- GHSA-93q8-gq69-wqmw
+						- GHSA-fhg7-m89q-25r3
+						- GHSA-j8xg-fqg3-53r7
+						- GHSA-q7rv-6hp3-vh96
+						- GHSA-rp65-9cf3-cjxr
+						- GHSA-whgm-jr23-g3j9
+					`,
+				)
+			},
+		},
 		// when there are multiple implicit configs, it updates the right ones
 		{
 			name: "",
