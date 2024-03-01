@@ -57,8 +57,6 @@ func expectDBToHaveOSVs(
 	}
 }
 
-type CleanUpZipServerFn = func()
-
 func cachePath(url string) string {
 	hash := sha256.Sum256([]byte(url))
 	fileName := fmt.Sprintf("osv-detector-%x-db.json", hash)
@@ -92,16 +90,18 @@ func cacheWriteBad(t *testing.T, url string, contents string) {
 	}
 }
 
-func createZipServer(t *testing.T, handler http.HandlerFunc) (*httptest.Server, CleanUpZipServerFn) {
+func createZipServer(t *testing.T, handler http.HandlerFunc) *httptest.Server {
 	t.Helper()
 
 	ts := httptest.NewServer(handler)
 
-	return ts, func() {
+	t.Cleanup(func() {
 		ts.Close()
 
 		_ = os.Remove(cachePath(ts.URL))
-	}
+	})
+
+	return ts
 }
 
 func zipOSVs(t *testing.T, osvs map[string]database.OSV) []byte {
@@ -136,10 +136,9 @@ func zipOSVs(t *testing.T, osvs map[string]database.OSV) []byte {
 func TestNewZippedDB_Offline_WithoutCache(t *testing.T) {
 	t.Parallel()
 
-	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
 		t.Errorf("a server request was made when running offline")
 	})
-	defer cleanup()
 
 	_, err := database.NewZippedDB(database.Config{URL: ts.URL}, true)
 
@@ -160,10 +159,9 @@ func TestNewZippedDB_Offline_WithCache(t *testing.T) {
 		withDefaultAffected("GHSA-5"),
 	}
 
-	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
 		t.Errorf("a server request was made when running offline")
 	})
-	defer cleanup()
 
 	cacheWrite(t, database.Cache{
 		URL:  ts.URL,
@@ -194,10 +192,9 @@ func TestNewZippedDB_Offline_WithCache(t *testing.T) {
 func TestNewZippedDB_BadZip(t *testing.T) {
 	t.Parallel()
 
-	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte("this is not a zip"))
 	})
-	defer cleanup()
 
 	_, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
 
@@ -227,7 +224,7 @@ func TestNewZippedDB_Online_WithoutCache(t *testing.T) {
 		withDefaultAffected("GHSA-5"),
 	}
 
-	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
 			"GHSA-1.json": withDefaultAffected("GHSA-1"),
 			"GHSA-2.json": withDefaultAffected("GHSA-2"),
@@ -236,7 +233,6 @@ func TestNewZippedDB_Online_WithoutCache(t *testing.T) {
 			"GHSA-5.json": withDefaultAffected("GHSA-5"),
 		}))
 	})
-	defer cleanup()
 
 	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
 
@@ -250,11 +246,10 @@ func TestNewZippedDB_Online_WithoutCache(t *testing.T) {
 func TestNewZippedDB_Online_WithoutCache_NotFound(t *testing.T) {
 	t.Parallel()
 
-	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{}))
 	})
-	defer cleanup()
 
 	_, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
 
@@ -275,14 +270,13 @@ func TestNewZippedDB_Online_WithCache(t *testing.T) {
 		withDefaultAffected("GHSA-3"),
 	}
 
-	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
 		if dateHeader := r.Header.Get("If-Modified-Since"); dateHeader != date {
 			t.Errorf("incorrect Date header: got = \"%s\", want = \"%s\"", dateHeader, date)
 		}
 
 		w.WriteHeader(http.StatusNotModified)
 	})
-	defer cleanup()
 
 	cacheWrite(t, database.Cache{
 		URL:  ts.URL,
@@ -320,7 +314,7 @@ func TestNewZippedDB_Online_WithOldCache(t *testing.T) {
 		withDefaultAffected("GHSA-5"),
 	}
 
-	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
 		if dateHeader := r.Header.Get("If-Modified-Since"); dateHeader != date {
 			t.Errorf("incorrect Date header: got = \"%s\", want = \"%s\"", dateHeader, date)
 		}
@@ -334,7 +328,6 @@ func TestNewZippedDB_Online_WithOldCache(t *testing.T) {
 			"GHSA-5.json": withDefaultAffected("GHSA-5"),
 		}))
 	})
-	defer cleanup()
 
 	cacheWrite(t, database.Cache{
 		URL:  ts.URL,
@@ -369,14 +362,13 @@ func TestNewZippedDB_Online_WithBadCache(t *testing.T) {
 		withDefaultAffected("GHSA-3"),
 	}
 
-	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
 			"GHSA-1.json": withDefaultAffected("GHSA-1"),
 			"GHSA-2.json": withDefaultAffected("GHSA-2"),
 			"GHSA-3.json": withDefaultAffected("GHSA-3"),
 		}))
 	})
-	defer cleanup()
 
 	cacheWriteBad(t, ts.URL, "this is not json!")
 
@@ -394,7 +386,7 @@ func TestNewZippedDB_FileChecks(t *testing.T) {
 
 	osvs := []database.OSV{withDefaultAffected("GHSA-1234"), withDefaultAffected("GHSA-4321")}
 
-	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
 			"file.json": withDefaultAffected("GHSA-1234"),
 			// only files with .json suffix should be loaded
@@ -403,7 +395,6 @@ func TestNewZippedDB_FileChecks(t *testing.T) {
 			"advisory-database-main/advisories/unreviewed/file.json": withDefaultAffected("GHSA-4321"),
 		}))
 	})
-	defer cleanup()
 
 	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
 
@@ -419,14 +410,13 @@ func TestNewZippedDB_WorkingDirectory(t *testing.T) {
 
 	osvs := []database.OSV{withDefaultAffected("GHSA-1234"), withDefaultAffected("GHSA-5678")}
 
-	ts, cleanup := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
 			"reviewed/file.json":        withDefaultAffected("GHSA-1234"),
 			"reviewed/nested/file.json": withDefaultAffected("GHSA-5678"),
 			"unreviewed/file.json":      withDefaultAffected("GHSA-4321"),
 		}))
 	})
-	defer cleanup()
 
 	db, err := database.NewZippedDB(database.Config{URL: ts.URL, WorkingDirectory: "reviewed"}, false)
 

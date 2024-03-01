@@ -93,7 +93,7 @@ func TestAPIDB_Check_NoPackages(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		t.Errorf("an API request was made even though there are no packages to check")
 	}))
-	defer ts.Close()
+	t.Cleanup(ts.Close)
 
 	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
 
@@ -151,7 +151,7 @@ func TestAPIDB_Check_NotOK(t *testing.T) {
 	})
 
 	ts := httptest.NewServer(mux)
-	defer ts.Close()
+	t.Cleanup(ts.Close)
 
 	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
 
@@ -189,7 +189,7 @@ func TestAPIDB_Check_InvalidBody(t *testing.T) {
 	})
 
 	ts := httptest.NewServer(mux)
-	defer ts.Close()
+	t.Cleanup(ts.Close)
 
 	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
 
@@ -233,7 +233,7 @@ func TestAPIDB_Check_UnbalancedResponse(t *testing.T) {
 	})
 
 	ts := httptest.NewServer(mux)
-	defer ts.Close()
+	t.Cleanup(ts.Close)
 
 	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 2)
 
@@ -284,7 +284,7 @@ func TestAPIDB_Check_FetchSuccessful(t *testing.T) {
 	})
 
 	ts := httptest.NewServer(mux)
-	defer ts.Close()
+	t.Cleanup(ts.Close)
 
 	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
 
@@ -340,7 +340,7 @@ func TestAPIDB_Check_FetchFails(t *testing.T) {
 	})
 
 	ts := httptest.NewServer(mux)
-	defer ts.Close()
+	t.Cleanup(ts.Close)
 
 	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
 
@@ -397,7 +397,7 @@ func TestAPIDB_Check_FetchMixed(t *testing.T) {
 	})
 
 	ts := httptest.NewServer(mux)
-	defer ts.Close()
+	t.Cleanup(ts.Close)
 
 	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
 
@@ -439,7 +439,7 @@ func TestAPIDB_Check_WithCommit(t *testing.T) {
 	})
 
 	ts := httptest.NewServer(mux)
-	defer ts.Close()
+	t.Cleanup(ts.Close)
 
 	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
 
@@ -509,7 +509,7 @@ func TestAPIDB_Check_Batches(t *testing.T) {
 	})
 
 	ts := httptest.NewServer(mux)
-	defer ts.Close()
+	t.Cleanup(ts.Close)
 
 	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 2)
 
