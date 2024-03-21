@@ -241,8 +241,12 @@ osv-detector --ignore GHSA-896r-f27r-55mw --ignore GHSA-74fj-2j2h-c42q package-l
 Ignores provided via the flag will be combined with any ignores specified in the
 loaded config file.
 
-You can use `jq` to generate a list of OSV ids if you want to ignore all current
-known vulnerabilities found by the detector:
+You can use `--update-config-ignores` to have the detector update configs being
+used for lockfiles to ignore any vulnerabilities that were found; it will also
+remove ignores for vulnerabilities that are no longer present.
+
+Alternatively, you can use `jq` to generate a list of OSV ids if you want to
+ignore all current known vulnerabilities found by the detector:
 
 ```shell
 osv-detector --json . | jq -r  '[.results[].packages | map("- " + .vulnerabilities[].id)] | flatten | unique | sort | .[]'
