@@ -73,6 +73,8 @@ type cliTestCase struct {
 	wantExitCode int
 	wantStdout   string
 	wantStderr   string
+
+	around func(t *testing.T) func()
 }
 
 // Attempts to normalize any file paths in the given `output` so that they can
@@ -1371,6 +1373,374 @@ func TestRun_Ignores(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
+
+			testCli(t, tt)
+		})
+	}
+}
+
+func setupConfigForUpdating(t *testing.T, path string, initial string, updated string) func() {
+	t.Helper()
+
+	err := os.WriteFile(path, []byte(initial), os.ModePerm)
+
+	if err != nil {
+		t.Fatalf("could not create test file: %v", err)
+	}
+
+	return func() {
+		t.Helper()
+
+		// ensure that we always try to remove the file
+		defer func() {
+			if err = os.Remove(path); err != nil {
+				// this will typically fail on Windows due to processes,
+				// so we just treat it as a warning instead of an error
+				t.Logf("could not remove test file: %v", err)
+			}
+		}()
+
+		content, err := os.ReadFile(path)
+
+		if err != nil {
+			t.Fatalf("could not read test config file: %v", err)
+		}
+
+		expectAreEqual(t, "config", string(content), updated)
+	}
+}
+
+func TestRun_UpdatingConfigIgnores(t *testing.T) {
+	t.Parallel()
+
+	tests := []cliTestCase{
+		// when there is no existing config, nothing should be updated
+		{
+			name:         "",
+			args:         []string{"--update-config-ignores", filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json")},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+			`,
+			wantStderr: "",
+		},
+		// when given an explicit config, that should be updated
+		{
+			name: "",
+			args: []string{
+				"--update-config-ignores",
+				"--config", "fixtures/existing-config.yml",
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json"),
+			},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using config at fixtures/existing-config.yml (0 ignores)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+
+				Updated fixtures/existing-config.yml with 1 vulnerability
+			`,
+			wantStderr: "",
+			around: func(t *testing.T) func() {
+				t.Helper()
+
+				return setupConfigForUpdating(t,
+					"fixtures/existing-config.yml",
+					"",
+					`
+						ignore:
+  						- GHSA-whgm-jr23-g3j9
+					`,
+				)
+			},
+		},
+		// when there are existing ignores
+		{
+			name: "",
+			args: []string{
+				"--update-config-ignores",
+				"--config", "fixtures/existing-config-with-ignores.yml",
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json"),
+			},
+			wantExitCode: 0,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using config at fixtures/existing-config-with-ignores.yml (1 ignore)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					no new vulnerabilities found (1 was ignored)
+
+				Updated fixtures/existing-config-with-ignores.yml with 1 vulnerability
+			`,
+			wantStderr: "",
+			around: func(t *testing.T) func() {
+				t.Helper()
+
+				return setupConfigForUpdating(t,
+					"fixtures/existing-config-with-ignores.yml",
+					"ignore: [GHSA-whgm-jr23-g3j9]",
+					`
+						ignore:
+							- GHSA-whgm-jr23-g3j9
+					`,
+				)
+			},
+		},
+		// when there are existing ignores but told to ignore those
+		{
+			name: "",
+			args: []string{
+				"--update-config-ignores",
+				"--no-config-ignores",
+				"--config", "fixtures/existing-config-with-ignored-ignores.yml",
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json"),
+			},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using config at fixtures/existing-config-with-ignored-ignores.yml (skipping any ignores)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+
+				Updated fixtures/existing-config-with-ignored-ignores.yml with 1 vulnerability
+			`,
+			wantStderr: "",
+			around: func(t *testing.T) func() {
+				t.Helper()
+
+				return setupConfigForUpdating(t,
+					"fixtures/existing-config-with-ignored-ignores.yml",
+					"ignore: [GHSA-whgm-jr23-g3j9]",
+					`
+					ignore:
+						- GHSA-whgm-jr23-g3j9
+					`,
+				)
+			},
+		},
+		// when there are many lockfiles with one config
+		{
+			name: "",
+			args: []string{
+				"--update-config-ignores",
+				"--config", "fixtures/existing-config-with-many-lockfiles.yml",
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json"),
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure-many/my-package-lock.json"),
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure-nested/my-package-lock.json"),
+				filepath.FromSlash("composer.lock:./fixtures/locks-insecure-nested/nested/my-composer-lock.json"),
+			},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure/my-package-lock.json: found 1 package
+					Using config at fixtures/existing-config-with-many-lockfiles.yml (1 ignore)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					no new vulnerabilities found (1 was ignored)
+
+				fixtures/locks-insecure-many/my-package-lock.json: found 6 packages
+					Using config at fixtures/existing-config-with-many-lockfiles.yml (1 ignore)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+          ansi-regex@4.1.0 is affected by the following vulnerabilities:
+            GHSA-93q8-gq69-wqmw: Inefficient Regular Expression Complexity in chalk/ansi-regex (https://github.com/advisories/GHSA-93q8-gq69-wqmw)
+          nth-check@1.0.2 is affected by the following vulnerabilities:
+            GHSA-rp65-9cf3-cjxr: Inefficient Regular Expression Complexity in nth-check (https://github.com/advisories/GHSA-rp65-9cf3-cjxr)
+          trim-newlines@3.0.0 is affected by the following vulnerabilities:
+            GHSA-7p7h-4mm5-852v: Uncontrolled Resource Consumption in trim-newlines (https://github.com/advisories/GHSA-7p7h-4mm5-852v)
+          ua-parser-js@1.0.2 is affected by the following vulnerabilities:
+            GHSA-fhg7-m89q-25r3: ReDoS Vulnerability in ua-parser-js version (https://github.com/advisories/GHSA-fhg7-m89q-25r3)
+          word-wrap@1.2.3 is affected by the following vulnerabilities:
+            GHSA-j8xg-fqg3-53r7: word-wrap vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-j8xg-fqg3-53r7)
+
+					5 known vulnerabilities found in fixtures/locks-insecure-many/my-package-lock.json
+
+				fixtures/locks-insecure-nested/my-package-lock.json: found 1 package
+					Using config at fixtures/existing-config-with-many-lockfiles.yml (1 ignore)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					no new vulnerabilities found (1 was ignored)
+
+				fixtures/locks-insecure-nested/nested/my-composer-lock.json: found 1 package
+					Using config at fixtures/existing-config-with-many-lockfiles.yml (1 ignore)
+					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+					guzzlehttp/psr7@1.8.2 is affected by the following vulnerabilities:
+						GHSA-q7rv-6hp3-vh96: Improper Input Validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-q7rv-6hp3-vh96)
+
+					1 known vulnerability found in fixtures/locks-insecure-nested/nested/my-composer-lock.json
+
+				Updated fixtures/existing-config-with-many-lockfiles.yml with 7 vulnerabilities
+			`,
+			wantStderr: "",
+			around: func(t *testing.T) func() {
+				t.Helper()
+
+				return setupConfigForUpdating(t,
+					"fixtures/existing-config-with-many-lockfiles.yml",
+					"ignore: [GHSA-whgm-jr23-g3j9]",
+					`
+					ignore:
+						- GHSA-7p7h-4mm5-852v
+						- GHSA-93q8-gq69-wqmw
+						- GHSA-fhg7-m89q-25r3
+						- GHSA-j8xg-fqg3-53r7
+						- GHSA-q7rv-6hp3-vh96
+						- GHSA-rp65-9cf3-cjxr
+						- GHSA-whgm-jr23-g3j9
+					`,
+				)
+			},
+		},
+		// when there are multiple implicit configs, it updates the right ones
+		{
+			name: "",
+			args: []string{
+				"--update-config-ignores",
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure-nested/my-package-lock.json"),
+				filepath.FromSlash("composer.lock:./fixtures/locks-insecure-nested/nested/my-composer-lock.json"),
+			},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure-nested/my-package-lock.json: found 1 package
+					Using config at fixtures/locks-insecure-nested/.osv-detector.yml (0 ignores)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+					ansi-html@0.0.1 is affected by the following vulnerabilities:
+						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+					1 known vulnerability found in fixtures/locks-insecure-nested/my-package-lock.json
+
+				fixtures/locks-insecure-nested/nested/my-composer-lock.json: found 1 package
+					Using config at fixtures/locks-insecure-nested/nested/.osv-detector.yml (0 ignores)
+					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+					guzzlehttp/psr7@1.8.2 is affected by the following vulnerabilities:
+						GHSA-q7rv-6hp3-vh96: Improper Input Validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-q7rv-6hp3-vh96)
+
+					1 known vulnerability found in fixtures/locks-insecure-nested/nested/my-composer-lock.json
+
+				Updated fixtures/locks-insecure-nested/.osv-detector.yml with 1 vulnerability
+				Updated fixtures/locks-insecure-nested/nested/.osv-detector.yml with 1 vulnerability
+			`,
+			wantStderr: "",
+			around: func(t *testing.T) func() {
+				t.Helper()
+
+				cleanupConfig1 := setupConfigForUpdating(t,
+					"fixtures/locks-insecure-nested/.osv-detector.yml",
+					"ignore: []",
+					`
+					ignore:
+						- GHSA-whgm-jr23-g3j9
+					`,
+				)
+
+				cleanupConfig2 := setupConfigForUpdating(t,
+					"fixtures/locks-insecure-nested/nested/.osv-detector.yml",
+					"ignore: []",
+					`
+					ignore:
+						- GHSA-q7rv-6hp3-vh96
+					`,
+				)
+
+				return func() {
+					cleanupConfig1()
+					cleanupConfig2()
+				}
+			},
+		},
+		// when there are existing ignores, it updates them and removes patched ones
+		{
+			name: "",
+			args: []string{
+				"--update-config-ignores",
+				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure-many/my-package-lock.json"),
+			},
+			wantExitCode: 1,
+			wantStdout: `
+				Loaded the following OSV databases:
+					npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+				fixtures/locks-insecure-many/my-package-lock.json: found 6 packages
+					Using config at fixtures/locks-insecure-many/.osv-detector.yml (3 ignores)
+					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+          nth-check@1.0.2 is affected by the following vulnerabilities:
+            GHSA-rp65-9cf3-cjxr: Inefficient Regular Expression Complexity in nth-check (https://github.com/advisories/GHSA-rp65-9cf3-cjxr)
+          ua-parser-js@1.0.2 is affected by the following vulnerabilities:
+            GHSA-fhg7-m89q-25r3: ReDoS Vulnerability in ua-parser-js version (https://github.com/advisories/GHSA-fhg7-m89q-25r3)
+          word-wrap@1.2.3 is affected by the following vulnerabilities:
+            GHSA-j8xg-fqg3-53r7: word-wrap vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-j8xg-fqg3-53r7)
+
+					3 new vulnerabilities found in fixtures/locks-insecure-many/my-package-lock.json (2 were ignored)
+
+				Updated fixtures/locks-insecure-many/.osv-detector.yml with 5 vulnerabilities
+			`,
+			wantStderr: "",
+			around: func(t *testing.T) func() {
+				t.Helper()
+
+				return setupConfigForUpdating(t,
+					"fixtures/locks-insecure-many/.osv-detector.yml",
+					"ignore: [GHSA-7p7h-4mm5-852v, GHSA-93q8-gq69-wqmw, GHSA-67hx-6x53-jw92]",
+					`
+						ignore:
+							- GHSA-7p7h-4mm5-852v
+							- GHSA-93q8-gq69-wqmw
+							- GHSA-fhg7-m89q-25r3
+							- GHSA-j8xg-fqg3-53r7
+							- GHSA-rp65-9cf3-cjxr
+					`,
+				)
+			},
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			if tt.around != nil {
+				teardown := tt.around(t)
+
+				defer teardown()
+			}
 
 			testCli(t, tt)
 		})
