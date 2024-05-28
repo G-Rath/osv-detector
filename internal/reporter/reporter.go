@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/fatih/color"
 	"github.com/g-rath/osv-detector/pkg/database"
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/jedib0t/go-pretty/v6/text"
 )
 
 type Reporter struct {
@@ -90,10 +90,10 @@ func (r *Reporter) PrintDatabaseLoadErr(err error) {
 	msg := err.Error()
 
 	if errors.Is(err, database.ErrOfflineDatabaseNotFound) {
-		msg = color.RedString("no local version of the database was found, and --offline flag was set")
+		msg = text.FgRed.Sprintf("no local version of the database was found, and --offline flag was set")
 	}
 
-	r.PrintErrorf(" %s\n", color.RedString("failed: %s", msg))
+	r.PrintErrorf(" %s\n", text.FgRed.Sprintf("failed: %s", msg))
 }
 
 func (r *Reporter) PrintKnownEcosystems() {
