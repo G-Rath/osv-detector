@@ -16,6 +16,7 @@ on:
           - successes
   pull_request:
     paths:
+      - '.github/workflows/semantic.yml'
       - 'generators/**'
 
 permissions:
