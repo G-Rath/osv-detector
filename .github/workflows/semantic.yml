@@ -45,9 +45,9 @@ jobs:
       - run: python3 generators/generate-debian-versions.py
       - run: git status
       - run: stat debian-db.zip
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: generated-versions
+          name: generated-debian-versions
           path: pkg/semantic/fixtures/debian-versions-generated.txt
 
       - uses: actions/cache/save@v3
@@ -67,9 +67,9 @@ jobs:
           extensions: zip
       - run: php generators/generate-packagist-versions.php
       - run: git status
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: generated-versions
+          name: generated-packagist-versions
           path: pkg/semantic/fixtures/packagist-versions-generated.txt
 
   generate-pypi-versions:
@@ -85,9 +85,9 @@ jobs:
         run: pip install packaging==21.3
       - run: python3 generators/generate-pypi-versions.py
       - run: git status
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: generated-versions
+          name: generated-pypi-versions
           path: pkg/semantic/fixtures/pypi-versions-generated.txt
 
   generate-rubygems-versions:
@@ -103,9 +103,9 @@ jobs:
         run: gem install rubyzip
       - run: ruby generators/generate-rubygems-versions.rb
       - run: git status
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: generated-versions
+          name: generated-rubygems-versions
           path: pkg/semantic/fixtures/rubygems-versions-generated.txt
 
   generate-maven-versions:
@@ -127,9 +127,9 @@ jobs:
             -o generators/lib/maven-artifact-3.8.5.jar
       - run: java -cp 'generators/lib/*' generators/GenerateMavenVersions.java
       - run: git status
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: generated-versions
+          name: generated-maven-versions
           path: pkg/semantic/fixtures/maven-versions-generated.txt
 
   generate-cran-versions:
@@ -143,9 +143,9 @@ jobs:
           r-version: '3.5.3'
       - run: Rscript generators/generate-cran-versions.R
       - run: git status
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: generated-versions
+          name: generated-cran-versions
           path: pkg/semantic/fixtures/cran-versions-generated.txt
 
   test-semantic:
@@ -167,9 +167,10 @@ jobs:
           go-version-file: .go-version
           cache: true
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: generated-versions
+          pattern: generated-*-versions
           path: pkg/semantic/fixtures/
+          merge-multiple: true
       - run: git status
       - run: make test
