@@ -6,10 +6,10 @@
 	<version>2.1.0</version>
 	<packaging>pom</packaging>
 	<name>Highcharts Export Project</name>
-	<url>http://maven.apache.org</url>
+	<url>https://maven.apache.org</url>
 	<organization>
 		<name>Highsoft</name>
-		<url>http://highcharts.com</url>
+		<url>https://highcharts.com</url>
 	</organization>
 	<properties>
 		<!-- compile plugin settings -->
@@ -28,13 +28,13 @@
 		<repository>
 			<id>com.springsource.repository.bundles.release</id>
 			<name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
-			<url>http://repository.springsource.com/maven/bundles/release</url>
+			<url>https://repository.springsource.com/maven/bundles/release</url>
 		</repository>
 
 		<repository>
 			<id>com.springsource.repository.bundles.external</id>
 			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
-			<url>http://repository.springsource.com/maven/bundles/external</url>
+			<url>https://repository.springsource.com/maven/bundles/external</url>
 		</repository>
 	</repositories>
 	<dependencies>
