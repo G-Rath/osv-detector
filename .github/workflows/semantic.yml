@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/cache/restore@v3
+      - uses: actions/cache/restore@v4
         with:
           path: /tmp/debian-versions-generator-cache.csv
           key: ${{ runner.os }}-
@@ -51,7 +51,7 @@ jobs:
           name: generated-debian-versions
           path: pkg/semantic/fixtures/debian-versions-generated.txt
 
-      - uses: actions/cache/save@v3
+      - uses: actions/cache/save@v4
         with:
           path: /tmp/debian-versions-generator-cache.csv
           key: ${{ runner.os }}-${{ hashFiles('debian-db.zip') }}
