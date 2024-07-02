@@ -9,10 +9,10 @@
   <artifactId>highcharts-export-web</artifactId>
   <packaging>war</packaging>
   <name>highcharts-export-web</name>
-  <url>http://maven.apache.org</url>
+  <url>https://maven.apache.org</url>
   <organization>
     <name>Highsoft</name>
-    <url>http://highcharts.com</url>
+    <url>https://highcharts.com</url>
   </organization>
   <dependencies>
     <dependency>
