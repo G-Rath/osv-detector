@@ -1,3 +1,5 @@
+version: 2
+
 # Visit https://goreleaser.com for documentation on how to customize this
 # behavior.
 before:
@@ -38,4 +40,4 @@ checksum:
 release:
   draft: true
 changelog:
-  skip: true
+  disable: true
