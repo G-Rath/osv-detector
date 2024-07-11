@@ -1,6 +1,6 @@
 # Open Source Vulnerability Detector
 
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/g-rath/osv-detector/badge)](https://scorecard.dev/viewer/?uri=github.com/g-rath/osv-detector)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/G-Rath/osv-detector/badge)](https://scorecard.dev/viewer/?uri=github.com/G-Rath/osv-detector)
 
 An auditing tool for detecting vulnerabilities, powered by advisory databases
 that follow the [OSV specification](https://ossf.github.io/osv-schema/).
