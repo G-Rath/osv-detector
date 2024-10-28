@@ -3,6 +3,7 @@ package reporter_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 	"testing"
@@ -11,7 +12,7 @@ import (
 	"github.com/g-rath/osv-detector/pkg/database"
 )
 
-var errOhNoes = fmt.Errorf("oh noes")
+var errOhNoes = errors.New("oh noes")
 
 type TestResult struct {
 	Value                string `json:"value"`
