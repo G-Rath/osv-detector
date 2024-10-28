@@ -1050,8 +1050,7 @@ func TestRun_Configs(t *testing.T) {
 
 					no known vulnerabilities found
 			`,
-			// for some reason example.com returns a 500 even though the page presents a 404 message
-			wantStderr: " failed: unable to fetch OSV database: db host returned an unexpected status code (500 Internal Server Error)",
+			wantStderr: " failed: unable to fetch OSV database: db host returned an unexpected status code (404 Not Found)",
 		},
 		// databases from configs are ignored if "--no-config-databases" is passed...
 		{
