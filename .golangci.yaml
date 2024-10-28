@@ -18,7 +18,7 @@ linters:
     - lll              # line length is hard
     - godox            # to-do comments are fine
     - godot            # comments are fine without full stops
-    - gomnd            # not every number is magic
+    - mnd              # not every number is magic
     - wsl              # disagree with, for now
     - ireturn          # disagree with, sort of
     - nonamedreturns   # they have their uses
