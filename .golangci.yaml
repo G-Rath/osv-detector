@@ -17,7 +17,6 @@ linters:
     - wsl              # disagree with, for now
     - ireturn          # disagree with, sort of
     - nonamedreturns   # they have their uses
-    - perfsprint       # enable in dedicated PR
   presets:
     - bugs
     - comment

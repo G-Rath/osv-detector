@@ -157,10 +157,7 @@ func uniqueDBConfigs(configs []*configer.Config) []database.Config {
 func describeDB(db database.DB) string {
 	switch tt := db.(type) {
 	case *database.APIDB:
-		return fmt.Sprintf(
-			"using batches of %s",
-			color.YellowString("%d", tt.BatchSize),
-		)
+		return "using batches of " + color.YellowString("%d", tt.BatchSize)
 	case *database.ZipDB:
 		count := tt.VulnerabilitiesCount
 
