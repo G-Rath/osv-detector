@@ -136,7 +136,7 @@ func zipOSVs(t *testing.T, osvs map[string]database.OSV) []byte {
 func TestNewZippedDB_Offline_WithoutCache(t *testing.T) {
 	t.Parallel()
 
-	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(_ http.ResponseWriter, _ *http.Request) {
 		t.Errorf("a server request was made when running offline")
 	})
 
@@ -159,7 +159,7 @@ func TestNewZippedDB_Offline_WithCache(t *testing.T) {
 		withDefaultAffected("GHSA-5"),
 	}
 
-	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(_ http.ResponseWriter, _ *http.Request) {
 		t.Errorf("a server request was made when running offline")
 	})
 
@@ -192,7 +192,7 @@ func TestNewZippedDB_Offline_WithCache(t *testing.T) {
 func TestNewZippedDB_BadZip(t *testing.T) {
 	t.Parallel()
 
-	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte("this is not a zip"))
 	})
 
@@ -224,7 +224,7 @@ func TestNewZippedDB_Online_WithoutCache(t *testing.T) {
 		withDefaultAffected("GHSA-5"),
 	}
 
-	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
 			"GHSA-1.json": withDefaultAffected("GHSA-1"),
 			"GHSA-2.json": withDefaultAffected("GHSA-2"),
@@ -246,7 +246,7 @@ func TestNewZippedDB_Online_WithoutCache(t *testing.T) {
 func TestNewZippedDB_Online_WithoutCache_NotFound(t *testing.T) {
 	t.Parallel()
 
-	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{}))
 	})
@@ -362,7 +362,7 @@ func TestNewZippedDB_Online_WithBadCache(t *testing.T) {
 		withDefaultAffected("GHSA-3"),
 	}
 
-	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
 			"GHSA-1.json": withDefaultAffected("GHSA-1"),
 			"GHSA-2.json": withDefaultAffected("GHSA-2"),
@@ -386,7 +386,7 @@ func TestNewZippedDB_FileChecks(t *testing.T) {
 
 	osvs := []database.OSV{withDefaultAffected("GHSA-1234"), withDefaultAffected("GHSA-4321")}
 
-	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
 			"file.json": withDefaultAffected("GHSA-1234"),
 			// only files with .json suffix should be loaded
@@ -410,7 +410,7 @@ func TestNewZippedDB_WorkingDirectory(t *testing.T) {
 
 	osvs := []database.OSV{withDefaultAffected("GHSA-1234"), withDefaultAffected("GHSA-5678")}
 
-	ts := createZipServer(t, func(w http.ResponseWriter, r *http.Request) {
+	ts := createZipServer(t, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
 			"reviewed/file.json":        withDefaultAffected("GHSA-1234"),
 			"reviewed/nested/file.json": withDefaultAffected("GHSA-5678"),

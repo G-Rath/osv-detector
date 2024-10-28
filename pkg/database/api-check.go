@@ -183,10 +183,10 @@ func (db APIDB) Check(pkgs []internal.PackageDetails) ([]Vulnerabilities, error)
 			return nil, err
 		}
 
-		for _, withIDS := range results {
-			vulns := make(Vulnerabilities, 0, len(withIDS))
+		for _, withIDs := range results {
+			vulns := make(Vulnerabilities, 0, len(withIDs))
 
-			for _, withID := range withIDS {
+			for _, withID := range withIDs {
 				vulns = append(vulns, OSV{ID: withID.ID})
 			}
 

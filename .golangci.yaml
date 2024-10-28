@@ -8,20 +8,16 @@ linters:
   disable:
     - tagliatelle      # we're parsing data from external sources
     - varnamelen       # maybe later
-    - exhaustivestruct # overkill
     - exhaustruct      # overkill
     - forcetypeassert  # too hard
-    - interfacer       # deprecated
-    - golint           # deprecated
-    - scopelint        # deprecated
-    - maligned         # deprecated
     - lll              # line length is hard
     - godox            # to-do comments are fine
     - godot            # comments are fine without full stops
-    - gomnd            # not every number is magic
+    - mnd              # not every number is magic
     - wsl              # disagree with, for now
     - ireturn          # disagree with, sort of
     - nonamedreturns   # they have their uses
+    - perfsprint       # enable in dedicated PR
   presets:
     - bugs
     - comment

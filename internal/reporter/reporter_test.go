@@ -11,6 +11,8 @@ import (
 	"github.com/g-rath/osv-detector/pkg/database"
 )
 
+var errOhNoes = fmt.Errorf("oh noes")
+
 type TestResult struct {
 	Value                string `json:"value"`
 	ErrorWhenMarshalling bool   `json:"-"`
@@ -24,7 +26,7 @@ func (r TestResult) MarshalJSON() ([]byte, error) {
 	type rawTestResult TestResult
 
 	if r.ErrorWhenMarshalling {
-		return nil, fmt.Errorf("oh noes, an error")
+		return nil, errOhNoes
 	}
 
 	out, err := json.Marshal((rawTestResult)(r))
@@ -205,7 +207,7 @@ func TestReporter_PrintDatabaseLoadErr(t *testing.T) {
 			name: "",
 			args: args{
 				outputAsJSON: false,
-				err:          fmt.Errorf("oh noes"),
+				err:          errOhNoes,
 			},
 			wantedStdout: "",
 			wantedStderr: " failed: oh noes\n",
@@ -214,7 +216,7 @@ func TestReporter_PrintDatabaseLoadErr(t *testing.T) {
 			name: "",
 			args: args{
 				outputAsJSON: true,
-				err:          fmt.Errorf("oh noes"),
+				err:          errOhNoes,
 			},
 			wantedStdout: "",
 			wantedStderr: " failed: oh noes\n",

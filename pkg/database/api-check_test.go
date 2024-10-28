@@ -90,7 +90,7 @@ func expectVulnerability(t *testing.T, vuln database.OSV, id string, summary str
 func TestAPIDB_Check_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {
 		t.Errorf("an API request was made even though there are no packages to check")
 	}))
 	t.Cleanup(ts.Close)
@@ -273,7 +273,7 @@ func TestAPIDB_Check_FetchSuccessful(t *testing.T) {
 		_, _ = w.Write(jsonData)
 	})
 
-	mux.HandleFunc("/vulns/GHSA-1234", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/vulns/GHSA-1234", func(w http.ResponseWriter, _ *http.Request) {
 		jsonData, err := json.Marshal(database.OSV{ID: "GHSA-1234", Summary: "my vulnerability"})
 
 		if err != nil {
@@ -330,12 +330,12 @@ func TestAPIDB_Check_FetchFails(t *testing.T) {
 	})
 
 	// this response is not a 200 OK
-	mux.HandleFunc("/vulns/GHSA-1234", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/vulns/GHSA-1234", func(w http.ResponseWriter, _ *http.Request) {
 		http.Error(w, "oh noes!", http.StatusForbidden)
 	})
 
 	// this response is not valid json
-	mux.HandleFunc("/vulns/GHSA-5678", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/vulns/GHSA-5678", func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte("<html></html>"))
 	})
 
@@ -386,7 +386,7 @@ func TestAPIDB_Check_FetchMixed(t *testing.T) {
 		_, _ = w.Write(jsonData)
 	})
 
-	mux.HandleFunc("/vulns/GHSA-1234", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/vulns/GHSA-1234", func(w http.ResponseWriter, _ *http.Request) {
 		jsonData, err := json.Marshal(database.OSV{ID: "GHSA-1234", Summary: "my vulnerability"})
 
 		if err != nil {

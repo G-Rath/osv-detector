@@ -1381,7 +1381,7 @@ func TestRun_Ignores(t *testing.T) {
 func setupConfigForUpdating(t *testing.T, path string, initial string, updated string) func() {
 	t.Helper()
 
-	err := os.WriteFile(path, []byte(initial), os.ModePerm)
+	err := os.WriteFile(path, []byte(initial), 0600)
 
 	if err != nil {
 		t.Fatalf("could not create test file: %v", err)
