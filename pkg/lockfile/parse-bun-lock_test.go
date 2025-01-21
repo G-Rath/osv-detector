@@ -90,18 +90,6 @@ func TestParseBunLock_OnePackageBadTuple(t *testing.T) {
 			Ecosystem: lockfile.BunEcosystem,
 			CompareAs: lockfile.BunEcosystem,
 		},
-		{
-			Name:      "",
-			Version:   "",
-			Ecosystem: lockfile.BunEcosystem,
-			CompareAs: lockfile.BunEcosystem,
-		},
-		{
-			Name:      "",
-			Version:   "",
-			Ecosystem: lockfile.BunEcosystem,
-			CompareAs: lockfile.BunEcosystem,
-		},
 	})
 }
 

@@ -68,6 +68,10 @@ func ParseBunLock(pathToLockfile string) ([]PackageDetails, error) {
 	for _, pkg := range parsedLockfile.Packages {
 		name, version, commit := structurePackageDetails(pkg)
 
+		if name == "" && version == "" && commit == "" {
+			continue
+		}
+
 		packages = append(packages, PackageDetails{
 			Name:      name,
 			Version:   version,
