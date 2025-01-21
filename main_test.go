@@ -158,6 +158,7 @@ func TestRun(t *testing.T) {
 			wantStderr: `
 				Don't know how to parse files as "my-file" - supported values are:
 					buildscript-gradle.lockfile
+          bun.lock
 					Cargo.lock
 					composer.lock
 					Gemfile.lock

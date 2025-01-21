@@ -59,6 +59,7 @@ The detector supports parsing the following lockfiles:
 | `packages.lock.json`          | `NuGet`     | `dotnet`   |
 | `package-lock.json`           | `npm`       | `npm`      |
 | `yarn.lock`                   | `npm`       | `yarn`     |
+| `bun.lock`                    | `npm`       | `bun`      |
 | `pnpm-lock.yaml`              | `npm`       | `pnpm`     |
 | `composer.lock`               | `Packagist` | `composer` |
 | `Gemfile.lock`                | `RubyGems`  | `bundler`  |
