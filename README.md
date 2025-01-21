@@ -53,7 +53,7 @@ osv-detector path/to/my/
 The detector supports parsing the following lockfiles:
 
 | Lockfile                      | Ecosystem   | Tool       |
-|-------------------------------| ----------- |------------|
+| ----------------------------- | ----------- | ---------- |
 | `buildscript-gradle.lockfile` | `Maven`     | `gradle`   |
 | `Cargo.lock`                  | `crates.io` | `cargo`    |
 | `packages.lock.json`          | `NuGet`     | `dotnet`   |
