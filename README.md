@@ -53,12 +53,13 @@ osv-detector path/to/my/
 The detector supports parsing the following lockfiles:
 
 | Lockfile                      | Ecosystem   | Tool       |
-| ----------------------------- | ----------- | ---------- |
+|-------------------------------| ----------- |------------|
 | `buildscript-gradle.lockfile` | `Maven`     | `gradle`   |
 | `Cargo.lock`                  | `crates.io` | `cargo`    |
 | `packages.lock.json`          | `NuGet`     | `dotnet`   |
 | `package-lock.json`           | `npm`       | `npm`      |
 | `yarn.lock`                   | `npm`       | `yarn`     |
+| `bun.lock`                    | `npm`       | `bun`      |
 | `pnpm-lock.yaml`              | `npm`       | `pnpm`     |
 | `composer.lock`               | `Packagist` | `composer` |
 | `Gemfile.lock`                | `RubyGems`  | `bundler`  |
