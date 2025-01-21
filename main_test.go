@@ -1596,10 +1596,11 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 
 					guzzlehttp/psr7@1.8.2 is affected by the following vulnerabilities:
 						GHSA-q7rv-6hp3-vh96: Improper Input Validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-q7rv-6hp3-vh96)
+						GHSA-wxmh-65f7-jcvw: Improper header name validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-wxmh-65f7-jcvw)
 
-					1 known vulnerability found in fixtures/locks-insecure-nested/nested/my-composer-lock.json
+					2 known vulnerabilities found in fixtures/locks-insecure-nested/nested/my-composer-lock.json
 
-				Updated fixtures/existing-config-with-many-lockfiles.yml with 7 vulnerabilities
+				Updated fixtures/existing-config-with-many-lockfiles.yml with 8 vulnerabilities
 			`,
 			wantStderr: "",
 			around: func(t *testing.T) func() {
@@ -1617,6 +1618,7 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 						- GHSA-q7rv-6hp3-vh96
 						- GHSA-rp65-9cf3-cjxr
 						- GHSA-whgm-jr23-g3j9
+						- GHSA-wxmh-65f7-jcvw
 					`,
 				)
 			},
@@ -1650,11 +1652,12 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 
 					guzzlehttp/psr7@1.8.2 is affected by the following vulnerabilities:
 						GHSA-q7rv-6hp3-vh96: Improper Input Validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-q7rv-6hp3-vh96)
+						GHSA-wxmh-65f7-jcvw: Improper header name validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-wxmh-65f7-jcvw)
 
-					1 known vulnerability found in fixtures/locks-insecure-nested/nested/my-composer-lock.json
+					2 known vulnerabilities found in fixtures/locks-insecure-nested/nested/my-composer-lock.json
 
 				Updated fixtures/locks-insecure-nested/.osv-detector.yml with 1 vulnerability
-				Updated fixtures/locks-insecure-nested/nested/.osv-detector.yml with 1 vulnerability
+				Updated fixtures/locks-insecure-nested/nested/.osv-detector.yml with 2 vulnerabilities
 			`,
 			wantStderr: "",
 			around: func(t *testing.T) func() {
@@ -1675,6 +1678,7 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 					`
 					ignore:
 						- GHSA-q7rv-6hp3-vh96
+						- GHSA-wxmh-65f7-jcvw
 					`,
 				)
 
