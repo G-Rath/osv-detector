@@ -35,6 +35,7 @@ var parsers = map[string]PackageDetailsParser{
 	"renv.lock":                   ParseRenvLock,
 	"requirements.txt":            ParseRequirementsTxt,
 	"yarn.lock":                   ParseYarnLock,
+	"uv.lock":                     ParseUvLock,
 	"gradle.lockfile":             ParseGradleLock,
 	"buildscript-gradle.lockfile": ParseGradleLock,
 }

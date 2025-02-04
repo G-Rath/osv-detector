@@ -68,6 +68,7 @@ The detector supports parsing the following lockfiles:
 | `gradle.lockfile`             | `CRAN`      | `renv`     |
 | `mix.lock`                    | `Hex`       | `mix`      |
 | `poetry.lock`                 | `PyPI`      | `poetry`   |
+| `uv.lock`                     | `PyPI`      | `uv`       |
 | `Pipfile.lock`                | `PyPI`      | `pipenv`   |
 | `pdm.lock`                    | `PyPI`      | `pdm`      |
 | `pubspec.lock`                | `Pub`       | `pub`      |

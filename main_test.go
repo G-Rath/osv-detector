@@ -175,6 +175,7 @@ func TestRun(t *testing.T) {
 					pubspec.lock
 					renv.lock
 					requirements.txt
+					uv.lock
 					yarn.lock
 					csv-file
 					csv-row
