@@ -18,8 +18,8 @@ const BunEcosystem = NpmEcosystem
 
 // structurePackageDetails returns the name, version, and commit of a package
 // specified as a tuple in a bun.lock
-func structurePackageDetails(a []any) (string, string, string) {
-	str, ok := a[0].(string)
+func structurePackageDetails(pkg []any) (string, string, string) {
+	str, ok := pkg[0].(string)
 
 	if !ok {
 		return "", "", ""
