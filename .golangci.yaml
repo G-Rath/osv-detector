@@ -6,17 +6,17 @@ linters:
     - goimports
   # prettier-ignore
   disable:
-    - tagliatelle      # we're parsing data from external sources
-    - varnamelen       # maybe later
     - exhaustruct      # overkill
     - forcetypeassert  # too hard
-    - lll              # line length is hard
-    - godox            # to-do comments are fine
     - godot            # comments are fine without full stops
-    - mnd              # not every number is magic
-    - wsl              # disagree with, for now
+    - godox            # to-do comments are fine
     - ireturn          # disagree with, sort of
+    - lll              # line length is hard
+    - mnd              # not every number is magic
     - nonamedreturns   # they have their uses
+    - tagliatelle      # we're parsing data from external sources
+    - varnamelen       # maybe later
+    - wsl              # disagree with, for now
     - intrange
     - copyloopvar
     - predeclared
