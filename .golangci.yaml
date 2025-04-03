@@ -1,24 +1,25 @@
 version: '2'
 linters:
   default: all
+  # prettier-ignore
   disable:
-    - cyclop
-    - exhaustruct
-    - forcetypeassert
-    - funlen
-    - gocognit
-    - gocyclo
-    - godot
-    - godox
-    - ireturn
-    - lll
-    - maintidx
-    - mnd
-    - nestif
-    - nonamedreturns
-    - tagliatelle
-    - varnamelen
-    - wsl
+    - cyclop          #
+    - exhaustruct     # overkill
+    - forcetypeassert # too hard
+    - funlen          #
+    - gocognit        #
+    - gocyclo         #
+    - godot           # comments are fine without full stops
+    - godox           # to-do comments are fine
+    - ireturn         # disagree with, sort of
+    - lll             #
+    - maintidx        #
+    - mnd             # not every number is magic
+    - nestif          #
+    - nonamedreturns  # they have their uses
+    - tagliatelle     # we're parsing data from external sources
+    - varnamelen      # maybe later
+    - wsl             # disagree with, for now
   settings:
     depguard:
       rules:
