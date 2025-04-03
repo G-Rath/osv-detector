@@ -29,6 +29,7 @@ var parsers = map[string]PackageDetailsParser{
 	"pdm.lock":                    ParsePdmLock,
 	"pnpm-lock.yaml":              ParsePnpmLock,
 	"poetry.lock":                 ParsePoetryLock,
+	"pylock.toml":                 ParsePylock,
 	"Pipfile.lock":                ParsePipenvLock,
 	"pom.xml":                     ParseMavenLock,
 	"pubspec.lock":                ParsePubspecLock,
