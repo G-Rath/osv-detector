@@ -24,7 +24,6 @@ linters:
     - varnamelen       # maybe later
     - wsl              # disagree with, for now
     - intrange
-    - copyloopvar
     - predeclared
     - govet
 
