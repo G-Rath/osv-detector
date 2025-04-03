@@ -3,15 +3,23 @@ output:
 linters:
   enable-all: true
   disable:
+    - cyclop
     - exhaustruct      # overkill
     - forcetypeassert  # too hard
+    - funlen
+    - gocognit
+    - gocyclo
     - godot            # comments are fine without full stops
     - godox            # to-do comments are fine
+    - maintidx
+    - gofumpt
     - ireturn          # disagree with, sort of
     - lll              # line length is hard
     - mnd              # not every number is magic
+    - nestif
     - nonamedreturns   # they have their uses
     - tagliatelle      # we're parsing data from external sources
+    - tenv             # Deprecated
     - varnamelen       # maybe later
     - wsl              # disagree with, for now
     - intrange
