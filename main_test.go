@@ -173,6 +173,7 @@ func TestRun(t *testing.T) {
 					poetry.lock
 					pom.xml
 					pubspec.lock
+					pylock.toml
 					renv.lock
 					requirements.txt
 					uv.lock
