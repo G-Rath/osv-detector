@@ -74,7 +74,7 @@ func canonicalSegments(segs []string) (canSegs []string) {
 func compareRubyGemsComponents(a, b []string) int {
 	numberOfComponents := maxInt(len(a), len(b))
 
-	for i := 0; i < numberOfComponents; i++ {
+	for i := range numberOfComponents {
 		as := fetch(a, i, "0")
 		bs := fetch(b, i, "0")
 
