@@ -13,7 +13,7 @@ func TestParse(t *testing.T) {
 
 	ecosystems := lockfile.KnownEcosystems()
 
-	ecosystems = append(ecosystems, "Alpine", "Debian", "Ubuntu")
+	ecosystems = append(ecosystems, "Alpine", "Debian", "Ubuntu", "Red Hat")
 
 	for _, ecosystem := range ecosystems {
 		_, err := semantic.Parse("", ecosystem)
@@ -35,7 +35,7 @@ func TestMustParse(t *testing.T) {
 
 	ecosystems := lockfile.KnownEcosystems()
 
-	ecosystems = append(ecosystems, "Alpine", "Debian", "Ubuntu")
+	ecosystems = append(ecosystems, "Alpine", "Debian", "Ubuntu", "Red Hat")
 
 	for _, ecosystem := range ecosystems {
 		semantic.MustParse("", ecosystem)
