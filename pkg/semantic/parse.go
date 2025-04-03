@@ -45,6 +45,8 @@ func Parse(str string, ecosystem internal.Ecosystem) (Version, error) {
 		return parsePyPIVersion(str), nil
 	case "RubyGems":
 		return parseRubyGemsVersion(str), nil
+	case "Ubuntu":
+		return parseDebianVersion(str), nil
 	}
 
 	return nil, fmt.Errorf("%w %s", ErrUnsupportedEcosystem, ecosystem)
