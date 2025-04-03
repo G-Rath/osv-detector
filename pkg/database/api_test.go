@@ -79,6 +79,9 @@ func TestNewAPIDB_Valid(t *testing.T) {
 
 	if db == nil {
 		t.Fatalf("NewAPIDB() db unexpectedly nil")
+
+		// this is required currently to make the staticcheck linter
+		return
 	}
 
 	if !reflect.DeepEqual(db.BaseURL, u) {
