@@ -1,6 +1,6 @@
 module github.com/g-rath/osv-detector
 
-go 1.21
+go 1.23.8
 
 require (
 	github.com/BurntSushi/toml v1.3.2
