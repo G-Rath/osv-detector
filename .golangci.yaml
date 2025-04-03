@@ -1,50 +1,66 @@
-output:
-  sort-results: true
+version: '2'
 linters:
-  enable-all: true
-  # prettier-ignore
+  default: all
   disable:
     - cyclop
-    - exhaustruct      # overkill
-    - forcetypeassert  # too hard
+    - exhaustruct
+    - forcetypeassert
     - funlen
     - gocognit
     - gocyclo
-    - godot            # comments are fine without full stops
-    - godox            # to-do comments are fine
+    - godot
+    - godox
+    - ireturn
+    - lll
     - maintidx
-    - gofumpt
-    - ireturn          # disagree with, sort of
-    - lll              # line length is hard
-    - mnd              # not every number is magic
+    - mnd
     - nestif
-    - nonamedreturns   # they have their uses
-    - tagliatelle      # we're parsing data from external sources
-    - tenv             # Deprecated
-    - varnamelen       # maybe later
-    - wsl              # disagree with, for now
-
-linters-settings:
-  depguard:
+    - nonamedreturns
+    - tagliatelle
+    - varnamelen
+    - wsl
+  settings:
+    depguard:
+      rules:
+        regexp:
+          files:
+            - '!**/internal/cachedregexp/**'
+            - '!**/main_test.go'
+          deny:
+            - pkg: regexp
+              desc:
+                Use github.com/g-rath/osv-detector/internal/cachedregexp instead
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
     rules:
-      regexp:
-        files:
-          - '!**/internal/cachedregexp/**'
-          - '!**/main_test.go'
-        deny:
-          - pkg: 'regexp'
-            desc:
-              'Use github.com/g-rath/osv-detector/internal/cachedregexp instead'
-
+      - linters:
+          - dupl
+          - err113
+          - goconst
+        path: _test\.go
+      - linters:
+          - gochecknoglobals
+        path: main.go
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - goconst
-        - goerr113
-        - dupl
-    - path: main.go
-      linters:
-        - gochecknoglobals
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
