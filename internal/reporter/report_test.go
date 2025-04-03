@@ -85,7 +85,6 @@ func TestReport_HasKnownVulnerabilities(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			r := reporter.Report{
@@ -223,7 +222,6 @@ func TestReport_HasIgnoredVulnerabilities(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			r := reporter.Report{
