@@ -15,8 +15,10 @@ builds:
     flags:
       - -trimpath
     ldflags:
-      # prettier-ignore
-      - '-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.CommitDate}}'
+      - '-s -w'
+      - '-X main.version={{.Version}}'
+      - '-X main.commit={{.Commit}}'
+      - '-X main.date={{.CommitDate}}'
     goos:
       - freebsd
       - windows
