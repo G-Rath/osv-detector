@@ -2,6 +2,7 @@ output:
   sort-results: true
 linters:
   enable-all: true
+  # prettier-ignore
   disable:
     - cyclop
     - exhaustruct      # overkill
