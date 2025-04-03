@@ -21,6 +21,8 @@ func MustParse(str string, ecosystem internal.Ecosystem) Version {
 
 func Parse(str string, ecosystem internal.Ecosystem) (Version, error) {
 	switch ecosystem {
+	case "Alpine":
+		return parseAlpineVersion(str), nil
 	case "CRAN":
 		return parseCRANVersion(str), nil
 	case "crates.io":
