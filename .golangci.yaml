@@ -1,35 +1,32 @@
 output:
   sort-results: true
 linters:
-  enable:
-    - gofmt
-    - goimports
+  enable-all: true
   # prettier-ignore
   disable:
-    - tagliatelle      # we're parsing data from external sources
-    - varnamelen       # maybe later
+    - cyclop
     - exhaustruct      # overkill
     - forcetypeassert  # too hard
-    - lll              # line length is hard
-    - godox            # to-do comments are fine
+    - funlen
+    - gocognit
+    - gocyclo
     - godot            # comments are fine without full stops
-    - mnd              # not every number is magic
-    - wsl              # disagree with, for now
+    - godox            # to-do comments are fine
+    - maintidx
+    - gofumpt
     - ireturn          # disagree with, sort of
+    - lll              # line length is hard
+    - mnd              # not every number is magic
+    - nestif
     - nonamedreturns   # they have their uses
+    - tagliatelle      # we're parsing data from external sources
+    - tenv             # Deprecated
+    - varnamelen       # maybe later
+    - wsl              # disagree with, for now
     - intrange
     - copyloopvar
     - predeclared
     - govet
-  presets:
-    - bugs
-    - comment
-    - error
-    - performance
-    - sql
-    - style
-    - test
-    - unused
 
 linters-settings:
   depguard:
@@ -44,6 +41,8 @@ linters-settings:
               'Use github.com/g-rath/osv-detector/internal/cachedregexp instead'
 
 issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
   exclude-rules:
     - path: _test\.go
       linters:
