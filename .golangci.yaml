@@ -23,7 +23,6 @@ linters:
     - tenv             # Deprecated
     - varnamelen       # maybe later
     - wsl              # disagree with, for now
-    - intrange
     - predeclared
     - govet
 
