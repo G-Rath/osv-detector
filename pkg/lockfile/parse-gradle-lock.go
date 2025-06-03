@@ -14,7 +14,7 @@ func isNotGradleDependencyLine(line string) bool {
 func parseGradleLine(line string) (PackageDetails, error) {
 	parts := strings.SplitN(line, ":", 3)
 	if len(parts) < 3 {
-		return PackageDetails{}, fmt.Errorf("invalid line in gradle lockfile: %s", line) //nolint:goerr113
+		return PackageDetails{}, fmt.Errorf("invalid line in gradle lockfile: %s", line) //nolint:err113
 	}
 
 	group, artifact, version := parts[0], parts[1], parts[2]
