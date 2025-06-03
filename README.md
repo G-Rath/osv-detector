@@ -70,6 +70,7 @@ The detector supports parsing the following lockfiles:
 | `poetry.lock`                 | `PyPI`      | `poetry`   |
 | `uv.lock`                     | `PyPI`      | `uv`       |
 | `Pipfile.lock`                | `PyPI`      | `pipenv`   |
+| `pylock.toml`                 | `PyPI`      | (none)     |
 | `pdm.lock`                    | `PyPI`      | `pdm`      |
 | `pubspec.lock`                | `Pub`       | `pub`      |
 | `pom.xml`\*                   | `Maven`     | `maven`    |
