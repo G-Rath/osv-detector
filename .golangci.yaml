@@ -6,6 +6,7 @@ linters:
     - cyclop          #
     - exhaustruct     # overkill
     - forcetypeassert # too hard
+    - funcorder       #
     - funlen          #
     - gocognit        #
     - gocyclo         #
