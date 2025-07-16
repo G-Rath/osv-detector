@@ -19,6 +19,7 @@ type PackageDetailsWithVulnerabilities struct {
 
 type Report struct {
 	lockfile.Lockfile
+
 	// Packages is a map of packages and any vulnerabilities that they're affected by
 	Packages []PackageDetailsWithVulnerabilities `json:"packages"`
 }

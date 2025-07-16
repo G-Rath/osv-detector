@@ -17,10 +17,12 @@ linters:
     - maintidx        #
     - mnd             # not every number is magic
     - nestif          #
+    - noinlineerr     #
     - nonamedreturns  # they have their uses
     - tagliatelle     # we're parsing data from external sources
     - varnamelen      # maybe later
     - wsl             # disagree with, for now
+    - wsl_v5          # disagree with, for now
   settings:
     depguard:
       rules:
