@@ -98,6 +98,6 @@ func (v SemverVersion) Compare(w SemverVersion) int {
 	return compareBuildComponents(v.Build, w.Build)
 }
 
-func (v SemverVersion) CompareStr(str string) int {
-	return v.Compare(parseSemverVersion(str))
+func (v SemverVersion) CompareStr(str string) (int, error) {
+	return v.Compare(parseSemverVersion(str)), nil
 }

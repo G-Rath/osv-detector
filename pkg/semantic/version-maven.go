@@ -313,8 +313,8 @@ func (mv MavenVersion) Compare(w MavenVersion) int {
 	return +1
 }
 
-func (mv MavenVersion) CompareStr(str string) int {
-	return mv.Compare(parseMavenVersion(str))
+func (mv MavenVersion) CompareStr(str string) (int, error) {
+	return mv.Compare(parseMavenVersion(str)), nil
 }
 
 func parseMavenVersion(str string) MavenVersion {

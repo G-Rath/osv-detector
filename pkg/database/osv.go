@@ -100,19 +100,25 @@ func (ar AffectsRange) containsVersion(pkg internal.PackageDetails) bool {
 			return false
 		}
 
-		return semantic.MustParse(a.version(), pkg.CompareAs).CompareStr(b.version()) < 0
+		// Ignore errors as we assume the version is correct
+		order, _ := semantic.MustParse(a.version(), pkg.CompareAs).CompareStr(b.version())
+
+		return order < 0
 	})
 
 	var affected bool
 	for _, e := range ar.Events {
 		if affected {
 			if e.Fixed != "" {
-				affected = vp.CompareStr(e.Fixed) < 0
+				order, _ := vp.CompareStr(e.Fixed)
+				affected = order < 0
 			} else if e.LastAffected != "" {
-				affected = e.LastAffected == pkg.Version || vp.CompareStr(e.LastAffected) <= 0
+				order, _ := vp.CompareStr(e.LastAffected)
+				affected = e.LastAffected == pkg.Version || order <= 0
 			}
 		} else if e.Introduced != "" {
-			affected = e.Introduced == "0" || vp.CompareStr(e.Introduced) >= 0
+			order, _ := vp.CompareStr(e.Introduced)
+			affected = e.Introduced == "0" || order >= 0
 		}
 	}
 

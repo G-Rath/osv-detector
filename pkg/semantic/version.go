@@ -9,7 +9,7 @@ type Version interface {
 	// when parsed as the concrete Version relative to the subject Version.
 	//
 	// The result will be 0 if v == w, -1 if v < w, or +1 if v > w.
-	CompareStr(str string) int
+	CompareStr(str string) (int, error)
 }
 
 type Components []*big.Int

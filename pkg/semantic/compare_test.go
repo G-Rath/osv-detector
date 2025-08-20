@@ -116,7 +116,15 @@ func expectCompareResult(
 
 	v := parseAsVersion(t, a, ecosystem)
 
-	if actualResult := v.CompareStr(b); actualResult != expectedResult {
+	actualResult, err := v.CompareStr(b)
+
+	if err != nil {
+		t.Errorf("failed to compare '%s' to '%s': %v", a, b, err)
+
+		return false
+	}
+
+	if actualResult != expectedResult {
 		t.Errorf(
 			"Expected %s to be %s %s, but it was %s",
 			a,

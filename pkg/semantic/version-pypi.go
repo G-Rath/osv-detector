@@ -366,6 +366,6 @@ func (pv PyPIVersion) Compare(pw PyPIVersion) int {
 	return pypiCompareVersion(pv, pw)
 }
 
-func (pv PyPIVersion) CompareStr(str string) int {
-	return pv.Compare(parsePyPIVersion(str))
+func (pv PyPIVersion) CompareStr(str string) (int, error) {
+	return pv.Compare(parsePyPIVersion(str)), nil
 }

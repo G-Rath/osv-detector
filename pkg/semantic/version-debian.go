@@ -133,8 +133,8 @@ func (v DebianVersion) Compare(w DebianVersion) int {
 	return 0
 }
 
-func (v DebianVersion) CompareStr(str string) int {
-	return v.Compare(parseDebianVersion(str))
+func (v DebianVersion) CompareStr(str string) (int, error) {
+	return v.Compare(parseDebianVersion(str)), nil
 }
 
 func parseDebianVersion(str string) DebianVersion {

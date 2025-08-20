@@ -174,20 +174,20 @@ func compareRedHatComponents(a, b string) int {
 	return 0
 }
 
-func (v RedHatVersion) CompareStr(str string) int {
+func (v RedHatVersion) CompareStr(str string) (int, error) {
 	w := parseRedHatVersion(str)
 
 	if diff := compareRedHatComponents(v.epoch, w.epoch); diff != 0 {
-		return diff
+		return diff, nil
 	}
 	if diff := compareRedHatComponents(v.version, w.version); diff != 0 {
-		return diff
+		return diff, nil
 	}
 	if diff := compareRedHatComponents(v.release, w.release); diff != 0 {
-		return diff
+		return diff, nil
 	}
 
-	return 0
+	return 0, nil
 }
 
 // parseRedHatVersion parses a Red Hat version into a RedHatVersion struct.
