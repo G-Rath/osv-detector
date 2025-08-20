@@ -132,7 +132,7 @@ def fetch_packages_versions
   extract_packages_with_versions(osvs)
 end
 
-outfile = "pkg/semantic/fixtures/rubygems-versions-generated.txt"
+outfile = "pkg/semantic/testdata/rubygems-versions-generated.txt"
 
 packs = fetch_packages_versions
 

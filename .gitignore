@@ -34,9 +34,9 @@ pids
 vendor/
 
 # These files are generated during tests
-fixtures/locks-insecure-nested/.osv-detector.yml
-fixtures/locks-insecure-nested/nested/.osv-detector.yml
-fixtures/locks-insecure-many/.osv-detector.yml
-fixtures/existing-config-with-ignored-ignores.yml
-fixtures/existing-config-with-ignores.yml
-fixtures/existing-config.yml
+testdata/locks-insecure-nested/.osv-detector.yml
+testdata/locks-insecure-nested/nested/.osv-detector.yml
+testdata/locks-insecure-many/.osv-detector.yml
+testdata/existing-config-with-ignored-ignores.yml
+testdata/existing-config-with-ignores.yml
+testdata/existing-config.yml

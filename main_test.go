@@ -184,7 +184,7 @@ func TestRun(t *testing.T) {
 		// only the files in the given directories are checked (no recursion)
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/")},
+			args:         []string{filepath.FromSlash("./testdata/")},
 			wantExitCode: 128,
 			wantStdout:   "",
 			wantStderr: `
@@ -218,7 +218,7 @@ func TestRun_EmptyDirExitCode(t *testing.T) {
 		// one directory without any lockfiles should result in "no lockfiles in directories" exit code
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/locks-none")},
+			args:         []string{filepath.FromSlash("./testdata/locks-none")},
 			wantExitCode: 128,
 			wantStdout:   "",
 			wantStderr: `
@@ -228,7 +228,7 @@ func TestRun_EmptyDirExitCode(t *testing.T) {
 		// two directories without any lockfiles should return "no lockfiles in directories" exit code
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/locks-none"), filepath.FromSlash("./fixtures/")},
+			args:         []string{filepath.FromSlash("./testdata/locks-none"), filepath.FromSlash("./testdata/")},
 			wantExitCode: 128,
 			wantStdout:   "",
 			wantStderr: `
@@ -238,57 +238,57 @@ func TestRun_EmptyDirExitCode(t *testing.T) {
 		// a path to an unknown lockfile should return standard error exit code
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/locks-none/my-file.txt")},
+			args:         []string{filepath.FromSlash("./testdata/locks-none/my-file.txt")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
 
 			`,
 			wantStderr: `
-				Error, could not determine parser for fixtures/locks-none/my-file.txt
+				Error, could not determine parser for testdata/locks-none/my-file.txt
 			`,
 		},
 		// mix and match of directory without any lockfiles and a path to an unknown lockfile should return standard exit code
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/locks-none/my-file.txt"), filepath.FromSlash("./fixtures/")},
+			args:         []string{filepath.FromSlash("./testdata/locks-none/my-file.txt"), filepath.FromSlash("./testdata/")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
 
 			`,
 			wantStderr: `
-				Error, could not determine parser for fixtures/locks-none/my-file.txt
+				Error, could not determine parser for testdata/locks-none/my-file.txt
 			`,
 		},
 		// when the directory does not exist, the exit code should not be for "no lockfiles in directories"
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/does/not/exist")},
+			args:         []string{filepath.FromSlash("./testdata/does/not/exist")},
 			wantExitCode: 127,
 			wantStdout:   "",
 			// "file not found" message is different on Windows vs other OSs
 			wantStderr: `
-				Error reading ./fixtures/does/not/exist: open ./fixtures/does/not/exist: %%
+				Error reading ./testdata/does/not/exist: open ./testdata/does/not/exist: %%
 				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
 			`,
 		},
 		// an empty directory + a directory that does not exist should return standard exit code
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/does/not/exist"), filepath.FromSlash("./fixtures/locks-none")},
+			args:         []string{filepath.FromSlash("./testdata/does/not/exist"), filepath.FromSlash("./testdata/locks-none")},
 			wantExitCode: 127,
 			wantStdout:   "",
 			// "file not found" message is different on Windows vs other OSs
 			wantStderr: `
-				Error reading ./fixtures/does/not/exist: open ./fixtures/does/not/exist: %%
+				Error reading ./testdata/does/not/exist: open ./testdata/does/not/exist: %%
 				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
 			`,
 		},
 		// when there are no parsable lockfiles in the directory + --json should give sensible json
 		{
 			name:         "",
-			args:         []string{"--json", filepath.FromSlash("./fixtures/locks-none")},
+			args:         []string{"--json", filepath.FromSlash("./testdata/locks-none")},
 			wantExitCode: 128,
 			wantStdout:   `{"results":[]}`,
 			wantStderr: `
@@ -311,51 +311,51 @@ func TestRun_ListPackages(t *testing.T) {
 	tests := []cliTestCase{
 		{
 			name:         "",
-			args:         []string{"--list-packages", filepath.FromSlash("./fixtures/locks-one")},
+			args:         []string{"--list-packages", filepath.FromSlash("./testdata/locks-one")},
 			wantExitCode: 0,
 			wantStdout: `
-				fixtures/locks-one/yarn.lock: found 1 package
+				testdata/locks-one/yarn.lock: found 1 package
 					npm: balanced-match@1.0.2
 			`,
 			wantStderr: "",
 		},
 		{
 			name:         "",
-			args:         []string{"--list-packages", filepath.FromSlash("./fixtures/locks-many")},
+			args:         []string{"--list-packages", filepath.FromSlash("./testdata/locks-many")},
 			wantExitCode: 0,
 			wantStdout: `
-				fixtures/locks-many/Gemfile.lock: found 1 package
+				testdata/locks-many/Gemfile.lock: found 1 package
 					RubyGems: ast@2.4.2
-				fixtures/locks-many/composer.lock: found 1 package
+				testdata/locks-many/composer.lock: found 1 package
 					Packagist: sentry/sdk@2.0.4 (4c115873c86ad5bd0ac6d962db70ca53bf8fb874)
-				fixtures/locks-many/yarn.lock: found 1 package
+				testdata/locks-many/yarn.lock: found 1 package
 					npm: balanced-match@1.0.2
 			`,
 			wantStderr: "",
 		},
 		{
 			name:         "",
-			args:         []string{"--list-packages", filepath.FromSlash("./fixtures/locks-empty")},
+			args:         []string{"--list-packages", filepath.FromSlash("./testdata/locks-empty")},
 			wantExitCode: 0,
 			wantStdout: `
-				fixtures/locks-empty/Gemfile.lock: found 0 packages
+				testdata/locks-empty/Gemfile.lock: found 0 packages
 
-				fixtures/locks-empty/composer.lock: found 0 packages
+				testdata/locks-empty/composer.lock: found 0 packages
 
-				fixtures/locks-empty/yarn.lock: found 0 packages
+				testdata/locks-empty/yarn.lock: found 0 packages
 			`,
 			wantStderr: "",
 		},
 		// json results in non-json output going to stderr
 		{
 			name:         "",
-			args:         []string{"--list-packages", "--json", filepath.FromSlash("./fixtures/locks-one")},
+			args:         []string{"--list-packages", "--json", filepath.FromSlash("./testdata/locks-one")},
 			wantExitCode: 0,
 			wantStdout: `
-				{"results":[{"filePath":"fixtures/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm","compareAs":"npm"}]}]}
+				{"results":[{"filePath":"testdata/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm","compareAs":"npm"}]}]}
 			`,
 			wantStderr: `
-				fixtures/locks-one/yarn.lock: found 1 package
+				testdata/locks-one/yarn.lock: found 1 package
 			`,
 		},
 	}
@@ -374,13 +374,13 @@ func TestRun_Lockfile(t *testing.T) {
 	tests := []cliTestCase{
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/locks-one")},
+			args:         []string{filepath.FromSlash("./testdata/locks-one")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-one/yarn.lock: found 1 package
+				testdata/locks-one/yarn.lock: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
@@ -389,7 +389,7 @@ func TestRun_Lockfile(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/locks-many")},
+			args:         []string{filepath.FromSlash("./testdata/locks-many")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -397,17 +397,17 @@ func TestRun_Lockfile(t *testing.T) {
 					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-many/Gemfile.lock: found 1 package
+				testdata/locks-many/Gemfile.lock: found 1 package
 					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
-				fixtures/locks-many/composer.lock: found 1 package
+				testdata/locks-many/composer.lock: found 1 package
 					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
-				fixtures/locks-many/yarn.lock: found 1 package
+				testdata/locks-many/yarn.lock: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
@@ -416,20 +416,20 @@ func TestRun_Lockfile(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/locks-empty")},
+			args:         []string{filepath.FromSlash("./testdata/locks-empty")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 
-				fixtures/locks-empty/Gemfile.lock: found 0 packages
+				testdata/locks-empty/Gemfile.lock: found 0 packages
 
 					no known vulnerabilities found
 
-				fixtures/locks-empty/composer.lock: found 0 packages
+				testdata/locks-empty/composer.lock: found 0 packages
 
 					no known vulnerabilities found
 
-				fixtures/locks-empty/yarn.lock: found 0 packages
+				testdata/locks-empty/yarn.lock: found 0 packages
 
 					no known vulnerabilities found
 			`,
@@ -438,35 +438,35 @@ func TestRun_Lockfile(t *testing.T) {
 		// parse-as + known vulnerability exits with error code 1
 		{
 			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json")},
+			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json")},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
+				testdata/locks-insecure/my-package-lock.json: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
-					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+					1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
 			`,
 			wantStderr: "",
 		},
 		// json results in non-json output going to stderr
 		{
 			name:         "",
-			args:         []string{"--json", filepath.FromSlash("./fixtures/locks-one")},
+			args:         []string{"--json", filepath.FromSlash("./testdata/locks-one")},
 			wantExitCode: 0,
 			wantStdout: `
-				{"results":[{"filePath":"fixtures/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm","compareAs":"npm","vulnerabilities":[],"ignored":[]}]}]}
+				{"results":[{"filePath":"testdata/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm","compareAs":"npm","vulnerabilities":[],"ignored":[]}]}]}
 			`,
 			wantStderr: `
 				Loaded the following OSV databases:
           npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-one/yarn.lock: found 1 package
+				testdata/locks-one/yarn.lock: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 			`,
@@ -487,12 +487,12 @@ func TestRun_DBs(t *testing.T) {
 	tests := []cliTestCase{
 		{
 			name:         "",
-			args:         []string{"--use-dbs=false", filepath.FromSlash("./fixtures/locks-one")},
+			args:         []string{"--use-dbs=false", filepath.FromSlash("./testdata/locks-one")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 
-				fixtures/locks-one/yarn.lock: found 1 package
+				testdata/locks-one/yarn.lock: found 1 package
 
 					no known vulnerabilities found
 			`,
@@ -500,14 +500,14 @@ func TestRun_DBs(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{"--use-api", filepath.FromSlash("./fixtures/locks-one")},
+			args:         []string{"--use-api", filepath.FromSlash("./testdata/locks-one")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 					osv.dev v1 API (using batches of 1000)
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-one/yarn.lock: found 1 package
+				testdata/locks-one/yarn.lock: found 1 package
 					Using db osv.dev v1 API (using batches of 1000)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
@@ -532,12 +532,12 @@ func TestRun_ParseAsSpecific(t *testing.T) {
 		// when there is just a ":", it defaults as empty
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash(":./fixtures/locks-insecure/composer.lock")},
+			args:         []string{filepath.FromSlash(":./testdata/locks-insecure/composer.lock")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 
-				fixtures/locks-insecure/composer.lock: found 0 packages
+				testdata/locks-insecure/composer.lock: found 0 packages
 
 					no known vulnerabilities found
 			`,
@@ -546,105 +546,105 @@ func TestRun_ParseAsSpecific(t *testing.T) {
 		// ":" can be used as an escape (no test though because it's invalid on Windows)
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash(":./fixtures/locks-insecure/my:file")},
+			args:         []string{filepath.FromSlash(":./testdata/locks-insecure/my:file")},
 			wantExitCode: 127,
 			wantStdout:   "",
 			wantStderr: `
-				Error reading ./fixtures/locks-insecure/my:file: open ./fixtures/locks-insecure/my:file: %%
+				Error reading ./testdata/locks-insecure/my:file: open ./testdata/locks-insecure/my:file: %%
 				You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
 			`,
 		},
 		// when a path to a file is given, parse-as is applied to that file
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json")},
+			args:         []string{filepath.FromSlash("package-lock.json:./testdata/locks-insecure/my-package-lock.json")},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
+				testdata/locks-insecure/my-package-lock.json: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
-					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+					1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
 			`,
 			wantStderr: "",
 		},
 		// when a path to a directory is given, parse-as is applied to all files in the directory
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("package-lock.json:./fixtures/locks-insecure")},
+			args:         []string{filepath.FromSlash("package-lock.json:./testdata/locks-insecure")},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/composer.lock: found 0 packages
+				testdata/locks-insecure/composer.lock: found 0 packages
 
 					no known vulnerabilities found
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
+				testdata/locks-insecure/my-package-lock.json: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
-					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+					1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
 			`,
 			wantStderr: "",
 		},
 		// files that error on parsing don't stop parsable files from being checked
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("package-lock.json:./fixtures/locks-empty")},
+			args:         []string{filepath.FromSlash("package-lock.json:./testdata/locks-empty")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
 
 
-				fixtures/locks-empty/composer.lock: found 0 packages
+				testdata/locks-empty/composer.lock: found 0 packages
 
 					no known vulnerabilities found
 
 			`,
 			wantStderr: `
-				Error, could not parse fixtures/locks-empty/Gemfile.lock: unexpected end of JSON input
-				Error, could not parse fixtures/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+				Error, could not parse testdata/locks-empty/Gemfile.lock: unexpected end of JSON input
+				Error, could not parse testdata/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
 			`,
 		},
 		// files that error on parsing don't stop parsable files from being checked
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("package-lock.json:./fixtures/locks-empty"), filepath.FromSlash("package-lock.json:./fixtures/locks-insecure")},
+			args:         []string{filepath.FromSlash("package-lock.json:./testdata/locks-empty"), filepath.FromSlash("package-lock.json:./testdata/locks-insecure")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 
-				fixtures/locks-empty/composer.lock: found 0 packages
+				testdata/locks-empty/composer.lock: found 0 packages
 
 					no known vulnerabilities found
 
 
-				fixtures/locks-insecure/composer.lock: found 0 packages
+				testdata/locks-insecure/composer.lock: found 0 packages
 
 					no known vulnerabilities found
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
+				testdata/locks-insecure/my-package-lock.json: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
-					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+					1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
 			`,
 			wantStderr: `
-				Error, could not parse fixtures/locks-empty/Gemfile.lock: unexpected end of JSON input
-				Error, could not parse fixtures/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+				Error, could not parse testdata/locks-empty/Gemfile.lock: unexpected end of JSON input
+				Error, could not parse testdata/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
 			`,
 		},
 	}
@@ -664,128 +664,128 @@ func TestRun_ParseAsGlobal(t *testing.T) {
 		// when a path to a file is given, parse-as is applied to that file
 		{
 			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json")},
+			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json")},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
+				testdata/locks-insecure/my-package-lock.json: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
-					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+					1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
 			`,
 			wantStderr: "",
 		},
 		// when a path to a directory is given, parse-as is applied to all files in the directory
 		{
 			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./fixtures/locks-insecure")},
+			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./testdata/locks-insecure")},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/composer.lock: found 0 packages
+				testdata/locks-insecure/composer.lock: found 0 packages
 
 					no known vulnerabilities found
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
+				testdata/locks-insecure/my-package-lock.json: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
-					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+					1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
 			`,
 			wantStderr: "",
 		},
 		// files that error on parsing don't stop parsable files from being checked
 		{
 			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./fixtures/locks-empty")},
+			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./testdata/locks-empty")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
 
 
-				fixtures/locks-empty/composer.lock: found 0 packages
+				testdata/locks-empty/composer.lock: found 0 packages
 
 					no known vulnerabilities found
 
 			`,
 			wantStderr: `
-				Error, could not parse fixtures/locks-empty/Gemfile.lock: unexpected end of JSON input
-				Error, could not parse fixtures/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+				Error, could not parse testdata/locks-empty/Gemfile.lock: unexpected end of JSON input
+				Error, could not parse testdata/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
 			`,
 		},
 		// files that error on parsing don't stop parsable files from being checked
 		{
 			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./fixtures/locks-empty"), filepath.FromSlash("./fixtures/locks-insecure")},
+			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./testdata/locks-empty"), filepath.FromSlash("./testdata/locks-insecure")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 
-				fixtures/locks-empty/composer.lock: found 0 packages
+				testdata/locks-empty/composer.lock: found 0 packages
 
 					no known vulnerabilities found
 
 
-				fixtures/locks-insecure/composer.lock: found 0 packages
+				testdata/locks-insecure/composer.lock: found 0 packages
 
 					no known vulnerabilities found
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
+				testdata/locks-insecure/my-package-lock.json: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
-					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+					1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
 			`,
 			wantStderr: `
-				Error, could not parse fixtures/locks-empty/Gemfile.lock: unexpected end of JSON input
-				Error, could not parse fixtures/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+				Error, could not parse testdata/locks-empty/Gemfile.lock: unexpected end of JSON input
+				Error, could not parse testdata/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
 			`,
 		},
 		// specific parse-as takes precedence over global parse-as
 		{
 			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("Gemfile.lock:./fixtures/locks-empty"), filepath.FromSlash("./fixtures/locks-insecure")},
+			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("Gemfile.lock:./testdata/locks-empty"), filepath.FromSlash("./testdata/locks-insecure")},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-empty/Gemfile.lock: found 0 packages
+				testdata/locks-empty/Gemfile.lock: found 0 packages
 
 					no known vulnerabilities found
 
-				fixtures/locks-empty/composer.lock: found 0 packages
+				testdata/locks-empty/composer.lock: found 0 packages
 
 					no known vulnerabilities found
 
-				fixtures/locks-empty/yarn.lock: found 0 packages
+				testdata/locks-empty/yarn.lock: found 0 packages
 
 					no known vulnerabilities found
 
-				fixtures/locks-insecure/composer.lock: found 0 packages
+				testdata/locks-insecure/composer.lock: found 0 packages
 
 					no known vulnerabilities found
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
+				testdata/locks-insecure/my-package-lock.json: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
-					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+					1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
 			`,
 			wantStderr: "",
 		},
@@ -885,14 +885,14 @@ func TestRun_ParseAs_CsvFile(t *testing.T) {
 	tests := []cliTestCase{
 		{
 			name:         "",
-			args:         []string{"--parse-as", "csv-file", filepath.FromSlash("./fixtures/csvs-files/two-rows.csv")},
+			args:         []string{"--parse-as", "csv-file", filepath.FromSlash("./testdata/csvs-files/two-rows.csv")},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
 					NuGet (%% vulnerabilities, including withdrawn - last updated %%)
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/csvs-files/two-rows.csv: found 2 packages
+				testdata/csvs-files/two-rows.csv: found 2 packages
 					Using db NuGet (%% vulnerabilities, including withdrawn - last updated %%)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
@@ -900,19 +900,19 @@ func TestRun_ParseAs_CsvFile(t *testing.T) {
 						GHSA-8xc6-g8xw-h2c4: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-8xc6-g8xw-h2c4)
 						GHSA-jrjw-qgr2-wfcg: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-jrjw-qgr2-wfcg)
 
-					2 known vulnerabilities found in fixtures/csvs-files/two-rows.csv
+					2 known vulnerabilities found in testdata/csvs-files/two-rows.csv
 			`,
 			wantStderr: "",
 		},
 		{
 			name:         "",
-			args:         []string{"--parse-as", "csv-file", filepath.FromSlash("./fixtures/csvs-files/not-a-csv.xml")},
+			args:         []string{"--parse-as", "csv-file", filepath.FromSlash("./testdata/csvs-files/not-a-csv.xml")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
 
 			`,
-			wantStderr: "Error, fixtures/csvs-files/not-a-csv.xml: row 1: not enough fields (expected at least four)",
+			wantStderr: "Error, testdata/csvs-files/not-a-csv.xml: row 1: not enough fields (expected at least four)",
 		},
 	}
 	for _, tt := range tests {
@@ -931,13 +931,13 @@ func TestRun_Configs(t *testing.T) {
 		// when given a path to a single lockfile, the local config should be used
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/configs-one/yarn.lock")},
+			args:         []string{filepath.FromSlash("./testdata/configs-one/yarn.lock")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 
-				fixtures/configs-one/yarn.lock: found 0 packages
-					Using config at fixtures/configs-one/.osv-detector.yaml (0 ignores)
+				testdata/configs-one/yarn.lock: found 0 packages
+					Using config at testdata/configs-one/.osv-detector.yaml (0 ignores)
 
 					no known vulnerabilities found
 			`,
@@ -945,13 +945,13 @@ func TestRun_Configs(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/configs-two/yarn.lock")},
+			args:         []string{filepath.FromSlash("./testdata/configs-two/yarn.lock")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 
-				fixtures/configs-two/yarn.lock: found 0 packages
-					Using config at fixtures/configs-two/.osv-detector.yaml (0 ignores)
+				testdata/configs-two/yarn.lock: found 0 packages
+					Using config at testdata/configs-two/.osv-detector.yaml (0 ignores)
 
 					no known vulnerabilities found
 			`,
@@ -960,13 +960,13 @@ func TestRun_Configs(t *testing.T) {
 		// when given a path to a directory, the local config should be used for all lockfiles
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/configs-one")},
+			args:         []string{filepath.FromSlash("./testdata/configs-one")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 
-				fixtures/configs-one/yarn.lock: found 0 packages
-					Using config at fixtures/configs-one/.osv-detector.yaml (0 ignores)
+				testdata/configs-one/yarn.lock: found 0 packages
+					Using config at testdata/configs-one/.osv-detector.yaml (0 ignores)
 
 					no known vulnerabilities found
 			`,
@@ -974,20 +974,20 @@ func TestRun_Configs(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/configs-two")},
+			args:         []string{filepath.FromSlash("./testdata/configs-two")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 					RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/configs-two/Gemfile.lock: found 1 package
-					Using config at fixtures/configs-two/.osv-detector.yaml (0 ignores)
+				testdata/configs-two/Gemfile.lock: found 1 package
+					Using config at testdata/configs-two/.osv-detector.yaml (0 ignores)
 					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
-				fixtures/configs-two/yarn.lock: found 0 packages
-					Using config at fixtures/configs-two/.osv-detector.yaml (0 ignores)
+				testdata/configs-two/yarn.lock: found 0 packages
+					Using config at testdata/configs-two/.osv-detector.yaml (0 ignores)
 
 					no known vulnerabilities found
 			`,
@@ -996,7 +996,7 @@ func TestRun_Configs(t *testing.T) {
 		// local configs should be applied based on directory of each lockfile
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/configs-one/yarn.lock"), filepath.FromSlash("./fixtures/locks-many")},
+			args:         []string{filepath.FromSlash("./testdata/configs-one/yarn.lock"), filepath.FromSlash("./testdata/locks-many")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -1004,22 +1004,22 @@ func TestRun_Configs(t *testing.T) {
 					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/configs-one/yarn.lock: found 0 packages
-					Using config at fixtures/configs-one/.osv-detector.yaml (0 ignores)
+				testdata/configs-one/yarn.lock: found 0 packages
+					Using config at testdata/configs-one/.osv-detector.yaml (0 ignores)
 
 					no known vulnerabilities found
 
-				fixtures/locks-many/Gemfile.lock: found 1 package
+				testdata/locks-many/Gemfile.lock: found 1 package
 					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
-				fixtures/locks-many/composer.lock: found 1 package
+				testdata/locks-many/composer.lock: found 1 package
 					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
-				fixtures/locks-many/yarn.lock: found 1 package
+				testdata/locks-many/yarn.lock: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
@@ -1029,17 +1029,17 @@ func TestRun_Configs(t *testing.T) {
 		// invalid databases should be skipped
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/configs-extra-dbs/yarn.lock")},
+			args:         []string{filepath.FromSlash("./testdata/configs-extra-dbs/yarn.lock")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
 					api#https://example.com/v1 (using batches of 1000)
-					dir#file:/fixtures/configs-extra-dbs (3 vulnerabilities, including withdrawn)
+					dir#file:/testdata/configs-extra-dbs (3 vulnerabilities, including withdrawn)
 					zip#https://example.com/osvs/all
-				fixtures/configs-extra-dbs/yarn.lock: found 0 packages
-					Using config at fixtures/configs-extra-dbs/.osv-detector.yaml (0 ignores)
+				testdata/configs-extra-dbs/yarn.lock: found 0 packages
+					Using config at testdata/configs-extra-dbs/.osv-detector.yaml (0 ignores)
 					Using db api#https://example.com/v1 (using batches of 1000)
-					Using db dir#file:/fixtures/configs-extra-dbs (3 vulnerabilities, including withdrawn)
+					Using db dir#file:/testdata/configs-extra-dbs (3 vulnerabilities, including withdrawn)
 
 					no known vulnerabilities found
 			`,
@@ -1050,14 +1050,14 @@ func TestRun_Configs(t *testing.T) {
 			name: "",
 			args: []string{
 				"--no-config-databases",
-				filepath.FromSlash("./fixtures/configs-extra-dbs/yarn.lock"),
+				filepath.FromSlash("./testdata/configs-extra-dbs/yarn.lock"),
 			},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 
-				fixtures/configs-extra-dbs/yarn.lock: found 0 packages
-					Using config at fixtures/configs-extra-dbs/.osv-detector.yaml (0 ignores)
+				testdata/configs-extra-dbs/yarn.lock: found 0 packages
+					Using config at testdata/configs-extra-dbs/.osv-detector.yaml (0 ignores)
 
 					no known vulnerabilities found
 			`,
@@ -1067,17 +1067,17 @@ func TestRun_Configs(t *testing.T) {
 		{
 			name: "",
 			args: []string{
-				"--config", filepath.FromSlash("./fixtures/configs-extra-dbs/.osv-detector.yaml"),
+				"--config", filepath.FromSlash("./testdata/configs-extra-dbs/.osv-detector.yaml"),
 				"--no-config-databases",
-				filepath.FromSlash("./fixtures/locks-many/yarn.lock"),
+				filepath.FromSlash("./testdata/locks-many/yarn.lock"),
 			},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-many/yarn.lock: found 1 package
-					Using config at fixtures/configs-extra-dbs/.osv-detector.yaml (0 ignores)
+				testdata/locks-many/yarn.lock: found 1 package
+					Using config at testdata/configs-extra-dbs/.osv-detector.yaml (0 ignores)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
@@ -1087,13 +1087,13 @@ func TestRun_Configs(t *testing.T) {
 		// when a global config is provided, any local configs should be ignored
 		{
 			name:         "",
-			args:         []string{"--config", filepath.FromSlash("fixtures/my-config.yml"), filepath.FromSlash("./fixtures/configs-one/yarn.lock")},
+			args:         []string{"--config", filepath.FromSlash("testdata/my-config.yml"), filepath.FromSlash("./testdata/configs-one/yarn.lock")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 
-				fixtures/configs-one/yarn.lock: found 0 packages
-					Using config at fixtures/my-config.yml (1 ignore)
+				testdata/configs-one/yarn.lock: found 0 packages
+					Using config at testdata/my-config.yml (1 ignore)
 
 					no known vulnerabilities found
 			`,
@@ -1101,20 +1101,20 @@ func TestRun_Configs(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{"--config", filepath.FromSlash("fixtures/my-config.yml"), filepath.FromSlash("./fixtures/configs-two")},
+			args:         []string{"--config", filepath.FromSlash("testdata/my-config.yml"), filepath.FromSlash("./testdata/configs-two")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 					RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/configs-two/Gemfile.lock: found 1 package
-					Using config at fixtures/my-config.yml (1 ignore)
+				testdata/configs-two/Gemfile.lock: found 1 package
+					Using config at testdata/my-config.yml (1 ignore)
 					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
-				fixtures/configs-two/yarn.lock: found 0 packages
-					Using config at fixtures/my-config.yml (1 ignore)
+				testdata/configs-two/yarn.lock: found 0 packages
+					Using config at testdata/my-config.yml (1 ignore)
 
 					no known vulnerabilities found
 			`,
@@ -1122,7 +1122,7 @@ func TestRun_Configs(t *testing.T) {
 		},
 		{
 			name:         "",
-			args:         []string{"--config", filepath.FromSlash("fixtures/my-config.yml"), filepath.FromSlash("./fixtures/configs-one/yarn.lock"), filepath.FromSlash("./fixtures/locks-many")},
+			args:         []string{"--config", filepath.FromSlash("testdata/my-config.yml"), filepath.FromSlash("./testdata/configs-one/yarn.lock"), filepath.FromSlash("./testdata/locks-many")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -1130,25 +1130,25 @@ func TestRun_Configs(t *testing.T) {
 					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/configs-one/yarn.lock: found 0 packages
-					Using config at fixtures/my-config.yml (1 ignore)
+				testdata/configs-one/yarn.lock: found 0 packages
+					Using config at testdata/my-config.yml (1 ignore)
 
 					no known vulnerabilities found
 
-				fixtures/locks-many/Gemfile.lock: found 1 package
-					Using config at fixtures/my-config.yml (1 ignore)
+				testdata/locks-many/Gemfile.lock: found 1 package
+					Using config at testdata/my-config.yml (1 ignore)
 					Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
-				fixtures/locks-many/composer.lock: found 1 package
-					Using config at fixtures/my-config.yml (1 ignore)
+				testdata/locks-many/composer.lock: found 1 package
+					Using config at testdata/my-config.yml (1 ignore)
 					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 
-				fixtures/locks-many/yarn.lock: found 1 package
-					Using config at fixtures/my-config.yml (1 ignore)
+				testdata/locks-many/yarn.lock: found 1 package
+					Using config at testdata/my-config.yml (1 ignore)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
@@ -1159,7 +1159,7 @@ func TestRun_Configs(t *testing.T) {
 		// be checked (as the results could be different due to e.g. missing ignores)
 		{
 			name:         "",
-			args:         []string{filepath.FromSlash("./fixtures/configs-invalid"), filepath.FromSlash("./fixtures/locks-one")},
+			args:         []string{filepath.FromSlash("./testdata/configs-invalid"), filepath.FromSlash("./testdata/locks-one")},
 			wantExitCode: 127,
 			wantStdout: `
 				Loaded the following OSV databases:
@@ -1167,15 +1167,15 @@ func TestRun_Configs(t *testing.T) {
 
 
 
-				fixtures/locks-one/yarn.lock: found 1 package
+				testdata/locks-one/yarn.lock: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
 			`,
 			wantStderr: `
-				Error, could not read fixtures/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
+				Error, could not read testdata/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
 					line 1: cannot unmarshal !!str ` + "`ignore ...`" + ` into configer.rawConfig
-				Error, could not read fixtures/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
+				Error, could not read testdata/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
 					line 1: cannot unmarshal !!str ` + "`ignore ...`" + ` into configer.rawConfig
 			`,
 		},
@@ -1184,15 +1184,15 @@ func TestRun_Configs(t *testing.T) {
 		{
 			name: "",
 			args: []string{
-				"--config", filepath.FromSlash("./fixtures/configs-invalid/.osv-detector.yaml"),
-				filepath.FromSlash("./fixtures/configs-invalid"),
-				filepath.FromSlash("./fixtures/locks-one"),
-				filepath.FromSlash("./fixtures/locks-many"),
+				"--config", filepath.FromSlash("./testdata/configs-invalid/.osv-detector.yaml"),
+				filepath.FromSlash("./testdata/configs-invalid"),
+				filepath.FromSlash("./testdata/locks-one"),
+				filepath.FromSlash("./testdata/locks-many"),
 			},
 			wantExitCode: 127,
 			wantStdout:   "",
 			wantStderr: `
-				Error, could not read fixtures/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
+				Error, could not read testdata/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
 					line 1: cannot unmarshal !!str ` + "`ignore ...`" + ` into configer.rawConfig
 			`,
 		},
@@ -1213,13 +1213,13 @@ func TestRun_Ignores(t *testing.T) {
 		// no ignore count is printed if there is nothing ignored
 		{
 			name:         "",
-			args:         []string{"--ignore", "GHSA-1234", "--ignore", "GHSA-5678", filepath.FromSlash("./fixtures/locks-one")},
+			args:         []string{"--ignore", "GHSA-1234", "--ignore", "GHSA-5678", filepath.FromSlash("./testdata/locks-one")},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-one/yarn.lock: found 1 package
+				testdata/locks-one/yarn.lock: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no known vulnerabilities found
@@ -1231,14 +1231,14 @@ func TestRun_Ignores(t *testing.T) {
 			args: []string{
 				"--ignore", "GHSA-whgm-jr23-g3j9",
 				"--parse-as", "package-lock.json",
-				filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json"),
+				filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json"),
 			},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
+				testdata/locks-insecure/my-package-lock.json: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no new vulnerabilities found (1 was ignored)
@@ -1253,14 +1253,14 @@ func TestRun_Ignores(t *testing.T) {
 				"--ignore", "GHSA-whgm-jr23-g3j9",
 				"--ignore", "GHSA-whgm-jr23-1234",
 				"--parse-as", "package-lock.json",
-				filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json"),
+				filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json"),
 			},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
+				testdata/locks-insecure/my-package-lock.json: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no new vulnerabilities found (1 was ignored)
@@ -1271,18 +1271,18 @@ func TestRun_Ignores(t *testing.T) {
 		{
 			name: "",
 			args: []string{
-				"--config", filepath.FromSlash("./fixtures/my-config.yml"),
+				"--config", filepath.FromSlash("./testdata/my-config.yml"),
 				"--ignore", "GHSA-1234",
 				"--parse-as", "package-lock.json",
-				filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json"),
+				filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json"),
 			},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
-					Using config at fixtures/my-config.yml (1 ignore)
+				testdata/locks-insecure/my-package-lock.json: found 1 package
+					Using config at testdata/my-config.yml (1 ignore)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no new vulnerabilities found (1 was ignored)
@@ -1294,23 +1294,23 @@ func TestRun_Ignores(t *testing.T) {
 			name: "",
 			args: []string{
 				"--no-config-ignores",
-				"--config", filepath.FromSlash("./fixtures/my-config.yml"),
+				"--config", filepath.FromSlash("./testdata/my-config.yml"),
 				"--parse-as", "package-lock.json",
-				filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json"),
+				filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json"),
 			},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
-					Using config at fixtures/my-config.yml (skipping any ignores)
+				testdata/locks-insecure/my-package-lock.json: found 1 package
+					Using config at testdata/my-config.yml (skipping any ignores)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
-					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+					1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
 			`,
 			wantStderr: "",
 		},
@@ -1319,18 +1319,18 @@ func TestRun_Ignores(t *testing.T) {
 			name: "",
 			args: []string{
 				"--no-config-ignores",
-				"--config", filepath.FromSlash("./fixtures/my-config.yml"),
+				"--config", filepath.FromSlash("./testdata/my-config.yml"),
 				"--ignore", "GHSA-whgm-jr23-g3j9",
 				"--parse-as", "package-lock.json",
-				filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json"),
+				filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json"),
 			},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
-					Using config at fixtures/my-config.yml (skipping any ignores)
+				testdata/locks-insecure/my-package-lock.json: found 1 package
+					Using config at testdata/my-config.yml (skipping any ignores)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no new vulnerabilities found (1 was ignored)
@@ -1341,18 +1341,18 @@ func TestRun_Ignores(t *testing.T) {
 		{
 			name: "",
 			args: []string{
-				"--config", filepath.FromSlash("./fixtures/my-config.yml"),
+				"--config", filepath.FromSlash("./testdata/my-config.yml"),
 				"--ignore", "GHSA-1234",
 				"--parse-as", "package-lock.json",
-				filepath.FromSlash("./fixtures/locks-insecure/my-package-lock.json"),
+				filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json"),
 			},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
-					Using config at fixtures/my-config.yml (1 ignore)
+				testdata/locks-insecure/my-package-lock.json: found 1 package
+					Using config at testdata/my-config.yml (1 ignore)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no new vulnerabilities found (1 was ignored)
@@ -1407,19 +1407,19 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 		// when there is no existing config, nothing should be updated
 		{
 			name:         "",
-			args:         []string{"--update-config-ignores", filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json")},
+			args:         []string{"--update-config-ignores", filepath.FromSlash("package-lock.json:./testdata/locks-insecure/my-package-lock.json")},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
+				testdata/locks-insecure/my-package-lock.json: found 1 package
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
-					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+					1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
 			`,
 			wantStderr: "",
 		},
@@ -1428,31 +1428,31 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 			name: "",
 			args: []string{
 				"--update-config-ignores",
-				"--config", "fixtures/existing-config.yml",
-				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json"),
+				"--config", "testdata/existing-config.yml",
+				filepath.FromSlash("package-lock.json:./testdata/locks-insecure/my-package-lock.json"),
 			},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
-					Using config at fixtures/existing-config.yml (0 ignores)
+				testdata/locks-insecure/my-package-lock.json: found 1 package
+					Using config at testdata/existing-config.yml (0 ignores)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
-					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+					1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
 
-				Updated fixtures/existing-config.yml with 1 vulnerability
+				Updated testdata/existing-config.yml with 1 vulnerability
 			`,
 			wantStderr: "",
 			around: func(t *testing.T) func() {
 				t.Helper()
 
 				return setupConfigForUpdating(t,
-					"fixtures/existing-config.yml",
+					"testdata/existing-config.yml",
 					"",
 					`
 						ignore:
@@ -1466,28 +1466,28 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 			name: "",
 			args: []string{
 				"--update-config-ignores",
-				"--config", "fixtures/existing-config-with-ignores.yml",
-				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json"),
+				"--config", "testdata/existing-config-with-ignores.yml",
+				filepath.FromSlash("package-lock.json:./testdata/locks-insecure/my-package-lock.json"),
 			},
 			wantExitCode: 0,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
-					Using config at fixtures/existing-config-with-ignores.yml (1 ignore)
+				testdata/locks-insecure/my-package-lock.json: found 1 package
+					Using config at testdata/existing-config-with-ignores.yml (1 ignore)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no new vulnerabilities found (1 was ignored)
 
-				Updated fixtures/existing-config-with-ignores.yml with 1 vulnerability
+				Updated testdata/existing-config-with-ignores.yml with 1 vulnerability
 			`,
 			wantStderr: "",
 			around: func(t *testing.T) func() {
 				t.Helper()
 
 				return setupConfigForUpdating(t,
-					"fixtures/existing-config-with-ignores.yml",
+					"testdata/existing-config-with-ignores.yml",
 					"ignore: [GHSA-whgm-jr23-g3j9]",
 					`
 						ignore:
@@ -1502,31 +1502,31 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 			args: []string{
 				"--update-config-ignores",
 				"--no-config-ignores",
-				"--config", "fixtures/existing-config-with-ignored-ignores.yml",
-				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json"),
+				"--config", "testdata/existing-config-with-ignored-ignores.yml",
+				filepath.FromSlash("package-lock.json:./testdata/locks-insecure/my-package-lock.json"),
 			},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
-					Using config at fixtures/existing-config-with-ignored-ignores.yml (skipping any ignores)
+				testdata/locks-insecure/my-package-lock.json: found 1 package
+					Using config at testdata/existing-config-with-ignored-ignores.yml (skipping any ignores)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
-					1 known vulnerability found in fixtures/locks-insecure/my-package-lock.json
+					1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
 
-				Updated fixtures/existing-config-with-ignored-ignores.yml with 1 vulnerability
+				Updated testdata/existing-config-with-ignored-ignores.yml with 1 vulnerability
 			`,
 			wantStderr: "",
 			around: func(t *testing.T) func() {
 				t.Helper()
 
 				return setupConfigForUpdating(t,
-					"fixtures/existing-config-with-ignored-ignores.yml",
+					"testdata/existing-config-with-ignored-ignores.yml",
 					"ignore: [GHSA-whgm-jr23-g3j9]",
 					`
 					ignore:
@@ -1540,11 +1540,11 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 			name: "",
 			args: []string{
 				"--update-config-ignores",
-				"--config", "fixtures/existing-config-with-many-lockfiles.yml",
-				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure/my-package-lock.json"),
-				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure-many/my-package-lock.json"),
-				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure-nested/my-package-lock.json"),
-				filepath.FromSlash("composer.lock:./fixtures/locks-insecure-nested/nested/my-composer-lock.json"),
+				"--config", "testdata/existing-config-with-many-lockfiles.yml",
+				filepath.FromSlash("package-lock.json:./testdata/locks-insecure/my-package-lock.json"),
+				filepath.FromSlash("package-lock.json:./testdata/locks-insecure-many/my-package-lock.json"),
+				filepath.FromSlash("package-lock.json:./testdata/locks-insecure-nested/my-package-lock.json"),
+				filepath.FromSlash("composer.lock:./testdata/locks-insecure-nested/nested/my-composer-lock.json"),
 			},
 			wantExitCode: 1,
 			wantStdout: `
@@ -1552,14 +1552,14 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure/my-package-lock.json: found 1 package
-					Using config at fixtures/existing-config-with-many-lockfiles.yml (1 ignore)
+				testdata/locks-insecure/my-package-lock.json: found 1 package
+					Using config at testdata/existing-config-with-many-lockfiles.yml (1 ignore)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no new vulnerabilities found (1 was ignored)
 
-				fixtures/locks-insecure-many/my-package-lock.json: found 6 packages
-					Using config at fixtures/existing-config-with-many-lockfiles.yml (1 ignore)
+				testdata/locks-insecure-many/my-package-lock.json: found 6 packages
+					Using config at testdata/existing-config-with-many-lockfiles.yml (1 ignore)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
           ansi-regex@4.1.0 is affected by the following vulnerabilities:
@@ -1573,32 +1573,32 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
           word-wrap@1.2.3 is affected by the following vulnerabilities:
             GHSA-j8xg-fqg3-53r7: word-wrap vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-j8xg-fqg3-53r7)
 
-					5 known vulnerabilities found in fixtures/locks-insecure-many/my-package-lock.json
+					5 known vulnerabilities found in testdata/locks-insecure-many/my-package-lock.json
 
-				fixtures/locks-insecure-nested/my-package-lock.json: found 1 package
-					Using config at fixtures/existing-config-with-many-lockfiles.yml (1 ignore)
+				testdata/locks-insecure-nested/my-package-lock.json: found 1 package
+					Using config at testdata/existing-config-with-many-lockfiles.yml (1 ignore)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					no new vulnerabilities found (1 was ignored)
 
-				fixtures/locks-insecure-nested/nested/my-composer-lock.json: found 1 package
-					Using config at fixtures/existing-config-with-many-lockfiles.yml (1 ignore)
+				testdata/locks-insecure-nested/nested/my-composer-lock.json: found 1 package
+					Using config at testdata/existing-config-with-many-lockfiles.yml (1 ignore)
 					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 
 					guzzlehttp/psr7@1.8.2 is affected by the following vulnerabilities:
 						GHSA-q7rv-6hp3-vh96: Improper Input Validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-q7rv-6hp3-vh96)
 						GHSA-wxmh-65f7-jcvw: Improper header name validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-wxmh-65f7-jcvw)
 
-					2 known vulnerabilities found in fixtures/locks-insecure-nested/nested/my-composer-lock.json
+					2 known vulnerabilities found in testdata/locks-insecure-nested/nested/my-composer-lock.json
 
-				Updated fixtures/existing-config-with-many-lockfiles.yml with 8 vulnerabilities
+				Updated testdata/existing-config-with-many-lockfiles.yml with 8 vulnerabilities
 			`,
 			wantStderr: "",
 			around: func(t *testing.T) func() {
 				t.Helper()
 
 				return setupConfigForUpdating(t,
-					"fixtures/existing-config-with-many-lockfiles.yml",
+					"testdata/existing-config-with-many-lockfiles.yml",
 					"ignore: [GHSA-whgm-jr23-g3j9]",
 					`
 					ignore:
@@ -1619,8 +1619,8 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 			name: "",
 			args: []string{
 				"--update-config-ignores",
-				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure-nested/my-package-lock.json"),
-				filepath.FromSlash("composer.lock:./fixtures/locks-insecure-nested/nested/my-composer-lock.json"),
+				filepath.FromSlash("package-lock.json:./testdata/locks-insecure-nested/my-package-lock.json"),
+				filepath.FromSlash("composer.lock:./testdata/locks-insecure-nested/nested/my-composer-lock.json"),
 			},
 			wantExitCode: 1,
 			wantStdout: `
@@ -1628,34 +1628,34 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 					Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure-nested/my-package-lock.json: found 1 package
-					Using config at fixtures/locks-insecure-nested/.osv-detector.yml (0 ignores)
+				testdata/locks-insecure-nested/my-package-lock.json: found 1 package
+					Using config at testdata/locks-insecure-nested/.osv-detector.yml (0 ignores)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
 					ansi-html@0.0.1 is affected by the following vulnerabilities:
 						GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
 
-					1 known vulnerability found in fixtures/locks-insecure-nested/my-package-lock.json
+					1 known vulnerability found in testdata/locks-insecure-nested/my-package-lock.json
 
-				fixtures/locks-insecure-nested/nested/my-composer-lock.json: found 1 package
-					Using config at fixtures/locks-insecure-nested/nested/.osv-detector.yml (0 ignores)
+				testdata/locks-insecure-nested/nested/my-composer-lock.json: found 1 package
+					Using config at testdata/locks-insecure-nested/nested/.osv-detector.yml (0 ignores)
 					Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 
 					guzzlehttp/psr7@1.8.2 is affected by the following vulnerabilities:
 						GHSA-q7rv-6hp3-vh96: Improper Input Validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-q7rv-6hp3-vh96)
 						GHSA-wxmh-65f7-jcvw: Improper header name validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-wxmh-65f7-jcvw)
 
-					2 known vulnerabilities found in fixtures/locks-insecure-nested/nested/my-composer-lock.json
+					2 known vulnerabilities found in testdata/locks-insecure-nested/nested/my-composer-lock.json
 
-				Updated fixtures/locks-insecure-nested/.osv-detector.yml with 1 vulnerability
-				Updated fixtures/locks-insecure-nested/nested/.osv-detector.yml with 2 vulnerabilities
+				Updated testdata/locks-insecure-nested/.osv-detector.yml with 1 vulnerability
+				Updated testdata/locks-insecure-nested/nested/.osv-detector.yml with 2 vulnerabilities
 			`,
 			wantStderr: "",
 			around: func(t *testing.T) func() {
 				t.Helper()
 
 				cleanupConfig1 := setupConfigForUpdating(t,
-					"fixtures/locks-insecure-nested/.osv-detector.yml",
+					"testdata/locks-insecure-nested/.osv-detector.yml",
 					"ignore: []",
 					`
 					ignore:
@@ -1664,7 +1664,7 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 				)
 
 				cleanupConfig2 := setupConfigForUpdating(t,
-					"fixtures/locks-insecure-nested/nested/.osv-detector.yml",
+					"testdata/locks-insecure-nested/nested/.osv-detector.yml",
 					"ignore: []",
 					`
 					ignore:
@@ -1684,15 +1684,15 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 			name: "",
 			args: []string{
 				"--update-config-ignores",
-				filepath.FromSlash("package-lock.json:./fixtures/locks-insecure-many/my-package-lock.json"),
+				filepath.FromSlash("package-lock.json:./testdata/locks-insecure-many/my-package-lock.json"),
 			},
 			wantExitCode: 1,
 			wantStdout: `
 				Loaded the following OSV databases:
 					npm (%% vulnerabilities, including withdrawn - last updated %%)
 
-				fixtures/locks-insecure-many/my-package-lock.json: found 6 packages
-					Using config at fixtures/locks-insecure-many/.osv-detector.yml (3 ignores)
+				testdata/locks-insecure-many/my-package-lock.json: found 6 packages
+					Using config at testdata/locks-insecure-many/.osv-detector.yml (3 ignores)
 					Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
 
           nth-check@1.0.2 is affected by the following vulnerabilities:
@@ -1702,16 +1702,16 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
           word-wrap@1.2.3 is affected by the following vulnerabilities:
             GHSA-j8xg-fqg3-53r7: word-wrap vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-j8xg-fqg3-53r7)
 
-					3 new vulnerabilities found in fixtures/locks-insecure-many/my-package-lock.json (2 were ignored)
+					3 new vulnerabilities found in testdata/locks-insecure-many/my-package-lock.json (2 were ignored)
 
-				Updated fixtures/locks-insecure-many/.osv-detector.yml with 5 vulnerabilities
+				Updated testdata/locks-insecure-many/.osv-detector.yml with 5 vulnerabilities
 			`,
 			wantStderr: "",
 			around: func(t *testing.T) func() {
 				t.Helper()
 
 				return setupConfigForUpdating(t,
-					"fixtures/locks-insecure-many/.osv-detector.yml",
+					"testdata/locks-insecure-many/.osv-detector.yml",
 					"ignore: [GHSA-7p7h-4mm5-852v, GHSA-93q8-gq69-wqmw, GHSA-67hx-6x53-jw92]",
 					`
 						ignore:
@@ -1747,9 +1747,9 @@ func TestRun_EndToEnd(t *testing.T) {
 		t.Skip("Skipping acceptance tests")
 	}
 
-	e2eFixturesDir := "./fixtures/locks-e2e"
+	e2eTestdataDir := "./testdata/locks-e2e"
 
-	files, err := os.ReadDir(e2eFixturesDir)
+	files, err := os.ReadDir(e2eTestdataDir)
 
 	if err != nil {
 		t.Fatalf("%v", err)
@@ -1779,7 +1779,7 @@ func TestRun_EndToEnd(t *testing.T) {
 
 		parseAs := matches[1]
 
-		fp := filepath.FromSlash(filepath.Join(e2eFixturesDir, f.Name()))
+		fp := filepath.FromSlash(filepath.Join(e2eTestdataDir, f.Name()))
 
 		wantStdout, err := os.ReadFile(fp + ".out.txt")
 

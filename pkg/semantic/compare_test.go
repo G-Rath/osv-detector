@@ -49,7 +49,7 @@ func compareWord(t *testing.T, result int) string {
 func runAgainstEcosystemFixture(t *testing.T, ecosystem internal.Ecosystem, filename string) {
 	t.Helper()
 
-	file, err := os.Open("fixtures/" + filename)
+	file, err := os.Open("testdata/" + filename)
 	if err != nil {
 		t.Fatalf("Failed to read fixture file: %v", err)
 	}
@@ -245,7 +245,7 @@ func TestVersion_Compare_Ecosystems(t *testing.T) {
 	// we don't check the generated fixture for Red Hat in due to its size
 	// so we only add it if it exists, so that people can have it locally
 	// without needing to do a dance with git everytime they commit
-	_, err := os.Stat("fixtures/redhat-versions-generated.txt")
+	_, err := os.Stat("testdata/redhat-versions-generated.txt")
 	if err == nil {
 		tests = append(tests, struct {
 			name string
@@ -255,7 +255,7 @@ func TestVersion_Compare_Ecosystems(t *testing.T) {
 			file: "redhat-versions-generated.txt",
 		})
 	} else if !errors.Is(err, fs.ErrNotExist) {
-		t.Fatalf("fixtures/redhat-versions-generated.txt exists but could not be read: %v", err)
+		t.Fatalf("testdata/redhat-versions-generated.txt exists but could not be read: %v", err)
 	}
 
 	for _, tt := range tests {

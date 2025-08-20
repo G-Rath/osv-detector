@@ -29,5 +29,5 @@ lint-with-go-fmt:
 format-with-prettier:
 	npx prettier --prose-wrap always --write .
 
-regenerate-e2e-fixtures: ${BINARY}
-	OSV_DETECTOR_CMD=./${BINARY} ./generators/generate-e2e-fixtures.js
+regenerate-e2e-testdata: ${BINARY}
+	OSV_DETECTOR_CMD=./${BINARY} ./generators/generate-e2e-testdata.js

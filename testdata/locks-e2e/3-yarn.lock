@@ -5944,7 +5944,7 @@ __metadata:
     pkg-dir: ^4.2.0
     resolve-cwd: ^3.0.0
   bin:
-    import-local-fixture: fixtures/cli.js
+    import-local-fixture: testdata/cli.js
   checksum: 9ba5f1697b8b11aae8dab7964bf1c2409ed5dc51dd03fe8698fb32df04a3a683adbe9d95e6bb963a384373ec8d055c508f0c534b45aac1de4a3b4b653e6cfe82
   languageName: node
   linkType: hard

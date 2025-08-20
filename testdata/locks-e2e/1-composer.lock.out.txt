@@ -1,7 +1,7 @@
 Loaded the following OSV databases:
   Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 
-fixtures/locks-e2e/1-composer.lock: found 203 packages
+testdata/locks-e2e/1-composer.lock: found 203 packages
   Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 
   guzzlehttp/guzzle@6.5.5 is affected by the following vulnerabilities:
@@ -45,4 +45,4 @@ fixtures/locks-e2e/1-composer.lock: found 203 packages
   silverstripe/versioned-admin@1.8.0 is affected by the following vulnerabilities:
     GHSA-66jf-xm2m-7m8r: Stored XSS in Compare Mode (https://github.com/advisories/GHSA-66jf-xm2m-7m8r)
 
-  31 known vulnerabilities found in fixtures/locks-e2e/1-composer.lock
+  31 known vulnerabilities found in testdata/locks-e2e/1-composer.lock

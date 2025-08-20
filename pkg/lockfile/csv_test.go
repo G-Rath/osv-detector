@@ -274,11 +274,11 @@ func TestFromCSVFile(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				pathToCSV: "fixtures/csv/empty.csv",
+				pathToCSV: "testdata/csv/empty.csv",
 				parseAs:   "csv-file",
 			},
 			want: lockfile.Lockfile{
-				FilePath: "fixtures/csv/empty.csv",
+				FilePath: "testdata/csv/empty.csv",
 				ParsedAs: "csv-file",
 				Packages: nil,
 			},
@@ -286,11 +286,11 @@ func TestFromCSVFile(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				pathToCSV: "fixtures/csv/multiple-rows.csv",
+				pathToCSV: "testdata/csv/multiple-rows.csv",
 				parseAs:   "csv-file",
 			},
 			want: lockfile.Lockfile{
-				FilePath: "fixtures/csv/multiple-rows.csv",
+				FilePath: "testdata/csv/multiple-rows.csv",
 				ParsedAs: "csv-file",
 				Packages: []lockfile.PackageDetails{
 					{
@@ -329,11 +329,11 @@ func TestFromCSVFile(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				pathToCSV: "fixtures/csv/with-extra-columns.csv",
+				pathToCSV: "testdata/csv/with-extra-columns.csv",
 				parseAs:   "csv-file",
 			},
 			want: lockfile.Lockfile{
-				FilePath: "fixtures/csv/with-extra-columns.csv",
+				FilePath: "testdata/csv/with-extra-columns.csv",
 				ParsedAs: "csv-file",
 				Packages: []lockfile.PackageDetails{
 					{
@@ -366,11 +366,11 @@ func TestFromCSVFile(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				pathToCSV: "fixtures/csv/one-row.csv",
+				pathToCSV: "testdata/csv/one-row.csv",
 				parseAs:   "-",
 			},
 			want: lockfile.Lockfile{
-				FilePath: "fixtures/csv/one-row.csv",
+				FilePath: "testdata/csv/one-row.csv",
 				ParsedAs: "-",
 				Packages: []lockfile.PackageDetails{
 					{
@@ -385,11 +385,11 @@ func TestFromCSVFile(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				pathToCSV: "fixtures/csv/two-rows.csv",
+				pathToCSV: "testdata/csv/two-rows.csv",
 				parseAs:   "-",
 			},
 			want: lockfile.Lockfile{
-				FilePath: "fixtures/csv/two-rows.csv",
+				FilePath: "testdata/csv/two-rows.csv",
 				ParsedAs: "-",
 				Packages: []lockfile.PackageDetails{
 					{
@@ -410,11 +410,11 @@ func TestFromCSVFile(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				pathToCSV: "fixtures/csv/with-headers.csv",
+				pathToCSV: "testdata/csv/with-headers.csv",
 				parseAs:   "-",
 			},
 			want: lockfile.Lockfile{
-				FilePath: "fixtures/csv/with-headers.csv",
+				FilePath: "testdata/csv/with-headers.csv",
 				ParsedAs: "-",
 				Packages: []lockfile.PackageDetails{
 					{
@@ -441,11 +441,11 @@ func TestFromCSVFile(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				pathToCSV: "fixtures/csv/commits.csv",
+				pathToCSV: "testdata/csv/commits.csv",
 				parseAs:   "-",
 			},
 			want: lockfile.Lockfile{
-				FilePath: "fixtures/csv/commits.csv",
+				FilePath: "testdata/csv/commits.csv",
 				ParsedAs: "-",
 				Packages: []lockfile.PackageDetails{
 					{
@@ -514,7 +514,7 @@ func TestFromCSVFile_Errors(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				pathToCSV: "fixtures/csv/does-not-exist",
+				pathToCSV: "testdata/csv/does-not-exist",
 				parseAs:   "csv-file",
 			},
 			wantErrMsg: "could not read",
@@ -522,7 +522,7 @@ func TestFromCSVFile_Errors(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				pathToCSV: "fixtures/csv/not-a-csv.xml",
+				pathToCSV: "testdata/csv/not-a-csv.xml",
 				parseAs:   "csv-file",
 			},
 			wantErrMsg: "row 1: not enough fields (expected at least four)",

@@ -87,7 +87,7 @@ func readConfigFixture(t *testing.T, path string) string {
 func TestUpdateWithIgnores_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	err := configer.UpdateWithIgnores("fixtures/does/not/exist", []string{})
+	err := configer.UpdateWithIgnores("testdata/does/not/exist", []string{})
 
 	if err == nil {
 		t.Errorf("Expected to get error, but did not")
@@ -162,7 +162,7 @@ func TestUpdateWithIgnores(t *testing.T) {
 		{
 			name:    "comments and existing ignores are not preserved",
 			ignores: []string{"OSV-1", "OSV-2"},
-			initial: readConfigFixture(t, "fixtures/ext-yml/.osv-detector.yml"),
+			initial: readConfigFixture(t, "testdata/ext-yml/.osv-detector.yml"),
 			updated: `
 				ignore:
 					- OSV-1
@@ -172,7 +172,7 @@ func TestUpdateWithIgnores(t *testing.T) {
 		{
 			name:    "other config options are preserved",
 			ignores: []string{"OSV-4", "OSV-5"},
-			initial: readConfigFixture(t, "fixtures/extra-databases/.osv-detector.yml"),
+			initial: readConfigFixture(t, "testdata/extra-databases/.osv-detector.yml"),
 			updated: `
 				ignore:
 					- OSV-4

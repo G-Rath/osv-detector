@@ -9,7 +9,7 @@ import (
 func TestParseGemfileLock_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGemfileLock("fixtures/bundler/does-not-exist")
+	packages, err := lockfile.ParseGemfileLock("testdata/bundler/does-not-exist")
 
 	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -18,7 +18,7 @@ func TestParseGemfileLock_FileDoesNotExist(t *testing.T) {
 func TestParseGemfileLock_NoSpecSection(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGemfileLock("fixtures/bundler/no-spec-section.lock")
+	packages, err := lockfile.ParseGemfileLock("testdata/bundler/no-spec-section.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -30,7 +30,7 @@ func TestParseGemfileLock_NoSpecSection(t *testing.T) {
 func TestParseGemfileLock_NoGemSection(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGemfileLock("fixtures/bundler/no-gem-section.lock")
+	packages, err := lockfile.ParseGemfileLock("testdata/bundler/no-gem-section.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -42,7 +42,7 @@ func TestParseGemfileLock_NoGemSection(t *testing.T) {
 func TestParseGemfileLock_NoGems(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGemfileLock("fixtures/bundler/no-gems.lock")
+	packages, err := lockfile.ParseGemfileLock("testdata/bundler/no-gems.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -54,7 +54,7 @@ func TestParseGemfileLock_NoGems(t *testing.T) {
 func TestParseGemfileLock_OneGem(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGemfileLock("fixtures/bundler/one-gem.lock")
+	packages, err := lockfile.ParseGemfileLock("testdata/bundler/one-gem.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -73,7 +73,7 @@ func TestParseGemfileLock_OneGem(t *testing.T) {
 func TestParseGemfileLock_SomeGems(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGemfileLock("fixtures/bundler/some-gems.lock")
+	packages, err := lockfile.ParseGemfileLock("testdata/bundler/some-gems.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -104,7 +104,7 @@ func TestParseGemfileLock_SomeGems(t *testing.T) {
 func TestParseGemfileLock_MultipleGems(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGemfileLock("fixtures/bundler/multiple-gems.lock")
+	packages, err := lockfile.ParseGemfileLock("testdata/bundler/multiple-gems.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -153,7 +153,7 @@ func TestParseGemfileLock_MultipleGems(t *testing.T) {
 func TestParseGemfileLock_Rails(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGemfileLock("fixtures/bundler/rails.lock")
+	packages, err := lockfile.ParseGemfileLock("testdata/bundler/rails.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -442,7 +442,7 @@ func TestParseGemfileLock_Rails(t *testing.T) {
 func TestParseGemfileLock_Rubocop(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGemfileLock("fixtures/bundler/rubocop.lock")
+	packages, err := lockfile.ParseGemfileLock("testdata/bundler/rubocop.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -515,7 +515,7 @@ func TestParseGemfileLock_Rubocop(t *testing.T) {
 func TestParseGemfileLock_HasLocalGem(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGemfileLock("fixtures/bundler/has-local-gem.lock")
+	packages, err := lockfile.ParseGemfileLock("testdata/bundler/has-local-gem.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -708,7 +708,7 @@ func TestParseGemfileLock_HasLocalGem(t *testing.T) {
 func TestParseGemfileLock_HasGitGem(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGemfileLock("fixtures/bundler/has-git-gem.lock")
+	packages, err := lockfile.ParseGemfileLock("testdata/bundler/has-git-gem.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

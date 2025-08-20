@@ -9,7 +9,7 @@ import (
 func TestParseRequirementsTxt_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/does-not-exist")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/does-not-exist")
 
 	expectErrContaining(t, err, "could not open")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -18,7 +18,7 @@ func TestParseRequirementsTxt_FileDoesNotExist(t *testing.T) {
 func TestParseRequirementsTxt_Empty(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/empty.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/empty.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -30,7 +30,7 @@ func TestParseRequirementsTxt_Empty(t *testing.T) {
 func TestParseRequirementsTxt_CommentsOnly(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/only-comments.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/only-comments.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -42,7 +42,7 @@ func TestParseRequirementsTxt_CommentsOnly(t *testing.T) {
 func TestParseRequirementsTxt_OneRequirementUnconstrained(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/one-package-unconstrained.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/one-package-unconstrained.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -61,7 +61,7 @@ func TestParseRequirementsTxt_OneRequirementUnconstrained(t *testing.T) {
 func TestParseRequirementsTxt_OneRequirementConstrained(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/one-package-constrained.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/one-package-constrained.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -80,7 +80,7 @@ func TestParseRequirementsTxt_OneRequirementConstrained(t *testing.T) {
 func TestParseRequirementsTxt_MultipleRequirementsConstrained(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/multiple-packages-constrained.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/multiple-packages-constrained.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -171,7 +171,7 @@ func TestParseRequirementsTxt_MultipleRequirementsConstrained(t *testing.T) {
 func TestParseRequirementsTxt_MultipleRequirementsMixed(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/multiple-packages-mixed.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/multiple-packages-mixed.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -232,7 +232,7 @@ func TestParseRequirementsTxt_MultipleRequirementsMixed(t *testing.T) {
 func TestParseRequirementsTxt_FileFormatExample(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/file-format-example.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/file-format-example.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -305,7 +305,7 @@ func TestParseRequirementsTxt_FileFormatExample(t *testing.T) {
 func TestParseRequirementsTxt_WithAddedSupport(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/with-added-support.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/with-added-support.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -324,7 +324,7 @@ func TestParseRequirementsTxt_WithAddedSupport(t *testing.T) {
 func TestParseRequirementsTxt_NonNormalizedNames(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/non-normalized-names.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/non-normalized-names.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -355,7 +355,7 @@ func TestParseRequirementsTxt_NonNormalizedNames(t *testing.T) {
 func TestParseRequirementsTxt_WithMultipleROptions(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/with-multiple-r-options.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/with-multiple-r-options.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -428,7 +428,7 @@ func TestParseRequirementsTxt_WithMultipleROptions(t *testing.T) {
 func TestParseRequirementsTxt_WithBadROption(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/with-bad-r-option.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/with-bad-r-option.txt")
 
 	expectErrContaining(t, err, "could not open")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -437,7 +437,7 @@ func TestParseRequirementsTxt_WithBadROption(t *testing.T) {
 func TestParseRequirementsTxt_DuplicateROptions(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/duplicate-r-dev.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/duplicate-r-dev.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -474,7 +474,7 @@ func TestParseRequirementsTxt_DuplicateROptions(t *testing.T) {
 func TestParseRequirementsTxt_CyclicRSelf(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/cyclic-r-self.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/cyclic-r-self.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -499,7 +499,7 @@ func TestParseRequirementsTxt_CyclicRSelf(t *testing.T) {
 func TestParseRequirementsTxt_CyclicRComplex(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/cyclic-r-complex-1.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/cyclic-r-complex-1.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -530,7 +530,7 @@ func TestParseRequirementsTxt_CyclicRComplex(t *testing.T) {
 func TestParseRequirementsTxt_WithPerRequirementOptions(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/with-per-requirement-options.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/with-per-requirement-options.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -567,7 +567,7 @@ func TestParseRequirementsTxt_WithPerRequirementOptions(t *testing.T) {
 func TestParseRequirementsTxt_LineContinuation(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRequirementsTxt("fixtures/pip/line-continuation.txt")
+	packages, err := lockfile.ParseRequirementsTxt("testdata/pip/line-continuation.txt")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

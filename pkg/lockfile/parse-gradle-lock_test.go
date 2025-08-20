@@ -9,7 +9,7 @@ import (
 func TestParseGradleLock_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGradleLock("fixtures/gradle/does-not-exist")
+	packages, err := lockfile.ParseGradleLock("testdata/gradle/does-not-exist")
 
 	expectErrContaining(t, err, "could not open")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -18,7 +18,7 @@ func TestParseGradleLock_FileDoesNotExist(t *testing.T) {
 func TestParseGradleLock_OnlyComments(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGradleLock("fixtures/gradle/only-comments")
+	packages, err := lockfile.ParseGradleLock("testdata/gradle/only-comments")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -30,7 +30,7 @@ func TestParseGradleLock_OnlyComments(t *testing.T) {
 func TestParseGradleLock_EmptyStatement(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGradleLock("fixtures/gradle/only-empty")
+	packages, err := lockfile.ParseGradleLock("testdata/gradle/only-empty")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -42,7 +42,7 @@ func TestParseGradleLock_EmptyStatement(t *testing.T) {
 func TestParseGradleLock_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGradleLock("fixtures/gradle/one-pkg")
+	packages, err := lockfile.ParseGradleLock("testdata/gradle/one-pkg")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -61,7 +61,7 @@ func TestParseGradleLock_OnePackage(t *testing.T) {
 func TestParseGradleLock_MultiplePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGradleLock("fixtures/gradle/5-pkg")
+	packages, err := lockfile.ParseGradleLock("testdata/gradle/5-pkg")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -105,7 +105,7 @@ func TestParseGradleLock_MultiplePackage(t *testing.T) {
 func TestParseGradleLock_WithInvalidLines(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseGradleLock("fixtures/gradle/with-bad-pkg")
+	packages, err := lockfile.ParseGradleLock("testdata/gradle/with-bad-pkg")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

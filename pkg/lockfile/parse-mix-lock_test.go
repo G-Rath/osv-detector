@@ -9,7 +9,7 @@ import (
 func TestParseMixLock_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMixLock("fixtures/mix/does-not-exist")
+	packages, err := lockfile.ParseMixLock("testdata/mix/does-not-exist")
 
 	expectErrContaining(t, err, "could not open")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -18,7 +18,7 @@ func TestParseMixLock_FileDoesNotExist(t *testing.T) {
 func TestParseMixLock_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMixLock("fixtures/mix/empty.lock")
+	packages, err := lockfile.ParseMixLock("testdata/mix/empty.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -30,7 +30,7 @@ func TestParseMixLock_NoPackages(t *testing.T) {
 func TestParseMixLock_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMixLock("fixtures/mix/one-package.lock")
+	packages, err := lockfile.ParseMixLock("testdata/mix/one-package.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -50,7 +50,7 @@ func TestParseMixLock_OnePackage(t *testing.T) {
 func TestParseMixLock_TwoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMixLock("fixtures/mix/two-packages.lock")
+	packages, err := lockfile.ParseMixLock("testdata/mix/two-packages.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -77,7 +77,7 @@ func TestParseMixLock_TwoPackages(t *testing.T) {
 func TestParseMixLock_Many(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMixLock("fixtures/mix/many.lock")
+	packages, err := lockfile.ParseMixLock("testdata/mix/many.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -237,7 +237,7 @@ func TestParseMixLock_Many(t *testing.T) {
 func TestParseMixLock_GitPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseMixLock("fixtures/mix/git.lock")
+	packages, err := lockfile.ParseMixLock("testdata/mix/git.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

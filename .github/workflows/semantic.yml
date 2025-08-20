@@ -52,7 +52,7 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: generated-debian-versions
-          path: pkg/semantic/fixtures/debian-versions-generated.txt
+          path: pkg/semantic/testdata/debian-versions-generated.txt
 
       - uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
@@ -85,7 +85,7 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: generated-redhat-versions
-          path: pkg/semantic/fixtures/redhat-versions-generated.txt
+          path: pkg/semantic/testdata/redhat-versions-generated.txt
 
       - uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
@@ -109,7 +109,7 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: generated-packagist-versions
-          path: pkg/semantic/fixtures/packagist-versions-generated.txt
+          path: pkg/semantic/testdata/packagist-versions-generated.txt
 
   generate-pypi-versions:
     permissions:
@@ -129,7 +129,7 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: generated-pypi-versions
-          path: pkg/semantic/fixtures/pypi-versions-generated.txt
+          path: pkg/semantic/testdata/pypi-versions-generated.txt
 
   generate-rubygems-versions:
     permissions:
@@ -149,7 +149,7 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: generated-rubygems-versions
-          path: pkg/semantic/fixtures/rubygems-versions-generated.txt
+          path: pkg/semantic/testdata/rubygems-versions-generated.txt
 
   generate-maven-versions:
     permissions:
@@ -175,7 +175,7 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: generated-maven-versions
-          path: pkg/semantic/fixtures/maven-versions-generated.txt
+          path: pkg/semantic/testdata/maven-versions-generated.txt
 
   generate-cran-versions:
     permissions:
@@ -193,7 +193,7 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: generated-cran-versions
-          path: pkg/semantic/fixtures/cran-versions-generated.txt
+          path: pkg/semantic/testdata/cran-versions-generated.txt
 
   test-semantic:
     permissions:
@@ -220,7 +220,7 @@ jobs:
       - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           pattern: generated-*-versions
-          path: pkg/semantic/fixtures/
+          path: pkg/semantic/testdata/
           merge-multiple: true
       - run: git status
       - run: make test

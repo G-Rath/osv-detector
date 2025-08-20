@@ -9,7 +9,7 @@ import (
 func TestParseUvLock_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseUvLock("fixtures/uv/does-not-exist")
+	packages, err := lockfile.ParseUvLock("testdata/uv/does-not-exist")
 
 	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -18,7 +18,7 @@ func TestParseUvLock_FileDoesNotExist(t *testing.T) {
 func TestParseUvLock_InvalidToml(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseUvLock("fixtures/uv/not-toml.txt")
+	packages, err := lockfile.ParseUvLock("testdata/uv/not-toml.txt")
 
 	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -27,7 +27,7 @@ func TestParseUvLock_InvalidToml(t *testing.T) {
 func TestParseUvLock_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseUvLock("fixtures/uv/empty.lock")
+	packages, err := lockfile.ParseUvLock("testdata/uv/empty.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -39,7 +39,7 @@ func TestParseUvLock_NoPackages(t *testing.T) {
 func TestParseUvLock_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseUvLock("fixtures/uv/one-package.lock")
+	packages, err := lockfile.ParseUvLock("testdata/uv/one-package.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -58,7 +58,7 @@ func TestParseUvLock_OnePackage(t *testing.T) {
 func TestParseUvLock_TwoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseUvLock("fixtures/uv/two-packages.lock")
+	packages, err := lockfile.ParseUvLock("testdata/uv/two-packages.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -83,7 +83,7 @@ func TestParseUvLock_TwoPackages(t *testing.T) {
 func TestParseUvLock_SourceGit(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseUvLock("fixtures/uv/source-git.lock")
+	packages, err := lockfile.ParseUvLock("testdata/uv/source-git.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -103,7 +103,7 @@ func TestParseUvLock_SourceGit(t *testing.T) {
 func TestParseUvLock_GroupedPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseUvLock("fixtures/uv/grouped-packages.lock")
+	packages, err := lockfile.ParseUvLock("testdata/uv/grouped-packages.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

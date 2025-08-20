@@ -213,7 +213,7 @@ function compareVersions(array $lines, string $select = "all"): bool
   return $hasAnyFailed;
 }
 
-$outfile = "pkg/semantic/fixtures/packagist-versions-generated.txt";
+$outfile = "pkg/semantic/testdata/packagist-versions-generated.txt";
 
 /** @noinspection PhpUnhandledExceptionInspection */
 $packages = fetchPackageVersions();
