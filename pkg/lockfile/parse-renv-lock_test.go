@@ -9,7 +9,7 @@ import (
 func TestParseRenvLock_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRenvLock("fixtures/renv/does-not-exist")
+	packages, err := lockfile.ParseRenvLock("testdata/renv/does-not-exist")
 
 	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -18,7 +18,7 @@ func TestParseRenvLock_FileDoesNotExist(t *testing.T) {
 func TestParseRenvLock_InvalidJson(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRenvLock("fixtures/renv/not-json.txt")
+	packages, err := lockfile.ParseRenvLock("testdata/renv/not-json.txt")
 
 	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -27,7 +27,7 @@ func TestParseRenvLock_InvalidJson(t *testing.T) {
 func TestParseRenvLock_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRenvLock("fixtures/renv/empty.lock")
+	packages, err := lockfile.ParseRenvLock("testdata/renv/empty.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -39,7 +39,7 @@ func TestParseRenvLock_NoPackages(t *testing.T) {
 func TestParseRenvLock_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRenvLock("fixtures/renv/one-package.lock")
+	packages, err := lockfile.ParseRenvLock("testdata/renv/one-package.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -58,7 +58,7 @@ func TestParseRenvLock_OnePackage(t *testing.T) {
 func TestParseRenvLock_TwoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRenvLock("fixtures/renv/two-packages.lock")
+	packages, err := lockfile.ParseRenvLock("testdata/renv/two-packages.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -83,7 +83,7 @@ func TestParseRenvLock_TwoPackages(t *testing.T) {
 func TestParseRenvLock_WithMixedSources(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRenvLock("fixtures/renv/with-mixed-sources.lock")
+	packages, err := lockfile.ParseRenvLock("testdata/renv/with-mixed-sources.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -107,7 +107,7 @@ func TestParseRenvLock_WithMixedSources(t *testing.T) {
 func TestParseRenvLock_WithoutRepository(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseRenvLock("fixtures/renv/without-repository.lock")
+	packages, err := lockfile.ParseRenvLock("testdata/renv/without-repository.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

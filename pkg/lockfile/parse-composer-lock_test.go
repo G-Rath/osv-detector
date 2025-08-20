@@ -9,7 +9,7 @@ import (
 func TestParseComposerLock_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseComposerLock("fixtures/composer/does-not-exist")
+	packages, err := lockfile.ParseComposerLock("testdata/composer/does-not-exist")
 
 	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -18,7 +18,7 @@ func TestParseComposerLock_FileDoesNotExist(t *testing.T) {
 func TestParseComposerLock_InvalidJson(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseComposerLock("fixtures/composer/not-json.txt")
+	packages, err := lockfile.ParseComposerLock("testdata/composer/not-json.txt")
 
 	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -27,7 +27,7 @@ func TestParseComposerLock_InvalidJson(t *testing.T) {
 func TestParseComposerLock_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseComposerLock("fixtures/composer/empty.json")
+	packages, err := lockfile.ParseComposerLock("testdata/composer/empty.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -39,7 +39,7 @@ func TestParseComposerLock_NoPackages(t *testing.T) {
 func TestParseComposerLock_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseComposerLock("fixtures/composer/one-package.json")
+	packages, err := lockfile.ParseComposerLock("testdata/composer/one-package.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -59,7 +59,7 @@ func TestParseComposerLock_OnePackage(t *testing.T) {
 func TestParseComposerLock_OnePackageDev(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseComposerLock("fixtures/composer/one-package-dev.json")
+	packages, err := lockfile.ParseComposerLock("testdata/composer/one-package-dev.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -79,7 +79,7 @@ func TestParseComposerLock_OnePackageDev(t *testing.T) {
 func TestParseComposerLock_TwoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseComposerLock("fixtures/composer/two-packages.json")
+	packages, err := lockfile.ParseComposerLock("testdata/composer/two-packages.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -106,7 +106,7 @@ func TestParseComposerLock_TwoPackages(t *testing.T) {
 func TestParseComposerLock_TwoPackagesAlt(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseComposerLock("fixtures/composer/two-packages-alt.json")
+	packages, err := lockfile.ParseComposerLock("testdata/composer/two-packages-alt.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

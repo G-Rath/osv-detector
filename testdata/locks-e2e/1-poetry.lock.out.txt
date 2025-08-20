@@ -1,7 +1,7 @@
 Loaded the following OSV databases:
   PyPI (%% vulnerabilities, including withdrawn - last updated %%)
 
-fixtures/locks-e2e/1-poetry.lock: found 142 packages
+testdata/locks-e2e/1-poetry.lock: found 142 packages
   Using db PyPI (%% vulnerabilities, including withdrawn - last updated %%)
 
   cryptography@41.0.2 is affected by the following vulnerabilities:
@@ -52,4 +52,4 @@ fixtures/locks-e2e/1-poetry.lock: found 142 packages
     GHSA-fc75-58r8-rm3h: Wagtail vulnerable to disclosure of user names via admin bulk action views (https://github.com/advisories/GHSA-fc75-58r8-rm3h)
     GHSA-xqxm-2rpm-3889: Comment reply notifications sent to incorrect users (https://github.com/advisories/GHSA-xqxm-2rpm-3889)
 
-  42 known vulnerabilities found in fixtures/locks-e2e/1-poetry.lock
+  42 known vulnerabilities found in testdata/locks-e2e/1-poetry.lock

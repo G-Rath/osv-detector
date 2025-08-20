@@ -9,7 +9,7 @@ import (
 func TestParseYarnLock_v1_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseYarnLock("fixtures/yarn/does-not-exist")
+	packages, err := lockfile.ParseYarnLock("testdata/yarn/does-not-exist")
 
 	expectErrContaining(t, err, "could not open")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -18,7 +18,7 @@ func TestParseYarnLock_v1_FileDoesNotExist(t *testing.T) {
 func TestParseYarnLock_v1_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseYarnLock("fixtures/yarn/empty.v1.lock")
+	packages, err := lockfile.ParseYarnLock("testdata/yarn/empty.v1.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -30,7 +30,7 @@ func TestParseYarnLock_v1_NoPackages(t *testing.T) {
 func TestParseYarnLock_v1_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseYarnLock("fixtures/yarn/one-package.v1.lock")
+	packages, err := lockfile.ParseYarnLock("testdata/yarn/one-package.v1.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -49,7 +49,7 @@ func TestParseYarnLock_v1_OnePackage(t *testing.T) {
 func TestParseYarnLock_v1_TwoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseYarnLock("fixtures/yarn/two-packages.v1.lock")
+	packages, err := lockfile.ParseYarnLock("testdata/yarn/two-packages.v1.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -74,7 +74,7 @@ func TestParseYarnLock_v1_TwoPackages(t *testing.T) {
 func TestParseYarnLock_v1_WithQuotes(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseYarnLock("fixtures/yarn/with-quotes.v1.lock")
+	packages, err := lockfile.ParseYarnLock("testdata/yarn/with-quotes.v1.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -99,7 +99,7 @@ func TestParseYarnLock_v1_WithQuotes(t *testing.T) {
 func TestParseYarnLock_v1_MultipleVersions(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseYarnLock("fixtures/yarn/multiple-versions.v1.lock")
+	packages, err := lockfile.ParseYarnLock("testdata/yarn/multiple-versions.v1.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -136,7 +136,7 @@ func TestParseYarnLock_v1_MultipleVersions(t *testing.T) {
 func TestParseYarnLock_v1_MultipleConstraints(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseYarnLock("fixtures/yarn/multiple-constraints.v1.lock")
+	packages, err := lockfile.ParseYarnLock("testdata/yarn/multiple-constraints.v1.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -161,7 +161,7 @@ func TestParseYarnLock_v1_MultipleConstraints(t *testing.T) {
 func TestParseYarnLock_v1_ScopedPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseYarnLock("fixtures/yarn/scoped-packages.v1.lock")
+	packages, err := lockfile.ParseYarnLock("testdata/yarn/scoped-packages.v1.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -186,7 +186,7 @@ func TestParseYarnLock_v1_ScopedPackages(t *testing.T) {
 func TestParseYarnLock_v1_WithPrerelease(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseYarnLock("fixtures/yarn/with-prerelease.v1.lock")
+	packages, err := lockfile.ParseYarnLock("testdata/yarn/with-prerelease.v1.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -229,7 +229,7 @@ func TestParseYarnLock_v1_WithPrerelease(t *testing.T) {
 func TestParseYarnLock_v1_WithBuildString(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseYarnLock("fixtures/yarn/with-build-string.v1.lock")
+	packages, err := lockfile.ParseYarnLock("testdata/yarn/with-build-string.v1.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -254,7 +254,7 @@ func TestParseYarnLock_v1_WithBuildString(t *testing.T) {
 func TestParseYarnLock_v1_Commits(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseYarnLock("fixtures/yarn/commits.v1.lock")
+	packages, err := lockfile.ParseYarnLock("testdata/yarn/commits.v1.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -393,7 +393,7 @@ func TestParseYarnLock_v1_Commits(t *testing.T) {
 func TestParseYarnLock_v1_Files(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseYarnLock("fixtures/yarn/files.v1.lock")
+	packages, err := lockfile.ParseYarnLock("testdata/yarn/files.v1.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -448,7 +448,7 @@ func TestParseYarnLock_v1_Files(t *testing.T) {
 func TestParseYarnLock_v1_WithAliases(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseYarnLock("fixtures/yarn/with-aliases.v1.lock")
+	packages, err := lockfile.ParseYarnLock("testdata/yarn/with-aliases.v1.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

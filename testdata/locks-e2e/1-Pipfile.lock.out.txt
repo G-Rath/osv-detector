@@ -1,7 +1,7 @@
 Loaded the following OSV databases:
   PyPI (%% vulnerabilities, including withdrawn - last updated %%)
 
-fixtures/locks-e2e/1-Pipfile.lock: found 114 packages
+testdata/locks-e2e/1-Pipfile.lock: found 114 packages
   Using db PyPI (%% vulnerabilities, including withdrawn - last updated %%)
 
   ansible@7.2.0 is affected by the following vulnerabilities:
@@ -41,4 +41,4 @@ fixtures/locks-e2e/1-Pipfile.lock: found 114 packages
     GHSA-5286-f2rf-35c2: Wagtail vulnerable to stored Cross-site Scripting attack via ModelAdmin views (https://github.com/advisories/GHSA-5286-f2rf-35c2)
     GHSA-fc75-58r8-rm3h: Wagtail vulnerable to disclosure of user names via admin bulk action views (https://github.com/advisories/GHSA-fc75-58r8-rm3h)
 
-  26 known vulnerabilities found in fixtures/locks-e2e/1-Pipfile.lock
+  26 known vulnerabilities found in testdata/locks-e2e/1-Pipfile.lock

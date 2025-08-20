@@ -9,7 +9,7 @@ import (
 func TestParsePubspecLock_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/does-not-exist")
+	packages, err := lockfile.ParsePubspecLock("testdata/pub/does-not-exist")
 
 	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -18,7 +18,7 @@ func TestParsePubspecLock_FileDoesNotExist(t *testing.T) {
 func TestParsePubspecLock_InvalidYaml(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/not-yaml.txt")
+	packages, err := lockfile.ParsePubspecLock("testdata/pub/not-yaml.txt")
 
 	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -27,7 +27,7 @@ func TestParsePubspecLock_InvalidYaml(t *testing.T) {
 func TestParsePubspecLock_Empty(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/empty.lock")
+	packages, err := lockfile.ParsePubspecLock("testdata/pub/empty.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -39,7 +39,7 @@ func TestParsePubspecLock_Empty(t *testing.T) {
 func TestParsePubspecLock_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/no-packages.lock")
+	packages, err := lockfile.ParsePubspecLock("testdata/pub/no-packages.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -51,7 +51,7 @@ func TestParsePubspecLock_NoPackages(t *testing.T) {
 func TestParsePubspecLock_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/one-package.lock")
+	packages, err := lockfile.ParsePubspecLock("testdata/pub/one-package.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -70,7 +70,7 @@ func TestParsePubspecLock_OnePackage(t *testing.T) {
 func TestParsePubspecLock_OnePackageDev(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/one-package-dev.lock")
+	packages, err := lockfile.ParsePubspecLock("testdata/pub/one-package-dev.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -89,7 +89,7 @@ func TestParsePubspecLock_OnePackageDev(t *testing.T) {
 func TestParsePubspecLock_TwoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/two-packages.lock")
+	packages, err := lockfile.ParsePubspecLock("testdata/pub/two-packages.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -114,7 +114,7 @@ func TestParsePubspecLock_TwoPackages(t *testing.T) {
 func TestParsePubspecLock_MixedPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/mixed-packages.lock")
+	packages, err := lockfile.ParsePubspecLock("testdata/pub/mixed-packages.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -151,7 +151,7 @@ func TestParsePubspecLock_MixedPackages(t *testing.T) {
 func TestParsePubspecLock_PackageWithGitSource(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/source-git.lock")
+	packages, err := lockfile.ParsePubspecLock("testdata/pub/source-git.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -199,7 +199,7 @@ func TestParsePubspecLock_PackageWithGitSource(t *testing.T) {
 func TestParsePubspecLock_PackageWithSdkSource(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/source-sdk.lock")
+	packages, err := lockfile.ParsePubspecLock("testdata/pub/source-sdk.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -219,7 +219,7 @@ func TestParsePubspecLock_PackageWithSdkSource(t *testing.T) {
 func TestParsePubspecLock_PackageWithPathSource(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePubspecLock("fixtures/pub/source-path.lock")
+	packages, err := lockfile.ParsePubspecLock("testdata/pub/source-path.lock")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

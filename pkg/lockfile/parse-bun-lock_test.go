@@ -9,7 +9,7 @@ import (
 func TestParseBunLock_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/does-not-exist")
+	packages, err := lockfile.ParseBunLock("testdata/bun/does-not-exist")
 
 	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -18,7 +18,7 @@ func TestParseBunLock_FileDoesNotExist(t *testing.T) {
 func TestParseBunLock_InvalidJson(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/not-json.txt")
+	packages, err := lockfile.ParseBunLock("testdata/bun/not-json.txt")
 
 	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -27,7 +27,7 @@ func TestParseBunLock_InvalidJson(t *testing.T) {
 func TestParseBunLock_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/empty.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/empty.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -39,7 +39,7 @@ func TestParseBunLock_NoPackages(t *testing.T) {
 func TestParseBunLock_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/one-package.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/one-package.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -58,7 +58,7 @@ func TestParseBunLock_OnePackage(t *testing.T) {
 func TestParseBunLock_OnePackageDev(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/one-package-dev.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/one-package-dev.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -77,7 +77,7 @@ func TestParseBunLock_OnePackageDev(t *testing.T) {
 func TestParseBunLock_OnePackageBadTuple(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/bad-tuple.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/bad-tuple.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -96,7 +96,7 @@ func TestParseBunLock_OnePackageBadTuple(t *testing.T) {
 func TestParseBunLock_TwoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/two-packages.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/two-packages.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -121,7 +121,7 @@ func TestParseBunLock_TwoPackages(t *testing.T) {
 func TestParseBunLock_SamePackageDifferentGroups(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/same-package-different-groups.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/same-package-different-groups.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -146,7 +146,7 @@ func TestParseBunLock_SamePackageDifferentGroups(t *testing.T) {
 func TestParseBunLock_ScopedPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/scoped-packages.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/scoped-packages.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -165,7 +165,7 @@ func TestParseBunLock_ScopedPackages(t *testing.T) {
 func TestParseBunLock_ScopedPackagesMixed(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/scoped-packages-mixed.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/scoped-packages-mixed.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -208,7 +208,7 @@ func TestParseBunLock_ScopedPackagesMixed(t *testing.T) {
 func TestParseBunLock_OptionalPackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/optional-package.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/optional-package.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -239,7 +239,7 @@ func TestParseBunLock_OptionalPackage(t *testing.T) {
 func TestParseBunLock_PeerDependenciesImplicit(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/peer-dependencies-implicit.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/peer-dependencies-implicit.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -264,7 +264,7 @@ func TestParseBunLock_PeerDependenciesImplicit(t *testing.T) {
 func TestParseBunLock_PeerDependenciesExplicit(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/peer-dependencies-explicit.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/peer-dependencies-explicit.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -289,7 +289,7 @@ func TestParseBunLock_PeerDependenciesExplicit(t *testing.T) {
 func TestParseBunLock_NestedDependenciesDups(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/nested-dependencies-dup.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/nested-dependencies-dup.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -344,7 +344,7 @@ func TestParseBunLock_NestedDependenciesDups(t *testing.T) {
 func TestParseBunLock_NestedDependencies(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/nested-dependencies.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/nested-dependencies.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -411,7 +411,7 @@ func TestParseBunLock_NestedDependencies(t *testing.T) {
 func TestParseBunLock_Aliases(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/alias.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/alias.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -448,7 +448,7 @@ func TestParseBunLock_Aliases(t *testing.T) {
 func TestParseBunLock_Commits(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/commits.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/commits.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -587,7 +587,7 @@ func TestParseBunLock_Commits(t *testing.T) {
 func TestParseBunLock_Files(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseBunLock("fixtures/bun/files.json5")
+	packages, err := lockfile.ParseBunLock("testdata/bun/files.json5")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

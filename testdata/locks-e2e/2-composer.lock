@@ -9068,19 +9068,19 @@
                     "dev-master": "0.12-dev"
                 },
                 "installer-paths": {
-                    "tests/fixtures/drupal/core": [
+                    "tests/testdata/drupal/core": [
                         "type:drupal-core"
                     ],
-                    "tests/fixtures/drupal/libraries/{$name}": [
+                    "tests/testdata/drupal/libraries/{$name}": [
                         "type:drupal-library"
                     ],
-                    "tests/fixtures/drupal/modules/contrib/{$name}": [
+                    "tests/testdata/drupal/modules/contrib/{$name}": [
                         "type:drupal-module"
                     ],
-                    "tests/fixtures/drupal/profiles/contrib/{$name}": [
+                    "tests/testdata/drupal/profiles/contrib/{$name}": [
                         "type:drupal-profile"
                     ],
-                    "tests/fixtures/drupal/themes/contrib/{$name}": [
+                    "tests/testdata/drupal/themes/contrib/{$name}": [
                         "type:drupal-theme"
                     ]
                 },

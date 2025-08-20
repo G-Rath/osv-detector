@@ -9,7 +9,7 @@ import (
 func TestParsePipenvLock_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePipenvLock("fixtures/pipenv/does-not-exist")
+	packages, err := lockfile.ParsePipenvLock("testdata/pipenv/does-not-exist")
 
 	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -18,7 +18,7 @@ func TestParsePipenvLock_FileDoesNotExist(t *testing.T) {
 func TestParsePipenvLock_InvalidJson(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePipenvLock("fixtures/pipenv/not-json.txt")
+	packages, err := lockfile.ParsePipenvLock("testdata/pipenv/not-json.txt")
 
 	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -27,7 +27,7 @@ func TestParsePipenvLock_InvalidJson(t *testing.T) {
 func TestParsePipenvLock_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePipenvLock("fixtures/pipenv/empty.json")
+	packages, err := lockfile.ParsePipenvLock("testdata/pipenv/empty.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -39,7 +39,7 @@ func TestParsePipenvLock_NoPackages(t *testing.T) {
 func TestParsePipenvLock_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePipenvLock("fixtures/pipenv/one-package.json")
+	packages, err := lockfile.ParsePipenvLock("testdata/pipenv/one-package.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -58,7 +58,7 @@ func TestParsePipenvLock_OnePackage(t *testing.T) {
 func TestParsePipenvLock_OnePackageDev(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePipenvLock("fixtures/pipenv/one-package-dev.json")
+	packages, err := lockfile.ParsePipenvLock("testdata/pipenv/one-package-dev.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -77,7 +77,7 @@ func TestParsePipenvLock_OnePackageDev(t *testing.T) {
 func TestParsePipenvLock_TwoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePipenvLock("fixtures/pipenv/two-packages.json")
+	packages, err := lockfile.ParsePipenvLock("testdata/pipenv/two-packages.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -102,7 +102,7 @@ func TestParsePipenvLock_TwoPackages(t *testing.T) {
 func TestParsePipenvLock_TwoPackagesAlt(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePipenvLock("fixtures/pipenv/two-packages-alt.json")
+	packages, err := lockfile.ParsePipenvLock("testdata/pipenv/two-packages-alt.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -127,7 +127,7 @@ func TestParsePipenvLock_TwoPackagesAlt(t *testing.T) {
 func TestParsePipenvLock_MultiplePackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePipenvLock("fixtures/pipenv/multiple-packages.json")
+	packages, err := lockfile.ParsePipenvLock("testdata/pipenv/multiple-packages.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -164,7 +164,7 @@ func TestParsePipenvLock_MultiplePackages(t *testing.T) {
 func TestParsePipenvLock_PackageWithoutVersion(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePipenvLock("fixtures/pipenv/no-version.json")
+	packages, err := lockfile.ParsePipenvLock("testdata/pipenv/no-version.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

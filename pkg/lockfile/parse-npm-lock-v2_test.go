@@ -9,7 +9,7 @@ import (
 func TestParseNpmLock_v2_FileDoesNotExist(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseNpmLock("fixtures/npm/does-not-exist")
+	packages, err := lockfile.ParseNpmLock("testdata/npm/does-not-exist")
 
 	expectErrContaining(t, err, "could not read")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -18,7 +18,7 @@ func TestParseNpmLock_v2_FileDoesNotExist(t *testing.T) {
 func TestParseNpmLock_v2_InvalidJson(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseNpmLock("fixtures/npm/not-json.txt")
+	packages, err := lockfile.ParseNpmLock("testdata/npm/not-json.txt")
 
 	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
@@ -27,7 +27,7 @@ func TestParseNpmLock_v2_InvalidJson(t *testing.T) {
 func TestParseNpmLock_v2_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseNpmLock("fixtures/npm/empty.v2.json")
+	packages, err := lockfile.ParseNpmLock("testdata/npm/empty.v2.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -39,7 +39,7 @@ func TestParseNpmLock_v2_NoPackages(t *testing.T) {
 func TestParseNpmLock_v2_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseNpmLock("fixtures/npm/one-package.v2.json")
+	packages, err := lockfile.ParseNpmLock("testdata/npm/one-package.v2.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -58,7 +58,7 @@ func TestParseNpmLock_v2_OnePackage(t *testing.T) {
 func TestParseNpmLock_v2_OnePackageDev(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseNpmLock("fixtures/npm/one-package-dev.v2.json")
+	packages, err := lockfile.ParseNpmLock("testdata/npm/one-package-dev.v2.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -77,7 +77,7 @@ func TestParseNpmLock_v2_OnePackageDev(t *testing.T) {
 func TestParseNpmLock_v2_TwoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseNpmLock("fixtures/npm/two-packages.v2.json")
+	packages, err := lockfile.ParseNpmLock("testdata/npm/two-packages.v2.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -102,7 +102,7 @@ func TestParseNpmLock_v2_TwoPackages(t *testing.T) {
 func TestParseNpmLock_v2_ScopedPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseNpmLock("fixtures/npm/scoped-packages.v2.json")
+	packages, err := lockfile.ParseNpmLock("testdata/npm/scoped-packages.v2.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -127,7 +127,7 @@ func TestParseNpmLock_v2_ScopedPackages(t *testing.T) {
 func TestParseNpmLock_v2_NestedDependencies(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseNpmLock("fixtures/npm/nested-dependencies.v2.json")
+	packages, err := lockfile.ParseNpmLock("testdata/npm/nested-dependencies.v2.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -170,7 +170,7 @@ func TestParseNpmLock_v2_NestedDependencies(t *testing.T) {
 func TestParseNpmLock_v2_NestedDependenciesDup(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseNpmLock("fixtures/npm/nested-dependencies-dup.v2.json")
+	packages, err := lockfile.ParseNpmLock("testdata/npm/nested-dependencies-dup.v2.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -195,7 +195,7 @@ func TestParseNpmLock_v2_NestedDependenciesDup(t *testing.T) {
 func TestParseNpmLock_v2_Commits(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseNpmLock("fixtures/npm/commits.v2.json")
+	packages, err := lockfile.ParseNpmLock("testdata/npm/commits.v2.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -306,7 +306,7 @@ func TestParseNpmLock_v2_Commits(t *testing.T) {
 func TestParseNpmLock_v2_Files(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseNpmLock("fixtures/npm/files.v2.json")
+	packages, err := lockfile.ParseNpmLock("testdata/npm/files.v2.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -340,7 +340,7 @@ func TestParseNpmLock_v2_Files(t *testing.T) {
 func TestParseNpmLock_v2_WithAliases(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParseNpmLock("fixtures/npm/with-aliases.v2.json")
+	packages, err := lockfile.ParseNpmLock("testdata/npm/with-aliases.v2.json")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

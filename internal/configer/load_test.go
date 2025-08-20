@@ -28,7 +28,7 @@ func TestFind_NoConfig(t *testing.T) {
 
 	r, _, _ := newReporter(t)
 
-	config, err := configer.Find(r, filepath.FromSlash("fixtures/no-config"))
+	config, err := configer.Find(r, filepath.FromSlash("testdata/no-config"))
 
 	if err != nil {
 		t.Errorf("Find() error = %v, expected nothing", err)
@@ -49,9 +49,9 @@ func TestFind_ExtYml(t *testing.T) {
 	r, _, _ := newReporter(t)
 
 	expectedIgnores := []string{"GHSA-1", "GHSA-2", "GHSA-3"}
-	expectedFilePath := filepath.FromSlash("fixtures/ext-yml/.osv-detector.yml")
+	expectedFilePath := filepath.FromSlash("testdata/ext-yml/.osv-detector.yml")
 
-	config, err := configer.Find(r, filepath.FromSlash("fixtures/ext-yml"))
+	config, err := configer.Find(r, filepath.FromSlash("testdata/ext-yml"))
 
 	if err != nil {
 		t.Errorf("Find() error = %v, expected nothing", err)
@@ -71,9 +71,9 @@ func TestFind_ExtYml_Invalid(t *testing.T) {
 
 	r, _, _ := newReporter(t)
 
-	expectedFilePath := filepath.FromSlash("fixtures/ext-yml-invalid/.osv-detector.yml")
+	expectedFilePath := filepath.FromSlash("testdata/ext-yml-invalid/.osv-detector.yml")
 
-	config, err := configer.Find(r, filepath.FromSlash("fixtures/ext-yml-invalid"))
+	config, err := configer.Find(r, filepath.FromSlash("testdata/ext-yml-invalid"))
 
 	if err == nil {
 		t.Errorf("Find() did not error, which was unexpected")
@@ -94,9 +94,9 @@ func TestFind_ExtYaml(t *testing.T) {
 	r, _, _ := newReporter(t)
 
 	expectedIgnores := []string{"GHSA-4", "GHSA-5", "GHSA-6"}
-	expectedFilePath := filepath.FromSlash("fixtures/ext-yaml/.osv-detector.yaml")
+	expectedFilePath := filepath.FromSlash("testdata/ext-yaml/.osv-detector.yaml")
 
-	config, err := configer.Find(r, filepath.FromSlash("fixtures/ext-yaml"))
+	config, err := configer.Find(r, filepath.FromSlash("testdata/ext-yaml"))
 
 	if err != nil {
 		t.Errorf("Find() error = %v, expected nothing", err)
@@ -116,9 +116,9 @@ func TestFind_ExtYaml_Invalid(t *testing.T) {
 
 	r, _, _ := newReporter(t)
 
-	expectedFilePath := filepath.FromSlash("fixtures/ext-yaml-invalid/.osv-detector.yaml")
+	expectedFilePath := filepath.FromSlash("testdata/ext-yaml-invalid/.osv-detector.yaml")
 
-	config, err := configer.Find(r, filepath.FromSlash("fixtures/ext-yaml-invalid"))
+	config, err := configer.Find(r, filepath.FromSlash("testdata/ext-yaml-invalid"))
 
 	if err == nil {
 		t.Errorf("Find() did not error, which was unexpected")
@@ -138,7 +138,7 @@ func TestLoad(t *testing.T) {
 
 	r, _, stderr := newReporter(t)
 
-	fixturePath := filepath.FromSlash("fixtures/extra-databases/.osv-detector.yml")
+	fixturePath := filepath.FromSlash("testdata/extra-databases/.osv-detector.yml")
 
 	config, err := configer.Load(r, fixturePath)
 

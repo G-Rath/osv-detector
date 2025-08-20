@@ -9,7 +9,7 @@ import (
 func TestParsePnpmLock_v9_NoPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/no-packages.v9.yaml")
+	packages, err := lockfile.ParsePnpmLock("testdata/pnpm/no-packages.v9.yaml")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -21,7 +21,7 @@ func TestParsePnpmLock_v9_NoPackages(t *testing.T) {
 func TestParsePnpmLock_v9_OnePackage(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/one-package.v9.yaml")
+	packages, err := lockfile.ParsePnpmLock("testdata/pnpm/one-package.v9.yaml")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -40,7 +40,7 @@ func TestParsePnpmLock_v9_OnePackage(t *testing.T) {
 func TestParsePnpmLock_v9_OnePackageDev(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/one-package-dev.v9.yaml")
+	packages, err := lockfile.ParsePnpmLock("testdata/pnpm/one-package-dev.v9.yaml")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -59,7 +59,7 @@ func TestParsePnpmLock_v9_OnePackageDev(t *testing.T) {
 func TestParsePnpmLock_v9_ScopedPackages(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/scoped-packages.v9.yaml")
+	packages, err := lockfile.ParsePnpmLock("testdata/pnpm/scoped-packages.v9.yaml")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -78,7 +78,7 @@ func TestParsePnpmLock_v9_ScopedPackages(t *testing.T) {
 func TestParsePnpmLock_v9_PeerDependencies(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/peer-dependencies.v9.yaml")
+	packages, err := lockfile.ParsePnpmLock("testdata/pnpm/peer-dependencies.v9.yaml")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -103,7 +103,7 @@ func TestParsePnpmLock_v9_PeerDependencies(t *testing.T) {
 func TestParsePnpmLock_v9_PeerDependenciesAdvanced(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/peer-dependencies-advanced.v9.yaml")
+	packages, err := lockfile.ParsePnpmLock("testdata/pnpm/peer-dependencies-advanced.v9.yaml")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -194,7 +194,7 @@ func TestParsePnpmLock_v9_PeerDependenciesAdvanced(t *testing.T) {
 func TestParsePnpmLock_v9_MultipleVersions(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/multiple-versions.v9.yaml")
+	packages, err := lockfile.ParsePnpmLock("testdata/pnpm/multiple-versions.v9.yaml")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -225,7 +225,7 @@ func TestParsePnpmLock_v9_MultipleVersions(t *testing.T) {
 func TestParsePnpmLock_v9_Commits(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/commits.v9.yaml")
+	packages, err := lockfile.ParsePnpmLock("testdata/pnpm/commits.v9.yaml")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)
@@ -252,7 +252,7 @@ func TestParsePnpmLock_v9_Commits(t *testing.T) {
 func TestParsePnpmLock_v9_MixedGroups(t *testing.T) {
 	t.Parallel()
 
-	packages, err := lockfile.ParsePnpmLock("fixtures/pnpm/mixed-groups.v9.yaml")
+	packages, err := lockfile.ParsePnpmLock("testdata/pnpm/mixed-groups.v9.yaml")
 
 	if err != nil {
 		t.Errorf("Got unexpected error: %v", err)

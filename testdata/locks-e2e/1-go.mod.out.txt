@@ -1,7 +1,7 @@
 Loaded the following OSV databases:
   Go (%% vulnerabilities, including withdrawn - last updated %%)
 
-fixtures/locks-e2e/1-go.mod: found 7 packages
+testdata/locks-e2e/1-go.mod: found 7 packages
   Using db Go (%% vulnerabilities, including withdrawn - last updated %%)
 
   golang.org/x/image@0.0.0-20210628002857-a66eb6448b8d is affected by the following vulnerabilities:
@@ -9,4 +9,4 @@ fixtures/locks-e2e/1-go.mod: found 7 packages
     GHSA-qgc7-mgm3-q253: Uncontrolled Resource Consumption in golang.org/x/image (https://github.com/advisories/GHSA-qgc7-mgm3-q253)
     GHSA-x92r-3vfx-4cv3: Golang TIFF decoder does not place a limit on the size of compressed tile data (https://github.com/advisories/GHSA-x92r-3vfx-4cv3)
 
-  3 known vulnerabilities found in fixtures/locks-e2e/1-go.mod
+  3 known vulnerabilities found in testdata/locks-e2e/1-go.mod

@@ -1,7 +1,7 @@
-**/fixtures/bun/*.json5
-**/fixtures/pnpm/*.yaml
-**/fixtures/**/invalid.json
-**/fixtures/configs-invalid/*.yaml
-**/fixtures/locks-e2e/
-internal/configer/fixtures/ext-yaml-invalid/*.yaml
-internal/configer/fixtures/ext-yml-invalid/*.yml
+**/testdata/bun/*.json5
+**/testdata/pnpm/*.yaml
+**/testdata/**/invalid.json
+**/testdata/configs-invalid/*.yaml
+**/testdata/locks-e2e/
+internal/configer/testdata/ext-yaml-invalid/*.yaml
+internal/configer/testdata/ext-yml-invalid/*.yml

@@ -262,7 +262,7 @@ def fetch_packages_versions():
   return extract_packages_with_versions(osvs)
 
 
-outfile = 'pkg/semantic/fixtures/redhat-versions-generated.txt'
+outfile = 'pkg/semantic/testdata/redhat-versions-generated.txt'
 
 packs = fetch_packages_versions()
 with open(outfile, 'w') as f:
