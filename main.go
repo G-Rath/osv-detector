@@ -88,7 +88,7 @@ func (dbs OSVDatabases) check(r *reporter.Reporter, lockf lockfile.Lockfile, ign
 		results, err := db.Check(lockf.Packages)
 
 		if err != nil {
-			r.PrintErrorf(color.RedString(fmt.Sprintf(
+			r.PrintErrorf("%s", color.RedString(fmt.Sprintf(
 				"  an api error occurred while trying to check the packages listed in %s: %v\n",
 				lockf.FilePath,
 				err,
@@ -755,9 +755,9 @@ func writeUpdatedConfigs(r *reporter.Reporter, vulnsPerConfig map[string]map[str
 
 	for _, line := range lines {
 		if strings.HasPrefix(line, "Error updating") {
-			r.PrintErrorf(line)
+			r.PrintErrorf("%s", line)
 		} else {
-			r.PrintTextf(line)
+			r.PrintTextf("%s", line)
 		}
 	}
 }
