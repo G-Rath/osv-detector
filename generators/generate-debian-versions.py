@@ -218,7 +218,7 @@ def fetch_packages_versions():
   return extract_packages_with_versions(osvs)
 
 
-outfile = 'pkg/semantic/testdata/debian-versions-generated.txt'
+outfile = 'generators/testdata/debian-versions-generated.txt'
 
 packs = fetch_packages_versions()
 with open(outfile, 'w') as f:

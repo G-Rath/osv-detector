@@ -170,7 +170,7 @@ fetch_packages_versions <- function() {
   return(extract_packages_with_versions(osvs))
 }
 
-outfile <- "pkg/semantic/testdata/cran-versions-generated.txt"
+outfile <- "generators/testdata/cran-versions-generated.txt"
 
 packs <- fetch_packages_versions()
 writeLines(generate_package_compares(packs), outfile, sep = "\n")

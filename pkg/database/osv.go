@@ -13,7 +13,7 @@ import (
 	"github.com/g-rath/osv-detector/internal"
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"github.com/g-rath/osv-detector/pkg/lockfile"
-	"github.com/g-rath/osv-detector/pkg/semantic"
+	"github.com/google/osv-scalibr/semantic"
 )
 
 type AffectsRangeType string
@@ -86,7 +86,7 @@ func (ar AffectsRange) containsVersion(pkg internal.PackageDetails) bool {
 		return false
 	}
 
-	vp := semantic.MustParse(pkg.Version, pkg.CompareAs)
+	vp := semantic.MustParse(pkg.Version, string(pkg.CompareAs))
 
 	sort.Slice(ar.Events, func(i, j int) bool {
 		a := ar.Events[i]
@@ -101,7 +101,7 @@ func (ar AffectsRange) containsVersion(pkg internal.PackageDetails) bool {
 		}
 
 		// Ignore errors as we assume the version is correct
-		order, _ := semantic.MustParse(a.version(), pkg.CompareAs).CompareStr(b.version())
+		order, _ := semantic.MustParse(a.version(), string(pkg.CompareAs)).CompareStr(b.version())
 
 		return order < 0
 	})
