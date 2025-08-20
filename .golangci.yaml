@@ -34,10 +34,6 @@ linters:
             - pkg: regexp
               desc:
                 Use github.com/g-rath/osv-detector/internal/cachedregexp instead
-    staticcheck:
-      checks:
-        - all
-        - -QF1006 # lift into loop condition
   exclusions:
     generated: lax
     presets:
