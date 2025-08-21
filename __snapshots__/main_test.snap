@@ -1,0 +1,1164 @@
+
+[TestRun/#00 - 1]
+
+---
+
+[TestRun/#00 - 2]
+You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
+
+---
+
+[TestRun/#01 - 1]
+osv-detector dev (unknown, commit none)
+
+---
+
+[TestRun/#01 - 2]
+
+---
+
+[TestRun/#02 - 1]
+
+---
+
+[TestRun/#02 - 2]
+Don't know how to parse files as "my-file" - supported values are:
+  buildscript-gradle.lockfile
+  bun.lock
+  Cargo.lock
+  composer.lock
+  Gemfile.lock
+  go.mod
+  gradle.lockfile
+  mix.lock
+  package-lock.json
+  packages.lock.json
+  pdm.lock
+  Pipfile.lock
+  pnpm-lock.yaml
+  poetry.lock
+  pom.xml
+  pubspec.lock
+  renv.lock
+  requirements.txt
+  uv.lock
+  yarn.lock
+  csv-file
+  csv-row
+
+---
+
+[TestRun/#03 - 1]
+
+---
+
+[TestRun/#03 - 2]
+You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
+
+---
+
+[TestRun_Configs/#00 - 1]
+Loaded the following OSV databases:
+
+testdata/configs-one/yarn.lock: found 0 packages
+  Using config at testdata/configs-one/.osv-detector.yaml (0 ignores)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Configs/#00 - 2]
+
+---
+
+[TestRun_Configs/#01 - 1]
+Loaded the following OSV databases:
+
+testdata/configs-two/yarn.lock: found 0 packages
+  Using config at testdata/configs-two/.osv-detector.yaml (0 ignores)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Configs/#01 - 2]
+
+---
+
+[TestRun_Configs/#02 - 1]
+Loaded the following OSV databases:
+
+testdata/configs-one/yarn.lock: found 0 packages
+  Using config at testdata/configs-one/.osv-detector.yaml (0 ignores)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Configs/#02 - 2]
+
+---
+
+[TestRun_Configs/#03 - 1]
+Loaded the following OSV databases:
+  RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/configs-two/Gemfile.lock: found 1 package
+  Using config at testdata/configs-two/.osv-detector.yaml (0 ignores)
+  Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+testdata/configs-two/yarn.lock: found 0 packages
+  Using config at testdata/configs-two/.osv-detector.yaml (0 ignores)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Configs/#03 - 2]
+
+---
+
+[TestRun_Configs/#04 - 1]
+Loaded the following OSV databases:
+  RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+  Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/configs-one/yarn.lock: found 0 packages
+  Using config at testdata/configs-one/.osv-detector.yaml (0 ignores)
+
+  no known vulnerabilities found
+
+testdata/locks-many/Gemfile.lock: found 1 package
+  Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+testdata/locks-many/composer.lock: found 1 package
+  Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+testdata/locks-many/yarn.lock: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Configs/#04 - 2]
+
+---
+
+[TestRun_Configs/#05 - 1]
+Loaded the following OSV databases:
+  api#https://example.com/v1 (using batches of 1000)
+  dir#file:/testdata/configs-extra-dbs (3 vulnerabilities, including withdrawn)
+  zip#https://example.com/osvs/all
+testdata/configs-extra-dbs/yarn.lock: found 0 packages
+  Using config at testdata/configs-extra-dbs/.osv-detector.yaml (0 ignores)
+  Using db api#https://example.com/v1 (using batches of 1000)
+  Using db dir#file:/testdata/configs-extra-dbs (3 vulnerabilities, including withdrawn)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Configs/#05 - 2]
+ failed: unable to fetch OSV database: db host returned an unexpected status code (404 Not Found)
+
+---
+
+[TestRun_Configs/#06 - 1]
+Loaded the following OSV databases:
+
+testdata/configs-extra-dbs/yarn.lock: found 0 packages
+  Using config at testdata/configs-extra-dbs/.osv-detector.yaml (0 ignores)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Configs/#06 - 2]
+
+---
+
+[TestRun_Configs/#07 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-many/yarn.lock: found 1 package
+  Using config at testdata/configs-extra-dbs/.osv-detector.yaml (0 ignores)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Configs/#07 - 2]
+
+---
+
+[TestRun_Configs/#08 - 1]
+Loaded the following OSV databases:
+
+testdata/configs-one/yarn.lock: found 0 packages
+  Using config at testdata/my-config.yml (1 ignore)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Configs/#08 - 2]
+
+---
+
+[TestRun_Configs/#09 - 1]
+Loaded the following OSV databases:
+  RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/configs-two/Gemfile.lock: found 1 package
+  Using config at testdata/my-config.yml (1 ignore)
+  Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+testdata/configs-two/yarn.lock: found 0 packages
+  Using config at testdata/my-config.yml (1 ignore)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Configs/#09 - 2]
+
+---
+
+[TestRun_Configs/#10 - 1]
+Loaded the following OSV databases:
+  RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+  Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/configs-one/yarn.lock: found 0 packages
+  Using config at testdata/my-config.yml (1 ignore)
+
+  no known vulnerabilities found
+
+testdata/locks-many/Gemfile.lock: found 1 package
+  Using config at testdata/my-config.yml (1 ignore)
+  Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+testdata/locks-many/composer.lock: found 1 package
+  Using config at testdata/my-config.yml (1 ignore)
+  Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+testdata/locks-many/yarn.lock: found 1 package
+  Using config at testdata/my-config.yml (1 ignore)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Configs/#10 - 2]
+
+---
+
+[TestRun_Configs/#11 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+
+
+testdata/locks-one/yarn.lock: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Configs/#11 - 2]
+Error, could not read testdata/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
+  line 1: cannot unmarshal !!str `ignore ...` into configer.rawConfig
+Error, could not read testdata/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
+  line 1: cannot unmarshal !!str `ignore ...` into configer.rawConfig
+
+---
+
+[TestRun_Configs/#12 - 1]
+
+---
+
+[TestRun_Configs/#12 - 2]
+Error, could not read testdata/configs-invalid/.osv-detector.yaml: yaml: unmarshal errors:
+  line 1: cannot unmarshal !!str `ignore ...` into configer.rawConfig
+
+---
+
+[TestRun_DBs/#00 - 1]
+Loaded the following OSV databases:
+
+testdata/locks-one/yarn.lock: found 1 package
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_DBs/#00 - 2]
+
+---
+
+[TestRun_DBs/#01 - 1]
+Loaded the following OSV databases:
+  osv.dev v1 API (using batches of 1000)
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-one/yarn.lock: found 1 package
+  Using db osv.dev v1 API (using batches of 1000)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_DBs/#01 - 2]
+
+---
+
+[TestRun_EmptyDirExitCode/#00 - 1]
+
+---
+
+[TestRun_EmptyDirExitCode/#00 - 2]
+You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
+
+---
+
+[TestRun_EmptyDirExitCode/#01 - 1]
+
+---
+
+[TestRun_EmptyDirExitCode/#01 - 2]
+You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
+
+---
+
+[TestRun_EmptyDirExitCode/#02 - 1]
+
+---
+
+[TestRun_EmptyDirExitCode/#02 - 2]
+You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
+
+---
+
+[TestRun_EmptyDirExitCode/#03 - 1]
+Loaded the following OSV databases:
+
+
+---
+
+[TestRun_EmptyDirExitCode/#03 - 2]
+Error, could not determine parser for testdata/locks-none/my-file.txt
+
+---
+
+[TestRun_EmptyDirExitCode/#04 - 1]
+Loaded the following OSV databases:
+
+
+---
+
+[TestRun_EmptyDirExitCode/#04 - 2]
+Error, could not determine parser for testdata/locks-none/my-file.txt
+
+---
+
+[TestRun_EmptyDirExitCode/#05 - 1]
+
+---
+
+[TestRun_EmptyDirExitCode/#05 - 2]
+Error reading ./testdata/does/not/exist: open ./testdata/does/not/exist: no such file or directory
+You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
+
+---
+
+[TestRun_EmptyDirExitCode/#06 - 1]
+
+---
+
+[TestRun_EmptyDirExitCode/#06 - 2]
+Error reading ./testdata/does/not/exist: open ./testdata/does/not/exist: no such file or directory
+You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
+
+---
+
+[TestRun_EmptyDirExitCode/#07 - 1]
+{"results":[]}
+---
+
+[TestRun_EmptyDirExitCode/#07 - 2]
+You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
+
+---
+
+[TestRun_Ignores/#00 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-one/yarn.lock: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Ignores/#00 - 2]
+
+---
+
+[TestRun_Ignores/#01 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no new vulnerabilities found (1 was ignored)
+
+---
+
+[TestRun_Ignores/#01 - 2]
+
+---
+
+[TestRun_Ignores/#02 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no new vulnerabilities found (1 was ignored)
+
+---
+
+[TestRun_Ignores/#02 - 2]
+
+---
+
+[TestRun_Ignores/#03 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using config at testdata/my-config.yml (1 ignore)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no new vulnerabilities found (1 was ignored)
+
+---
+
+[TestRun_Ignores/#03 - 2]
+
+---
+
+[TestRun_Ignores/#04 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using config at testdata/my-config.yml (skipping any ignores)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-html@0.0.1 is affected by the following vulnerabilities:
+    GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+  1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
+
+---
+
+[TestRun_Ignores/#04 - 2]
+
+---
+
+[TestRun_Ignores/#05 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using config at testdata/my-config.yml (skipping any ignores)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no new vulnerabilities found (1 was ignored)
+
+---
+
+[TestRun_Ignores/#05 - 2]
+
+---
+
+[TestRun_Ignores/#06 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using config at testdata/my-config.yml (1 ignore)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no new vulnerabilities found (1 was ignored)
+
+---
+
+[TestRun_Ignores/#06 - 2]
+
+---
+
+[TestRun_ListPackages/#00 - 1]
+testdata/locks-one/yarn.lock: found 1 package
+  npm: balanced-match@1.0.2
+---
+
+[TestRun_ListPackages/#00 - 2]
+
+---
+
+[TestRun_ListPackages/#01 - 1]
+testdata/locks-many/Gemfile.lock: found 1 package
+  RubyGems: ast@2.4.2
+testdata/locks-many/composer.lock: found 1 package
+  Packagist: sentry/sdk@2.0.4 (4c115873c86ad5bd0ac6d962db70ca53bf8fb874)
+testdata/locks-many/yarn.lock: found 1 package
+  npm: balanced-match@1.0.2
+---
+
+[TestRun_ListPackages/#01 - 2]
+
+---
+
+[TestRun_ListPackages/#02 - 1]
+testdata/locks-empty/Gemfile.lock: found 0 packages
+
+testdata/locks-empty/composer.lock: found 0 packages
+
+testdata/locks-empty/yarn.lock: found 0 packages
+
+---
+
+[TestRun_ListPackages/#02 - 2]
+
+---
+
+[TestRun_ListPackages/#03 - 1]
+{"results":[{"filePath":"testdata/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm","compareAs":"npm"}]}]}
+---
+
+[TestRun_ListPackages/#03 - 2]
+testdata/locks-one/yarn.lock: found 1 package
+
+---
+
+[TestRun_Lockfile/#00 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-one/yarn.lock: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Lockfile/#00 - 2]
+
+---
+
+[TestRun_Lockfile/#01 - 1]
+Loaded the following OSV databases:
+  RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+  Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-many/Gemfile.lock: found 1 package
+  Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+testdata/locks-many/composer.lock: found 1 package
+  Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+testdata/locks-many/yarn.lock: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Lockfile/#01 - 2]
+
+---
+
+[TestRun_Lockfile/#02 - 1]
+Loaded the following OSV databases:
+
+testdata/locks-empty/Gemfile.lock: found 0 packages
+
+  no known vulnerabilities found
+
+testdata/locks-empty/composer.lock: found 0 packages
+
+  no known vulnerabilities found
+
+testdata/locks-empty/yarn.lock: found 0 packages
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Lockfile/#02 - 2]
+
+---
+
+[TestRun_Lockfile/#03 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-html@0.0.1 is affected by the following vulnerabilities:
+    GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+  1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
+
+---
+
+[TestRun_Lockfile/#03 - 2]
+
+---
+
+[TestRun_Lockfile/#04 - 1]
+{"results":[{"filePath":"testdata/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm","compareAs":"npm","vulnerabilities":[],"ignored":[]}]}]}
+---
+
+[TestRun_Lockfile/#04 - 2]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-one/yarn.lock: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+
+---
+
+[TestRun_ParseAsGlobal/#00 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-html@0.0.1 is affected by the following vulnerabilities:
+    GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+  1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
+
+---
+
+[TestRun_ParseAsGlobal/#00 - 2]
+
+---
+
+[TestRun_ParseAsGlobal/#01 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/composer.lock: found 0 packages
+
+  no known vulnerabilities found
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-html@0.0.1 is affected by the following vulnerabilities:
+    GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+  1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
+
+---
+
+[TestRun_ParseAsGlobal/#01 - 2]
+
+---
+
+[TestRun_ParseAsGlobal/#02 - 1]
+Loaded the following OSV databases:
+
+
+testdata/locks-empty/composer.lock: found 0 packages
+
+  no known vulnerabilities found
+
+
+---
+
+[TestRun_ParseAsGlobal/#02 - 2]
+Error, could not parse testdata/locks-empty/Gemfile.lock: unexpected end of JSON input
+Error, could not parse testdata/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+
+---
+
+[TestRun_ParseAsGlobal/#03 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+
+testdata/locks-empty/composer.lock: found 0 packages
+
+  no known vulnerabilities found
+
+
+testdata/locks-insecure/composer.lock: found 0 packages
+
+  no known vulnerabilities found
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-html@0.0.1 is affected by the following vulnerabilities:
+    GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+  1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
+
+---
+
+[TestRun_ParseAsGlobal/#03 - 2]
+Error, could not parse testdata/locks-empty/Gemfile.lock: unexpected end of JSON input
+Error, could not parse testdata/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+
+---
+
+[TestRun_ParseAsGlobal/#04 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-empty/Gemfile.lock: found 0 packages
+
+  no known vulnerabilities found
+
+testdata/locks-empty/composer.lock: found 0 packages
+
+  no known vulnerabilities found
+
+testdata/locks-empty/yarn.lock: found 0 packages
+
+  no known vulnerabilities found
+
+testdata/locks-insecure/composer.lock: found 0 packages
+
+  no known vulnerabilities found
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-html@0.0.1 is affected by the following vulnerabilities:
+    GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+  1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
+
+---
+
+[TestRun_ParseAsGlobal/#04 - 2]
+
+---
+
+[TestRun_ParseAsSpecific/#00 - 1]
+Loaded the following OSV databases:
+
+testdata/locks-insecure/composer.lock: found 0 packages
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_ParseAsSpecific/#00 - 2]
+
+---
+
+[TestRun_ParseAsSpecific/#01 - 1]
+
+---
+
+[TestRun_ParseAsSpecific/#01 - 2]
+Error reading ./testdata/locks-insecure/my:file: open ./testdata/locks-insecure/my:file: no such file or directory
+You must provide at least one path to either a lockfile or a directory containing at least one lockfile (see --help for usage and flags)
+
+---
+
+[TestRun_ParseAsSpecific/#02 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-html@0.0.1 is affected by the following vulnerabilities:
+    GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+  1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
+
+---
+
+[TestRun_ParseAsSpecific/#02 - 2]
+
+---
+
+[TestRun_ParseAsSpecific/#03 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/composer.lock: found 0 packages
+
+  no known vulnerabilities found
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-html@0.0.1 is affected by the following vulnerabilities:
+    GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+  1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
+
+---
+
+[TestRun_ParseAsSpecific/#03 - 2]
+
+---
+
+[TestRun_ParseAsSpecific/#04 - 1]
+Loaded the following OSV databases:
+
+
+testdata/locks-empty/composer.lock: found 0 packages
+
+  no known vulnerabilities found
+
+
+---
+
+[TestRun_ParseAsSpecific/#04 - 2]
+Error, could not parse testdata/locks-empty/Gemfile.lock: unexpected end of JSON input
+Error, could not parse testdata/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+
+---
+
+[TestRun_ParseAsSpecific/#05 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+
+testdata/locks-empty/composer.lock: found 0 packages
+
+  no known vulnerabilities found
+
+
+testdata/locks-insecure/composer.lock: found 0 packages
+
+  no known vulnerabilities found
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-html@0.0.1 is affected by the following vulnerabilities:
+    GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+  1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
+
+---
+
+[TestRun_ParseAsSpecific/#05 - 2]
+Error, could not parse testdata/locks-empty/Gemfile.lock: unexpected end of JSON input
+Error, could not parse testdata/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
+
+---
+
+[TestRun_ParseAs_CsvFile/#00 - 1]
+Loaded the following OSV databases:
+  NuGet (%% vulnerabilities, including withdrawn - last updated %%)
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/csvs-files/two-rows.csv: found 2 packages
+  Using db NuGet (%% vulnerabilities, including withdrawn - last updated %%)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  Yarp.ReverseProxy@ is affected by the following vulnerabilities:
+    GHSA-8xc6-g8xw-h2c4: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-8xc6-g8xw-h2c4)
+    GHSA-jrjw-qgr2-wfcg: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-jrjw-qgr2-wfcg)
+
+  2 known vulnerabilities found in testdata/csvs-files/two-rows.csv
+
+---
+
+[TestRun_ParseAs_CsvFile/#00 - 2]
+
+---
+
+[TestRun_ParseAs_CsvFile/#01 - 1]
+Loaded the following OSV databases:
+
+
+---
+
+[TestRun_ParseAs_CsvFile/#01 - 2]
+Error, testdata/csvs-files/not-a-csv.xml: row 1: not enough fields (expected at least four)
+
+---
+
+[TestRun_ParseAs_CsvRow/#00 - 1]
+Loaded the following OSV databases:
+  NuGet (%% vulnerabilities, including withdrawn - last updated %%)
+
+-: found 1 package
+  Using db NuGet (%% vulnerabilities, including withdrawn - last updated %%)
+
+  Yarp.ReverseProxy@ is affected by the following vulnerabilities:
+    GHSA-8xc6-g8xw-h2c4: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-8xc6-g8xw-h2c4)
+    GHSA-jrjw-qgr2-wfcg: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-jrjw-qgr2-wfcg)
+
+  2 known vulnerabilities found in -
+
+---
+
+[TestRun_ParseAs_CsvRow/#00 - 2]
+
+---
+
+[TestRun_ParseAs_CsvRow/#01 - 1]
+Loaded the following OSV databases:
+  NuGet (%% vulnerabilities, including withdrawn - last updated %%)
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+-: found 2 packages
+  Using db NuGet (%% vulnerabilities, including withdrawn - last updated %%)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  Yarp.ReverseProxy@ is affected by the following vulnerabilities:
+    GHSA-8xc6-g8xw-h2c4: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-8xc6-g8xw-h2c4)
+    GHSA-jrjw-qgr2-wfcg: YARP Denial of Service Vulnerability (https://github.com/advisories/GHSA-jrjw-qgr2-wfcg)
+
+  2 known vulnerabilities found in -
+
+---
+
+[TestRun_ParseAs_CsvRow/#01 - 2]
+
+---
+
+[TestRun_ParseAs_CsvRow/#02 - 1]
+Loaded the following OSV databases:
+
+
+---
+
+[TestRun_ParseAs_CsvRow/#02 - 2]
+Error, row 1: not enough fields (expected at least four)
+
+---
+
+[TestRun_UpdatingConfigIgnores/#00 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-html@0.0.1 is affected by the following vulnerabilities:
+    GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+  1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
+
+---
+
+[TestRun_UpdatingConfigIgnores/#00 - 2]
+
+---
+
+[TestRun_UpdatingConfigIgnores/#01 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using config at testdata/existing-config.yml (0 ignores)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-html@0.0.1 is affected by the following vulnerabilities:
+    GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+  1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
+
+Updated testdata/existing-config.yml with 1 vulnerability
+
+---
+
+[TestRun_UpdatingConfigIgnores/#01 - 2]
+
+---
+
+[TestRun_UpdatingConfigIgnores/#02 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using config at testdata/existing-config-with-ignores.yml (1 ignore)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no new vulnerabilities found (1 was ignored)
+
+Updated testdata/existing-config-with-ignores.yml with 1 vulnerability
+
+---
+
+[TestRun_UpdatingConfigIgnores/#02 - 2]
+
+---
+
+[TestRun_UpdatingConfigIgnores/#03 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using config at testdata/existing-config-with-ignored-ignores.yml (skipping any ignores)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-html@0.0.1 is affected by the following vulnerabilities:
+    GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+  1 known vulnerability found in testdata/locks-insecure/my-package-lock.json
+
+Updated testdata/existing-config-with-ignored-ignores.yml with 1 vulnerability
+
+---
+
+[TestRun_UpdatingConfigIgnores/#03 - 2]
+
+---
+
+[TestRun_UpdatingConfigIgnores/#04 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+  Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using config at testdata/existing-config-with-many-lockfiles.yml (1 ignore)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no new vulnerabilities found (1 was ignored)
+
+testdata/locks-insecure-many/my-package-lock.json: found 6 packages
+  Using config at testdata/existing-config-with-many-lockfiles.yml (1 ignore)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-regex@4.1.0 is affected by the following vulnerabilities:
+    GHSA-93q8-gq69-wqmw: Inefficient Regular Expression Complexity in chalk/ansi-regex (https://github.com/advisories/GHSA-93q8-gq69-wqmw)
+  nth-check@1.0.2 is affected by the following vulnerabilities:
+    GHSA-rp65-9cf3-cjxr: Inefficient Regular Expression Complexity in nth-check (https://github.com/advisories/GHSA-rp65-9cf3-cjxr)
+  trim-newlines@3.0.0 is affected by the following vulnerabilities:
+    GHSA-7p7h-4mm5-852v: Uncontrolled Resource Consumption in trim-newlines (https://github.com/advisories/GHSA-7p7h-4mm5-852v)
+  ua-parser-js@1.0.2 is affected by the following vulnerabilities:
+    GHSA-fhg7-m89q-25r3: ReDoS Vulnerability in ua-parser-js version (https://github.com/advisories/GHSA-fhg7-m89q-25r3)
+  word-wrap@1.2.3 is affected by the following vulnerabilities:
+    GHSA-j8xg-fqg3-53r7: word-wrap vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-j8xg-fqg3-53r7)
+
+  5 known vulnerabilities found in testdata/locks-insecure-many/my-package-lock.json
+
+testdata/locks-insecure-nested/my-package-lock.json: found 1 package
+  Using config at testdata/existing-config-with-many-lockfiles.yml (1 ignore)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no new vulnerabilities found (1 was ignored)
+
+testdata/locks-insecure-nested/nested/my-composer-lock.json: found 1 package
+  Using config at testdata/existing-config-with-many-lockfiles.yml (1 ignore)
+  Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+  guzzlehttp/psr7@1.8.2 is affected by the following vulnerabilities:
+    GHSA-q7rv-6hp3-vh96: Improper Input Validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-q7rv-6hp3-vh96)
+    GHSA-wxmh-65f7-jcvw: Improper header name validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-wxmh-65f7-jcvw)
+
+  2 known vulnerabilities found in testdata/locks-insecure-nested/nested/my-composer-lock.json
+
+Updated testdata/existing-config-with-many-lockfiles.yml with 8 vulnerabilities
+
+---
+
+[TestRun_UpdatingConfigIgnores/#04 - 2]
+
+---
+
+[TestRun_UpdatingConfigIgnores/#05 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+  Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure-nested/my-package-lock.json: found 1 package
+  Using config at testdata/locks-insecure-nested/.osv-detector.yml (0 ignores)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-html@0.0.1 is affected by the following vulnerabilities:
+    GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+  1 known vulnerability found in testdata/locks-insecure-nested/my-package-lock.json
+
+testdata/locks-insecure-nested/nested/my-composer-lock.json: found 1 package
+  Using config at testdata/locks-insecure-nested/nested/.osv-detector.yml (0 ignores)
+  Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+  guzzlehttp/psr7@1.8.2 is affected by the following vulnerabilities:
+    GHSA-q7rv-6hp3-vh96: Improper Input Validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-q7rv-6hp3-vh96)
+    GHSA-wxmh-65f7-jcvw: Improper header name validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-wxmh-65f7-jcvw)
+
+  2 known vulnerabilities found in testdata/locks-insecure-nested/nested/my-composer-lock.json
+
+Updated testdata/locks-insecure-nested/.osv-detector.yml with 1 vulnerability
+Updated testdata/locks-insecure-nested/nested/.osv-detector.yml with 2 vulnerabilities
+
+---
+
+[TestRun_UpdatingConfigIgnores/#05 - 2]
+
+---
+
+[TestRun_UpdatingConfigIgnores/#06 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+testdata/locks-insecure-many/my-package-lock.json: found 6 packages
+  Using config at testdata/locks-insecure-many/.osv-detector.yml (3 ignores)
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  nth-check@1.0.2 is affected by the following vulnerabilities:
+    GHSA-rp65-9cf3-cjxr: Inefficient Regular Expression Complexity in nth-check (https://github.com/advisories/GHSA-rp65-9cf3-cjxr)
+  ua-parser-js@1.0.2 is affected by the following vulnerabilities:
+    GHSA-fhg7-m89q-25r3: ReDoS Vulnerability in ua-parser-js version (https://github.com/advisories/GHSA-fhg7-m89q-25r3)
+  word-wrap@1.2.3 is affected by the following vulnerabilities:
+    GHSA-j8xg-fqg3-53r7: word-wrap vulnerable to Regular Expression Denial of Service (https://github.com/advisories/GHSA-j8xg-fqg3-53r7)
+
+  3 new vulnerabilities found in testdata/locks-insecure-many/my-package-lock.json (2 were ignored)
+
+Updated testdata/locks-insecure-many/.osv-detector.yml with 5 vulnerabilities
+
+---
+
+[TestRun_UpdatingConfigIgnores/#06 - 2]
+
+---
