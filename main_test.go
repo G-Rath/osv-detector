@@ -30,9 +30,9 @@ func TestMain(m *testing.M) {
 }
 
 type cliTestCase struct {
-	name         string
-	args         []string
-	wantExitCode int
+	name string
+	args []string
+	exit int
 
 	around func(t *testing.T) func()
 }
@@ -79,8 +79,8 @@ func testCli(t *testing.T, tc cliTestCase) {
 	stdout = normalizeWindowsErrors(stdout)
 	stderr = normalizeWindowsErrors(stderr)
 
-	if ec != tc.wantExitCode {
-		t.Errorf("cli exited with code %d, not %d", ec, tc.wantExitCode)
+	if ec != tc.exit {
+		t.Errorf("cli exited with code %d, not %d", ec, tc.exit)
 	}
 
 	snaps.MatchSnapshot(t, stdout)
@@ -92,25 +92,25 @@ func TestRun(t *testing.T) {
 
 	tests := []cliTestCase{
 		{
-			name:         "",
-			args:         []string{},
-			wantExitCode: 127,
+			name: "",
+			args: []string{},
+			exit: 127,
 		},
 		{
-			name:         "",
-			args:         []string{"--version"},
-			wantExitCode: 0,
+			name: "",
+			args: []string{"--version"},
+			exit: 0,
 		},
 		{
-			name:         "",
-			args:         []string{"--parse-as", "my-file"},
-			wantExitCode: 127,
+			name: "",
+			args: []string{"--parse-as", "my-file"},
+			exit: 127,
 		},
 		// only the files in the given directories are checked (no recursion)
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/")},
-			wantExitCode: 128,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/")},
+			exit: 128,
 		},
 	}
 	for _, tt := range tests {
@@ -128,53 +128,53 @@ func TestRun_EmptyDirExitCode(t *testing.T) {
 	tests := []cliTestCase{
 		// no paths should return standard error exit code
 		{
-			name:         "",
-			args:         []string{},
-			wantExitCode: 127,
+			name: "",
+			args: []string{},
+			exit: 127,
 		},
 		// one directory without any lockfiles should result in "no lockfiles in directories" exit code
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/locks-none")},
-			wantExitCode: 128,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/locks-none")},
+			exit: 128,
 		},
 		// two directories without any lockfiles should return "no lockfiles in directories" exit code
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/locks-none"), filepath.FromSlash("./testdata/")},
-			wantExitCode: 128,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/locks-none"), filepath.FromSlash("./testdata/")},
+			exit: 128,
 		},
 		// a path to an unknown lockfile should return standard error exit code
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/locks-none/my-file.txt")},
-			wantExitCode: 127,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/locks-none/my-file.txt")},
+			exit: 127,
 		},
 		// mix and match of directory without any lockfiles and a path to an unknown lockfile should return standard exit code
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/locks-none/my-file.txt"), filepath.FromSlash("./testdata/")},
-			wantExitCode: 127,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/locks-none/my-file.txt"), filepath.FromSlash("./testdata/")},
+			exit: 127,
 		},
 		// when the directory does not exist, the exit code should not be for "no lockfiles in directories"
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/does/not/exist")},
-			wantExitCode: 127,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/does/not/exist")},
+			exit: 127,
 			// "file not found" message is different on Windows vs other OSs
 		},
 		// an empty directory + a directory that does not exist should return standard exit code
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/does/not/exist"), filepath.FromSlash("./testdata/locks-none")},
-			wantExitCode: 127,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/does/not/exist"), filepath.FromSlash("./testdata/locks-none")},
+			exit: 127,
 			// "file not found" message is different on Windows vs other OSs
 		},
 		// when there are no parsable lockfiles in the directory + --json should give sensible json
 		{
-			name:         "",
-			args:         []string{"--json", filepath.FromSlash("./testdata/locks-none")},
-			wantExitCode: 128,
+			name: "",
+			args: []string{"--json", filepath.FromSlash("./testdata/locks-none")},
+			exit: 128,
 		},
 	}
 	for _, tt := range tests {
@@ -191,25 +191,25 @@ func TestRun_ListPackages(t *testing.T) {
 
 	tests := []cliTestCase{
 		{
-			name:         "",
-			args:         []string{"--list-packages", filepath.FromSlash("./testdata/locks-one")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{"--list-packages", filepath.FromSlash("./testdata/locks-one")},
+			exit: 0,
 		},
 		{
-			name:         "",
-			args:         []string{"--list-packages", filepath.FromSlash("./testdata/locks-many")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{"--list-packages", filepath.FromSlash("./testdata/locks-many")},
+			exit: 0,
 		},
 		{
-			name:         "",
-			args:         []string{"--list-packages", filepath.FromSlash("./testdata/locks-empty")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{"--list-packages", filepath.FromSlash("./testdata/locks-empty")},
+			exit: 0,
 		},
 		// json results in non-json output going to stderr
 		{
-			name:         "",
-			args:         []string{"--list-packages", "--json", filepath.FromSlash("./testdata/locks-one")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{"--list-packages", "--json", filepath.FromSlash("./testdata/locks-one")},
+			exit: 0,
 		},
 	}
 	for _, tt := range tests {
@@ -226,31 +226,31 @@ func TestRun_Lockfile(t *testing.T) {
 
 	tests := []cliTestCase{
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/locks-one")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/locks-one")},
+			exit: 0,
 		},
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/locks-many")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/locks-many")},
+			exit: 0,
 		},
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/locks-empty")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/locks-empty")},
+			exit: 0,
 		},
 		// parse-as + known vulnerability exits with error code 1
 		{
-			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json")},
-			wantExitCode: 1,
+			name: "",
+			args: []string{"--parse-as", "package-lock.json", filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json")},
+			exit: 1,
 		},
 		// json results in non-json output going to stderr
 		{
-			name:         "",
-			args:         []string{"--json", filepath.FromSlash("./testdata/locks-one")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{"--json", filepath.FromSlash("./testdata/locks-one")},
+			exit: 0,
 		},
 	}
 	for _, tt := range tests {
@@ -267,14 +267,14 @@ func TestRun_DBs(t *testing.T) {
 
 	tests := []cliTestCase{
 		{
-			name:         "",
-			args:         []string{"--use-dbs=false", filepath.FromSlash("./testdata/locks-one")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{"--use-dbs=false", filepath.FromSlash("./testdata/locks-one")},
+			exit: 0,
 		},
 		{
-			name:         "",
-			args:         []string{"--use-api", filepath.FromSlash("./testdata/locks-one")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{"--use-api", filepath.FromSlash("./testdata/locks-one")},
+			exit: 0,
 		},
 	}
 	for _, tt := range tests {
@@ -292,39 +292,39 @@ func TestRun_ParseAsSpecific(t *testing.T) {
 	tests := []cliTestCase{
 		// when there is just a ":", it defaults as empty
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash(":./testdata/locks-insecure/composer.lock")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{filepath.FromSlash(":./testdata/locks-insecure/composer.lock")},
+			exit: 0,
 		},
 		// ":" can be used as an escape (no test though because it's invalid on Windows)
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash(":./testdata/locks-insecure/my:file")},
-			wantExitCode: 127,
+			name: "",
+			args: []string{filepath.FromSlash(":./testdata/locks-insecure/my:file")},
+			exit: 127,
 		},
 		// when a path to a file is given, parse-as is applied to that file
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("package-lock.json:./testdata/locks-insecure/my-package-lock.json")},
-			wantExitCode: 1,
+			name: "",
+			args: []string{filepath.FromSlash("package-lock.json:./testdata/locks-insecure/my-package-lock.json")},
+			exit: 1,
 		},
 		// when a path to a directory is given, parse-as is applied to all files in the directory
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("package-lock.json:./testdata/locks-insecure")},
-			wantExitCode: 1,
+			name: "",
+			args: []string{filepath.FromSlash("package-lock.json:./testdata/locks-insecure")},
+			exit: 1,
 		},
 		// files that error on parsing don't stop parsable files from being checked
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("package-lock.json:./testdata/locks-empty")},
-			wantExitCode: 127,
+			name: "",
+			args: []string{filepath.FromSlash("package-lock.json:./testdata/locks-empty")},
+			exit: 127,
 		},
 		// files that error on parsing don't stop parsable files from being checked
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("package-lock.json:./testdata/locks-empty"), filepath.FromSlash("package-lock.json:./testdata/locks-insecure")},
-			wantExitCode: 127,
+			name: "",
+			args: []string{filepath.FromSlash("package-lock.json:./testdata/locks-empty"), filepath.FromSlash("package-lock.json:./testdata/locks-insecure")},
+			exit: 127,
 		},
 	}
 	for _, tt := range tests {
@@ -342,33 +342,33 @@ func TestRun_ParseAsGlobal(t *testing.T) {
 	tests := []cliTestCase{
 		// when a path to a file is given, parse-as is applied to that file
 		{
-			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json")},
-			wantExitCode: 1,
+			name: "",
+			args: []string{"--parse-as", "package-lock.json", filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json")},
+			exit: 1,
 		},
 		// when a path to a directory is given, parse-as is applied to all files in the directory
 		{
-			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./testdata/locks-insecure")},
-			wantExitCode: 1,
+			name: "",
+			args: []string{"--parse-as", "package-lock.json", filepath.FromSlash("./testdata/locks-insecure")},
+			exit: 1,
 		},
 		// files that error on parsing don't stop parsable files from being checked
 		{
-			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./testdata/locks-empty")},
-			wantExitCode: 127,
+			name: "",
+			args: []string{"--parse-as", "package-lock.json", filepath.FromSlash("./testdata/locks-empty")},
+			exit: 127,
 		},
 		// files that error on parsing don't stop parsable files from being checked
 		{
-			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("./testdata/locks-empty"), filepath.FromSlash("./testdata/locks-insecure")},
-			wantExitCode: 127,
+			name: "",
+			args: []string{"--parse-as", "package-lock.json", filepath.FromSlash("./testdata/locks-empty"), filepath.FromSlash("./testdata/locks-insecure")},
+			exit: 127,
 		},
 		// specific parse-as takes precedence over global parse-as
 		{
-			name:         "",
-			args:         []string{"--parse-as", "package-lock.json", filepath.FromSlash("Gemfile.lock:./testdata/locks-empty"), filepath.FromSlash("./testdata/locks-insecure")},
-			wantExitCode: 1,
+			name: "",
+			args: []string{"--parse-as", "package-lock.json", filepath.FromSlash("Gemfile.lock:./testdata/locks-empty"), filepath.FromSlash("./testdata/locks-insecure")},
+			exit: 1,
 		},
 	}
 	for _, tt := range tests {
@@ -393,7 +393,7 @@ func TestRun_ParseAs_CsvRow(t *testing.T) {
 				"--parse-as", "csv-row",
 				"NuGet,,Yarp.ReverseProxy,",
 			},
-			wantExitCode: 1,
+			exit: 1,
 		},
 		{
 			name: "",
@@ -403,7 +403,7 @@ func TestRun_ParseAs_CsvRow(t *testing.T) {
 				"NuGet,,Yarp.ReverseProxy,",
 				"npm,,@typescript-eslint/types,5.13.0",
 			},
-			wantExitCode: 1,
+			exit: 1,
 		},
 		{
 			name: "",
@@ -413,7 +413,7 @@ func TestRun_ParseAs_CsvRow(t *testing.T) {
 				"NuGet,,",
 				"npm,,@typescript-eslint/types,5.13.0",
 			},
-			wantExitCode: 127,
+			exit: 127,
 		},
 	}
 	for _, tt := range tests {
@@ -430,14 +430,14 @@ func TestRun_ParseAs_CsvFile(t *testing.T) {
 
 	tests := []cliTestCase{
 		{
-			name:         "",
-			args:         []string{"--parse-as", "csv-file", filepath.FromSlash("./testdata/csvs-files/two-rows.csv")},
-			wantExitCode: 1,
+			name: "",
+			args: []string{"--parse-as", "csv-file", filepath.FromSlash("./testdata/csvs-files/two-rows.csv")},
+			exit: 1,
 		},
 		{
-			name:         "",
-			args:         []string{"--parse-as", "csv-file", filepath.FromSlash("./testdata/csvs-files/not-a-csv.xml")},
-			wantExitCode: 127,
+			name: "",
+			args: []string{"--parse-as", "csv-file", filepath.FromSlash("./testdata/csvs-files/not-a-csv.xml")},
+			exit: 127,
 		},
 	}
 	for _, tt := range tests {
@@ -455,37 +455,37 @@ func TestRun_Configs(t *testing.T) {
 	tests := []cliTestCase{
 		// when given a path to a single lockfile, the local config should be used
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/configs-one/yarn.lock")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/configs-one/yarn.lock")},
+			exit: 0,
 		},
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/configs-two/yarn.lock")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/configs-two/yarn.lock")},
+			exit: 0,
 		},
 		// when given a path to a directory, the local config should be used for all lockfiles
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/configs-one")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/configs-one")},
+			exit: 0,
 		},
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/configs-two")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/configs-two")},
+			exit: 0,
 		},
 		// local configs should be applied based on directory of each lockfile
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/configs-one/yarn.lock"), filepath.FromSlash("./testdata/locks-many")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/configs-one/yarn.lock"), filepath.FromSlash("./testdata/locks-many")},
+			exit: 0,
 		},
 		// invalid databases should be skipped
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/configs-extra-dbs/yarn.lock")},
-			wantExitCode: 127,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/configs-extra-dbs/yarn.lock")},
+			exit: 127,
 		},
 		// databases from configs are ignored if "--no-config-databases" is passed...
 		{
@@ -494,7 +494,7 @@ func TestRun_Configs(t *testing.T) {
 				"--no-config-databases",
 				filepath.FromSlash("./testdata/configs-extra-dbs/yarn.lock"),
 			},
-			wantExitCode: 0,
+			exit: 0,
 		},
 		// ...but it does still use the built-in databases
 		{
@@ -504,30 +504,30 @@ func TestRun_Configs(t *testing.T) {
 				"--no-config-databases",
 				filepath.FromSlash("./testdata/locks-many/yarn.lock"),
 			},
-			wantExitCode: 0,
+			exit: 0,
 		},
 		// when a global config is provided, any local configs should be ignored
 		{
-			name:         "",
-			args:         []string{"--config", filepath.FromSlash("testdata/my-config.yml"), filepath.FromSlash("./testdata/configs-one/yarn.lock")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{"--config", filepath.FromSlash("testdata/my-config.yml"), filepath.FromSlash("./testdata/configs-one/yarn.lock")},
+			exit: 0,
 		},
 		{
-			name:         "",
-			args:         []string{"--config", filepath.FromSlash("testdata/my-config.yml"), filepath.FromSlash("./testdata/configs-two")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{"--config", filepath.FromSlash("testdata/my-config.yml"), filepath.FromSlash("./testdata/configs-two")},
+			exit: 0,
 		},
 		{
-			name:         "",
-			args:         []string{"--config", filepath.FromSlash("testdata/my-config.yml"), filepath.FromSlash("./testdata/configs-one/yarn.lock"), filepath.FromSlash("./testdata/locks-many")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{"--config", filepath.FromSlash("testdata/my-config.yml"), filepath.FromSlash("./testdata/configs-one/yarn.lock"), filepath.FromSlash("./testdata/locks-many")},
+			exit: 0,
 		},
 		// when a local config is invalid, none of the lockfiles in that directory should
 		// be checked (as the results could be different due to e.g. missing ignores)
 		{
-			name:         "",
-			args:         []string{filepath.FromSlash("./testdata/configs-invalid"), filepath.FromSlash("./testdata/locks-one")},
-			wantExitCode: 127,
+			name: "",
+			args: []string{filepath.FromSlash("./testdata/configs-invalid"), filepath.FromSlash("./testdata/locks-one")},
+			exit: 127,
 		},
 		// when a global config is invalid, none of the lockfiles should be checked
 		// (as the results could be different due to e.g. missing ignores)
@@ -539,7 +539,7 @@ func TestRun_Configs(t *testing.T) {
 				filepath.FromSlash("./testdata/locks-one"),
 				filepath.FromSlash("./testdata/locks-many"),
 			},
-			wantExitCode: 127,
+			exit: 127,
 		},
 	}
 	for _, tt := range tests {
@@ -557,9 +557,9 @@ func TestRun_Ignores(t *testing.T) {
 	tests := []cliTestCase{
 		// no ignore count is printed if there is nothing ignored
 		{
-			name:         "",
-			args:         []string{"--ignore", "GHSA-1234", "--ignore", "GHSA-5678", filepath.FromSlash("./testdata/locks-one")},
-			wantExitCode: 0,
+			name: "",
+			args: []string{"--ignore", "GHSA-1234", "--ignore", "GHSA-5678", filepath.FromSlash("./testdata/locks-one")},
+			exit: 0,
 		},
 		{
 			name: "",
@@ -568,7 +568,7 @@ func TestRun_Ignores(t *testing.T) {
 				"--parse-as", "package-lock.json",
 				filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json"),
 			},
-			wantExitCode: 0,
+			exit: 0,
 		},
 		// the ignored count reflects the number of vulnerabilities ignored,
 		// not the number of ignores that were provided
@@ -580,7 +580,7 @@ func TestRun_Ignores(t *testing.T) {
 				"--parse-as", "package-lock.json",
 				filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json"),
 			},
-			wantExitCode: 0,
+			exit: 0,
 		},
 		// ignores passed by flags are _merged_ with those specified in configs by default
 		{
@@ -591,7 +591,7 @@ func TestRun_Ignores(t *testing.T) {
 				"--parse-as", "package-lock.json",
 				filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json"),
 			},
-			wantExitCode: 0,
+			exit: 0,
 		},
 		// ignores from configs are ignored if "--no-config-ignores" is passed
 		{
@@ -602,7 +602,7 @@ func TestRun_Ignores(t *testing.T) {
 				"--parse-as", "package-lock.json",
 				filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json"),
 			},
-			wantExitCode: 1,
+			exit: 1,
 		},
 		// ignores passed by flags are still respected with "--no-config-ignores"
 		{
@@ -614,7 +614,7 @@ func TestRun_Ignores(t *testing.T) {
 				"--parse-as", "package-lock.json",
 				filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json"),
 			},
-			wantExitCode: 0,
+			exit: 0,
 		},
 		// ignores passed by flags are ignored with those specified in configs
 		{
@@ -625,7 +625,7 @@ func TestRun_Ignores(t *testing.T) {
 				"--parse-as", "package-lock.json",
 				filepath.FromSlash("./testdata/locks-insecure/my-package-lock.json"),
 			},
-			wantExitCode: 0,
+			exit: 0,
 		},
 	}
 	for _, tt := range tests {
@@ -674,9 +674,9 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 	tests := []cliTestCase{
 		// when there is no existing config, nothing should be updated
 		{
-			name:         "",
-			args:         []string{"--update-config-ignores", filepath.FromSlash("package-lock.json:./testdata/locks-insecure/my-package-lock.json")},
-			wantExitCode: 1,
+			name: "",
+			args: []string{"--update-config-ignores", filepath.FromSlash("package-lock.json:./testdata/locks-insecure/my-package-lock.json")},
+			exit: 1,
 		},
 		// when given an explicit config, that should be updated
 		{
@@ -686,7 +686,7 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 				"--config", "testdata/existing-config.yml",
 				filepath.FromSlash("package-lock.json:./testdata/locks-insecure/my-package-lock.json"),
 			},
-			wantExitCode: 1,
+			exit: 1,
 			around: func(t *testing.T) func() {
 				t.Helper()
 
@@ -701,7 +701,7 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 				"--config", "testdata/existing-config-with-ignores.yml",
 				filepath.FromSlash("package-lock.json:./testdata/locks-insecure/my-package-lock.json"),
 			},
-			wantExitCode: 0,
+			exit: 0,
 			around: func(t *testing.T) func() {
 				t.Helper()
 
@@ -720,7 +720,7 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 				"--config", "testdata/existing-config-with-ignored-ignores.yml",
 				filepath.FromSlash("package-lock.json:./testdata/locks-insecure/my-package-lock.json"),
 			},
-			wantExitCode: 1,
+			exit: 1,
 			around: func(t *testing.T) func() {
 				t.Helper()
 
@@ -741,7 +741,7 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 				filepath.FromSlash("package-lock.json:./testdata/locks-insecure-nested/my-package-lock.json"),
 				filepath.FromSlash("composer.lock:./testdata/locks-insecure-nested/nested/my-composer-lock.json"),
 			},
-			wantExitCode: 1,
+			exit: 1,
 			around: func(t *testing.T) func() {
 				t.Helper()
 
@@ -759,7 +759,7 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 				filepath.FromSlash("package-lock.json:./testdata/locks-insecure-nested/my-package-lock.json"),
 				filepath.FromSlash("composer.lock:./testdata/locks-insecure-nested/nested/my-composer-lock.json"),
 			},
-			wantExitCode: 1,
+			exit: 1,
 			around: func(t *testing.T) func() {
 				t.Helper()
 
@@ -786,7 +786,7 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 				"--update-config-ignores",
 				filepath.FromSlash("package-lock.json:./testdata/locks-insecure-many/my-package-lock.json"),
 			},
-			wantExitCode: 1,
+			exit: 1,
 			around: func(t *testing.T) func() {
 				t.Helper()
 
@@ -854,8 +854,8 @@ func TestRun_EndToEnd(t *testing.T) {
 		fp := filepath.FromSlash(filepath.Join(e2eTestdataDir, f.Name()))
 
 		tests = append(tests, cliTestCase{
-			args:         []string{parseAs + ":" + fp},
-			wantExitCode: 1,
+			args: []string{parseAs + ":" + fp},
+			exit: 1,
 		})
 	}
 
