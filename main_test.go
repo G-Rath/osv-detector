@@ -5,14 +5,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"regexp"
-	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/g-rath/osv-detector/internal/cachedregexp"
 	"github.com/gkampitakis/go-snaps/snaps"
-	"github.com/google/go-cmp/cmp"
 )
 
 func TestMain(m *testing.M) {
@@ -30,60 +27,6 @@ func TestMain(m *testing.M) {
 		fmt.Println("Some snapshots were outdated.")
 		os.Exit(1)
 	}
-}
-
-func dedent(t *testing.T, str string) string {
-	t.Helper()
-
-	// 0. replace all tabs with spaces
-	str = strings.ReplaceAll(str, "\t", "  ")
-
-	// 1. remove trailing whitespace
-	re := cachedregexp.MustCompile(`\r?\n([\t ]*)$`)
-	str = re.ReplaceAllString(str, "")
-
-	// 2. if any of the lines are not indented, return as we're already dedent-ed
-	re = cachedregexp.MustCompile(`(^|\r?\n)[^\t \n]`)
-	if re.MatchString(str) {
-		return str
-	}
-
-	// 3. find all line breaks to determine the highest common indentation level
-	re = cachedregexp.MustCompile(`\n[\t ]+`)
-	matches := re.FindAllString(str, -1)
-
-	// 4. remove the common indentation from all strings
-	if matches != nil {
-		size := len(matches[0]) - 1
-
-		for _, match := range matches {
-			if len(match)-1 < size {
-				size = len(match) - 1
-			}
-		}
-
-		re := cachedregexp.MustCompile(`\n[\t ]{` + strconv.Itoa(size) + `}`)
-		str = re.ReplaceAllString(str, "\n")
-	}
-
-	// 5. Remove leading whitespace.
-	re = cachedregexp.MustCompile(`^\r?\n`)
-	str = re.ReplaceAllString(str, "")
-
-	return str
-}
-
-// checks if two strings are equal, treating any occurrences of `%%` in the
-// expected string to mean "any text"
-func areEqual(t *testing.T, actual, expect string) bool {
-	t.Helper()
-
-	expect = regexp.QuoteMeta(expect)
-	expect = strings.ReplaceAll(expect, "%%", ".+")
-
-	re := cachedregexp.MustCompile(`^` + expect + `$`)
-
-	return re.MatchString(actual)
 }
 
 type cliTestCase struct {
@@ -117,21 +60,6 @@ func normalizeWindowsErrors(str string) string {
 	str = strings.ReplaceAll(str, "The system cannot find the file specified.", "no such file or directory")
 
 	return str
-}
-
-func expectAreEqual(t *testing.T, subject, actual, expect string) {
-	t.Helper()
-
-	actual = dedent(t, actual)
-	expect = dedent(t, expect)
-
-	if !areEqual(t, actual, expect) {
-		if os.Getenv("TEST_NO_DIFF") == "true" {
-			t.Errorf("\nactual %s does not match expected:\n got:\n%s\n\n want:\n%s", subject, actual, expect)
-		} else {
-			t.Errorf("\nactual %s does not match expected:\n%s", subject, cmp.Diff(expect, actual))
-		}
-	}
 }
 
 func testCli(t *testing.T, tc cliTestCase) {
@@ -709,7 +637,7 @@ func TestRun_Ignores(t *testing.T) {
 	}
 }
 
-func setupConfigForUpdating(t *testing.T, path string, initial string, updated string) func() {
+func setupConfigForUpdating(t *testing.T, path string, initial string) func() {
 	t.Helper()
 
 	err := os.WriteFile(path, []byte(initial), 0600)
@@ -736,7 +664,7 @@ func setupConfigForUpdating(t *testing.T, path string, initial string, updated s
 			t.Fatalf("could not read test config file: %v", err)
 		}
 
-		expectAreEqual(t, "config", string(content), updated)
+		snaps.MatchSnapshot(t, string(content))
 	}
 }
 
@@ -762,14 +690,7 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 			around: func(t *testing.T) func() {
 				t.Helper()
 
-				return setupConfigForUpdating(t,
-					"testdata/existing-config.yml",
-					"",
-					`
-						ignore:
-  						- GHSA-whgm-jr23-g3j9
-					`,
-				)
+				return setupConfigForUpdating(t, "testdata/existing-config.yml", "")
 			},
 		},
 		// when there are existing ignores
@@ -787,10 +708,6 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 				return setupConfigForUpdating(t,
 					"testdata/existing-config-with-ignores.yml",
 					"ignore: [GHSA-whgm-jr23-g3j9]",
-					`
-						ignore:
-							- GHSA-whgm-jr23-g3j9
-					`,
 				)
 			},
 		},
@@ -810,10 +727,6 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 				return setupConfigForUpdating(t,
 					"testdata/existing-config-with-ignored-ignores.yml",
 					"ignore: [GHSA-whgm-jr23-g3j9]",
-					`
-					ignore:
-						- GHSA-whgm-jr23-g3j9
-					`,
 				)
 			},
 		},
@@ -835,17 +748,6 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 				return setupConfigForUpdating(t,
 					"testdata/existing-config-with-many-lockfiles.yml",
 					"ignore: [GHSA-whgm-jr23-g3j9]",
-					`
-					ignore:
-						- GHSA-7p7h-4mm5-852v
-						- GHSA-93q8-gq69-wqmw
-						- GHSA-fhg7-m89q-25r3
-						- GHSA-j8xg-fqg3-53r7
-						- GHSA-q7rv-6hp3-vh96
-						- GHSA-rp65-9cf3-cjxr
-						- GHSA-whgm-jr23-g3j9
-						- GHSA-wxmh-65f7-jcvw
-					`,
 				)
 			},
 		},
@@ -864,20 +766,11 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 				cleanupConfig1 := setupConfigForUpdating(t,
 					"testdata/locks-insecure-nested/.osv-detector.yml",
 					"ignore: []",
-					`
-					ignore:
-						- GHSA-whgm-jr23-g3j9
-					`,
 				)
 
 				cleanupConfig2 := setupConfigForUpdating(t,
 					"testdata/locks-insecure-nested/nested/.osv-detector.yml",
 					"ignore: []",
-					`
-					ignore:
-						- GHSA-q7rv-6hp3-vh96
-						- GHSA-wxmh-65f7-jcvw
-					`,
 				)
 
 				return func() {
@@ -900,14 +793,6 @@ func TestRun_UpdatingConfigIgnores(t *testing.T) {
 				return setupConfigForUpdating(t,
 					"testdata/locks-insecure-many/.osv-detector.yml",
 					"ignore: [GHSA-7p7h-4mm5-852v, GHSA-93q8-gq69-wqmw, GHSA-67hx-6x53-jw92]",
-					`
-						ignore:
-							- GHSA-7p7h-4mm5-852v
-							- GHSA-93q8-gq69-wqmw
-							- GHSA-fhg7-m89q-25r3
-							- GHSA-j8xg-fqg3-53r7
-							- GHSA-rp65-9cf3-cjxr
-					`,
 				)
 			},
 		},

@@ -1014,6 +1014,12 @@ Updated testdata/existing-config.yml with 1 vulnerability
 
 ---
 
+[TestRun_UpdatingConfigIgnores/#01 - 3]
+ignore:
+  - GHSA-whgm-jr23-g3j9
+
+---
+
 [TestRun_UpdatingConfigIgnores/#02 - 1]
 Loaded the following OSV databases:
   npm (%% vulnerabilities, including withdrawn - last updated %%)
@@ -1029,6 +1035,12 @@ Updated testdata/existing-config-with-ignores.yml with 1 vulnerability
 ---
 
 [TestRun_UpdatingConfigIgnores/#02 - 2]
+
+---
+
+[TestRun_UpdatingConfigIgnores/#02 - 3]
+ignore:
+  - GHSA-whgm-jr23-g3j9
 
 ---
 
@@ -1050,6 +1062,12 @@ Updated testdata/existing-config-with-ignored-ignores.yml with 1 vulnerability
 ---
 
 [TestRun_UpdatingConfigIgnores/#03 - 2]
+
+---
+
+[TestRun_UpdatingConfigIgnores/#03 - 3]
+ignore:
+  - GHSA-whgm-jr23-g3j9
 
 ---
 
@@ -1105,6 +1123,19 @@ Updated testdata/existing-config-with-many-lockfiles.yml with 8 vulnerabilities
 
 ---
 
+[TestRun_UpdatingConfigIgnores/#04 - 3]
+ignore:
+  - GHSA-7p7h-4mm5-852v
+  - GHSA-93q8-gq69-wqmw
+  - GHSA-fhg7-m89q-25r3
+  - GHSA-j8xg-fqg3-53r7
+  - GHSA-q7rv-6hp3-vh96
+  - GHSA-rp65-9cf3-cjxr
+  - GHSA-whgm-jr23-g3j9
+  - GHSA-wxmh-65f7-jcvw
+
+---
+
 [TestRun_UpdatingConfigIgnores/#05 - 1]
 Loaded the following OSV databases:
   npm (%% vulnerabilities, including withdrawn - last updated %%)
@@ -1138,6 +1169,19 @@ Updated testdata/locks-insecure-nested/nested/.osv-detector.yml with 2 vulnerabi
 
 ---
 
+[TestRun_UpdatingConfigIgnores/#05 - 3]
+ignore:
+  - GHSA-whgm-jr23-g3j9
+
+---
+
+[TestRun_UpdatingConfigIgnores/#05 - 4]
+ignore:
+  - GHSA-q7rv-6hp3-vh96
+  - GHSA-wxmh-65f7-jcvw
+
+---
+
 [TestRun_UpdatingConfigIgnores/#06 - 1]
 Loaded the following OSV databases:
   npm (%% vulnerabilities, including withdrawn - last updated %%)
@@ -1160,5 +1204,15 @@ Updated testdata/locks-insecure-many/.osv-detector.yml with 5 vulnerabilities
 ---
 
 [TestRun_UpdatingConfigIgnores/#06 - 2]
+
+---
+
+[TestRun_UpdatingConfigIgnores/#06 - 3]
+ignore:
+  - GHSA-7p7h-4mm5-852v
+  - GHSA-93q8-gq69-wqmw
+  - GHSA-fhg7-m89q-25r3
+  - GHSA-j8xg-fqg3-53r7
+  - GHSA-rp65-9cf3-cjxr
 
 ---
