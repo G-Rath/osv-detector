@@ -33,10 +33,7 @@ func TestParsePubspecLock_Empty(t *testing.T) {
 
 	packages, err := lockfile.ParsePubspecLock("testdata/pub/empty.lock")
 
-	if err != nil {
-		t.Errorf("Got unexpected error: %v", err)
-	}
-
+	expectErrContaining(t, err, "could not parse")
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
