@@ -275,7 +275,7 @@ public class GenerateMavenVersions {
   }
 
   public static void main(String[] args) throws IOException {
-    String outfile = "pkg/semantic/testdata/maven-versions-generated.txt";
+    String outfile = "generators/testdata/maven-versions-generated.txt";
     Map<String, List<String>> packages = fetchPackageVersions();
 
     writeToFile(outfile, generatePackageCompares(packages));

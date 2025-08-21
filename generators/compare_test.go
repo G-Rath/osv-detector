@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/g-rath/osv-detector/internal"
-	"github.com/g-rath/osv-detector/pkg/semantic"
+	"github.com/google/osv-scalibr/semantic"
 )
 
 func expectedResult(t *testing.T, comparator string) int {
@@ -96,7 +96,7 @@ func runAgainstEcosystemFixture(t *testing.T, ecosystem internal.Ecosystem, file
 func parseAsVersion(t *testing.T, str string, ecosystem internal.Ecosystem) semantic.Version {
 	t.Helper()
 
-	v, err := semantic.Parse(str, ecosystem)
+	v, err := semantic.Parse(str, string(ecosystem))
 
 	if err != nil {
 		t.Fatalf("failed to parse version '%s' as ecosystem '%s': %v", str, ecosystem, err)
@@ -116,7 +116,15 @@ func expectCompareResult(
 
 	v := parseAsVersion(t, a, ecosystem)
 
-	if actualResult := v.CompareStr(b); actualResult != expectedResult {
+	actualResult, err := v.CompareStr(b)
+
+	if err != nil {
+		t.Errorf("failed to compare '%s' to '%s': %v", a, b, err)
+
+		return false
+	}
+
+	if actualResult != expectedResult {
 		t.Errorf(
 			"Expected %s to be %s %s, but it was %s",
 			a,
