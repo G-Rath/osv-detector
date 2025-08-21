@@ -140,10 +140,16 @@ func invToPackageDetails(invs []*extractor.Package, ecosystem Ecosystem) []Packa
 	details := make([]PackageDetails, 0, len(invs))
 
 	for _, inv := range invs {
+		commit := ""
+
+		if inv.SourceCode != nil {
+			commit = inv.SourceCode.Commit
+		}
+
 		details = append(details, PackageDetails{
 			Name:      inv.Name,
 			Version:   inv.Version,
-			Commit:    inv.SourceCode.Commit,
+			Commit:    commit,
 			Ecosystem: ecosystem,
 			CompareAs: ecosystem,
 		})
