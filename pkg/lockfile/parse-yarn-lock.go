@@ -189,7 +189,7 @@ func ParseYarnLock(pathToLockfile string) ([]PackageDetails, error) {
 	packages := make([]PackageDetails, 0, len(packageGroups))
 
 	for _, group := range packageGroups {
-		if group[0] == "__metadata:" {
+		if group[0] == "__metadata:" || strings.HasSuffix(group[0], "@workspace:.\":") {
 			continue
 		}
 

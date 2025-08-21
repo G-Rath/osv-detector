@@ -180,12 +180,6 @@ func TestParseYarnLock_v2_WithPrerelease(t *testing.T) {
 			Ecosystem: lockfile.YarnEcosystem,
 			CompareAs: lockfile.YarnEcosystem,
 		},
-		{
-			Name:      "eslint-plugin-jest",
-			Version:   "0.0.0-use.local",
-			Ecosystem: lockfile.YarnEcosystem,
-			CompareAs: lockfile.YarnEcosystem,
-		},
 	})
 }
 
@@ -209,12 +203,6 @@ func TestParseYarnLock_v2_WithBuildString(t *testing.T) {
 		{
 			Name:      "tslib",
 			Version:   "2.6.2",
-			Ecosystem: lockfile.YarnEcosystem,
-			CompareAs: lockfile.YarnEcosystem,
-		},
-		{
-			Name:      "zone.js",
-			Version:   "0.0.0-use.local",
 			Ecosystem: lockfile.YarnEcosystem,
 			CompareAs: lockfile.YarnEcosystem,
 		},
@@ -331,9 +319,28 @@ func TestParseYarnLock_v2_WithAliases(t *testing.T) {
 			Ecosystem: lockfile.YarnEcosystem,
 			CompareAs: lockfile.YarnEcosystem,
 		},
+	})
+}
+
+func TestParseYarnLock_v2_ExcludeRoot(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParseYarnLock("testdata/yarn/exclude-root.v2.lock")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
 		{
-			Name:      "mine",
+			Name:      "@ws/ansi-regex",
 			Version:   "0.0.0-use.local",
+			Ecosystem: lockfile.YarnEcosystem,
+			CompareAs: lockfile.YarnEcosystem,
+		},
+		{
+			Name:      "ansi-regex",
+			Version:   "6.1.0",
 			Ecosystem: lockfile.YarnEcosystem,
 			CompareAs: lockfile.YarnEcosystem,
 		},
