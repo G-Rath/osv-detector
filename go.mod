@@ -8,7 +8,6 @@ require (
 	github.com/gkampitakis/go-snaps v0.5.14
 	github.com/google/go-cmp v0.7.0
 	github.com/google/osv-scalibr v0.3.3-0.20250826230339-30c71f65b5d6
-	github.com/tidwall/jsonc v0.3.2
 	golang.org/x/mod v0.27.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -35,6 +34,7 @@ require (
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/spdx/tools-golang v0.5.5 // indirect
 	github.com/tidwall/gjson v1.18.0 // indirect
+	github.com/tidwall/jsonc v0.3.2 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tidwall/sjson v1.2.5 // indirect
