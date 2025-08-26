@@ -291,3 +291,38 @@ func (osv *OSV) IsAffected(pkg internal.PackageDetails) bool {
 
 	return false
 }
+
+func (osv *OSV) NextFixedVersion(pkg internal.PackageDetails) string {
+	if pkg.Version == "" {
+		return ""
+	}
+
+	parsed := semantic.MustParse(pkg.Version, string(pkg.Ecosystem))
+
+	for _, affected := range osv.Affected {
+		if affected.Package.Ecosystem == pkg.Ecosystem &&
+			affected.Package.NormalizedName() == pkg.Name {
+			if len(affected.Ranges) == 0 && len(affected.Versions) == 0 {
+				_, _ = fmt.Fprintf(
+					os.Stderr,
+					"%s does not have any ranges or versions - this is probably a mistake!\n",
+					osv.ID,
+				)
+
+				continue
+			}
+
+			for _, rang := range affected.Ranges {
+				for _, event := range rang.Events {
+					if event.Fixed != "" {
+						if r, _ := parsed.CompareStr(event.Fixed); r == -1 {
+							return event.Fixed
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return ""
+}

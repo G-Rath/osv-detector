@@ -72,6 +72,12 @@ func (r Report) formatLineByLine() string {
 				color.CyanString("%s:", vulnerability.ID),
 				vulnerability.Describe(),
 			))
+
+			nextFix := vulnerability.NextFixedVersion(pkg.PackageDetails)
+
+			if nextFix != "" {
+				lines[len(lines)-1] += fmt.Sprintf(" (%s)", nextFix)
+			}
 		}
 	}
 
