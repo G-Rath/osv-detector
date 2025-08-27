@@ -29,6 +29,8 @@ var ErrUnsupportedDatabaseType = errors.New("unsupported database source type")
 // Load initializes a new OSV database based on the given Config
 func Load(config Config, offline bool, batchSize int) (DB, error) {
 	switch config.Type {
+	case "smart":
+		return NewSmartDB(config, offline)
 	case "zip":
 		return NewZippedDB(config, offline)
 	case "api":

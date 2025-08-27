@@ -34,6 +34,22 @@ func withDefaultAffected(id string) database.OSV {
 	}
 }
 
+func withSummary(id string, summary string) database.OSV {
+	return database.OSV{
+		ID: id,
+		Summary: summary,
+		Affected: []database.Affected{
+			{
+				Package: database.Package{
+					Name:      "mine",
+					Ecosystem: "PyPi",
+				},
+				Versions: database.Versions{},
+			},
+		},
+	}
+}
+
 func expectDBToHaveOSVs(
 	t *testing.T,
 	db interface {
@@ -99,6 +115,7 @@ func createZipServer(t *testing.T, handler http.HandlerFunc) *httptest.Server {
 		ts.Close()
 
 		_ = os.Remove(cachePath(ts.URL))
+		_ = os.RemoveAll(dirPath(ts.URL))
 	})
 
 	return ts
