@@ -33,10 +33,15 @@ func makeAPIDBConfig() database.Config {
 	}
 }
 
-func makeEcosystemDBConfig(ecosystem internal.Ecosystem) database.Config {
+func makeEcosystemDBConfig(ecosystem internal.Ecosystem, beSmart bool) database.Config {
+	typ := "zip"
+	if beSmart {
+		typ = "smart"
+	}
+
 	return database.Config{
 		Name: string(ecosystem),
-		Type: "zip",
+		Type: typ,
 		URL:  fmt.Sprintf("https://osv-vulnerabilities.storage.googleapis.com/%s/all.zip", ecosystem),
 	}
 }
@@ -158,6 +163,15 @@ func describeDB(db database.DB) string {
 	switch tt := db.(type) {
 	case *database.APIDB:
 		return "using batches of " + color.YellowString("%d", tt.BatchSize)
+	case *database.SmartDB:
+		count := tt.VulnerabilitiesCount
+
+		return fmt.Sprintf(
+			"%s %s, including withdrawn - last updated %s",
+			color.YellowString("%d", count),
+			reporter.Form(count, "vulnerability", "vulnerabilities"),
+			tt.UpdatedAt,
+		)
 	case *database.ZipDB:
 		count := tt.VulnerabilitiesCount
 
@@ -372,6 +386,7 @@ func (files lockfileAndConfigOrErrs) adjustExtraDatabases(
 	removeConfigDatabases bool,
 	addDefaultAPIDatabase bool,
 	addEcosystemDatabases bool,
+	beSmart bool,
 ) {
 	for _, file := range files {
 		if file.err != nil {
@@ -391,7 +406,7 @@ func (files lockfileAndConfigOrErrs) adjustExtraDatabases(
 			ecosystems := collectEcosystems([]lockfileAndConfigOrErr{file})
 
 			for _, ecosystem := range ecosystems {
-				extraDBConfigs = append(extraDBConfigs, makeEcosystemDBConfig(ecosystem))
+				extraDBConfigs = append(extraDBConfigs, makeEcosystemDBConfig(ecosystem, beSmart))
 			}
 		}
 
@@ -508,6 +523,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 	useDatabases := cli.Bool("use-dbs", true, "Use the databases from osv.dev to check for known vulnerabilities")
 	useAPI := cli.Bool("use-api", false, "Use the osv.dev API to check for known vulnerabilities")
 	batchSize := cli.Int("batch-size", 1000, "The number of packages to include in each batch when using the api database")
+	beSmart := cli.Bool("be-smart", false, "Use smart database mode for faster incremental updates")
 
 	cli.Var(&globalIgnores, "ignore", `ID of an OSV to ignore when determining exit codes.
 This flag can be passed multiple times to ignore different vulnerabilities`)
@@ -589,7 +605,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 	files := readAllLockfiles(r, pathsToLocksWithParseAs, cli.Args(), loadLocalConfig, &config)
 
-	files.adjustExtraDatabases(*noConfigDatabases, *useAPI, *useDatabases)
+	files.adjustExtraDatabases(*noConfigDatabases, *useAPI, *useDatabases, *beSmart)
 
 	dbs, errored := loadDatabases(
 		r,
