@@ -75,7 +75,7 @@ func cacheWrite(t *testing.T, cache database.Cache) {
 	}
 
 	if err != nil {
-		t.Errorf("unexpected error with cache: %v", err)
+		t.Fatalf("unexpected error with cache: %v", err)
 	}
 }
 
@@ -86,7 +86,7 @@ func cacheWriteBad(t *testing.T, url string, contents string) {
 	err := os.WriteFile(cachePath(url), []byte(contents), 0644)
 
 	if err != nil {
-		t.Errorf("unexpected error with cache: %v", err)
+		t.Fatalf("unexpected error with cache: %v", err)
 	}
 }
 
@@ -179,7 +179,7 @@ func TestNewZippedDB_Offline_WithCache(t *testing.T) {
 	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, true)
 
 	if err != nil {
-		t.Errorf("unexpected error \"%v\"", err)
+		t.Fatalf("unexpected error \"%v\"", err)
 	}
 
 	if db.UpdatedAt != date {
@@ -237,7 +237,7 @@ func TestNewZippedDB_Online_WithoutCache(t *testing.T) {
 	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
 
 	if err != nil {
-		t.Errorf("unexpected error \"%v\"", err)
+		t.Fatalf("unexpected error \"%v\"", err)
 	}
 
 	expectDBToHaveOSVs(t, db, osvs)
@@ -399,7 +399,7 @@ func TestNewZippedDB_FileChecks(t *testing.T) {
 	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
 
 	if err != nil {
-		t.Errorf("unexpected error \"%v\"", err)
+		t.Fatalf("unexpected error \"%v\"", err)
 	}
 
 	expectDBToHaveOSVs(t, db, osvs)
@@ -421,7 +421,7 @@ func TestNewZippedDB_WorkingDirectory(t *testing.T) {
 	db, err := database.NewZippedDB(database.Config{URL: ts.URL, WorkingDirectory: "reviewed"}, false)
 
 	if err != nil {
-		t.Errorf("unexpected error \"%v\"", err)
+		t.Fatalf("unexpected error \"%v\"", err)
 	}
 
 	expectDBToHaveOSVs(t, db, osvs)

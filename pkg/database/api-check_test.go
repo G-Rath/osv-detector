@@ -104,7 +104,7 @@ func TestAPIDB_Check_NoPackages(t *testing.T) {
 	vulns, err := db.Check([]internal.PackageDetails{})
 
 	if err != nil {
-		t.Errorf("unexpected error \"%v\"", err)
+		t.Fatalf("unexpected error \"%v\"", err)
 	}
 
 	if len(vulns) > 0 {
@@ -297,7 +297,7 @@ func TestAPIDB_Check_FetchSuccessful(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Errorf("unexpected error \"%v\"", err)
+		t.Fatalf("unexpected error \"%v\"", err)
 	}
 
 	if len(vulns) != 1 {
@@ -353,7 +353,7 @@ func TestAPIDB_Check_FetchFails(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Errorf("unexpected error \"%v\"", err)
+		t.Fatalf("unexpected error \"%v\"", err)
 	}
 
 	if len(vulns) != 1 {
@@ -410,7 +410,7 @@ func TestAPIDB_Check_FetchMixed(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Errorf("unexpected error \"%v\"", err)
+		t.Fatalf("unexpected error \"%v\"", err)
 	}
 
 	if len(vulns) != 1 {
@@ -452,7 +452,7 @@ func TestAPIDB_Check_WithCommit(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Errorf("unexpected error \"%v\"", err)
+		t.Fatalf("unexpected error \"%v\"", err)
 	}
 
 	if len(vulns) != 1 {
@@ -524,7 +524,7 @@ func TestAPIDB_Check_Batches(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Errorf("unexpected error \"%v\"", err)
+		t.Fatalf("unexpected error \"%v\"", err)
 	}
 
 	if requestCount != 2 {
