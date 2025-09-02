@@ -25,7 +25,7 @@ func TestNewDirDB(t *testing.T) {
 	db, err := database.NewDirDB(database.Config{URL: "file:/testdata/db"}, false)
 
 	if err != nil {
-		t.Errorf("unexpected error \"%v\"", err)
+		t.Fatalf("unexpected error \"%v\"", err)
 	}
 
 	expectDBToHaveOSVs(t, db, osvs)
@@ -85,7 +85,7 @@ func TestNewDirDB_WorkingDirectory(t *testing.T) {
 	db, err := database.NewDirDB(database.Config{URL: "file:/testdata/db", WorkingDirectory: "nested-1"}, false)
 
 	if err != nil {
-		t.Errorf("unexpected error \"%v\"", err)
+		t.Fatalf("unexpected error \"%v\"", err)
 	}
 
 	expectDBToHaveOSVs(t, db, osvs)
