@@ -1,6 +1,8 @@
 package lockfile_test
 
 import (
+	"errors"
+	"os"
 	"testing"
 
 	"github.com/g-rath/osv-detector/pkg/lockfile"
@@ -11,7 +13,9 @@ func TestParseNuGetLock_v1_FileDoesNotExist(t *testing.T) {
 
 	packages, err := lockfile.ParseNuGetLock("testdata/nuget/does-not-exist")
 
-	expectErrContaining(t, err, "could not read")
+	if !errors.Is(err, os.ErrNotExist) {
+		t.Errorf("expected \"%v\" error but got \"%v\"", os.ErrNotExist, err)
+	}
 	expectPackages(t, packages, []lockfile.PackageDetails{})
 }
 
