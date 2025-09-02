@@ -35,8 +35,13 @@ func extract(localPath string, extractor filesystem.Extractor, ecosystem Ecosyst
 func extractWithExtractor(ctx context.Context, localPath string, info fs.FileInfo, ext filesystem.Extractor) ([]*extractor.Package, error) {
 	// Create a scan input centered at the system root directory,
 	// to give access to the full filesystem for each extractor.
-	rootDir := getRootDir(localPath)
-	si, err := createScanInput(localPath, rootDir, info)
+	absPath, err := filepath.Abs(localPath)
+	if err != nil {
+		return nil, err
+	}
+
+	rootDir := getRootDir(absPath)
+	si, err := createScanInput(absPath, rootDir, info)
 	if err != nil {
 		return nil, err
 	}
