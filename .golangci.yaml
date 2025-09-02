@@ -21,6 +21,7 @@ linters:
     - nonamedreturns  # they have their uses
     - tagliatelle     # we're parsing data from external sources
     - varnamelen      # maybe later
+    - wrapcheck       # not (yet) convinced
     - wsl             # disagree with, for now
     - wsl_v5          # disagree with, for now
   settings:
