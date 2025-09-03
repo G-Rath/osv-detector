@@ -26,6 +26,8 @@ type SmartDB struct {
 	WorkingDirectory string
 	Offline          bool
 	UpdatedAt        string
+
+	cacheDirectory string
 }
 
 func (db *SmartDB) Name() string       { return db.name }
@@ -35,7 +37,7 @@ func (db *SmartDB) cachePath() string {
 	hash := sha256.Sum256([]byte(db.ArchiveURL))
 	fileName := fmt.Sprintf("osv-detector-%x-db", hash)
 
-	return filepath.Join(os.TempDir(), fileName)
+	return filepath.Join(db.cacheDirectory, fileName)
 }
 
 func (db *SmartDB) cacheFile(name string, content []byte) error {
@@ -96,6 +98,7 @@ func (db *SmartDB) populateFromZip() (*time.Time, error) {
 		name:             db.name,
 		ArchiveURL:       db.ArchiveURL,
 		WorkingDirectory: db.WorkingDirectory,
+		cacheDirectory:   db.cacheDirectory,
 		Offline:          db.Offline,
 	}
 
@@ -310,11 +313,22 @@ func (db *SmartDB) load() error {
 }
 
 func NewSmartDB(config Config, offline bool) (*SmartDB, error) {
+	if config.CacheDirectory == "" {
+		d, err := setupCacheDirectory()
+
+		if err != nil {
+			return nil, err
+		}
+
+		config.CacheDirectory = d
+	}
+
 	db := &SmartDB{
 		name:             config.Name,
 		identifier:       config.Identifier(),
 		ArchiveURL:       config.URL,
 		WorkingDirectory: config.WorkingDirectory,
+		cacheDirectory:   config.CacheDirectory,
 		Offline:          offline,
 	}
 	if err := db.load(); err != nil {

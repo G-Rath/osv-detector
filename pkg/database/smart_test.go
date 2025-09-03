@@ -73,7 +73,7 @@ func TestNewSmartDB_Offline_WithoutCache(t *testing.T) {
 		t.Errorf("a server request was made when running offline")
 	})
 
-	_, err := database.NewSmartDB(database.Config{URL: ts.URL}, true)
+	_, err := database.NewSmartDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, true)
 
 	if !errors.Is(err, database.ErrOfflineDatabaseNotFound) {
 		t.Errorf("expected \"%v\" error but got \"%v\"", database.ErrOfflineDatabaseNotFound, err)
@@ -109,7 +109,7 @@ func TestNewSmartDB_Offline_WithZipCache(t *testing.T) {
 		}),
 	})
 
-	db, err := database.NewSmartDB(database.Config{URL: ts.URL}, true)
+	db, err := database.NewSmartDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, true)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -152,7 +152,7 @@ func TestNewSmartDB_Offline_WithDirCache(t *testing.T) {
 		}),
 	})
 
-	db, err := database.NewSmartDB(database.Config{URL: ts.URL}, true)
+	db, err := database.NewSmartDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, true)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -175,7 +175,7 @@ func TestNewSmartDB_BadZip(t *testing.T) {
 		_, _ = w.Write([]byte("this is not a zip"))
 	})
 
-	_, err := database.NewSmartDB(database.Config{URL: ts.URL}, false)
+	_, err := database.NewSmartDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, false)
 
 	if err == nil {
 		t.Errorf("expected an error but did not get one")
@@ -185,7 +185,7 @@ func TestNewSmartDB_BadZip(t *testing.T) {
 func TestNewSmartDB_UnsupportedProtocol(t *testing.T) {
 	t.Parallel()
 
-	_, err := database.NewSmartDB(database.Config{URL: "file://hello-world"}, false)
+	_, err := database.NewSmartDB(database.Config{CacheDirectory: os.TempDir(), URL: "file://hello-world"}, false)
 
 	if err == nil {
 		t.Errorf("expected an error but did not get one")
@@ -221,7 +221,7 @@ func TestNewSmartDB_Online_WithoutCache(t *testing.T) {
 		}))
 	})
 
-	db, err := database.NewSmartDB(database.Config{URL: ts.URL}, false)
+	db, err := database.NewSmartDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, false)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -246,7 +246,7 @@ func TestNewSmartDB_Online_WithoutCache_NotFound(t *testing.T) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{}))
 	})
 
-	_, err := database.NewSmartDB(database.Config{URL: ts.URL}, false)
+	_, err := database.NewSmartDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, false)
 
 	if err == nil {
 		t.Errorf("expected an error but did not get one")
@@ -304,7 +304,7 @@ func TestNewSmartDB_Online_WithExistingDirDB_UpToDate(t *testing.T) {
 		"GHSA-5.json": withDefaultAffected("GHSA-5"),
 	})
 
-	db, err := database.NewSmartDB(database.Config{URL: ts.URL}, false)
+	db, err := database.NewSmartDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, false)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -356,7 +356,7 @@ func TestNewSmartDB_Online_WithExistingDirDB_NotModified(t *testing.T) {
 		"GHSA-5.json": withDefaultAffected("GHSA-5"),
 	})
 
-	db, err := database.NewSmartDB(database.Config{URL: ts.URL}, false)
+	db, err := database.NewSmartDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, false)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -419,7 +419,7 @@ func TestNewSmartDB_Online_WithExistingDirDB_Outdated(t *testing.T) {
 		"GHSA-5.json": withDefaultAffected("GHSA-5"),
 	})
 
-	db, err := database.NewSmartDB(database.Config{URL: ts.URL}, false)
+	db, err := database.NewSmartDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, false)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
