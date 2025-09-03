@@ -11,6 +11,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -24,6 +25,7 @@ type ZipDB struct {
 	WorkingDirectory string
 	Offline          bool
 	UpdatedAt        string
+	cacheDirectory   string
 }
 
 func (db *ZipDB) Name() string       { return db.name }
@@ -44,7 +46,7 @@ func (db *ZipDB) cachePath() string {
 	hash := sha256.Sum256([]byte(db.ArchiveURL))
 	fileName := fmt.Sprintf("osv-detector-%x-db.json", hash)
 
-	return filepath.Join(os.TempDir(), fileName)
+	return filepath.Join(db.cacheDirectory, fileName)
 }
 
 func (db *ZipDB) fetchZip() ([]byte, error) {
@@ -192,11 +194,22 @@ func (db *ZipDB) load() error {
 }
 
 func NewZippedDB(config Config, offline bool) (*ZipDB, error) {
+	if config.CacheDirectory == "" {
+		d, err := setupCacheDirectory()
+
+		if err != nil {
+			return nil, err
+		}
+
+		config.CacheDirectory = d
+	}
+
 	db := &ZipDB{
 		name:             config.Name,
 		identifier:       config.Identifier(),
 		ArchiveURL:       config.URL,
 		WorkingDirectory: config.WorkingDirectory,
+		cacheDirectory:   config.CacheDirectory,
 		Offline:          offline,
 	}
 	if err := db.load(); err != nil {
@@ -204,4 +217,23 @@ func NewZippedDB(config Config, offline bool) (*ZipDB, error) {
 	}
 
 	return db, nil
+}
+
+// setupCacheDirectory attempts to set up the directory the detector should use
+// to cache things like local databases, attempting to use the user cache directory
+// if possible or otherwise falling back to the temp directory
+func setupCacheDirectory() (string, error) {
+	localDBPath, err := os.UserCacheDir()
+
+	if err != nil {
+		localDBPath = os.TempDir()
+	}
+
+	altPath := path.Join(localDBPath, "osv-detector")
+	err = os.MkdirAll(altPath, 0750)
+	if err == nil {
+		return altPath, nil
+	}
+
+	return "", err
 }
