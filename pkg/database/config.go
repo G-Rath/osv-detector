@@ -10,6 +10,8 @@ type Config struct {
 	Type             string `yaml:"type"`
 	URL              string `yaml:"url"`
 	WorkingDirectory string `yaml:"working-directory"`
+
+	CacheDirectory string `yaml:"-"`
 }
 
 // Identifier returns a unique string that can be used to check if a loaded
