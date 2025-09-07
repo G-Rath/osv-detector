@@ -154,7 +154,7 @@ func parseModifiedIDRow(columns []string) (*modifiedIDRow, error) {
 	return &modifiedIDRow{id: columns[1], modified: modified}, nil
 }
 
-func (db *SmartDB) fetchModifiedIDs(since time.Time) ([]modifiedIDRow, error) {
+func (db *SmartDB) fetchModifiedIDs(since time.Time) ([]string, error) {
 	url := strings.TrimSuffix(db.ArchiveURL, "/all.zip") + "/modified_id.csv"
 
 	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
@@ -172,7 +172,7 @@ func (db *SmartDB) fetchModifiedIDs(since time.Time) ([]modifiedIDRow, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusNotModified {
-		return []modifiedIDRow{}, nil
+		return nil, nil
 	} else if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("%w (%s)", ErrUnexpectedStatusCode, resp.Status)
 	}
@@ -180,7 +180,7 @@ func (db *SmartDB) fetchModifiedIDs(since time.Time) ([]modifiedIDRow, error) {
 	i := 0
 	r := csv.NewReader(resp.Body)
 
-	var rows []modifiedIDRow
+	var ids []string
 
 	for {
 		i++
@@ -203,10 +203,10 @@ func (db *SmartDB) fetchModifiedIDs(since time.Time) ([]modifiedIDRow, error) {
 			break
 		}
 
-		rows = append(rows, *row)
+		ids = append(ids, row.id)
 	}
 
-	return rows, nil
+	return ids, nil
 }
 
 func (db *SmartDB) updateAdvisory(id string) error {
@@ -241,6 +241,56 @@ func (db *SmartDB) updateAdvisory(id string) error {
 	return err
 }
 
+func (db *SmartDB) downloadModifiedAdvisories(ids []string) error {
+	conLimit := 200
+
+	if len(ids) == 0 {
+		return nil
+	}
+
+	// buffered channel which controls the number of concurrent operations
+	semaphoreChan := make(chan struct{}, conLimit)
+	resultsChan := make(chan *result)
+
+	defer func() {
+		close(semaphoreChan)
+		close(resultsChan)
+	}()
+
+	for i, id := range ids {
+		go func(i int, id string) {
+			// read from the buffered semaphore channel, which will block if we're
+			// already got as many goroutines as our concurrency limit allows
+			//
+			// when one of those routines finish they'll read from this channel,
+			// freeing up a slot to unblock this send
+			semaphoreChan <- struct{}{}
+
+			// use an empty OSV as we're reusing the result struct
+			result := &result{i, OSV{}, db.updateAdvisory(id)}
+
+			resultsChan <- result
+
+			// read from the buffered semaphore to free up a slot to allow
+			// another goroutine to start, since this one is wrapping up
+			<-semaphoreChan
+		}(i, id)
+	}
+
+	var errs []error
+
+	for {
+		result := <-resultsChan
+		errs = append(errs, result.err)
+
+		if len(errs) == len(ids) {
+			break
+		}
+	}
+
+	return errors.Join(errs...)
+}
+
 func (db *SmartDB) updateModifiedAdvisories(since time.Time) error {
 	modifiedIDs, err := db.fetchModifiedIDs(since)
 
@@ -248,15 +298,7 @@ func (db *SmartDB) updateModifiedAdvisories(since time.Time) error {
 		return err
 	}
 
-	for _, row := range modifiedIDs {
-		err = db.updateAdvisory(row.id)
-
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return db.downloadModifiedAdvisories(modifiedIDs)
 }
 
 func (db *SmartDB) populate() (*time.Time, error) {
