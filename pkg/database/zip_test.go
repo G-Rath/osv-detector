@@ -34,6 +34,22 @@ func withDefaultAffected(id string) database.OSV {
 	}
 }
 
+func withSummary(id string, summary string) database.OSV {
+	return database.OSV{
+		ID:      id,
+		Summary: summary,
+		Affected: []database.Affected{
+			{
+				Package: database.Package{
+					Name:      "mine",
+					Ecosystem: "PyPi",
+				},
+				Versions: database.Versions{},
+			},
+		},
+	}
+}
+
 func expectDBToHaveOSVs(
 	t *testing.T,
 	db interface {
@@ -99,6 +115,7 @@ func createZipServer(t *testing.T, handler http.HandlerFunc) *httptest.Server {
 		ts.Close()
 
 		_ = os.Remove(cachePath(ts.URL))
+		_ = os.RemoveAll(dirPath(ts.URL))
 	})
 
 	return ts
@@ -140,7 +157,7 @@ func TestNewZippedDB_Offline_WithoutCache(t *testing.T) {
 		t.Errorf("a server request was made when running offline")
 	})
 
-	_, err := database.NewZippedDB(database.Config{URL: ts.URL}, true)
+	_, err := database.NewZippedDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, true)
 
 	if !errors.Is(err, database.ErrOfflineDatabaseNotFound) {
 		t.Errorf("expected \"%v\" error but got \"%v\"", database.ErrOfflineDatabaseNotFound, err)
@@ -176,7 +193,7 @@ func TestNewZippedDB_Offline_WithCache(t *testing.T) {
 		}),
 	})
 
-	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, true)
+	db, err := database.NewZippedDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, true)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -196,7 +213,7 @@ func TestNewZippedDB_BadZip(t *testing.T) {
 		_, _ = w.Write([]byte("this is not a zip"))
 	})
 
-	_, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+	_, err := database.NewZippedDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, false)
 
 	if err == nil {
 		t.Errorf("expected an error but did not get one")
@@ -206,7 +223,7 @@ func TestNewZippedDB_BadZip(t *testing.T) {
 func TestNewZippedDB_UnsupportedProtocol(t *testing.T) {
 	t.Parallel()
 
-	_, err := database.NewZippedDB(database.Config{URL: "file://hello-world"}, false)
+	_, err := database.NewZippedDB(database.Config{CacheDirectory: os.TempDir(), URL: "file://hello-world"}, false)
 
 	if err == nil {
 		t.Errorf("expected an error but did not get one")
@@ -234,7 +251,7 @@ func TestNewZippedDB_Online_WithoutCache(t *testing.T) {
 		}))
 	})
 
-	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+	db, err := database.NewZippedDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, false)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -251,7 +268,7 @@ func TestNewZippedDB_Online_WithoutCache_NotFound(t *testing.T) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{}))
 	})
 
-	_, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+	_, err := database.NewZippedDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, false)
 
 	if err == nil {
 		t.Errorf("expected an error but did not get one")
@@ -289,7 +306,7 @@ func TestNewZippedDB_Online_WithCache(t *testing.T) {
 		}),
 	})
 
-	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+	db, err := database.NewZippedDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, false)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -340,7 +357,7 @@ func TestNewZippedDB_Online_WithOldCache(t *testing.T) {
 		}),
 	})
 
-	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+	db, err := database.NewZippedDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, false)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -372,7 +389,7 @@ func TestNewZippedDB_Online_WithBadCache(t *testing.T) {
 
 	cacheWriteBad(t, ts.URL, "this is not json!")
 
-	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+	db, err := database.NewZippedDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, false)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -396,7 +413,7 @@ func TestNewZippedDB_FileChecks(t *testing.T) {
 		}))
 	})
 
-	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+	db, err := database.NewZippedDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL}, false)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -418,7 +435,7 @@ func TestNewZippedDB_WorkingDirectory(t *testing.T) {
 		}))
 	})
 
-	db, err := database.NewZippedDB(database.Config{URL: ts.URL, WorkingDirectory: "reviewed"}, false)
+	db, err := database.NewZippedDB(database.Config{CacheDirectory: os.TempDir(), URL: ts.URL, WorkingDirectory: "reviewed"}, false)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
