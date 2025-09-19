@@ -2,6 +2,8 @@ module github.com/g-rath/osv-detector
 
 go 1.24.6
 
+replace github.com/google/osv-scalibr v0.3.3-0.20250826230339-30c71f65b5d6 => github.com/ackama/osv-scalibr v0.0.0-20250919032352-a12061af75b5
+
 require (
 	github.com/BurntSushi/toml v1.5.0
 	github.com/fatih/color v1.18.0
