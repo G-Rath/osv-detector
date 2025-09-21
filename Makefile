@@ -21,7 +21,7 @@ test-with-coverage:
 lint:	lint-with-golangci-lint lint-with-go-fmt
 
 lint-with-golangci-lint:
-	go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.4.0 run ./...
+	go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.5.0 run ./...
 
 lint-with-go-fmt:
 	gofmt -s -d */**.go
