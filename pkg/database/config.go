@@ -10,6 +10,8 @@ type Config struct {
 	Type             string `yaml:"type"`
 	URL              string `yaml:"url"`
 	WorkingDirectory string `yaml:"working-directory"`
+
+	CacheDirectory string `yaml:"-"`
 }
 
 // Identifier returns a unique string that can be used to check if a loaded
@@ -29,6 +31,8 @@ var ErrUnsupportedDatabaseType = errors.New("unsupported database source type")
 // Load initializes a new OSV database based on the given Config
 func Load(config Config, offline bool, batchSize int) (DB, error) {
 	switch config.Type {
+	case "smart":
+		return NewSmartDB(config, offline)
 	case "zip":
 		return NewZippedDB(config, offline)
 	case "api":
