@@ -140,7 +140,7 @@ func TestNewZippedDB_Offline_WithoutCache(t *testing.T) {
 		t.Errorf("a server request was made when running offline")
 	})
 
-	_, err := database.NewZippedDB(database.Config{URL: ts.URL}, true)
+	_, err := database.NewZippedDB(database.Config{URL: ts.URL}, true, nil)
 
 	if !errors.Is(err, database.ErrOfflineDatabaseNotFound) {
 		t.Errorf("expected \"%v\" error but got \"%v\"", database.ErrOfflineDatabaseNotFound, err)
@@ -176,7 +176,7 @@ func TestNewZippedDB_Offline_WithCache(t *testing.T) {
 		}),
 	})
 
-	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, true)
+	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, true, nil)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -196,7 +196,7 @@ func TestNewZippedDB_BadZip(t *testing.T) {
 		_, _ = w.Write([]byte("this is not a zip"))
 	})
 
-	_, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+	_, err := database.NewZippedDB(database.Config{URL: ts.URL}, false, nil)
 
 	if err == nil {
 		t.Errorf("expected an error but did not get one")
@@ -206,7 +206,7 @@ func TestNewZippedDB_BadZip(t *testing.T) {
 func TestNewZippedDB_UnsupportedProtocol(t *testing.T) {
 	t.Parallel()
 
-	_, err := database.NewZippedDB(database.Config{URL: "file://hello-world"}, false)
+	_, err := database.NewZippedDB(database.Config{URL: "file://hello-world"}, false, nil)
 
 	if err == nil {
 		t.Errorf("expected an error but did not get one")
@@ -234,7 +234,7 @@ func TestNewZippedDB_Online_WithoutCache(t *testing.T) {
 		}))
 	})
 
-	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false, nil)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -251,7 +251,7 @@ func TestNewZippedDB_Online_WithoutCache_NotFound(t *testing.T) {
 		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{}))
 	})
 
-	_, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+	_, err := database.NewZippedDB(database.Config{URL: ts.URL}, false, nil)
 
 	if err == nil {
 		t.Errorf("expected an error but did not get one")
@@ -289,7 +289,7 @@ func TestNewZippedDB_Online_WithCache(t *testing.T) {
 		}),
 	})
 
-	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false, nil)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -340,7 +340,7 @@ func TestNewZippedDB_Online_WithOldCache(t *testing.T) {
 		}),
 	})
 
-	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false, nil)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -372,7 +372,7 @@ func TestNewZippedDB_Online_WithBadCache(t *testing.T) {
 
 	cacheWriteBad(t, ts.URL, "this is not json!")
 
-	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false, nil)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -396,7 +396,7 @@ func TestNewZippedDB_FileChecks(t *testing.T) {
 		}))
 	})
 
-	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false)
+	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false, nil)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
@@ -418,11 +418,82 @@ func TestNewZippedDB_WorkingDirectory(t *testing.T) {
 		}))
 	})
 
-	db, err := database.NewZippedDB(database.Config{URL: ts.URL, WorkingDirectory: "reviewed"}, false)
+	db, err := database.NewZippedDB(database.Config{URL: ts.URL, WorkingDirectory: "reviewed"}, false, nil)
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
 	}
 
 	expectDBToHaveOSVs(t, db, osvs)
+}
+
+func TestNewZippedDB_WithSpecificPackages(t *testing.T) {
+	t.Parallel()
+
+	ts := createZipServer(t, func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write(zipOSVs(t, map[string]database.OSV{
+			"GHSA-1.json": {
+				ID:       "GHSA-1",
+				Affected: []database.Affected{},
+			},
+			"GHSA-2.json": {
+				ID: "GHSA-2",
+				Affected: []database.Affected{
+					{Package: database.Package{Name: "pkg-1"}},
+				},
+			},
+			"GHSA-3.json": {
+				ID: "GHSA-3",
+			},
+			"GHSA-4.json": {
+				ID: "GHSA-4",
+				Affected: []database.Affected{
+					{Package: database.Package{Name: "pkg-2"}},
+				},
+			},
+			"GHSA-5.json": {
+				ID: "GHSA-5",
+				Affected: []database.Affected{
+					{Package: database.Package{Name: "pkg-2"}},
+					{Package: database.Package{Name: "pkg-1"}},
+				},
+			},
+			"GHSA-6.json": {
+				ID: "GHSA-6",
+				Affected: []database.Affected{
+					{Package: database.Package{Name: "pkg-3"}},
+					{Package: database.Package{Name: "pkg-2"}},
+				},
+			},
+		}))
+	})
+
+	db, err := database.NewZippedDB(database.Config{URL: ts.URL}, false, []string{"pkg-1", "pkg-3"})
+
+	if err != nil {
+		t.Fatalf("unexpected error \"%v\"", err)
+	}
+
+	expectDBToHaveOSVs(t, db, []database.OSV{
+		{
+			ID: "GHSA-2",
+			Affected: []database.Affected{
+				{Package: database.Package{Name: "pkg-1"}, Versions: database.Versions{}},
+			},
+		},
+		{
+			ID: "GHSA-5",
+			Affected: []database.Affected{
+				{Package: database.Package{Name: "pkg-2"}, Versions: database.Versions{}},
+				{Package: database.Package{Name: "pkg-1"}, Versions: database.Versions{}},
+			},
+		},
+		{
+			ID: "GHSA-6",
+			Affected: []database.Affected{
+				{Package: database.Package{Name: "pkg-3"}, Versions: database.Versions{}},
+				{Package: database.Package{Name: "pkg-2"}, Versions: database.Versions{}},
+			},
+		},
+	})
 }

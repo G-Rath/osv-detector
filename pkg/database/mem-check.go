@@ -11,8 +11,14 @@ type memDB struct {
 	VulnerabilitiesCount int
 }
 
-func (db *memDB) addVulnerability(osv OSV) {
+func (db *memDB) addVulnerability(osv OSV, pkgNames []string) {
 	db.VulnerabilitiesCount++
+
+	// if we have been provided a list of package names, only load advisories
+	// that might actually affect those packages, rather than all advisories
+	if len(pkgNames) != 0 && !mightAffectPackages(osv, pkgNames) {
+		return
+	}
 
 	for _, affected := range osv.Affected {
 		hash := string(affected.Package.Ecosystem) + "-" + affected.Package.NormalizedName()
