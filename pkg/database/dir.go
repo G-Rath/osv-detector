@@ -28,7 +28,7 @@ var ErrDirPathWrongProtocol = errors.New("directory path must start with \"file:
 
 // load walks the filesystem starting with the working directory within the local path,
 // loading all OSVs found along the way.
-func (db *DirDB) load() error {
+func (db *DirDB) load(pkgNames []string) error {
 	db.vulnerabilities = make(map[string][]OSV)
 
 	if !strings.HasPrefix(db.LocalPath, "file:") {
@@ -78,7 +78,7 @@ func (db *DirDB) load() error {
 			return nil
 		}
 
-		db.addVulnerability(pa)
+		db.addVulnerability(pa, pkgNames)
 
 		return nil
 	})
@@ -94,7 +94,7 @@ func (db *DirDB) load() error {
 	return nil
 }
 
-func NewDirDB(config Config, offline bool) (*DirDB, error) {
+func NewDirDB(config Config, offline bool, pkgNames []string) (*DirDB, error) {
 	db := &DirDB{
 		name:             config.Name,
 		identifier:       config.Identifier(),
@@ -102,7 +102,7 @@ func NewDirDB(config Config, offline bool) (*DirDB, error) {
 		WorkingDirectory: config.WorkingDirectory,
 		Offline:          offline,
 	}
-	if err := db.load(); err != nil {
+	if err := db.load(pkgNames); err != nil {
 		return nil, fmt.Errorf("unable to load OSV database: %w", err)
 	}
 
