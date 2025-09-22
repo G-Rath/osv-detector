@@ -27,14 +27,14 @@ func (dbc Config) Identifier() string {
 var ErrUnsupportedDatabaseType = errors.New("unsupported database source type")
 
 // Load initializes a new OSV database based on the given Config
-func Load(config Config, offline bool, batchSize int) (DB, error) {
+func Load(config Config, offline bool, batchSize int, pkgNames []string) (DB, error) {
 	switch config.Type {
 	case "zip":
-		return NewZippedDB(config, offline)
+		return NewZippedDB(config, offline, pkgNames)
 	case "api":
 		return NewAPIDB(config, offline, batchSize)
 	case "dir":
-		return NewDirDB(config, offline)
+		return NewDirDB(config, offline, pkgNames)
 	}
 
 	return nil, fmt.Errorf("%w %s", ErrUnsupportedDatabaseType, config.Type)
