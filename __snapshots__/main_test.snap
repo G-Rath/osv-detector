@@ -39,6 +39,7 @@ Don't know how to parse files as "my-file" - supported values are:
   poetry.lock
   pom.xml
   pubspec.lock
+  pylock.toml
   renv.lock
   requirements.txt
   uv.lock
