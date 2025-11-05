@@ -50,7 +50,7 @@ jobs:
       - run: python3 generators/generate-debian-versions.py
       - run: git status
       - run: stat debian-db.zip
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: generated-debian-versions
           path: generators/testdata/debian-versions-generated.txt
@@ -83,7 +83,7 @@ jobs:
       - run: python3 generators/generate-redhat-versions.py
       - run: git status
       - run: stat redhat-db.zip
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: generated-redhat-versions
           path: generators/testdata/redhat-versions-generated.txt
@@ -107,7 +107,7 @@ jobs:
           extensions: zip
       - run: php generators/generate-packagist-versions.php
       - run: git status
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: generated-packagist-versions
           path: generators/testdata/packagist-versions-generated.txt
@@ -127,7 +127,7 @@ jobs:
         run: pip install packaging==21.3
       - run: python3 generators/generate-pypi-versions.py
       - run: git status
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: generated-pypi-versions
           path: generators/testdata/pypi-versions-generated.txt
@@ -147,7 +147,7 @@ jobs:
         run: gem install rubyzip
       - run: ruby generators/generate-rubygems-versions.rb
       - run: git status
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: generated-rubygems-versions
           path: generators/testdata/rubygems-versions-generated.txt
@@ -173,7 +173,7 @@ jobs:
             -o generators/lib/maven-artifact-3.8.5.jar
       - run: java -cp 'generators/lib/*' generators/GenerateMavenVersions.java
       - run: git status
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: generated-maven-versions
           path: generators/testdata/maven-versions-generated.txt
@@ -191,7 +191,7 @@ jobs:
           r-version: '3.5.3'
       - run: Rscript generators/generate-cran-versions.R
       - run: git status
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: generated-cran-versions
           path: generators/testdata/cran-versions-generated.txt
@@ -218,7 +218,7 @@ jobs:
           go-version-file: .go-version
           cache: true
 
-      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           pattern: generated-*-versions
           path: generators/testdata/
