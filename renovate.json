@@ -25,6 +25,10 @@
     {
       "matchPackageNames": ["github.com/google/osv-scalibr"],
       "groupName": "osv-scalibr"
+    },
+    {
+      "matchDepTypes": ["uses-with"],
+      "enabled": false
     }
   ],
   "ignorePaths": ["**/testdata/**"]
