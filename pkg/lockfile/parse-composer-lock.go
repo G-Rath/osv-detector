@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 )
 
 type ComposerPackage struct {
@@ -20,6 +21,17 @@ type ComposerLock struct {
 }
 
 const ComposerEcosystem Ecosystem = "Packagist"
+
+func extractCommit(pkg ComposerPackage) string {
+	commit := pkg.Dist.Reference
+
+	// a dot means the reference is likely a tag, rather than a commit
+	if strings.Contains(commit, ".") {
+		commit = ""
+	}
+
+	return commit
+}
 
 func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 	var parsedLockfile *ComposerLock
@@ -47,7 +59,7 @@ func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 		packages = append(packages, PackageDetails{
 			Name:      composerPackage.Name,
 			Version:   composerPackage.Version,
-			Commit:    composerPackage.Dist.Reference,
+			Commit:    extractCommit(composerPackage),
 			Ecosystem: ComposerEcosystem,
 			CompareAs: ComposerEcosystem,
 		})
@@ -57,7 +69,7 @@ func ParseComposerLock(pathToLockfile string) ([]PackageDetails, error) {
 		packages = append(packages, PackageDetails{
 			Name:      composerPackage.Name,
 			Version:   composerPackage.Version,
-			Commit:    composerPackage.Dist.Reference,
+			Commit:    extractCommit(composerPackage),
 			Ecosystem: ComposerEcosystem,
 			CompareAs: ComposerEcosystem,
 		})
