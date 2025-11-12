@@ -133,3 +133,44 @@ func TestParseComposerLock_TwoPackagesAlt(t *testing.T) {
 		},
 	})
 }
+
+func TestParseComposerLock_DrupalPackages(t *testing.T) {
+	t.Parallel()
+
+	packages, err := lockfile.ParseComposerLock("testdata/composer/drupal-packages.json")
+
+	if err != nil {
+		t.Errorf("Got unexpected error: %v", err)
+	}
+
+	expectPackages(t, packages, []lockfile.PackageDetails{
+		{
+			Name:      "drupal/core",
+			Version:   "10.4.5",
+			Ecosystem: lockfile.ComposerEcosystem,
+			CompareAs: lockfile.ComposerEcosystem,
+			Commit:    "5247dbaa65b42b601058555f4a8b2bd541f5611f",
+		},
+		{
+			Name:      "drupal/tfa",
+			Version:   "2.0.0-alpha4",
+			Ecosystem: lockfile.ComposerEcosystem,
+			CompareAs: lockfile.ComposerEcosystem,
+			Commit:    "",
+		},
+		{
+			Name:      "drupal/field_time",
+			Version:   "1.0.0-beta5",
+			Ecosystem: lockfile.ComposerEcosystem,
+			CompareAs: lockfile.ComposerEcosystem,
+			Commit:    "",
+		},
+		{
+			Name:      "theseer/tokenizer",
+			Version:   "1.1.3",
+			Ecosystem: lockfile.ComposerEcosystem,
+			CompareAs: lockfile.ComposerEcosystem,
+			Commit:    "11336f6f84e16a720dae9d8e6ed5019efa85a0f9",
+		},
+	})
+}
