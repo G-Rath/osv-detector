@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fatih/color"
 	"github.com/g-rath/osv-detector/internal"
 	"github.com/g-rath/osv-detector/pkg/database"
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/jedib0t/go-pretty/v6/text"
 )
 
 type PackageDetailsWithVulnerabilities struct {
@@ -62,14 +62,14 @@ func (r Report) formatLineByLine() string {
 
 		lines = append(lines, fmt.Sprintf(
 			"  %s %s",
-			color.YellowString("%s@%s", pkg.Name, pkg.Version),
-			color.RedString("is affected by the following vulnerabilities:"),
+			text.FgYellow.Sprintf("%s@%s", pkg.Name, pkg.Version),
+			text.FgRed.Sprintf("is affected by the following vulnerabilities:"),
 		))
 
 		for _, vulnerability := range pkg.Vulnerabilities {
 			lines = append(lines, fmt.Sprintf(
 				"    %s %s",
-				color.CyanString("%s:", vulnerability.ID),
+				text.FgCyan.Sprintf("%s:", vulnerability.ID),
 				vulnerability.Describe(),
 			))
 		}
@@ -93,7 +93,7 @@ func (r Report) describeIgnores() string {
 		return ""
 	}
 
-	return color.YellowString(
+	return text.FgYellow.Sprintf(
 		" (%d %s ignored)",
 		count,
 		Form(count, "was", "were"),
@@ -112,7 +112,7 @@ func (r Report) String() string {
 	if count == 0 {
 		return fmt.Sprintf(
 			"  %s%s\n",
-			color.GreenString("no %s vulnerabilities found", word),
+			text.FgGreen.Sprintf("no %s vulnerabilities found", word),
 			ignoreMsg,
 		)
 	}
@@ -121,7 +121,7 @@ func (r Report) String() string {
 	out += "\n"
 
 	out += fmt.Sprintf("\n  %s%s\n",
-		color.RedString(
+		text.FgRed.Sprintf(
 			"%d %s %s found in %s",
 			count,
 			word,
