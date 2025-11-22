@@ -12,6 +12,7 @@ import (
 	"path"
 
 	"github.com/g-rath/osv-detector/internal"
+	"golang.org/x/sync/errgroup"
 )
 
 func (db APIDB) buildAPIPayload(pkg internal.PackageDetails) apiQuery {
@@ -173,22 +174,34 @@ func (db APIDB) Check(pkgs []internal.PackageDetails) ([]Vulnerabilities, error)
 
 	vulnerabilities := make([]Vulnerabilities, 0, len(pkgs))
 
+	var eg errgroup.Group
+
 	for _, batch := range batches {
-		results, err := db.checkBatch(batch)
+		eg.Go(func() error {
+			results, err := db.checkBatch(batch)
 
-		if err != nil {
-			return nil, err
-		}
-
-		for _, withIDs := range results {
-			vulns := make(Vulnerabilities, 0, len(withIDs))
-
-			for _, withID := range withIDs {
-				vulns = append(vulns, OSV{ID: withID.ID})
+			if err != nil {
+				return err
 			}
 
-			vulnerabilities = append(vulnerabilities, vulns)
-		}
+			for _, withIDs := range results {
+				vulns := make(Vulnerabilities, 0, len(withIDs))
+
+				for _, withID := range withIDs {
+					vulns = append(vulns, OSV{ID: withID.ID})
+				}
+
+				vulnerabilities = append(vulnerabilities, vulns)
+			}
+
+			return nil
+		})
+	}
+
+	err := eg.Wait()
+
+	if err != nil {
+		return nil, err
 	}
 
 	var osvs Vulnerabilities
