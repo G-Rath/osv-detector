@@ -10,6 +10,7 @@ require (
 	github.com/google/osv-scalibr v0.3.5-0.20251002191929-de9496dc5aa2
 	github.com/tidwall/jsonc v0.3.2
 	golang.org/x/mod v0.30.0
+	golang.org/x/sync v0.16.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
