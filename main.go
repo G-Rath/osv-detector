@@ -23,6 +23,9 @@ var (
 	version = "dev"
 	commit  = "none"
 	date    = "unknown"
+
+	// controls if the api should be preferred by default, rather than the dbs
+	preferAPI = os.Getenv("OSV_DETECTOR_PREFER_API") == "true"
 )
 
 func makeAPIDBConfig() database.Config {
@@ -505,8 +508,8 @@ func run(args []string, stdout, stderr io.Writer) int {
 	listEcosystems := cli.Bool("list-ecosystems", false, "List all of the known ecosystems that are supported by the detector")
 	listPackages := cli.Bool("list-packages", false, "List the packages that are parsed from the input files")
 	outputAsJSON := cli.Bool("json", false, "Output the results in JSON format")
-	useDatabases := cli.Bool("use-dbs", true, "Use the databases from osv.dev to check for known vulnerabilities")
-	useAPI := cli.Bool("use-api", false, "Use the osv.dev API to check for known vulnerabilities")
+	useDatabases := cli.Bool("use-dbs", !preferAPI, "Use the databases from osv.dev to check for known vulnerabilities")
+	useAPI := cli.Bool("use-api", preferAPI, "Use the osv.dev API to check for known vulnerabilities")
 	batchSize := cli.Int("batch-size", 1000, "The number of packages to include in each batch when using the api database")
 
 	cli.Var(&globalIgnores, "ignore", `ID of an OSV to ignore when determining exit codes.

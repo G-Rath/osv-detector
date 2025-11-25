@@ -134,6 +134,12 @@ however it currently can produce false negatives for some ecosystems.
 You cannot use the API in `--offline` mode, but you can use both the offline
 databases and the API together; the detector will remove any duplicate results.
 
+> [!NOTE]
+>
+> If the `OSV_DETECTOR_PREFER_API` environment variable is `true`, then the
+> detector will default to using the API rather than the dbs, as if it has been
+> called with `--use-api --use-dbs=false`.
+
 Once all the lockfiles have been pared, the detector will then determine all the
 databases to load - if `--use-dbs` is `true` (which it is by default) then this
 will include ecosystem specific databases based on the parsed packages.
