@@ -172,11 +172,11 @@ func findOrDefault(vulns Vulnerabilities, def OSV) OSV {
 func (db APIDB) Check(pkgs []internal.PackageDetails) ([]Vulnerabilities, error) {
 	batches := batchPkgs(pkgs, db.BatchSize)
 
-	vulnerabilities := make([]Vulnerabilities, 0, len(pkgs))
-
 	var eg errgroup.Group
 
-	for _, batch := range batches {
+	batchResults := make([][][]ObjectWithID, len(batches))
+
+	for i, batch := range batches {
 		eg.Go(func() error {
 			results, err := db.checkBatch(batch)
 
@@ -184,15 +184,7 @@ func (db APIDB) Check(pkgs []internal.PackageDetails) ([]Vulnerabilities, error)
 				return err
 			}
 
-			for _, withIDs := range results {
-				vulns := make(Vulnerabilities, 0, len(withIDs))
-
-				for _, withID := range withIDs {
-					vulns = append(vulns, OSV{ID: withID.ID})
-				}
-
-				vulnerabilities = append(vulnerabilities, vulns)
-			}
+			batchResults[i] = results
 
 			return nil
 		})
@@ -202,6 +194,21 @@ func (db APIDB) Check(pkgs []internal.PackageDetails) ([]Vulnerabilities, error)
 
 	if err != nil {
 		return nil, err
+	}
+
+	vulnerabilities := make([]Vulnerabilities, 0, len(pkgs))
+
+	// todo: pretty sure some of these loops and slices can be merged and simplified
+	for _, results := range batchResults {
+		for _, withIDs := range results {
+			vulns := make(Vulnerabilities, 0, len(withIDs))
+
+			for _, withID := range withIDs {
+				vulns = append(vulns, OSV{ID: withID.ID})
+			}
+
+			vulnerabilities = append(vulnerabilities, vulns)
+		}
 	}
 
 	var osvs Vulnerabilities
