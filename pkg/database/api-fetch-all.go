@@ -11,16 +11,16 @@ func (db APIDB) FetchAll(ids []string) Vulnerabilities {
 
 	eg.SetLimit(200)
 
-	var osvs Vulnerabilities
+	osvs := make(Vulnerabilities, len(ids))
 
-	for _, id := range ids {
+	for i, id := range ids {
 		eg.Go(func() error {
 			// if we error, still report the vulnerability as hopefully the ID should be
 			// enough to manually look up the details - in future we should ideally warn
 			// the user too, but for now we just silently eat the error
 			osv, _ := db.Fetch(id)
 
-			osvs = append(osvs, osv)
+			osvs[i] = osv
 
 			return nil
 		})
