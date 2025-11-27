@@ -431,7 +431,12 @@ func TestAPIDB_Check_WithCommit(t *testing.T) {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/querybatch", func(w http.ResponseWriter, r *http.Request) {
-		expectRequestPayload(t, r, []apiQuery{{Commit: "abc123"}})
+		expectRequestPayload(t, r, []apiQuery{
+			{
+				Version: "1.0.0",
+				Package: apiPackage{Name: "my-package", Ecosystem: lockfile.NpmEcosystem},
+			},
+		})
 
 		jsonData := jsonMarshalQueryBatchResponse(t, []objectsWithIDs{{}})
 
@@ -450,6 +455,80 @@ func TestAPIDB_Check_WithCommit(t *testing.T) {
 	vulns, err := db.Check([]internal.PackageDetails{
 		{Name: "my-package", Version: "1.0.0", Commit: "abc123", Ecosystem: "npm"},
 	})
+
+	if err != nil {
+		t.Fatalf("unexpected error \"%v\"", err)
+	}
+
+	if len(vulns) != 1 {
+		t.Fatalf("expected to get 1 package but got %d", len(vulns))
+	}
+
+	if len(vulns[0]) != 0 {
+		t.Fatalf("expected to get 0 vulnerabilities but got %d", len(vulns[0]))
+	}
+}
+
+func TestAPIDB_Check_WithCommitOnly(t *testing.T) {
+	t.Parallel()
+
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/querybatch", func(w http.ResponseWriter, r *http.Request) {
+		expectRequestPayload(t, r, []apiQuery{{Commit: "abc123"}})
+
+		jsonData := jsonMarshalQueryBatchResponse(t, []objectsWithIDs{{}})
+
+		_, _ = w.Write(jsonData)
+	})
+
+	ts := httptest.NewServer(mux)
+	t.Cleanup(ts.Close)
+
+	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
+
+	if err != nil {
+		t.Fatalf("Check() unexpected error \"%v\"", err)
+	}
+
+	vulns, err := db.Check([]internal.PackageDetails{{Commit: "abc123"}})
+
+	if err != nil {
+		t.Fatalf("unexpected error \"%v\"", err)
+	}
+
+	if len(vulns) != 1 {
+		t.Fatalf("expected to get 1 package but got %d", len(vulns))
+	}
+
+	if len(vulns[0]) != 0 {
+		t.Fatalf("expected to get 0 vulnerabilities but got %d", len(vulns[0]))
+	}
+}
+
+func TestAPIDB_Check_WithCommitAndSomeFields(t *testing.T) {
+	t.Parallel()
+
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/querybatch", func(w http.ResponseWriter, r *http.Request) {
+		expectRequestPayload(t, r, []apiQuery{{Commit: "abc123"}})
+
+		jsonData := jsonMarshalQueryBatchResponse(t, []objectsWithIDs{{}})
+
+		_, _ = w.Write(jsonData)
+	})
+
+	ts := httptest.NewServer(mux)
+	t.Cleanup(ts.Close)
+
+	db, err := database.NewAPIDB(database.Config{URL: ts.URL}, false, 1)
+
+	if err != nil {
+		t.Fatalf("Check() unexpected error \"%v\"", err)
+	}
+
+	vulns, err := db.Check([]internal.PackageDetails{{Commit: "abc123", Ecosystem: "npm"}})
 
 	if err != nil {
 		t.Fatalf("unexpected error \"%v\"", err)
