@@ -17,11 +17,12 @@ import (
 func (db APIDB) buildAPIPayload(pkg internal.PackageDetails) apiQuery {
 	var query apiQuery
 
-	if pkg.Commit == "" {
+	// this mirrors the logic used by the osv-scalibr vulnmatch enricher
+	if pkg.Name != "" && pkg.Ecosystem != "" && pkg.Version != "" {
 		query.Package.Name = pkg.Name
 		query.Package.Ecosystem = pkg.Ecosystem
 		query.Version = pkg.Version
-	} else {
+	} else if pkg.Commit != "" {
 		query.Commit = pkg.Commit
 	}
 
