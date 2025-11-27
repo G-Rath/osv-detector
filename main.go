@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
-	"sort"
 	"strings"
 
 	"github.com/fatih/color"
@@ -269,9 +268,7 @@ func findLockfiles(r *reporter.Reporter, pathToLockOrDirectory string, parseAs s
 		r.PrintErrorf("Error reading %s: %v\n", pathToLockOrDirectory, err)
 	}
 
-	sort.Slice(lockfiles, func(i, j int) bool {
-		return lockfiles[i] < lockfiles[j]
-	})
+	slices.Sort(lockfiles)
 
 	return lockfiles, err != nil
 }
@@ -734,9 +731,7 @@ func writeUpdatedConfigs(r *reporter.Reporter, vulnsPerConfig map[string]map[str
 		for id := range vulns {
 			ignores = append(ignores, id)
 		}
-		sort.Slice(ignores, func(i, j int) bool {
-			return ignores[i] < ignores[j]
-		})
+		slices.Sort(ignores)
 
 		err := configer.UpdateWithIgnores(configPath, ignores)
 
@@ -752,9 +747,7 @@ func writeUpdatedConfigs(r *reporter.Reporter, vulnsPerConfig map[string]map[str
 		}
 	}
 
-	sort.Slice(lines, func(i, j int) bool {
-		return lines[i] < lines[j]
-	})
+	slices.Sort(lines)
 
 	for _, line := range lines {
 		if strings.HasPrefix(line, "Error updating") {

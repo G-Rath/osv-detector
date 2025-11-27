@@ -149,11 +149,7 @@ func batchPkgs(pkgs []internal.PackageDetails, batchSize int) [][]internal.Packa
 	)
 
 	for i := 0; i < len(pkgs); i += batchSize {
-		end := i + batchSize
-
-		if end > len(pkgs) {
-			end = len(pkgs)
-		}
+		end := min(i+batchSize, len(pkgs))
 
 		batches = append(batches, pkgs[i:end])
 	}

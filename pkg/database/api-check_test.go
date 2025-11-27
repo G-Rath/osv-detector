@@ -21,7 +21,7 @@ type apiPackage struct {
 type apiQuery struct {
 	Commit  string     `json:"commit,omitempty"`
 	Version string     `json:"version,omitempty"`
-	Package apiPackage `json:"package,omitempty"`
+	Package apiPackage `json:"package"`
 }
 
 func jsonMarshalQueryBatchResponse(t *testing.T, vulns []objectsWithIDs) []byte {

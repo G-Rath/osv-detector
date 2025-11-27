@@ -2,6 +2,7 @@ package lockfile_test
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"testing"
 
@@ -34,13 +35,7 @@ func packageToString(pkg lockfile.PackageDetails) string {
 func hasPackage(t *testing.T, packages []lockfile.PackageDetails, pkg lockfile.PackageDetails) bool {
 	t.Helper()
 
-	for _, details := range packages {
-		if details == pkg {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(packages, pkg)
 }
 
 func expectPackage(t *testing.T, packages []lockfile.PackageDetails, pkg lockfile.PackageDetails) {
