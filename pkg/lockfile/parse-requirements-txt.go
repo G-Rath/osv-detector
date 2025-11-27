@@ -128,7 +128,7 @@ func parseRequirementsTxt(pathToLockfile string, requiredAlready map[string]stru
 
 		line = removeComments(line)
 
-		if ar := strings.TrimPrefix(line, "-r "); ar != line {
+		if ar, ok := strings.CutPrefix(line, "-r "); ok {
 			ar = filepath.Join(filepath.Dir(pathToLockfile), ar)
 
 			if _, ok := requiredAlready[ar]; ok {

@@ -3,6 +3,7 @@ package lockfile
 import (
 	"encoding/json"
 	"fmt"
+	"maps"
 	"os"
 	"path"
 	"strings"
@@ -43,13 +44,8 @@ func pkgDetailsMapToSlice(m map[string]PackageDetails) []PackageDetails {
 func mergePkgDetailsMap(m1 map[string]PackageDetails, m2 map[string]PackageDetails) map[string]PackageDetails {
 	details := map[string]PackageDetails{}
 
-	for name, detail := range m1 {
-		details[name] = detail
-	}
-
-	for name, detail := range m2 {
-		details[name] = detail
-	}
+	maps.Copy(details, m1)
+	maps.Copy(details, m2)
 
 	return details
 }

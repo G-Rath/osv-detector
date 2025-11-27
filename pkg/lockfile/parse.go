@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 )
@@ -81,9 +82,7 @@ func (ps Packages) Ecosystems() []Ecosystem {
 
 	slicedEcosystems := toSliceOfEcosystems(ecosystems)
 
-	sort.Slice(slicedEcosystems, func(i, j int) bool {
-		return slicedEcosystems[i] < slicedEcosystems[j]
-	})
+	slices.Sort(slicedEcosystems)
 
 	return slicedEcosystems
 }

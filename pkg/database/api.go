@@ -24,7 +24,7 @@ type apiQuery struct {
 	Package struct {
 		Name      string             `json:"name"`
 		Ecosystem internal.Ecosystem `json:"ecosystem"`
-	} `json:"package,omitempty"`
+	} `json:"package"`
 }
 
 var ErrOfflineDatabaseNotSupported = errors.New("API database does not support being used offline")

@@ -24,8 +24,6 @@ linters:
     - wrapcheck       # not (yet) convinced
     - wsl             # disagree with, for now
     - wsl_v5          # disagree with, for now
-
-    - modernize
   settings:
     depguard:
       rules:
