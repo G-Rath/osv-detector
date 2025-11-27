@@ -12,6 +12,7 @@ import (
 	"path"
 
 	"github.com/g-rath/osv-detector/internal"
+	"golang.org/x/sync/errgroup"
 )
 
 func (db APIDB) buildAPIPayload(pkg internal.PackageDetails) apiQuery {
@@ -171,15 +172,38 @@ func findOrDefault(vulns Vulnerabilities, def OSV) OSV {
 func (db APIDB) Check(pkgs []internal.PackageDetails) ([]Vulnerabilities, error) {
 	batches := batchPkgs(pkgs, db.BatchSize)
 
+	var eg errgroup.Group
+
+	// use a sensible upper limit so it's not possible to have inf. operations going
+	// even though it's very unlikely there will be more than a couple of batches
+	eg.SetLimit(100)
+
+	batchResults := make([][][]ObjectWithID, len(batches))
+
+	for i, batch := range batches {
+		eg.Go(func() error {
+			results, err := db.checkBatch(batch)
+
+			if err != nil {
+				return err
+			}
+
+			batchResults[i] = results
+
+			return nil
+		})
+	}
+
+	err := eg.Wait()
+
+	if err != nil {
+		return nil, err
+	}
+
 	vulnerabilities := make([]Vulnerabilities, 0, len(pkgs))
 
-	for _, batch := range batches {
-		results, err := db.checkBatch(batch)
-
-		if err != nil {
-			return nil, err
-		}
-
+	// todo: pretty sure some of these loops and slices can be merged and simplified
+	for _, results := range batchResults {
 		for _, withIDs := range results {
 			vulns := make(Vulnerabilities, 0, len(withIDs))
 

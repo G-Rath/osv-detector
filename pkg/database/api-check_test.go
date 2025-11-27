@@ -553,11 +553,15 @@ func TestAPIDB_Check_Batches(t *testing.T) {
 	mux.HandleFunc("/querybatch", func(w http.ResponseWriter, r *http.Request) {
 		requestCount++
 
+		if requestCount > 2 {
+			t.Errorf("unexpected number of requests (%d)", requestCount)
+		}
+
 		var expectedPayload []apiQuery
 		var batchResponse []objectsWithIDs
 
-		switch requestCount {
-		case 1:
+		// strictly speaking not the best of checks, but it should be good enough
+		if r.ContentLength > 100 {
 			expectedPayload = []apiQuery{
 				{
 					Version: "1.0.0",
@@ -569,7 +573,7 @@ func TestAPIDB_Check_Batches(t *testing.T) {
 				},
 			}
 			batchResponse = []objectsWithIDs{{}, {}}
-		case 2:
+		} else if r.ContentLength > 50 {
 			expectedPayload = []apiQuery{
 				{
 					Version: "2.3.1",
@@ -577,8 +581,6 @@ func TestAPIDB_Check_Batches(t *testing.T) {
 				},
 			}
 			batchResponse = []objectsWithIDs{{}}
-		default:
-			t.Errorf("unexpected number of requests (%d)", requestCount)
 		}
 
 		expectRequestPayload(t, r, expectedPayload)
