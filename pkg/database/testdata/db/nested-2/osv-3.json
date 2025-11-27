@@ -1,0 +1,12 @@
+{
+  "id": "OSV-3",
+  "affected": [
+    {
+      "package": {
+        "name": "mine2",
+        "ecosystem": "PyPi"
+      },
+      "versions": []
+    }
+  ]
+}
