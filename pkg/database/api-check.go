@@ -174,6 +174,10 @@ func (db APIDB) Check(pkgs []internal.PackageDetails) ([]Vulnerabilities, error)
 
 	var eg errgroup.Group
 
+	// use a sensible upper limit so it's not possible to have inf. operations going
+	// even though it's very unlikely there will be more than a couple of batches
+	eg.SetLimit(100)
+
 	batchResults := make([][][]ObjectWithID, len(batches))
 
 	for i, batch := range batches {
