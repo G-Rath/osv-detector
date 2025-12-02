@@ -37,31 +37,6 @@ type cliTestCase struct {
 	around func(t *testing.T) func()
 }
 
-// Attempts to normalize any file paths in the given `output` so that they can
-// be compared reliably regardless of the file path separator being used.
-//
-// Namely, escaped forward slashes are replaced with backslashes.
-func normalizeFilePaths(output string) string {
-	return strings.ReplaceAll(strings.ReplaceAll(output, "\\\\", "/"), "\\", "/")
-}
-
-// wildcardDatabaseStats attempts to replace references to database stats (such as
-// the number of vulnerabilities and the time that the database was last updated)
-// in the output with %% wildcards, in order to reduce the noise of the cmp diff
-func wildcardDatabaseStats(str string) string {
-	re := cachedregexp.MustCompile(`(\w+) \(\d+ vulnerabilities, including withdrawn - last updated \w{3}, \d\d \w{3} \d{4} [012]\d:\d\d:\d\d GMT\)`)
-
-	return re.ReplaceAllString(str, "$1 (%% vulnerabilities, including withdrawn - last updated %%)")
-}
-
-// normalizeWindowsErrors attempts to replace Windows versions of errors with their Linux versions
-func normalizeWindowsErrors(str string) string {
-	str = strings.ReplaceAll(str, "The system cannot find the path specified.", "no such file or directory")
-	str = strings.ReplaceAll(str, "The system cannot find the file specified.", "no such file or directory")
-
-	return str
-}
-
 func testCli(t *testing.T, tc cliTestCase) {
 	t.Helper()
 
@@ -70,14 +45,8 @@ func testCli(t *testing.T, tc cliTestCase) {
 
 	ec := run(tc.args, stdoutBuffer, stderrBuffer)
 
-	stdout := normalizeFilePaths(stdoutBuffer.String())
-	stderr := normalizeFilePaths(stderrBuffer.String())
-
-	stdout = wildcardDatabaseStats(stdout)
-	stderr = wildcardDatabaseStats(stderr)
-
-	stdout = normalizeWindowsErrors(stdout)
-	stderr = normalizeWindowsErrors(stderr)
+	stdout := normalizeSnapshot(t, stdoutBuffer.String())
+	stderr := normalizeSnapshot(t, stderrBuffer.String())
 
 	if ec != tc.exit {
 		t.Errorf("cli exited with code %d, not %d", ec, tc.exit)

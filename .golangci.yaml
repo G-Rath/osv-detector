@@ -30,7 +30,7 @@ linters:
         regexp:
           files:
             - '!**/internal/cachedregexp/**'
-            - '!**/main_test.go'
+            - '!**/main_normalize_test.go'
           deny:
             - pkg: regexp
               desc:
