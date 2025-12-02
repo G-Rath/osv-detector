@@ -60,12 +60,12 @@ You must provide at least one path to either a lockfile or a directory containin
 
 [TestRun_APIError/#00 - 1]
 Loaded the following OSV databases:
-  api#http://127.0.0.1:37453 (using batches of 1000)
+  api#http://<localhost>:<port> (using batches of 1000)
   RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 
 <tempdir>/Gemfile.lock: found 1 package
   Using config at <tempdir>/.osv-detector.yml (0 ignores)
-  Using db api#http://127.0.0.1:37453 (using batches of 1000)
+  Using db api#http://<localhost>:<port> (using batches of 1000)
   Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 
   no known vulnerabilities found
@@ -73,18 +73,18 @@ Loaded the following OSV databases:
 ---
 
 [TestRun_APIError/#00 - 2]
-  an api error occurred while trying to check the packages listed in <tempdir>/Gemfile.lock: api returned unexpected status (POST http://127.0.0.1:37453/querybatch 400)
+  an api error occurred while trying to check the packages listed in <tempdir>/Gemfile.lock: api returned unexpected status (POST http://<localhost>:<port>/querybatch 400)
 
 ---
 
 [TestRun_APIError/#01 - 1]
 Loaded the following OSV databases:
-  api#http://127.0.0.1:38803 (using batches of 1000)
+  api#http://<localhost>:<port> (using batches of 1000)
   RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 
 <tempdir>/Gemfile.lock: found 1 package
   Using config at <tempdir>/.osv-detector.yml (0 ignores)
-  Using db api#http://127.0.0.1:38803 (using batches of 1000)
+  Using db api#http://<localhost>:<port> (using batches of 1000)
   Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
 
   no known vulnerabilities found
@@ -92,7 +92,7 @@ Loaded the following OSV databases:
 ---
 
 [TestRun_APIError/#01 - 2]
-  an api error occurred while trying to check the packages listed in <tempdir>/Gemfile.lock: api response could not be parsed as json (POST http://127.0.0.1:38803/querybatch): invalid character '<' looking for beginning of value
+  an api error occurred while trying to check the packages listed in <tempdir>/Gemfile.lock: api response could not be parsed as json (POST http://<localhost>:<port>/querybatch): invalid character '<' looking for beginning of value
 
 ---
 

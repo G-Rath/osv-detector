@@ -89,6 +89,16 @@ func normalizeDatabaseStats(t *testing.T, str string) string {
 	return re.ReplaceAllString(str, "$1 (%% vulnerabilities, including withdrawn - last updated %%)")
 }
 
+// normalizeLocalhostPort attempts to replace references to 127.0.0.1:<port>
+// with a placeholder, to ensure tests pass when using httptest.Server
+func normalizeLocalhostPort(t *testing.T, str string) string {
+	t.Helper()
+
+	re := cachedregexp.MustCompile(`127\.0\.0\.1:\d+`)
+
+	return re.ReplaceAllString(str, "<localhost>:<port>")
+}
+
 // normalizeErrors attempts to replace error messages on alternative OSs with their
 // known linux equivalents, to ensure tests pass across different OSs
 func normalizeErrors(t *testing.T, str string) string {
@@ -110,6 +120,7 @@ func normalizeSnapshot(t *testing.T, str string) string {
 		normalizeTempDirectory,
 		normalizeUserCacheDirectory,
 		normalizeDatabaseStats,
+		normalizeLocalhostPort,
 		normalizeErrors,
 	} {
 		str = normalizer(t, str)
