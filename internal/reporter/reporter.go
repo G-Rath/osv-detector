@@ -16,6 +16,8 @@ type Reporter struct {
 	stderr       io.Writer
 	outputAsJSON bool
 	results      []Result
+
+	hasErrored bool
 }
 
 func New(stdout io.Writer, stderr io.Writer, outputAsJSON bool) *Reporter {
@@ -27,9 +29,15 @@ func New(stdout io.Writer, stderr io.Writer, outputAsJSON bool) *Reporter {
 	}
 }
 
+func (r *Reporter) HasErrored() bool {
+	return r.hasErrored
+}
+
 // PrintErrorf writes the given message to stderr, regardless of if the reporter
 // is outputting as JSON or not
 func (r *Reporter) PrintErrorf(msg string, a ...any) {
+	r.hasErrored = true
+
 	fmt.Fprintf(r.stderr, msg, a...)
 }
 
