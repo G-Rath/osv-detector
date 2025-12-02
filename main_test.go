@@ -3,6 +3,8 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -880,6 +882,66 @@ func TestRun_EndToEnd(t *testing.T) {
 			t.Parallel()
 
 			testCli(t, tt)
+		})
+	}
+}
+
+func TestRun_APIError(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct{ handler http.HandlerFunc }{
+		{
+			handler: func(w http.ResponseWriter, _ *http.Request) {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("{}"))
+			},
+		},
+		{
+			handler: func(w http.ResponseWriter, _ *http.Request) {
+				_, _ = w.Write([]byte("<html></html>"))
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run("", func(t *testing.T) {
+			t.Parallel()
+
+			tmp := t.TempDir()
+
+			var err error
+
+			// create a file for scanning
+			err = os.WriteFile(filepath.Join(tmp, "Gemfile.lock"), []byte(`
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ast (2.4.2)
+`), 0600)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			// setup a fake api server
+			ts := httptest.NewServer(tt.handler)
+			t.Cleanup(ts.Close)
+
+			// create a config file setting up our api server
+			err = os.WriteFile(filepath.Join(tmp, ".osv-detector.yml"), []byte(`
+extra-databases:
+  - url: `+ts.URL,
+			), 0600)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			// run the cli in our tmp directory
+			testCli(t, cliTestCase{
+				name: "",
+				args: []string{tmp},
+				exit: 127,
+			})
 		})
 	}
 }

@@ -58,6 +58,44 @@ You must provide at least one path to either a lockfile or a directory containin
 
 ---
 
+[TestRun_APIError/#00 - 1]
+Loaded the following OSV databases:
+  api#http://127.0.0.1:42805 (using batches of 1000)
+  RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
+/tmp/TestRun_APIError#003124218549/001/Gemfile.lock: found 1 package
+  Using config at /tmp/TestRun_APIError#003124218549/001/.osv-detector.yml (0 ignores)
+  Using db api#http://127.0.0.1:42805 (using batches of 1000)
+  Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_APIError/#00 - 2]
+  an api error occurred while trying to check the packages listed in /tmp/TestRun_APIError#003124218549/001/Gemfile.lock: api returned unexpected status (POST http://127.0.0.1:42805/querybatch 400)
+
+---
+
+[TestRun_APIError/#01 - 1]
+Loaded the following OSV databases:
+  api#http://127.0.0.1:36893 (using batches of 1000)
+  RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
+/tmp/TestRun_APIError#01238228472/001/Gemfile.lock: found 1 package
+  Using config at /tmp/TestRun_APIError#01238228472/001/.osv-detector.yml (0 ignores)
+  Using db api#http://127.0.0.1:36893 (using batches of 1000)
+  Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_APIError/#01 - 2]
+  an api error occurred while trying to check the packages listed in /tmp/TestRun_APIError#01238228472/001/Gemfile.lock: api response could not be parsed as json (POST http://127.0.0.1:36893/querybatch): invalid character '<' looking for beginning of value
+
+---
+
 [TestRun_Configs/#00 - 1]
 Loaded the following OSV databases:
 
