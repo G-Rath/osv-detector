@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"slices"
 	"strings"
 
@@ -405,6 +406,10 @@ func (files lockfileAndConfigOrErrs) adjustExtraDatabases(
 }
 
 func parseLockfilePathWithParseAs(lockfilePathWithParseAs string) (string, string) {
+	if runtime.GOOS == "windows" && filepath.IsAbs(lockfilePathWithParseAs) {
+		return "", lockfilePathWithParseAs
+	}
+
 	if !strings.Contains(lockfilePathWithParseAs, ":") {
 		return "", lockfilePathWithParseAs
 	}
