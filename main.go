@@ -733,6 +733,10 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 		writeUpdatedConfigs(r, vulnsPerConfig)
 	}
 
+	if r.HasErrored() && exitCode == 0 {
+		exitCode = 127
+	}
+
 	return exitCode
 }
 
