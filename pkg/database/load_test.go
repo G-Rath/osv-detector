@@ -17,7 +17,7 @@ func TestLoad(t *testing.T) {
 	}
 
 	for _, typ := range types {
-		_, err := database.Load(database.Config{Type: typ}, false, 100)
+		_, err := database.Load(database.Config{Type: typ}, false, 100, nil)
 
 		if err == nil {
 			t.Fatalf("NewDirDB() did not return expected error")
@@ -28,7 +28,7 @@ func TestLoad(t *testing.T) {
 func TestLoad_BadType(t *testing.T) {
 	t.Parallel()
 
-	db, err := database.Load(database.Config{Type: "file"}, false, 100)
+	db, err := database.Load(database.Config{Type: "file"}, false, 100, nil)
 
 	if err == nil {
 		t.Fatalf("NewDirDB() did not return expected error")

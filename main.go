@@ -188,6 +188,7 @@ func loadDatabases(
 	listPackages bool,
 	offline bool,
 	batchSize int,
+	pkgNames []string,
 ) (OSVDatabases, bool) {
 	dbs := make(OSVDatabases, 0, len(dbConfigs))
 
@@ -204,7 +205,7 @@ func loadDatabases(
 	for _, dbConfig := range dbConfigs {
 		r.PrintTextf("  %s", dbConfig.Name)
 
-		db, err := database.Load(dbConfig, offline, batchSize)
+		db, err := database.Load(dbConfig, offline, batchSize, pkgNames)
 
 		if err != nil {
 			r.PrintDatabaseLoadErr(err)
@@ -591,12 +592,24 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 	files.adjustExtraDatabases(*noConfigDatabases, *useAPI, *useDatabases)
 
+	pkgSet := make(map[string]struct{})
+	for _, p := range files {
+		for _, pkg := range p.lockf.Packages {
+			pkgSet[pkg.Name] = struct{}{}
+		}
+	}
+	allPackages := make([]string, 0, len(pkgSet))
+	for name := range pkgSet {
+		allPackages = append(allPackages, name)
+	}
+
 	dbs, errored := loadDatabases(
 		r,
 		uniqueDBConfigs(files.getConfigs()),
 		*listPackages,
 		*offline,
 		*batchSize,
+		allPackages,
 	)
 
 	if errored {

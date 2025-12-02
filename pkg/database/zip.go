@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 )
 
@@ -126,9 +127,19 @@ func (db *ZipDB) fetchZip() ([]byte, error) {
 	return body, nil
 }
 
+func mightAffectPackages(v OSV, names []string) bool {
+	for _, affected := range v.Affected {
+		if slices.Contains(names, affected.Package.NormalizedName()) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // Loads the given zip file into the database as an OSV.
 // It is assumed that the file is JSON and in the working directory of the db
-func (db *ZipDB) loadZipFile(zipFile *zip.File) {
+func (db *ZipDB) loadZipFile(zipFile *zip.File, pkgNames []string) {
 	file, err := zipFile.Open()
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Could not read %s: %v\n", zipFile.Name, err)
@@ -152,7 +163,7 @@ func (db *ZipDB) loadZipFile(zipFile *zip.File) {
 		return
 	}
 
-	db.addVulnerability(osv)
+	db.addVulnerability(osv, pkgNames)
 }
 
 // load fetches a zip archive of the OSV database and loads known vulnerabilities
@@ -161,7 +172,7 @@ func (db *ZipDB) loadZipFile(zipFile *zip.File) {
 // Internally, the archive is cached along with the date that it was fetched
 // so that a new version of the archive is only downloaded if it has been
 // modified, per HTTP caching standards.
-func (db *ZipDB) load() error {
+func (db *ZipDB) load(pkgNames []string) error {
 	db.vulnerabilities = make(map[string][]OSV)
 
 	body, err := db.fetchZip()
@@ -185,13 +196,13 @@ func (db *ZipDB) load() error {
 			continue
 		}
 
-		db.loadZipFile(zipFile)
+		db.loadZipFile(zipFile, pkgNames)
 	}
 
 	return nil
 }
 
-func NewZippedDB(config Config, offline bool) (*ZipDB, error) {
+func NewZippedDB(config Config, offline bool, pkgNames []string) (*ZipDB, error) {
 	db := &ZipDB{
 		name:             config.Name,
 		identifier:       config.Identifier(),
@@ -199,7 +210,7 @@ func NewZippedDB(config Config, offline bool) (*ZipDB, error) {
 		WorkingDirectory: config.WorkingDirectory,
 		Offline:          offline,
 	}
-	if err := db.load(); err != nil {
+	if err := db.load(pkgNames); err != nil {
 		return nil, fmt.Errorf("unable to fetch OSV database: %w", err)
 	}
 
