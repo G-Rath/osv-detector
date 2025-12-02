@@ -662,6 +662,101 @@ testdata/locks-one/yarn.lock: found 1 package
 
 ---
 
+[TestRun_Lockfile_AbsolutePath/#00 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+<rootdir>/testdata/locks-one/yarn.lock: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Lockfile_AbsolutePath/#00 - 2]
+
+---
+
+[TestRun_Lockfile_AbsolutePath/#01 - 1]
+Loaded the following OSV databases:
+  RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+  Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+<rootdir>/testdata/locks-many/Gemfile.lock: found 1 package
+  Using db RubyGems (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+<rootdir>/testdata/locks-many/composer.lock: found 1 package
+  Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+<rootdir>/testdata/locks-many/yarn.lock: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Lockfile_AbsolutePath/#01 - 2]
+
+---
+
+[TestRun_Lockfile_AbsolutePath/#02 - 1]
+Loaded the following OSV databases:
+
+<rootdir>/testdata/locks-empty/Gemfile.lock: found 0 packages
+
+  no known vulnerabilities found
+
+<rootdir>/testdata/locks-empty/composer.lock: found 0 packages
+
+  no known vulnerabilities found
+
+<rootdir>/testdata/locks-empty/yarn.lock: found 0 packages
+
+  no known vulnerabilities found
+
+---
+
+[TestRun_Lockfile_AbsolutePath/#02 - 2]
+
+---
+
+[TestRun_Lockfile_AbsolutePath/#03 - 1]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+<rootdir>/testdata/locks-insecure/my-package-lock.json: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+  ansi-html@0.0.1 is affected by the following vulnerabilities:
+    GHSA-whgm-jr23-g3j9: Uncontrolled Resource Consumption in ansi-html (https://github.com/advisories/GHSA-whgm-jr23-g3j9)
+
+  1 known vulnerability found in <rootdir>/testdata/locks-insecure/my-package-lock.json
+
+---
+
+[TestRun_Lockfile_AbsolutePath/#03 - 2]
+
+---
+
+[TestRun_Lockfile_AbsolutePath/#04 - 1]
+{"results":[{"filePath":"<rootdir>/testdata/locks-one/yarn.lock","parsedAs":"yarn.lock","packages":[{"name":"balanced-match","version":"1.0.2","ecosystem":"npm","compareAs":"npm","vulnerabilities":[],"ignored":[]}]}]}
+---
+
+[TestRun_Lockfile_AbsolutePath/#04 - 2]
+Loaded the following OSV databases:
+  npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+<rootdir>/testdata/locks-one/yarn.lock: found 1 package
+  Using db npm (%% vulnerabilities, including withdrawn - last updated %%)
+
+
+---
+
 [TestRun_ParseAsGlobal/#00 - 1]
 Loaded the following OSV databases:
   npm (%% vulnerabilities, including withdrawn - last updated %%)
