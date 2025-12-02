@@ -906,12 +906,19 @@ func TestRun_APIError(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			t.Parallel()
 
-			tmp := t.TempDir()
+			//nolint:usetesting // we need to customize the directory name to replace in snapshots
+			p, err := os.MkdirTemp("", "osv-detector-test-*")
+			if err != nil {
+				t.Fatalf("could not create test directory: %v", err)
+			}
 
-			var err error
+			// ensure the test directory is removed when we're done testing
+			t.Cleanup(func() {
+				_ = os.RemoveAll(p)
+			})
 
 			// create a file for scanning
-			err = os.WriteFile(filepath.Join(tmp, "Gemfile.lock"), []byte(`
+			err = os.WriteFile(filepath.Join(p, "Gemfile.lock"), []byte(`
 GEM
   remote: https://rubygems.org/
   specs:
@@ -927,7 +934,7 @@ GEM
 			t.Cleanup(ts.Close)
 
 			// create a config file setting up our api server
-			err = os.WriteFile(filepath.Join(tmp, ".osv-detector.yml"), []byte(`
+			err = os.WriteFile(filepath.Join(p, ".osv-detector.yml"), []byte(`
 extra-databases:
   - url: `+ts.URL,
 			), 0600)
@@ -939,7 +946,7 @@ extra-databases:
 			// run the cli in our tmp directory
 			testCli(t, cliTestCase{
 				name: "",
-				args: []string{tmp},
+				args: []string{p},
 				exit: 127,
 			})
 		})
