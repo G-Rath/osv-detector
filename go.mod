@@ -2,7 +2,8 @@ module github.com/g-rath/osv-detector
 
 go 1.24.6
 
-replace github.com/gkampitakis/go-snaps => github.com/g-rath/go-snaps v0.5.15-0.20251127021339-74a2a5953f85
+//replace github.com/gkampitakis/go-snaps => github.com/g-rath/go-snaps v0.5.15-0.20251127021339-74a2a5953f85
+replace github.com/gkampitakis/go-snaps => github.com/g-rath/go-snaps v0.5.15-0.20251127071124-a45d986fbc08
 
 require (
 	github.com/BurntSushi/toml v1.5.0
