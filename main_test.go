@@ -231,6 +231,53 @@ func TestRun_Lockfile(t *testing.T) {
 	}
 }
 
+func TestRun_Lockfile_AbsolutePath(t *testing.T) {
+	t.Parallel()
+
+	testdataDir, err := filepath.Abs("./testdata")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tests := []cliTestCase{
+		{
+			name: "",
+			args: []string{filepath.Join(testdataDir, "locks-one")},
+			exit: 0,
+		},
+		{
+			name: "",
+			args: []string{filepath.Join(testdataDir, "locks-many")},
+			exit: 0,
+		},
+		{
+			name: "",
+			args: []string{filepath.Join(testdataDir, "locks-empty")},
+			exit: 0,
+		},
+		// parse-as + known vulnerability exits with error code 1
+		{
+			name: "",
+			args: []string{"--parse-as", "package-lock.json", filepath.Join(testdataDir, "locks-insecure/my-package-lock.json")},
+			exit: 1,
+		},
+		// json results in non-json output going to stderr
+		{
+			name: "",
+			args: []string{"--json", filepath.Join(testdataDir, "locks-one")},
+			exit: 0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			testCli(t, tt)
+		})
+	}
+}
+
 func TestRun_DBs(t *testing.T) {
 	t.Parallel()
 
