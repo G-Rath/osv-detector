@@ -31,6 +31,13 @@ type Package struct {
 	Ecosystem Ecosystem `json:"ecosystem"`
 }
 
+// NormalizedEcosystem returns the ecosystem name without the suffix
+func (p Package) NormalizedEcosystem() Ecosystem {
+	eco, _, _ := strings.Cut(string(p.Ecosystem), ":")
+
+	return Ecosystem(eco)
+}
+
 // NormalizedName ensures that the package name is normalized based on ecosystem
 // in accordance to the OSV specification.
 //
@@ -40,7 +47,7 @@ type Package struct {
 //
 // In the future, it's hoped that this can be improved.
 func (p Package) NormalizedName() string {
-	if p.Ecosystem != lockfile.PipEcosystem {
+	if p.NormalizedEcosystem() != lockfile.PipEcosystem {
 		return p.Name
 	}
 
@@ -261,9 +268,22 @@ func (osv *OSV) Link() string {
 	return ""
 }
 
+func areEcosystemsEqual(a, b internal.Ecosystem) bool {
+	aEcosystem, aSuffix, _ := strings.Cut(string(a), ":")
+	bEcosystem, bSuffix, _ := strings.Cut(string(b), ":")
+
+	// only care about the minor version if both ecosystems have one
+	// otherwise we just assume that they're the same and move on
+	if aSuffix != "" && bSuffix != "" {
+		return aEcosystem == bEcosystem && aSuffix == bSuffix
+	}
+
+	return aEcosystem == bEcosystem
+}
+
 func (osv *OSV) IsAffected(pkg internal.PackageDetails) bool {
 	for _, affected := range osv.Affected {
-		if affected.Package.Ecosystem == pkg.Ecosystem &&
+		if areEcosystemsEqual(affected.Package.Ecosystem, pkg.Ecosystem) &&
 			affected.Package.NormalizedName() == pkg.Name {
 			if len(affected.Ranges) == 0 && len(affected.Versions) == 0 {
 				_, _ = fmt.Fprintf(

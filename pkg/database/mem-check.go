@@ -21,7 +21,7 @@ func (db *memDB) addVulnerability(osv OSV, pkgNames []string) {
 	}
 
 	for _, affected := range osv.Affected {
-		hash := string(affected.Package.Ecosystem) + "-" + affected.Package.NormalizedName()
+		hash := string(affected.Package.NormalizedEcosystem()) + "-" + affected.Package.NormalizedName()
 		vulns := db.vulnerabilities[hash]
 
 		if vulns == nil {

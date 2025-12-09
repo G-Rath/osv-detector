@@ -205,6 +205,76 @@ func TestOSV_IsAffected_AffectsWithEcosystem_DifferentEcosystem(t *testing.T) {
 	}
 }
 
+func TestOSV_IsAffected_AffectsWithEcosystem_DifferentEcosystemSuffixes(t *testing.T) {
+	t.Parallel()
+
+	var osv database.OSV
+	var isAffected bool
+
+	// suffix is considered when present on both advisory and package
+	osv = buildOSVWithAffected(
+		database.Affected{
+			Package: database.Package{Ecosystem: "Packagist:https://packages.drupal.org/7", Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildEcosystemAffectsRange(database.RangeEvent{Introduced: "0"}),
+			},
+		},
+	)
+
+	isAffected = osv.IsAffected(internal.PackageDetails{
+		Name:      "my-package",
+		Version:   "1.0.0",
+		Ecosystem: "Packagist:https://packages.drupal.org/8",
+		CompareAs: "Packagist",
+	})
+
+	if isAffected {
+		t.Errorf("Package should not be affected")
+	}
+
+	// suffix is only considered if present on both advisory and package
+	osv = buildOSVWithAffected(
+		database.Affected{
+			Package: database.Package{Ecosystem: "Packagist", Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildEcosystemAffectsRange(database.RangeEvent{Introduced: "0"}),
+			},
+		},
+	)
+
+	isAffected = osv.IsAffected(internal.PackageDetails{
+		Name:      "my-package",
+		Version:   "1.0.0",
+		Ecosystem: "Packagist:https://packages.drupal.org/8",
+		CompareAs: "Packagist",
+	})
+
+	if !isAffected {
+		t.Errorf("Package should be affected")
+	}
+
+	// suffix is only considered if present on both advisory and package
+	osv = buildOSVWithAffected(
+		database.Affected{
+			Package: database.Package{Ecosystem: "Packagist:https://packages.drupal.org/8", Name: "my-package"},
+			Ranges: []database.AffectsRange{
+				buildEcosystemAffectsRange(database.RangeEvent{Introduced: "0"}),
+			},
+		},
+	)
+
+	isAffected = osv.IsAffected(internal.PackageDetails{
+		Name:      "my-package",
+		Version:   "1.0.0",
+		Ecosystem: "Packagist",
+		CompareAs: "Packagist",
+	})
+
+	if !isAffected {
+		t.Errorf("Package should be affected")
+	}
+}
+
 func TestOSV_IsAffected_AffectsWithEcosystem_SingleAffected(t *testing.T) {
 	t.Parallel()
 
