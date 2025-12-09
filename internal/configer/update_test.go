@@ -181,7 +181,7 @@ func TestUpdateWithIgnores(t *testing.T) {
 					- url: https://github.com/github/advisory-database/archive/refs/heads/main.zip
 					- url: file:/relative/path/to/dir
 					- url: file:////root/path/to/dir
-					- url: https://api-staging.osv.dev/v1
+					- url: https://api.test.osv.dev/v1
 					- url: https://github.com/github/advisory-database/archive/refs/heads/main.zip
 						name: GitHub Advisory Database
 					- url: https://my-site.com/osvs/all

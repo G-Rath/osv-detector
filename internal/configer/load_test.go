@@ -192,7 +192,7 @@ func TestLoad(t *testing.T) {
 		"zip#https://github.com/github/advisory-database/archive/refs/heads/main.zip",
 		"dir#file:/relative/path/to/dir",
 		"dir#file:////root/path/to/dir",
-		"api#https://api-staging.osv.dev/v1",
+		"api#https://api.test.osv.dev/v1",
 		"GitHub Advisory Database",
 		"zip#https://my-site.com/osvs/all",
 		"zip#https://github.com/github/advisory-database/archive/refs/heads/main.zip#advisory-database-main/advisories/unreviewed",

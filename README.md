@@ -288,7 +288,7 @@ The `url` should be either:
     as a zip archive
 - a url for a rest API that implements the [osv.dev](https://osv.dev/docs/) API
   - the `url` _should_ include the `/v1` e.g. if you wanted to use the `osv.dev`
-    staging API you would specify `https://api-staging.osv.dev/v1` as the `url`
+    test API you would specify `https://api.test.osv.dev/v1` as the `url`
 
 > The detector will attempt to detect the type of each database based on the
 > above, however you can explicitly provide the type if needed with the `type`
@@ -330,9 +330,9 @@ extra-databases:
     name: GitHub Advisory Database (unreviewed)
     working-directory: 'advisory-database-main/advisories/unreviewed'
 
-  # include the osv staging api
-  - url: https://api-staging.osv.dev/v1
-    name: GitHub Advisory Database (unreviewed)
+  # include the osv test api
+  - url: https://api.test.osv.dev/v1
+    name: OSV.dev (test)
 
   # include a local directory database (relative)
   - url: file:/../relative/path/to/dir
