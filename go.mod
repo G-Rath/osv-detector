@@ -7,7 +7,7 @@ require (
 	github.com/fatih/color v1.18.0
 	github.com/gkampitakis/go-snaps v0.5.15
 	github.com/google/go-cmp v0.7.0
-	github.com/google/osv-scalibr v0.4.1-0.20251202121049-5e7e15f4a036
+	github.com/google/osv-scalibr v0.4.2
 	github.com/tidwall/jsonc v0.3.2
 	golang.org/x/mod v0.30.0
 	golang.org/x/sync v0.17.0
