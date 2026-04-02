@@ -75,7 +75,7 @@ class AlpineVersionComparer:
     self.cache_path = Path(cache_path)
     self.cache = {}
 
-    self._alpine_version = '3.10'
+    self._alpine_version = '3.20'
     self._compare_method = how
     self._docker_container = None
     self._load_cache()
