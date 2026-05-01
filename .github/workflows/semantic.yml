@@ -35,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+      - uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: /tmp/debian-versions-generator-cache.csv
           key: ${{ runner.os }}-
@@ -50,12 +50,12 @@ jobs:
       - run: python3 generators/generate-debian-versions.py
       - run: git status
       - run: stat debian-db.zip
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: generated-debian-versions
           path: generators/testdata/debian-versions-generated.txt
 
-      - uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+      - uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: /tmp/debian-versions-generator-cache.csv
           key: ${{ runner.os }}-${{ hashFiles('debian-db.zip') }}
@@ -67,7 +67,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+      - uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: /tmp/redhat-versions-generator-cache.csv
           key: ${{ runner.os }}-
@@ -83,12 +83,12 @@ jobs:
       - run: python3 generators/generate-redhat-versions.py
       - run: git status
       - run: stat redhat-db.zip
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: generated-redhat-versions
           path: generators/testdata/redhat-versions-generated.txt
 
-      - uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+      - uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: /tmp/redhat-versions-generator-cache.csv
           key: ${{ runner.os }}-${{ hashFiles('redhat-db.zip') }}
@@ -107,7 +107,7 @@ jobs:
           extensions: zip
       - run: php generators/generate-packagist-versions.php
       - run: git status
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: generated-packagist-versions
           path: generators/testdata/packagist-versions-generated.txt
@@ -127,7 +127,7 @@ jobs:
         run: pip install packaging==21.3
       - run: python3 generators/generate-pypi-versions.py
       - run: git status
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: generated-pypi-versions
           path: generators/testdata/pypi-versions-generated.txt
@@ -140,14 +140,14 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
-      - uses: ruby/setup-ruby@3ff19f5e2baf30647122352b96108b1fbe250c64 # v1.299.0
+      - uses: ruby/setup-ruby@c4e5b1316158f92e3d49443a9d58b31d25ac0f8f # v1.306.0
         with:
           ruby-version: '3.1'
       - name: setup dependencies
         run: gem install rubyzip
       - run: ruby generators/generate-rubygems-versions.rb
       - run: git status
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: generated-rubygems-versions
           path: generators/testdata/rubygems-versions-generated.txt
@@ -173,7 +173,7 @@ jobs:
             -o generators/lib/maven-artifact-3.8.5.jar
       - run: java -cp 'generators/lib/*' generators/GenerateMavenVersions.java
       - run: git status
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: generated-maven-versions
           path: generators/testdata/maven-versions-generated.txt
@@ -186,12 +186,12 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
-      - uses: r-lib/actions/setup-r@6f6e5bc62fba3a704f74e7ad7ef7676c5c6a2590 # v2.11.4
+      - uses: r-lib/actions/setup-r@a51a8012b0aab7c32ef9d19bf54da93f3254335e # v2.12.0
         with:
           r-version: '3.5.3'
       - run: Rscript generators/generate-cran-versions.R
       - run: git status
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: generated-cran-versions
           path: generators/testdata/cran-versions-generated.txt
