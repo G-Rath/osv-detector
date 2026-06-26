@@ -1244,12 +1244,15 @@ testdata/locks-insecure-nested/nested/my-composer-lock.json: found 1 package
   Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 
   guzzlehttp/psr7@1.8.2 is affected by the following vulnerabilities:
+    GHSA-34xg-wgjx-8xph: guzzlehttp/psr7 has Host Confusion via Authority Reinterpretation (https://github.com/advisories/GHSA-34xg-wgjx-8xph)
+    GHSA-hq7v-mx3g-29hw: guzzlehttp/psr7 has CRLF Injection via URI Host Component (https://github.com/advisories/GHSA-hq7v-mx3g-29hw)
     GHSA-q7rv-6hp3-vh96: Improper Input Validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-q7rv-6hp3-vh96)
+    GHSA-vm85-hxw5-5432: guzzlehttp/psr7: CRLF Injection in HTTP Start-Line Serialization (https://github.com/advisories/GHSA-vm85-hxw5-5432)
     GHSA-wxmh-65f7-jcvw: Improper header name validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-wxmh-65f7-jcvw)
 
-  2 known vulnerabilities found in testdata/locks-insecure-nested/nested/my-composer-lock.json
+  5 known vulnerabilities found in testdata/locks-insecure-nested/nested/my-composer-lock.json
 
-Updated testdata/existing-config-with-many-lockfiles.yml with 8 vulnerabilities
+Updated testdata/existing-config-with-many-lockfiles.yml with 11 vulnerabilities
 
 ---
 
@@ -1259,12 +1262,15 @@ Updated testdata/existing-config-with-many-lockfiles.yml with 8 vulnerabilities
 
 [TestRun_UpdatingConfigIgnores/#04 - 3]
 ignore:
+  - GHSA-34xg-wgjx-8xph
   - GHSA-7p7h-4mm5-852v
   - GHSA-93q8-gq69-wqmw
   - GHSA-fhg7-m89q-25r3
+  - GHSA-hq7v-mx3g-29hw
   - GHSA-j8xg-fqg3-53r7
   - GHSA-q7rv-6hp3-vh96
   - GHSA-rp65-9cf3-cjxr
+  - GHSA-vm85-hxw5-5432
   - GHSA-whgm-jr23-g3j9
   - GHSA-wxmh-65f7-jcvw
 
@@ -1289,13 +1295,16 @@ testdata/locks-insecure-nested/nested/my-composer-lock.json: found 1 package
   Using db Packagist (%% vulnerabilities, including withdrawn - last updated %%)
 
   guzzlehttp/psr7@1.8.2 is affected by the following vulnerabilities:
+    GHSA-34xg-wgjx-8xph: guzzlehttp/psr7 has Host Confusion via Authority Reinterpretation (https://github.com/advisories/GHSA-34xg-wgjx-8xph)
+    GHSA-hq7v-mx3g-29hw: guzzlehttp/psr7 has CRLF Injection via URI Host Component (https://github.com/advisories/GHSA-hq7v-mx3g-29hw)
     GHSA-q7rv-6hp3-vh96: Improper Input Validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-q7rv-6hp3-vh96)
+    GHSA-vm85-hxw5-5432: guzzlehttp/psr7: CRLF Injection in HTTP Start-Line Serialization (https://github.com/advisories/GHSA-vm85-hxw5-5432)
     GHSA-wxmh-65f7-jcvw: Improper header name validation in guzzlehttp/psr7 (https://github.com/advisories/GHSA-wxmh-65f7-jcvw)
 
-  2 known vulnerabilities found in testdata/locks-insecure-nested/nested/my-composer-lock.json
+  5 known vulnerabilities found in testdata/locks-insecure-nested/nested/my-composer-lock.json
 
 Updated testdata/locks-insecure-nested/.osv-detector.yml with 1 vulnerability
-Updated testdata/locks-insecure-nested/nested/.osv-detector.yml with 2 vulnerabilities
+Updated testdata/locks-insecure-nested/nested/.osv-detector.yml with 5 vulnerabilities
 
 ---
 
@@ -1311,7 +1320,10 @@ ignore:
 
 [TestRun_UpdatingConfigIgnores/#05 - 4]
 ignore:
+  - GHSA-34xg-wgjx-8xph
+  - GHSA-hq7v-mx3g-29hw
   - GHSA-q7rv-6hp3-vh96
+  - GHSA-vm85-hxw5-5432
   - GHSA-wxmh-65f7-jcvw
 
 ---
