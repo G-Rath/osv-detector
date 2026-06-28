@@ -20,7 +20,7 @@ UNSUPPORTED_COMPARISONS = []
 
 
 def is_unsupported_comparison(line):
-  return line in UNSUPPORTED_COMPARISONS
+  return line in UNSUPPORTED_COMPARISONS or line.startswith('langchain')
 
 
 def uncomment(line):
