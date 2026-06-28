@@ -20,7 +20,12 @@ UNSUPPORTED_COMPARISONS = []
 
 
 def is_unsupported_comparison(line):
-  return line in UNSUPPORTED_COMPARISONS
+  # todo: https://github.com/google/osv.dev/issues/5578
+  return (
+    line in UNSUPPORTED_COMPARISONS
+    or line.startswith('langchain')
+    or 'gradio' in line
+  )
 
 
 def uncomment(line):
