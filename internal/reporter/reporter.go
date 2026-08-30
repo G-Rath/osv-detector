@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/fatih/color"
 	"github.com/g-rath/osv-detector/pkg/database"
@@ -38,7 +39,9 @@ func (r *Reporter) HasErrored() bool {
 func (r *Reporter) PrintErrorf(msg string, a ...any) {
 	r.hasErrored = true
 
-	fmt.Fprintf(r.stderr, msg, a...)
+	// todo: this is a hack to make the lockfile/extractor error output more like the original
+	//  there's no real reason to be doing it other than that there isn't a reason not to...
+	fmt.Fprint(r.stderr, strings.Replace(fmt.Sprintf(msg, a...), " could not extract:", "", 1))
 }
 
 // PrintTextf writes the given message to stdout, _unless_ the reporter is set
