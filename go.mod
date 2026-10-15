@@ -1,6 +1,6 @@
 module github.com/g-rath/osv-detector
 
-go 1.24.6
+go 1.25.0
 
 require (
 	github.com/BurntSushi/toml v1.5.0
@@ -28,5 +28,5 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tidwall/sjson v1.2.5 // indirect
-	golang.org/x/sys v0.35.0 // indirect
+	golang.org/x/sys v0.44.0 // indirect
 )
