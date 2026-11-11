@@ -188,7 +188,7 @@ jobs:
           persist-credentials: false
       - uses: r-lib/actions/setup-r@6f6e5bc62fba3a704f74e7ad7ef7676c5c6a2590 # v2.11.4
         with:
-          r-version: '3.5.3'
+          r-version: 'latest'
       - run: Rscript generators/generate-cran-versions.R
       - run: git status
       - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
