@@ -31,7 +31,7 @@ extract_packages_with_versions <- function(osvs) {
       package <- affected$package$name
 
       if (!(package %in% names(result))) {
-        result[[package]] <- list()
+        result[[package]] <- character()
       }
 
       for (version in affected$versions) {
