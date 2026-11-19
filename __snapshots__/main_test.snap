@@ -847,7 +847,7 @@ testdata/locks-empty/composer.lock: found 0 packages
 ---
 
 [TestRun_ParseAsGlobal/#02 - 2]
-Error, could not parse testdata/locks-empty/Gemfile.lock: unexpected end of JSON input
+Error, could not parse testdata/locks-empty/Gemfile.lock: EOF
 Error, could not parse testdata/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
 
 ---
@@ -877,7 +877,7 @@ testdata/locks-insecure/my-package-lock.json: found 1 package
 ---
 
 [TestRun_ParseAsGlobal/#03 - 2]
-Error, could not parse testdata/locks-empty/Gemfile.lock: unexpected end of JSON input
+Error, could not parse testdata/locks-empty/Gemfile.lock: EOF
 Error, could not parse testdata/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
 
 ---
@@ -991,7 +991,7 @@ testdata/locks-empty/composer.lock: found 0 packages
 ---
 
 [TestRun_ParseAsSpecific/#04 - 2]
-Error, could not parse testdata/locks-empty/Gemfile.lock: unexpected end of JSON input
+Error, could not parse testdata/locks-empty/Gemfile.lock: EOF
 Error, could not parse testdata/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
 
 ---
@@ -1021,7 +1021,7 @@ testdata/locks-insecure/my-package-lock.json: found 1 package
 ---
 
 [TestRun_ParseAsSpecific/#05 - 2]
-Error, could not parse testdata/locks-empty/Gemfile.lock: unexpected end of JSON input
+Error, could not parse testdata/locks-empty/Gemfile.lock: EOF
 Error, could not parse testdata/locks-empty/yarn.lock: invalid character '#' looking for beginning of value
 
 ---
