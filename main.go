@@ -10,12 +10,12 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/fatih/color"
 	"github.com/g-rath/osv-detector/internal"
 	"github.com/g-rath/osv-detector/internal/configer"
 	"github.com/g-rath/osv-detector/internal/reporter"
 	"github.com/g-rath/osv-detector/pkg/database"
 	"github.com/g-rath/osv-detector/pkg/lockfile"
+	"github.com/jedib0t/go-pretty/v6/text"
 )
 
 // these come from goreleaser
@@ -91,11 +91,11 @@ func (dbs OSVDatabases) check(r *reporter.Reporter, lockf lockfile.Lockfile, ign
 		results, err := db.Check(lockf.Packages)
 
 		if err != nil {
-			r.PrintErrorf("%s", color.RedString(fmt.Sprintf(
+			r.PrintErrorf("%s", text.FgRed.Sprintf(
 				"  an api error occurred while trying to check the packages listed in %s: %v\n",
 				lockf.FilePath,
 				err,
-			)))
+			))
 
 			continue
 		}
@@ -160,13 +160,13 @@ func uniqueDBConfigs(configs []*configer.Config) []database.Config {
 func describeDB(db database.DB) string {
 	switch tt := db.(type) {
 	case *database.APIDB:
-		return "using batches of " + color.YellowString("%d", tt.BatchSize)
+		return "using batches of " + text.FgYellow.Sprintf("%d", tt.BatchSize)
 	case *database.ZipDB:
 		count := tt.VulnerabilitiesCount
 
 		return fmt.Sprintf(
 			"%s %s, including withdrawn - last updated %s",
-			color.YellowString("%d", count),
+			text.FgYellow.Sprintf("%d", count),
 			reporter.Form(count, "vulnerability", "vulnerabilities"),
 			tt.UpdatedAt,
 		)
@@ -175,7 +175,7 @@ func describeDB(db database.DB) string {
 
 		return fmt.Sprintf(
 			"%s %s, including withdrawn",
-			color.YellowString("%d", count),
+			text.FgYellow.Sprintf("%d", count),
 			reporter.Form(count, "vulnerability", "vulnerabilities"),
 		)
 	}
@@ -644,8 +644,8 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 		r.PrintTextf(
 			"%s: found %s %s\n",
-			color.MagentaString("%s", lockf.FilePath),
-			color.YellowString("%d", len(lockf.Packages)),
+			text.FgMagenta.Sprint(lockf.FilePath),
+			text.FgYellow.Sprintf("%d", len(lockf.Packages)),
 			reporter.Form(len(lockf.Packages), "package", "packages"),
 		)
 
@@ -670,7 +670,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 				ignoresStr = "skipping any ignores"
 			} else {
 				ignores = append(ignores, config.Ignore...)
-				ignoresStr = color.YellowString("%d %s",
+				ignoresStr = text.FgYellow.Sprintf("%d %s",
 					len(config.Ignore),
 					reporter.Form(len(config.Ignore), "ignore", "ignores"),
 				)
@@ -678,7 +678,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 			r.PrintTextf(
 				"  Using config at %s (%s)\n",
-				color.MagentaString(config.FilePath),
+				text.FgMagenta.Sprint(config.FilePath),
 				ignoresStr,
 			)
 		}
@@ -695,7 +695,7 @@ This flag can be passed multiple times to ignore different vulnerabilities`)
 
 			r.PrintTextf(
 				"  Using db %s%s\n",
-				color.HiCyanString(db.Name()),
+				text.FgHiCyan.Sprint(db.Name()),
 				desc,
 			)
 		}
@@ -760,7 +760,7 @@ func writeUpdatedConfigs(r *reporter.Reporter, vulnsPerConfig map[string]map[str
 		if err == nil {
 			lines = append(lines, fmt.Sprintf(
 				"Updated %s with %d %s\n",
-				color.MagentaString(configPath),
+				text.FgMagenta.Sprint(configPath),
 				len(vulns),
 				reporter.Form(len(vulns), "vulnerability", "vulnerabilities"),
 			))
